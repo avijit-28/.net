@@ -1,0 +1,14 @@
+D:\avi\MethodOverriding\obj\Debug\net8.0\MethodOverriding.GeneratedMSBuildEditorConfig.editorconfig
+D:\avi\MethodOverriding\obj\Debug\net8.0\MethodOverriding.AssemblyInfoInputs.cache
+D:\avi\MethodOverriding\obj\Debug\net8.0\MethodOverriding.AssemblyInfo.cs
+D:\avi\MethodOverriding\obj\Debug\net8.0\MethodOverriding.csproj.CoreCompileInputs.cache
+D:\avi\MethodOverriding\bin\Debug\net8.0\MethodOverriding.exe
+D:\avi\MethodOverriding\bin\Debug\net8.0\MethodOverriding.deps.json
+D:\avi\MethodOverriding\bin\Debug\net8.0\MethodOverriding.runtimeconfig.json
+D:\avi\MethodOverriding\bin\Debug\net8.0\MethodOverriding.dll
+D:\avi\MethodOverriding\bin\Debug\net8.0\MethodOverriding.pdb
+D:\avi\MethodOverriding\obj\Debug\net8.0\MethodOverriding.dll
+D:\avi\MethodOverriding\obj\Debug\net8.0\refint\MethodOverriding.dll
+D:\avi\MethodOverriding\obj\Debug\net8.0\MethodOverriding.pdb
+D:\avi\MethodOverriding\obj\Debug\net8.0\MethodOverriding.genruntimeconfig.cache
+D:\avi\MethodOverriding\obj\Debug\net8.0\ref\MethodOverriding.dll

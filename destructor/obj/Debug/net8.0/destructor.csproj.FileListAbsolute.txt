@@ -1,0 +1,14 @@
+D:\avi\destructor\bin\Debug\net8.0\destructor.exe
+D:\avi\destructor\bin\Debug\net8.0\destructor.deps.json
+D:\avi\destructor\bin\Debug\net8.0\destructor.runtimeconfig.json
+D:\avi\destructor\bin\Debug\net8.0\destructor.dll
+D:\avi\destructor\bin\Debug\net8.0\destructor.pdb
+D:\avi\destructor\obj\Debug\net8.0\destructor.GeneratedMSBuildEditorConfig.editorconfig
+D:\avi\destructor\obj\Debug\net8.0\destructor.AssemblyInfoInputs.cache
+D:\avi\destructor\obj\Debug\net8.0\destructor.AssemblyInfo.cs
+D:\avi\destructor\obj\Debug\net8.0\destructor.csproj.CoreCompileInputs.cache
+D:\avi\destructor\obj\Debug\net8.0\destructor.dll
+D:\avi\destructor\obj\Debug\net8.0\refint\destructor.dll
+D:\avi\destructor\obj\Debug\net8.0\destructor.pdb
+D:\avi\destructor\obj\Debug\net8.0\destructor.genruntimeconfig.cache
+D:\avi\destructor\obj\Debug\net8.0\ref\destructor.dll

@@ -1,0 +1,14 @@
+D:\avi\Day 3\bin\Debug\net8.0\Day 3.exe
+D:\avi\Day 3\bin\Debug\net8.0\Day 3.deps.json
+D:\avi\Day 3\bin\Debug\net8.0\Day 3.runtimeconfig.json
+D:\avi\Day 3\bin\Debug\net8.0\Day 3.dll
+D:\avi\Day 3\bin\Debug\net8.0\Day 3.pdb
+D:\avi\Day 3\obj\Debug\net8.0\Day 3.GeneratedMSBuildEditorConfig.editorconfig
+D:\avi\Day 3\obj\Debug\net8.0\Day 3.AssemblyInfoInputs.cache
+D:\avi\Day 3\obj\Debug\net8.0\Day 3.AssemblyInfo.cs
+D:\avi\Day 3\obj\Debug\net8.0\Day 3.csproj.CoreCompileInputs.cache
+D:\avi\Day 3\obj\Debug\net8.0\Day 3.dll
+D:\avi\Day 3\obj\Debug\net8.0\refint\Day 3.dll
+D:\avi\Day 3\obj\Debug\net8.0\Day 3.pdb
+D:\avi\Day 3\obj\Debug\net8.0\Day 3.genruntimeconfig.cache
+D:\avi\Day 3\obj\Debug\net8.0\ref\Day 3.dll

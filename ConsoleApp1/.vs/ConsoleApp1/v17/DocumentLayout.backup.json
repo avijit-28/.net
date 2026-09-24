@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\avi\\ConsoleApp1\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{01666BA8-E40F-4A7C-87B9-C9DE7DCA2164}|ConsoleApp1.csproj|d:\\avi\\consoleapp1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{01666BA8-E40F-4A7C-87B9-C9DE7DCA2164}|ConsoleApp1.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{01666BA8-E40F-4A7C-87B9-C9DE7DCA2164}|ConsoleApp1.csproj|d:\\avi\\consoleapp1\\bankfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{01666BA8-E40F-4A7C-87B9-C9DE7DCA2164}|ConsoleApp1.csproj|solutionrelative:bankfactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{01666BA8-E40F-4A7C-87B9-C9DE7DCA2164}|ConsoleApp1.csproj|d:\\avi\\consoleapp1\\emp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{01666BA8-E40F-4A7C-87B9-C9DE7DCA2164}|ConsoleApp1.csproj|solutionrelative:emp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "BankFactory.cs",
+              "DocumentMoniker": "D:\\avi\\ConsoleApp1\\BankFactory.cs",
+              "RelativeDocumentMoniker": "BankFactory.cs",
+              "ToolTip": "D:\\avi\\ConsoleApp1\\BankFactory.cs",
+              "RelativeToolTip": "BankFactory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEQAAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-17T12:11:02.527Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "emp.cs",
+              "DocumentMoniker": "D:\\avi\\ConsoleApp1\\emp.cs",
+              "RelativeDocumentMoniker": "emp.cs",
+              "ToolTip": "D:\\avi\\ConsoleApp1\\emp.cs",
+              "RelativeToolTip": "emp.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAowCEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-17T10:35:37.38Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\avi\\ConsoleApp1\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\avi\\ConsoleApp1\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAAgwBQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-17T10:32:02.686Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

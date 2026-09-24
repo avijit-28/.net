@@ -1,0 +1,207 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\avi\\assignment1\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|d:\\avi\\assignment1\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|d:\\avi\\assignment1\\healthcare.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|solutionrelative:healthcare.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|d:\\avi\\assignment1\\paymentgateway.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|solutionrelative:paymentgateway.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|d:\\avi\\assignment1\\employee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|solutionrelative:employee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|d:\\avi\\assignment1\\vehicle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|solutionrelative:vehicle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|d:\\avi\\assignment1\\notification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|solutionrelative:notification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|d:\\avi\\assignment1\\areacalculator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|solutionrelative:areacalculator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|d:\\avi\\assignment1\\smartdevice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|solutionrelative:smartdevice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|d:\\avi\\assignment1\\loan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|solutionrelative:loan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|d:\\avi\\assignment1\\cloudstorage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|solutionrelative:cloudstorage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|d:\\avi\\assignment1\\robot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{14CA7FC5-BCE2-4FFB-B510-3E802BBE619B}|assignment1.csproj|solutionrelative:robot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AreaCalculator.cs",
+              "DocumentMoniker": "D:\\avi\\assignment1\\AreaCalculator.cs",
+              "RelativeDocumentMoniker": "AreaCalculator.cs",
+              "ToolTip": "D:\\avi\\assignment1\\AreaCalculator.cs",
+              "RelativeToolTip": "AreaCalculator.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAgwA4AAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T12:09:01.733Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Notification.cs",
+              "DocumentMoniker": "D:\\avi\\assignment1\\Notification.cs",
+              "RelativeDocumentMoniker": "Notification.cs",
+              "ToolTip": "D:\\avi\\assignment1\\Notification.cs",
+              "RelativeToolTip": "Notification.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACcAAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T11:56:08.86Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Vehicle.cs",
+              "DocumentMoniker": "D:\\avi\\assignment1\\Vehicle.cs",
+              "RelativeDocumentMoniker": "Vehicle.cs",
+              "ToolTip": "D:\\avi\\assignment1\\Vehicle.cs",
+              "RelativeToolTip": "Vehicle.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAcwCgAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T11:40:03.914Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "employee.cs",
+              "DocumentMoniker": "D:\\avi\\assignment1\\employee.cs",
+              "RelativeDocumentMoniker": "employee.cs",
+              "ToolTip": "D:\\avi\\assignment1\\employee.cs",
+              "RelativeToolTip": "employee.cs",
+              "ViewState": "AgIAAEIAAAAAAAAAAAAiwAgAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T11:07:32.376Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Healthcare.cs",
+              "DocumentMoniker": "D:\\avi\\assignment1\\Healthcare.cs",
+              "RelativeDocumentMoniker": "Healthcare.cs",
+              "ToolTip": "D:\\avi\\assignment1\\Healthcare.cs",
+              "RelativeToolTip": "Healthcare.cs",
+              "ViewState": "AgIAACwAAAAAAAAAAAA8wA4AAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T10:35:48.983Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PaymentGateway.cs",
+              "DocumentMoniker": "D:\\avi\\assignment1\\PaymentGateway.cs",
+              "RelativeDocumentMoniker": "PaymentGateway.cs",
+              "ToolTip": "D:\\avi\\assignment1\\PaymentGateway.cs",
+              "RelativeToolTip": "PaymentGateway.cs",
+              "ViewState": "AgIAADAAAAAAAAAAAAAowAwAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T10:01:36.181Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\avi\\assignment1\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\avi\\assignment1\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAJAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T09:56:40.824Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "SmartDevice.cs",
+              "DocumentMoniker": "D:\\avi\\assignment1\\SmartDevice.cs",
+              "RelativeDocumentMoniker": "SmartDevice.cs",
+              "ToolTip": "D:\\avi\\assignment1\\SmartDevice.cs",
+              "RelativeToolTip": "SmartDevice.cs",
+              "ViewState": "AgIAADYAAAAAAAAAAAAiwA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T12:48:27.62Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Loan.cs",
+              "DocumentMoniker": "D:\\avi\\assignment1\\Loan.cs",
+              "RelativeDocumentMoniker": "Loan.cs",
+              "ToolTip": "D:\\avi\\assignment1\\Loan.cs",
+              "RelativeToolTip": "Loan.cs",
+              "ViewState": "AgIAADIAAAAAAAAAAAA7wBMAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T13:01:36.683Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "CloudStorage.cs",
+              "DocumentMoniker": "D:\\avi\\assignment1\\CloudStorage.cs",
+              "RelativeDocumentMoniker": "CloudStorage.cs",
+              "ToolTip": "D:\\avi\\assignment1\\CloudStorage.cs",
+              "RelativeToolTip": "CloudStorage.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAmwAsAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T13:18:42.372Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Robot.cs",
+              "DocumentMoniker": "D:\\avi\\assignment1\\Robot.cs",
+              "RelativeDocumentMoniker": "Robot.cs",
+              "ToolTip": "D:\\avi\\assignment1\\Robot.cs",
+              "RelativeToolTip": "Robot.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAowCQAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-21T13:40:18.211Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
