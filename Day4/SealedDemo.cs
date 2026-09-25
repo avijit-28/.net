@@ -40,7 +40,24 @@ namespace Day4
         double Bonus, Salary;
         public override void GetEmployeeDetails()
         {
-                
+            Console.WriteLine("\n Manager Details ");
+            Console.Write("Enter Manager ID:");
+            Eid = int.Parse(Console.ReadLine());
+            Console.Write("Enter Manager Name:");
+            Ename = Console.ReadLine();
+            Console.Write("Enter Manager Salary:");
+            Salary = Convert.ToDouble(Console.ReadLine());
+            Console.Write("Enter Manager Bonus:");
+            Bonus = double.Parse(Console.ReadLine());
+        }
+
+        public override void DisplayDetails()
+        {
+            Console.WriteLine("\n Manager Details");
+            Console.WriteLine($"Manager ID : {Eid}");
+            Console.WriteLine($"Manager Name : {Ename}");
+            Console.WriteLine($"Manager Salary : {Salary}");
+            Console.WriteLine($"Manager Bonus : {Bonus}");
         }
     }
 }

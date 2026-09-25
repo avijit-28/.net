@@ -1,0 +1,16 @@
+D:\avi\C#\Day 6\obj\Debug\net10.0\Day 6.GeneratedMSBuildEditorConfig.editorconfig
+D:\avi\C#\Day 6\obj\Debug\net10.0\Day 6.AssemblyInfoInputs.cache
+D:\avi\C#\Day 6\obj\Debug\net10.0\Day 6.AssemblyInfo.cs
+D:\avi\C#\Day 6\obj\Debug\net10.0\Day 6.csproj.CoreCompileInputs.cache
+D:\avi\C#\Day 6\obj\Debug\net10.0\Day 6.sourcelink.json
+D:\avi\C#\Day 6\bin\Debug\net10.0\Day 6.exe
+D:\avi\C#\Day 6\bin\Debug\net10.0\Day 6.deps.json
+D:\avi\C#\Day 6\bin\Debug\net10.0\Day 6.runtimeconfig.json
+D:\avi\C#\Day 6\bin\Debug\net10.0\Day 6.dll
+D:\avi\C#\Day 6\bin\Debug\net10.0\Day 6.pdb
+D:\avi\C#\Day 6\obj\Debug\net10.0\Day 6.dll
+D:\avi\C#\Day 6\obj\Debug\net10.0\refint\Day 6.dll
+D:\avi\C#\Day 6\obj\Debug\net10.0\Day 6.pdb
+D:\avi\C#\Day 6\obj\Debug\net10.0\Day 6.genruntimeconfig.cache
+D:\avi\C#\Day 6\obj\Debug\net10.0\ref\Day 6.dll
+D:\avi\C#\Day 6\obj\Debug\net10.0\Day 6.csproj.Up2Date

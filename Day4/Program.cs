@@ -14,6 +14,16 @@
             //emp1.DisplayDetails();
 
 
+            Employee emp = new Employee();
+            //emp.Eid = 101;
+            //emp.Ename = "Avijit";
+            //emp.Eaddress = "New Town";
+            //emp.Eage = 23;
+            
+            emp.GetEmployeeDetails();
+            emp.DisplayDetails();
+            Console.ReadLine();
+
 
         }
     }

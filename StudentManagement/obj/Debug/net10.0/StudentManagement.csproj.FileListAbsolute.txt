@@ -1,0 +1,16 @@
+D:\avi\C#\StudentManagement\bin\Debug\net10.0\StudentManagement.exe
+D:\avi\C#\StudentManagement\bin\Debug\net10.0\StudentManagement.deps.json
+D:\avi\C#\StudentManagement\bin\Debug\net10.0\StudentManagement.runtimeconfig.json
+D:\avi\C#\StudentManagement\bin\Debug\net10.0\StudentManagement.dll
+D:\avi\C#\StudentManagement\bin\Debug\net10.0\StudentManagement.pdb
+D:\avi\C#\StudentManagement\obj\Debug\net10.0\StudentManagement.GeneratedMSBuildEditorConfig.editorconfig
+D:\avi\C#\StudentManagement\obj\Debug\net10.0\StudentManagement.AssemblyInfoInputs.cache
+D:\avi\C#\StudentManagement\obj\Debug\net10.0\StudentManagement.AssemblyInfo.cs
+D:\avi\C#\StudentManagement\obj\Debug\net10.0\StudentManagement.csproj.CoreCompileInputs.cache
+D:\avi\C#\StudentManagement\obj\Debug\net10.0\StudentManagement.sourcelink.json
+D:\avi\C#\StudentManagement\obj\Debug\net10.0\StudentManagement.dll
+D:\avi\C#\StudentManagement\obj\Debug\net10.0\refint\StudentManagement.dll
+D:\avi\C#\StudentManagement\obj\Debug\net10.0\StudentManagement.pdb
+D:\avi\C#\StudentManagement\obj\Debug\net10.0\StudentManagement.genruntimeconfig.cache
+D:\avi\C#\StudentManagement\obj\Debug\net10.0\ref\StudentManagement.dll
+D:\avi\C#\StudentManagement\obj\Debug\net10.0\StudentM.FBDC7194.Up2Date
