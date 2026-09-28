@@ -1,0 +1,16 @@
+D:\avi\C#\DictionaryCollection\bin\Debug\net10.0\DictionaryCollection.exe
+D:\avi\C#\DictionaryCollection\bin\Debug\net10.0\DictionaryCollection.deps.json
+D:\avi\C#\DictionaryCollection\bin\Debug\net10.0\DictionaryCollection.runtimeconfig.json
+D:\avi\C#\DictionaryCollection\bin\Debug\net10.0\DictionaryCollection.dll
+D:\avi\C#\DictionaryCollection\bin\Debug\net10.0\DictionaryCollection.pdb
+D:\avi\C#\DictionaryCollection\obj\Debug\net10.0\DictionaryCollection.GeneratedMSBuildEditorConfig.editorconfig
+D:\avi\C#\DictionaryCollection\obj\Debug\net10.0\DictionaryCollection.AssemblyInfoInputs.cache
+D:\avi\C#\DictionaryCollection\obj\Debug\net10.0\DictionaryCollection.AssemblyInfo.cs
+D:\avi\C#\DictionaryCollection\obj\Debug\net10.0\DictionaryCollection.csproj.CoreCompileInputs.cache
+D:\avi\C#\DictionaryCollection\obj\Debug\net10.0\DictionaryCollection.sourcelink.json
+D:\avi\C#\DictionaryCollection\obj\Debug\net10.0\DictionaryCollection.dll
+D:\avi\C#\DictionaryCollection\obj\Debug\net10.0\refint\DictionaryCollection.dll
+D:\avi\C#\DictionaryCollection\obj\Debug\net10.0\DictionaryCollection.pdb
+D:\avi\C#\DictionaryCollection\obj\Debug\net10.0\DictionaryCollection.genruntimeconfig.cache
+D:\avi\C#\DictionaryCollection\obj\Debug\net10.0\ref\DictionaryCollection.dll
+D:\avi\C#\DictionaryCollection\obj\Debug\net10.0\Dictiona.C7BB3BBF.Up2Date
