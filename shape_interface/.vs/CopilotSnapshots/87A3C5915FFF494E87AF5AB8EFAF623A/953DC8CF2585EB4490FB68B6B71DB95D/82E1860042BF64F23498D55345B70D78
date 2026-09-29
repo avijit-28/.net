@@ -1,0 +1,74 @@
+﻿using ConsoleApp1;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
+
+namespace ConsoleApp1
+{
+    public interface IShape
+    {
+        float Area(float a, float b);
+
+        float Perimeter(float a, float b);
+    }
+    public class ShapeFactory
+    {
+        public static IShape getMyShape(string shapeType)
+        {
+            IShape MyShape = null;
+
+
+            if (shapeType == "Square")
+            {
+                MyShape = new Square();
+            }
+            else if (shapeType == "Rectangle")
+            {
+                MyShape = new Rectangle();
+            }
+
+            return MyShape;
+        }
+    }
+
+    
+
+    public class  Square : IShape
+    {
+        float side1, side2;
+        public float Area(float a, float b)
+        {
+            this.side1 = a;
+            this.side2 = b;
+            return side1 * side2;
+        }
+
+        public float Perimeter(float a, float b)
+        {
+            this.side1 = a;
+            this.side2 = b;
+            return 2 * (side1 + side2);
+        }
+
+    }
+
+    public class Rectangle : IShape
+    {
+        float side1, side2;
+        public float Area(float a, float b)
+        {
+            this.side1 = a;
+            this.side2 = b;
+            return side1 * side2;
+        }
+        public float Perimeter(float a, float b)
+        {
+            this.side1 = a;
+            this.side2 = b;
+            return 2 * (side1 + side2);
+        }
+    }
+
+
+}
