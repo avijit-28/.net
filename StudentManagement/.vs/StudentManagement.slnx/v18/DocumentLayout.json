@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "D:\\avi\\C#\\StudentManagement\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1E3604D0-4219-4469-9115-B2B3794D85EB}|StudentManagement.csproj|d:\\avi\\c#\\studentmanagement\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1E3604D0-4219-4469-9115-B2B3794D85EB}|StudentManagement.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{84C517A6-DEEF-89D1-F783-D8FD841E2565}|StudentManagement.csproj|d:\\avi\\c#\\studentmanagement\\student.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{84C517A6-DEEF-89D1-F783-D8FD841E2565}|StudentManagement.csproj|solutionrelative:student.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1E3604D0-4219-4469-9115-B2B3794D85EB}|StudentManagement.csproj|d:\\avi\\c#\\studentmanagement\\student.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1E3604D0-4219-4469-9115-B2B3794D85EB}|StudentManagement.csproj|solutionrelative:student.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{84C517A6-DEEF-89D1-F783-D8FD841E2565}|StudentManagement.csproj|d:\\avi\\c#\\studentmanagement\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{84C517A6-DEEF-89D1-F783-D8FD841E2565}|StudentManagement.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,30 +18,30 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Student.cs",
               "DocumentMoniker": "D:\\avi\\C#\\StudentManagement\\Student.cs",
               "RelativeDocumentMoniker": "Student.cs",
               "ToolTip": "D:\\avi\\C#\\StudentManagement\\Student.cs",
               "RelativeToolTip": "Student.cs",
-              "ViewState": "AgIAAGgAAAAAAAAAAADwvykAAAAzAAAAAAAAAA==",
+              "ViewState": "AgIAABYAAAAAAAAAAAAcwCUAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-09-25T12:01:25.191Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\avi\\C#\\StudentManagement\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "D:\\avi\\C#\\StudentManagement\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAA1AAAAAAAAAA==",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAAACIAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-09-25T12:00:59.072Z",
               "EditorCaption": ""
