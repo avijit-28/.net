@@ -1,0 +1,15 @@
+D:\All\.net\DictionaryOptimazaion\bin\Debug\net10.0\DictionaryOptimazaion.exe
+D:\All\.net\DictionaryOptimazaion\bin\Debug\net10.0\DictionaryOptimazaion.deps.json
+D:\All\.net\DictionaryOptimazaion\bin\Debug\net10.0\DictionaryOptimazaion.runtimeconfig.json
+D:\All\.net\DictionaryOptimazaion\bin\Debug\net10.0\DictionaryOptimazaion.dll
+D:\All\.net\DictionaryOptimazaion\bin\Debug\net10.0\DictionaryOptimazaion.pdb
+D:\All\.net\DictionaryOptimazaion\obj\Debug\net10.0\DictionaryOptimazaion.GeneratedMSBuildEditorConfig.editorconfig
+D:\All\.net\DictionaryOptimazaion\obj\Debug\net10.0\DictionaryOptimazaion.AssemblyInfoInputs.cache
+D:\All\.net\DictionaryOptimazaion\obj\Debug\net10.0\DictionaryOptimazaion.AssemblyInfo.cs
+D:\All\.net\DictionaryOptimazaion\obj\Debug\net10.0\DictionaryOptimazaion.csproj.CoreCompileInputs.cache
+D:\All\.net\DictionaryOptimazaion\obj\Debug\net10.0\DictionaryOptimazaion.dll
+D:\All\.net\DictionaryOptimazaion\obj\Debug\net10.0\refint\DictionaryOptimazaion.dll
+D:\All\.net\DictionaryOptimazaion\obj\Debug\net10.0\DictionaryOptimazaion.pdb
+D:\All\.net\DictionaryOptimazaion\obj\Debug\net10.0\DictionaryOptimazaion.genruntimeconfig.cache
+D:\All\.net\DictionaryOptimazaion\obj\Debug\net10.0\ref\DictionaryOptimazaion.dll
+D:\All\.net\DictionaryOptimazaion\obj\Debug\net10.0\Dictiona.09F18AB9.Up2Date
