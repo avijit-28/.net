@@ -1,0 +1,106 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\avi\\C#\\RecordOptimization\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{55757B8D-4120-4045-86ED-21727551318F}|RecordOptimization.csproj|d:\\avi\\c#\\recordoptimization\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{55757B8D-4120-4045-86ED-21727551318F}|RecordOptimization.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{55757B8D-4120-4045-86ED-21727551318F}|RecordOptimization.csproj|d:\\avi\\c#\\recordoptimization\\customers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{55757B8D-4120-4045-86ED-21727551318F}|RecordOptimization.csproj|solutionrelative:customers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{55757B8D-4120-4045-86ED-21727551318F}|RecordOptimization.csproj|d:\\avi\\c#\\recordoptimization\\customerorders.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{55757B8D-4120-4045-86ED-21727551318F}|RecordOptimization.csproj|solutionrelative:customerorders.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{55757B8D-4120-4045-86ED-21727551318F}|RecordOptimization.csproj|d:\\avi\\c#\\recordoptimization\\orders.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{55757B8D-4120-4045-86ED-21727551318F}|RecordOptimization.csproj|solutionrelative:orders.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{55757B8D-4120-4045-86ED-21727551318F}|RecordOptimization.csproj|d:\\avi\\c#\\recordoptimization\\orderresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{55757B8D-4120-4045-86ED-21727551318F}|RecordOptimization.csproj|solutionrelative:orderresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\avi\\C#\\RecordOptimization\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\avi\\C#\\RecordOptimization\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAYwCgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-29T13:36:53.365Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "OrderResult.cs",
+              "DocumentMoniker": "D:\\avi\\C#\\RecordOptimization\\OrderResult.cs",
+              "RelativeDocumentMoniker": "OrderResult.cs",
+              "ToolTip": "D:\\avi\\C#\\RecordOptimization\\OrderResult.cs",
+              "RelativeToolTip": "OrderResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-29T14:09:59.923Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CustomerOrders.cs",
+              "DocumentMoniker": "D:\\avi\\C#\\RecordOptimization\\CustomerOrders.cs",
+              "RelativeDocumentMoniker": "CustomerOrders.cs",
+              "ToolTip": "D:\\avi\\C#\\RecordOptimization\\CustomerOrders.cs",
+              "RelativeToolTip": "CustomerOrders.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-29T13:41:22.143Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Orders.cs",
+              "DocumentMoniker": "D:\\avi\\C#\\RecordOptimization\\Orders.cs",
+              "RelativeDocumentMoniker": "Orders.cs",
+              "ToolTip": "D:\\avi\\C#\\RecordOptimization\\Orders.cs",
+              "RelativeToolTip": "Orders.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-29T13:40:53.908Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Customers.cs",
+              "DocumentMoniker": "D:\\avi\\C#\\RecordOptimization\\Customers.cs",
+              "RelativeDocumentMoniker": "Customers.cs",
+              "ToolTip": "D:\\avi\\C#\\RecordOptimization\\Customers.cs",
+              "RelativeToolTip": "Customers.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-29T13:40:37.479Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
