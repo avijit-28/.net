@@ -55,7 +55,8 @@ namespace FirstADOConsoleApp
             while (true)
             {
                 Console.WriteLine("1. Add Doctor");
-                Console.WriteLine("2. Exit");
+                Console.WriteLine("2. Show Doctors");
+                Console.WriteLine("3. Exit");
                 Console.Write("Enter your choice: ");
                 string choice = Console.ReadLine();
                 if (choice == "1")
@@ -78,6 +79,10 @@ namespace FirstADOConsoleApp
                     Console.WriteLine("Doctor added successfully!");
                 }
                 else if (choice == "2")
+                {
+                    repo.showDoctors();
+                }
+                else if(choice == "3")
                 {
                     break;
                 }
