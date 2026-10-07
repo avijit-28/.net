@@ -1,0 +1,7 @@
+D:\avi\C#\DeparmentProject\bin\Debug\DeparmentProject.exe.config
+D:\avi\C#\DeparmentProject\bin\Debug\DeparmentProject.exe
+D:\avi\C#\DeparmentProject\bin\Debug\DeparmentProject.pdb
+D:\avi\C#\DeparmentProject\obj\Debug\DeparmentProject.csproj.AssemblyReference.cache
+D:\avi\C#\DeparmentProject\obj\Debug\DeparmentProject.csproj.CoreCompileInputs.cache
+D:\avi\C#\DeparmentProject\obj\Debug\DeparmentProject.exe
+D:\avi\C#\DeparmentProject\obj\Debug\DeparmentProject.pdb
