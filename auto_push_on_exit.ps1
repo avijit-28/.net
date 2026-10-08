@@ -242,9 +242,13 @@ function Push-Changes {
             $subject = "$($topItem): Update changes"
         }
 
-        Write-Host "Committing [$topItem] -> $subject" -ForegroundColor Cyan
-        git commit -m "$subject"
-        $committedItems.Add($subject)
+        # Append push Date and Time as requested
+        $timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+        $subjectWithTime = "$subject - $timestamp"
+
+        Write-Host "Committing [$topItem] -> $subjectWithTime" -ForegroundColor Cyan
+        git commit -m "$subjectWithTime"
+        $committedItems.Add($subjectWithTime)
     }
 
     if ($committedItems.Count -gt 0) {
