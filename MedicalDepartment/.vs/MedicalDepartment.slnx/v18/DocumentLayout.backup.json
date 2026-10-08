@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "D:\\All\\.net\\MedicalDepartment\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{ADC7E223-9C3B-4B2E-8494-FB6B44153354}|MedicalDepartment.csproj|d:\\all\\.net\\medicaldepartment\\doctorsrepo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{ADC7E223-9C3B-4B2E-8494-FB6B44153354}|MedicalDepartment.csproj|solutionrelative:doctorsrepo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{ADC7E223-9C3B-4B2E-8494-FB6B44153354}|MedicalDepartment.csproj|D:\\All\\.net\\MedicalDepartment\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ADC7E223-9C3B-4B2E-8494-FB6B44153354}|MedicalDepartment.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{ADC7E223-9C3B-4B2E-8494-FB6B44153354}|MedicalDepartment.csproj|D:\\All\\.net\\MedicalDepartment\\doctors.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{ADC7E223-9C3B-4B2E-8494-FB6B44153354}|MedicalDepartment.csproj|solutionrelative:doctors.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{ADC7E223-9C3B-4B2E-8494-FB6B44153354}|MedicalDepartment.csproj|D:\\All\\.net\\MedicalDepartment\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{ADC7E223-9C3B-4B2E-8494-FB6B44153354}|MedicalDepartment.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{ADC7E223-9C3B-4B2E-8494-FB6B44153354}|MedicalDepartment.csproj|d:\\all\\.net\\medicaldepartment\\doctorsrepo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{ADC7E223-9C3B-4B2E-8494-FB6B44153354}|MedicalDepartment.csproj|solutionrelative:doctorsrepo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{ADC7E223-9C3B-4B2E-8494-FB6B44153354}|MedicalDepartment.csproj|D:\\All\\.net\\MedicalDepartment\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
@@ -26,20 +26,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\All\\.net\\MedicalDepartment\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "D:\\All\\.net\\MedicalDepartment\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAA7AAAAAAAAAA==",
+              "ViewState": "AgIAABAAAAAAAAAAAAAQwBkAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-10-06T14:37:32.61Z",
-              "IsPinned": true
+              "IsPinned": true,
+              "EditorCaption": ""
             },
             {
               "$type": "Bookmark",
@@ -63,13 +64,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "DoctorsRepo.cs",
               "DocumentMoniker": "D:\\All\\.net\\MedicalDepartment\\DoctorsRepo.cs",
               "RelativeDocumentMoniker": "DoctorsRepo.cs",
               "ToolTip": "D:\\All\\.net\\MedicalDepartment\\DoctorsRepo.cs",
               "RelativeToolTip": "DoctorsRepo.cs",
-              "ViewState": "AgIAALAAAAAAAAAAAAAuwLgAAAA6AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAH8AAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-10-06T14:41:11.069Z",
               "EditorCaption": ""
@@ -84,7 +85,8 @@
               "RelativeToolTip": "Doctors.cs",
               "ViewState": "AgIAAA4AAAAAAAAAAAAgwAgAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-06T14:40:34.249Z"
+              "WhenOpened": "2026-10-06T14:40:34.249Z",
+              "EditorCaption": ""
             }
           ]
         },
