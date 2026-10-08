@@ -18,7 +18,7 @@ namespace MedicalDepartment
                 Console.WriteLine("1. Add Doctor");
                 Console.WriteLine("2. Show Doctors");
                 Console.WriteLine("3. Updates Doctors Details");
-                //Console.WriteLine("4. Delete Doctors Details");
+                Console.WriteLine("4. Delete Doctors Details");
                 Console.WriteLine("5. Exit");
                 Console.Write("Enter your choice: ");
                 string choice = Console.ReadLine();
