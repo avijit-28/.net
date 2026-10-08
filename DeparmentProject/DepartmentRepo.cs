@@ -43,6 +43,7 @@ namespace DeparmentProject
                         );
                     }
                 }
+                Console.WriteLine(messageParameter.Value);
             }
         }
         public void getallDepartmentByProcedure()

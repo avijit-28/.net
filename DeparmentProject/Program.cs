@@ -14,7 +14,8 @@ namespace DeparmentProject
             //Repo.getallDepartmentByProcedure();
             //Repo.insertDepartmentByProcedure();
             //Repo.deleteDepartmentByProcedure();
-            Repo.updateDepartmentByProcedure();
+            //Repo.updateDepartmentByProcedure();
+            Repo.getDepartmentDetails(2);    
         }
     }
 }

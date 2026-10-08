@@ -7,16 +7,16 @@
       "RelativeMoniker": "D:0:0:{47941BF6-F3DB-4888-8093-1CB87ABBE1A0}|FirstADOConsoleApp.csproj|solutionrelative:doctorsrepo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{47941BF6-F3DB-4888-8093-1CB87ABBE1A0}|FirstADOConsoleApp.csproj|D:\\avi\\C#\\FirstADOConsoleApp\\doctors.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{47941BF6-F3DB-4888-8093-1CB87ABBE1A0}|FirstADOConsoleApp.csproj|solutionrelative:doctors.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{47941BF6-F3DB-4888-8093-1CB87ABBE1A0}|FirstADOConsoleApp.csproj|D:\\avi\\C#\\FirstADOConsoleApp\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{47941BF6-F3DB-4888-8093-1CB87ABBE1A0}|FirstADOConsoleApp.csproj|solutionrelative:app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{47941BF6-F3DB-4888-8093-1CB87ABBE1A0}|FirstADOConsoleApp.csproj|D:\\avi\\C#\\FirstADOConsoleApp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{47941BF6-F3DB-4888-8093-1CB87ABBE1A0}|FirstADOConsoleApp.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{47941BF6-F3DB-4888-8093-1CB87ABBE1A0}|FirstADOConsoleApp.csproj|d:\\avi\\c#\\firstadoconsoleapp\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{47941BF6-F3DB-4888-8093-1CB87ABBE1A0}|FirstADOConsoleApp.csproj|solutionrelative:app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+      "AbsoluteMoniker": "D:0:0:{47941BF6-F3DB-4888-8093-1CB87ABBE1A0}|FirstADOConsoleApp.csproj|D:\\avi\\C#\\FirstADOConsoleApp\\doctors.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{47941BF6-F3DB-4888-8093-1CB87ABBE1A0}|FirstADOConsoleApp.csproj|solutionrelative:doctors.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,13 +38,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "App.config",
               "DocumentMoniker": "D:\\avi\\C#\\FirstADOConsoleApp\\App.config",
               "RelativeDocumentMoniker": "App.config",
               "ToolTip": "D:\\avi\\C#\\FirstADOConsoleApp\\App.config",
               "RelativeToolTip": "App.config",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAMAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
               "WhenOpened": "2026-10-05T13:33:49.836Z",
               "EditorCaption": ""
@@ -57,7 +57,7 @@
               "RelativeDocumentMoniker": "DoctorsRepo.cs",
               "ToolTip": "D:\\avi\\C#\\FirstADOConsoleApp\\DoctorsRepo.cs",
               "RelativeToolTip": "DoctorsRepo.cs",
-              "ViewState": "AgIAAKYAAAAAAAAAAAAswLEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAQwBMAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-10-02T13:06:26.075Z",
               "EditorCaption": ""
@@ -70,14 +70,13 @@
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "D:\\avi\\C#\\FirstADOConsoleApp\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAEcAAAAAAAAAAADwv1IAAAAnAAAAAAAAAA==",
+              "ViewState": "AgIAAEcAAAAAAAAAAADwv1YAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-30T13:34:31.059Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-30T13:34:31.059Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Doctors.cs",
               "DocumentMoniker": "D:\\avi\\C#\\FirstADOConsoleApp\\Doctors.cs",
               "RelativeDocumentMoniker": "Doctors.cs",
@@ -85,8 +84,7 @@
               "RelativeToolTip": "Doctors.cs",
               "ViewState": "AgIAAAoAAAAAAAAAAAA1wBMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-02T13:03:04.336Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-02T13:03:04.336Z"
             }
           ]
         },

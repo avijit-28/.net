@@ -1,0 +1,21 @@
+# Visual Studio user-specific files and cache
+.vs/
+**/.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+
+# Temporary and backup files
+*.tmp
+*.bak
+*~
+~$*
+
+# OS metadata
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Logs
+*.log

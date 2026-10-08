@@ -175,10 +175,7 @@ namespace FirstADOConsoleApp
                             cmd.Parameters.AddWithValue("@phone", DcPhoneNumber);
 
                         cmd.ExecuteNonQuery();                    }
-
                 }
-
-
             }
             else
             {

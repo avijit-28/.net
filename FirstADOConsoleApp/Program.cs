@@ -82,6 +82,10 @@ namespace FirstADOConsoleApp
                 {
                     repo.showDoctors();
                 }
+                else if (choice == "3")
+                {
+                    repo.updateDoctorsDetails();
+                }
                 else if(choice == "3")
                 {
                     break;
