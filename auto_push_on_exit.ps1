@@ -3,9 +3,10 @@
     Automated Git Auto-Push Watcher for Visual Studio
 .DESCRIPTION
     Monitors Visual Studio (devenv.exe or Code.exe).
-    When Visual Studio is closed, checks if any files/folders were added or modified in D:\All\.net,
-    analyzes the changes to identify the exact files, project, and work done (methods, tasks, or comments),
-    and automatically commits and pushes them to GitHub on the 'main' branch.
+    When Visual Studio is closed, checks all modified and newly created files/folders in D:\All\.net,
+    groups them by their respective folder or file name,
+    commits each folder/file individually with a specific, custom commit message,
+    and pushes all commits to GitHub on the 'main' branch.
 #>
 
 param(
@@ -64,7 +65,6 @@ function Get-WorkHintFromDiff {
     foreach ($file in $files) {
         if (-not ($file.EndsWith(".cs") -or $file.EndsWith(".sql") -or $file.EndsWith(".md"))) { continue }
 
-        # Get diff of added lines only
         $diffLines = git -C $targetRepo diff -U0 -- $file 2>$null | Where-Object { $_ -match '^\+[^\+]' }
         if (-not $diffLines) {
             $fullPath = Join-Path $targetRepo $file
@@ -77,7 +77,7 @@ function Get-WorkHintFromDiff {
             $trimmed = $line.Substring(1).Trim()
             if ([string]::IsNullOrWhiteSpace($trimmed)) { continue }
 
-            # 1. Match C# method declaration: e.g. void DeleteDoctor(...)
+            # Match method declaration
             if ($trimmed -match '(?:public|private|protected|internal|static|async)\s+[\w<>,\[\]]+\s+([A-Z]\w+)\s*\(') {
                 $method = $Matches[1]
                 if ($method -notmatch '^(Main|ToString|Dispose)$') {
@@ -85,17 +85,17 @@ function Get-WorkHintFromDiff {
                     break
                 }
             }
-            # 2. Match C# class or interface
+            # Match class / interface
             if ($trimmed -match '(?:class|interface|record|struct|enum)\s+([A-Z]\w+)') {
                 $hints.Add("create $($Matches[1])")
                 break
             }
-            # 3. Match comments: e.g. // Delete Doctors or // Update method
+            # Match comments
             if ($trimmed -match '^//\s*([A-Za-z0-9\s_\-]{4,35})') {
                 $hints.Add($Matches[1].Trim())
                 break
             }
-            # 4. Match Menu/Action strings: e.g. "4. Delete Doctors Details"
+            # Match descriptive strings
             if ($trimmed -match '"(?:\d+\.\s*)?([A-Za-z\s]{4,30})"') {
                 $actionText = $Matches[1].Trim()
                 if ($actionText -notmatch '^(Enter|Invalid|Error|Success|Exit|Select)$') {
@@ -114,193 +114,154 @@ function Get-WorkHintFromDiff {
     return ""
 }
 
-function Generate-SmartCommitMessage {
-    param (
-        [string[]]$statusLines,
-        [string]$targetRepo
-    )
-
-    $added = [System.Collections.Generic.List[string]]::new()
-    $modified = [System.Collections.Generic.List[string]]::new()
-    $deleted = [System.Collections.Generic.List[string]]::new()
-    $renamed = [System.Collections.Generic.List[string]]::new()
-    $projects = [System.Collections.Generic.HashSet[string]]::new()
-
-    foreach ($line in $statusLines) {
-        if ([string]::IsNullOrWhiteSpace($line)) { continue }
-        
-        $code = $line.Substring(0, 2).Trim()
-        $rawPath = $line.Substring(2).Trim().Trim('"')
-
-        # Filter out temporary / build files if any slipped through
-        if ($rawPath -match '[\\/](\.vs|obj|bin)[\\/]' -or $rawPath -match '^\.vs[\\/]') {
-            continue
-        }
-
-        # Identify project/module name if inside a subfolder
-        $parts = $rawPath.Split('\/')
-        if ($parts.Length -gt 1) {
-            $null = $projects.Add($parts[0])
-        }
-
-        if ($code -eq '??' -or $code -eq 'A') {
-            $added.Add($rawPath)
-        } elseif ($code -eq 'D') {
-            $deleted.Add($rawPath)
-        } elseif ($code -eq 'R') {
-            $renamed.Add($rawPath)
-        } else {
-            $modified.Add($rawPath)
-        }
-    }
-
-    $totalCount = $added.Count + $modified.Count + $deleted.Count + $renamed.Count
-    if ($totalCount -eq 0) {
-        return $null
-    }
-
-    # Helper function to get simple base filename
-    $getFileName = { param([string]$p) [System.IO.Path]::GetFileName($p) }
-
-    # Extract work description hint from code changes
-    $allTouchFiles = @($modified) + @($added)
-    $workHint = Get-WorkHintFromDiff -targetRepo $targetRepo -files $allTouchFiles
-
-    # Build concise subject title
-    $actionParts = [System.Collections.Generic.List[string]]::new()
-
-    if ($modified.Count -gt 0) {
-        if ($modified.Count -le 2) {
-            $names = ($modified | ForEach-Object { & $getFileName $_ }) -join ', '
-            $actionParts.Add("Update $names")
-        } else {
-            $actionParts.Add("Update $($modified.Count) files")
-        }
-    }
-
-    if ($added.Count -gt 0) {
-        if ($added.Count -le 2) {
-            $names = ($added | ForEach-Object { & $getFileName $_ }) -join ', '
-            $actionParts.Add("Add $names")
-        } else {
-            $actionParts.Add("Add $($added.Count) new files")
-        }
-    }
-
-    if ($deleted.Count -gt 0) {
-        if ($deleted.Count -le 2) {
-            $names = ($deleted | ForEach-Object { & $getFileName $_ }) -join ', '
-            $actionParts.Add("Delete $names")
-        } else {
-            $actionParts.Add("Delete $($deleted.Count) files")
-        }
-    }
-
-    if ($renamed.Count -gt 0) {
-        $actionParts.Add("Rename $($renamed.Count) files")
-    }
-
-    # Add project folder context
-    $projContext = ""
-    if ($projects.Count -eq 1) {
-        $singleProj = [System.Linq.Enumerable]::First($projects)
-        $projContext = " in $singleProj"
-    } elseif ($projects.Count -gt 1) {
-        $firstFew = ($projects | Select-Object -First 2) -join ', '
-        $projContext = " in $firstFew"
-    }
-
-    # Integrate work hint into title if present
-    $hintContext = ""
-    if (-not [string]::IsNullOrWhiteSpace($workHint)) {
-        $hintContext = " ($workHint)"
-    }
-
-    $subject = ($actionParts -join ' and ') + $hintContext + $projContext
-
-    # Fallback or length guard
-    if ([string]::IsNullOrWhiteSpace($subject)) {
-        $subject = "Auto-update ($totalCount files changed)"
-    } elseif ($subject.Length -gt 72) {
-        $subject = $subject.Substring(0, 69) + "..."
-    }
-
-    # Build detailed body breakdown
-    $bodyLines = [System.Collections.Generic.List[string]]::new()
-    $bodyLines.Add("Visual Studio Work Summary:")
-    $bodyLines.Add("Timestamp: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')")
-    if (-not [string]::IsNullOrWhiteSpace($workHint)) {
-        $bodyLines.Add("Task/Feature: $workHint")
-    }
-    $bodyLines.Add("")
-
-    if ($modified.Count -gt 0) {
-        $bodyLines.Add("Modified Files ($($modified.Count)):")
-        foreach ($f in $modified) { $bodyLines.Add("  - $f") }
-        $bodyLines.Add("")
-    }
-
-    if ($added.Count -gt 0) {
-        $bodyLines.Add("New Files Added ($($added.Count)):")
-        foreach ($f in $added) { $bodyLines.Add("  - $f") }
-        $bodyLines.Add("")
-    }
-
-    if ($deleted.Count -gt 0) {
-        $bodyLines.Add("Deleted Files ($($deleted.Count)):")
-        foreach ($f in $deleted) { $bodyLines.Add("  - $f") }
-        $bodyLines.Add("")
-    }
-
-    if ($renamed.Count -gt 0) {
-        $bodyLines.Add("Renamed Files ($($renamed.Count)):")
-        foreach ($f in $renamed) { $bodyLines.Add("  - $f") }
-        $bodyLines.Add("")
-    }
-
-    $body = ($bodyLines -join "`n").TrimEnd()
-
-    return @{
-        Subject = $subject
-        Body    = $body
-    }
-}
-
 function Push-Changes {
     Set-Location -Path $repoPath
 
     $statusOutput = git status --porcelain
-    if (-not [string]::IsNullOrWhiteSpace($statusOutput)) {
-        $statusLines = $statusOutput -split "`r?`n" | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
-        
-        $commitInfo = Generate-SmartCommitMessage -statusLines $statusLines -targetRepo $repoPath
-        if ($null -eq $commitInfo) {
-            Write-Host "[$(Get-Date -Format 'HH:mm:ss')] No trackable code changes detected." -ForegroundColor DarkGray
-            return
+    if ([string]::IsNullOrWhiteSpace($statusOutput)) {
+        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Visual Studio closed, but no file changes were detected." -ForegroundColor DarkGray
+        return
+    }
+
+    $statusLines = $statusOutput -split "`r?`n" | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+
+    # Group changes by top-level item (Folder name or Root file name)
+    $groups = @{}
+
+    foreach ($line in $statusLines) {
+        $code = $line.Substring(0, 2).Trim()
+        $rawPath = $line.Substring(2).Trim().Trim('"')
+
+        # Filter out temporary Visual Studio build/cache files
+        if ($rawPath -match '[\\/](\.vs|obj|bin)[\\/]' -or $rawPath -match '^\.vs[\\/]') {
+            continue
         }
 
-        $subject = $commitInfo.Subject
-        $body = $commitInfo.Body
+        $normPath = $rawPath.Replace('/', '\')
+        $parts = $normPath.Split('\')
+        $topLevelItem = $parts[0]
 
-        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Commit Title: $subject" -ForegroundColor Cyan
-        Write-Host "Staging files..." -ForegroundColor Gray
-        git add -A
+        if (-not $groups.ContainsKey($topLevelItem)) {
+            $groups[$topLevelItem] = [System.Collections.Generic.List[PSCustomObject]]::new()
+        }
 
-        Write-Host "Committing..." -ForegroundColor Gray
-        git commit -m "$subject" -m "$body"
+        $groups[$topLevelItem].Add([PSCustomObject]@{
+            Code     = $code
+            Path     = $rawPath
+        })
+    }
 
-        Write-Host "Pushing to origin $branch..." -ForegroundColor Gray
+    if ($groups.Keys.Count -eq 0) {
+        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] No trackable code changes found." -ForegroundColor DarkGray
+        return
+    }
+
+    Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Changes detected across $($groups.Keys.Count) folder(s)/file(s)." -ForegroundColor Yellow
+    $committedItems = [System.Collections.Generic.List[string]]::new()
+
+    foreach ($topItem in $groups.Keys) {
+        $items = $groups[$topItem]
+
+        # Stage only this specific folder or file
+        git add -- "$topItem"
+
+        # Check what was staged for this item
+        $staged = git status --porcelain -- "$topItem"
+        if ([string]::IsNullOrWhiteSpace($staged)) {
+            continue
+        }
+
+        $added = [System.Collections.Generic.List[string]]::new()
+        $modified = [System.Collections.Generic.List[string]]::new()
+        $deleted = [System.Collections.Generic.List[string]]::new()
+
+        foreach ($it in $items) {
+            $fname = [System.IO.Path]::GetFileName($it.Path)
+            if ($it.Code -eq '??' -or $it.Code -eq 'A') {
+                $added.Add($fname)
+            } elseif ($it.Code -eq 'D') {
+                $deleted.Add($fname)
+            } else {
+                $modified.Add($fname)
+            }
+        }
+
+        $isFolder = (Test-Path -Path (Join-Path $repoPath $topItem) -PathType Container)
+        $allFiles = ($items | ForEach-Object { $_.Path })
+        $workHint = Get-WorkHintFromDiff -targetRepo $repoPath -files $allFiles
+
+        $subject = ""
+
+        if (-not $isFolder) {
+            # Root file (e.g. C#Concepts.md, notes.txt)
+            if ($added.Count -gt 0) {
+                $subject = "Add $topItem"
+            } elseif ($deleted.Count -gt 0) {
+                $subject = "Delete $topItem"
+            } else {
+                $subject = "Update $topItem"
+            }
+        } else {
+            # Folder (e.g. MedicalDepartment, Day 6, ConsoleApp1)
+            $folderName = $topItem
+
+            # If brand new folder with multiple files
+            if ($added.Count -gt 0 -and $modified.Count -eq 0 -and $deleted.Count -eq 0 -and $added.Count -ge 3) {
+                $subject = "$($folderName): Add new $folderName project ($($added.Count) files)"
+            } else {
+                $actions = [System.Collections.Generic.List[string]]::new()
+
+                if ($modified.Count -gt 0) {
+                    if ($modified.Count -le 2) {
+                        $actions.Add("Update $(($modified | Select-Object -Unique) -join ', ')")
+                    } else {
+                        $actions.Add("Update $($modified.Count) files")
+                    }
+                }
+                if ($added.Count -gt 0) {
+                    if ($added.Count -le 2) {
+                        $actions.Add("Add $(($added | Select-Object -Unique) -join ', ')")
+                    } else {
+                        $actions.Add("Add $($added.Count) new files")
+                    }
+                }
+                if ($deleted.Count -gt 0) {
+                    if ($deleted.Count -le 2) {
+                        $actions.Add("Delete $(($deleted | Select-Object -Unique) -join ', ')")
+                    } else {
+                        $actions.Add("Delete $($deleted.Count) files")
+                    }
+                }
+
+                $actString = $actions -join ' and '
+                if (-not [string]::IsNullOrWhiteSpace($workHint)) {
+                    $subject = "$($folderName): $actString ($workHint)"
+                } else {
+                    $subject = "$($folderName): $actString"
+                }
+            }
+        }
+
+        if ([string]::IsNullOrWhiteSpace($subject)) {
+            $subject = "$($topItem): Update changes"
+        }
+
+        Write-Host "Committing [$topItem] -> $subject" -ForegroundColor Cyan
+        git commit -m "$subject"
+        $committedItems.Add($subject)
+    }
+
+    if ($committedItems.Count -gt 0) {
+        Write-Host "Pushing all $($committedItems.Count) commit(s) to origin $branch..." -ForegroundColor Gray
         $pushOutput = git push origin $branch 2>&1
 
         if ($LASTEXITCODE -eq 0) {
             Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Successfully pushed to GitHub!" -ForegroundColor Green
-            Show-Notification -Title "Git Push Success" -Message "$subject"
+            Show-Notification -Title "Git Push Success" -Message ($committedItems -join "`n")
         } else {
             Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Push failed: $pushOutput" -ForegroundColor Red
             Show-Notification -Title "Git Push Failed" -Message "Check terminal for details."
         }
-    } else {
-        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Visual Studio closed, but no file changes were detected." -ForegroundColor DarkGray
     }
 }
 
@@ -331,7 +292,7 @@ while ($true) {
         }
     } else {
         if ($wasRunning) {
-            Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Visual Studio was CLOSED. Analyzing and pushing changes..." -ForegroundColor Yellow
+            Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Visual Studio was CLOSED. Analyzing and committing by folder/file..." -ForegroundColor Yellow
             $wasRunning = $false
             Push-Changes
         }
