@@ -1,7 +1,0 @@
-D:\All\.net\MedicalDepartment\bin\Debug\MedicalDepartment.exe.config
-D:\All\.net\MedicalDepartment\bin\Debug\MedicalDepartment.exe
-D:\All\.net\MedicalDepartment\bin\Debug\MedicalDepartment.pdb
-D:\All\.net\MedicalDepartment\obj\Debug\MedicalDepartment.csproj.AssemblyReference.cache
-D:\All\.net\MedicalDepartment\obj\Debug\MedicalDepartment.csproj.CoreCompileInputs.cache
-D:\All\.net\MedicalDepartment\obj\Debug\MedicalDepartment.exe
-D:\All\.net\MedicalDepartment\obj\Debug\MedicalDepartment.pdb
