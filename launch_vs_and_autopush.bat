@@ -4,7 +4,7 @@ set REPO_PATH=D:\All\.net
 set BRANCH=main
 
 echo =======================================================
-echo  Launching Visual Studio with Auto-Push on Exit
+echo  Launching Visual Studio with Smart Auto-Push on Exit
 echo  Repo: %REPO_PATH%
 echo =======================================================
 
@@ -28,35 +28,9 @@ if %ERRORLEVEL% equ 0 (
 )
 
 echo.
-echo Visual Studio has closed! Checking for modified or new files...
-cd /d "%REPO_PATH%"
+echo Visual Studio has closed! Running Git auto-push with smart commit message...
 
-for /f %%i in ('git status --porcelain') do (
-    goto has_changes
-)
+powershell -NoProfile -ExecutionPolicy Bypass -File "D:\All\.net\auto_push_on_exit.ps1" -Once
 
-echo No changes detected in %REPO_PATH%.
-goto end
-
-:has_changes
-echo Changes detected! Staging all files...
-git add -A
-
-set COMMIT_MSG=Auto-commit on exit %DATE% %TIME%
-echo Committing changes...
-git commit -m "%COMMIT_MSG%"
-
-echo Pushing changes to %BRANCH%...
-git push origin %BRANCH%
-
-if %ERRORLEVEL% equ 0 (
-    echo.
-    echo [SUCCESS] All modified and newly created files have been pushed to GitHub!
-) else (
-    echo.
-    echo [ERROR] Push failed. Please check your internet or git credentials.
-)
-
-:end
 echo.
 timeout /t 5
