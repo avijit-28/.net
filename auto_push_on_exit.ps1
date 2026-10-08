@@ -1,12 +1,10 @@
 <#
 .SYNOPSIS
-    Automated Git Auto-Push Watcher for Visual Studio
+    Automated Git Auto-Push Watcher for Visual Studio & Directory Changes
 .DESCRIPTION
-    Monitors Visual Studio (devenv.exe or Code.exe).
-    When Visual Studio is closed, checks all modified and newly created files/folders in D:\All\.net,
-    groups them by their respective folder or file name,
-    commits each folder/file individually with a specific, custom commit message,
-    and pushes all commits to GitHub on the 'main' branch.
+    1. Monitors Visual Studio (devenv.exe or Code.exe). When closed, commits and pushes all work.
+    2. Also monitors the folder: whenever any new file or folder is added (even without VS), 
+       it commits each file/folder individually with its own specific message and pushes to GitHub.
 #>
 
 param(
@@ -119,7 +117,6 @@ function Push-Changes {
 
     $statusOutput = git status --porcelain
     if ([string]::IsNullOrWhiteSpace($statusOutput)) {
-        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Visual Studio closed, but no file changes were detected." -ForegroundColor DarkGray
         return
     }
 
@@ -152,7 +149,6 @@ function Push-Changes {
     }
 
     if ($groups.Keys.Count -eq 0) {
-        Write-Host "[$(Get-Date -Format 'HH:mm:ss')] No trackable code changes found." -ForegroundColor DarkGray
         return
     }
 
@@ -273,16 +269,16 @@ if ($Once) {
 
 # Continuous Watcher Mode
 Write-Host "=======================================================" -ForegroundColor Cyan
-Write-Host " Git Auto-Push Monitor for Visual Studio (Smart Commit)" -ForegroundColor Green
+Write-Host " Git Auto-Push Monitor (VS Close + Real-Time New Files)" -ForegroundColor Green
 Write-Host " Watching Repo : $repoPath" -ForegroundColor Yellow
 Write-Host " Target Branch : $branch" -ForegroundColor Yellow
-Write-Host " Monitoring    : $($processNames -join ', ')" -ForegroundColor Yellow
+Write-Host " Monitoring    : $($processNames -join ', ') & Folder additions" -ForegroundColor Yellow
 Write-Host "=======================================================" -ForegroundColor Cyan
 
 $wasRunning = $false
 
 while ($true) {
-    # Check if any monitored process is running
+    # Check if Visual Studio is running
     $runningProcesses = Get-Process -Name $processNames -ErrorAction SilentlyContinue
 
     if ($runningProcesses) {
@@ -292,9 +288,19 @@ while ($true) {
         }
     } else {
         if ($wasRunning) {
-            Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Visual Studio was CLOSED. Analyzing and committing by folder/file..." -ForegroundColor Yellow
+            # Visual Studio was closed
+            Write-Host "[$(Get-Date -Format 'HH:mm:ss')] Visual Studio was CLOSED. Analyzing and pushing changes..." -ForegroundColor Yellow
             $wasRunning = $false
             Push-Changes
+        } else {
+            # Visual Studio is NOT running, but user may have added new files/folders directly
+            $statusCheck = git -C $repoPath status --porcelain
+            if (-not [string]::IsNullOrWhiteSpace($statusCheck)) {
+                # Ensure files are completely copied before pushing (settle time 2s)
+                Start-Sleep -Seconds 2
+                Write-Host "[$(Get-Date -Format 'HH:mm:ss')] New files/folders detected in repository. Pushing..." -ForegroundColor Yellow
+                Push-Changes
+            }
         }
     }
 
