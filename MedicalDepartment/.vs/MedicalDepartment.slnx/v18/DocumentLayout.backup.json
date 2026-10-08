@@ -39,8 +39,7 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-10-06T14:37:32.61Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Bookmark",
@@ -70,7 +69,7 @@
               "RelativeDocumentMoniker": "DoctorsRepo.cs",
               "ToolTip": "D:\\All\\.net\\MedicalDepartment\\DoctorsRepo.cs",
               "RelativeToolTip": "DoctorsRepo.cs",
-              "ViewState": "AgIAALAAAAAAAAAAAAAuwLgAAAA4AAAAAAAAAA==",
+              "ViewState": "AgIAALAAAAAAAAAAAAAuwLgAAAA6AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-10-06T14:41:11.069Z",
               "EditorCaption": ""
@@ -85,8 +84,7 @@
               "RelativeToolTip": "Doctors.cs",
               "ViewState": "AgIAAA4AAAAAAAAAAAAgwAgAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-06T14:40:34.249Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-06T14:40:34.249Z"
             }
           ]
         },

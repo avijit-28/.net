@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DictionaryOptimazaion")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+40df30587ee401b96dbed2f6e947b0d06b950e4c")]
 [assembly: System.Reflection.AssemblyProductAttribute("DictionaryOptimazaion")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DictionaryOptimazaion")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
