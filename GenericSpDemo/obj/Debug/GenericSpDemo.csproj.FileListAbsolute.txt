@@ -1,0 +1,7 @@
+D:\avi\C#\GenericSpDemo\bin\Debug\GenericSpDemo.exe.config
+D:\avi\C#\GenericSpDemo\bin\Debug\GenericSpDemo.exe
+D:\avi\C#\GenericSpDemo\bin\Debug\GenericSpDemo.pdb
+D:\avi\C#\GenericSpDemo\obj\Debug\GenericSpDemo.csproj.AssemblyReference.cache
+D:\avi\C#\GenericSpDemo\obj\Debug\GenericSpDemo.csproj.CoreCompileInputs.cache
+D:\avi\C#\GenericSpDemo\obj\Debug\GenericSpDemo.exe
+D:\avi\C#\GenericSpDemo\obj\Debug\GenericSpDemo.pdb
