@@ -17,11 +17,11 @@ param(
 
 # Ensure only one instance of this specific watcher runs at a time
 if (-not $Once) {
-    $currentPid = $PID
-    Get-CimInstance Win32_Process | Where-Object { 
-        $_.CommandLine -like "*\.net\auto_push_on_exit.ps1*" -and $_.ProcessId -ne $currentPid 
-    } | ForEach-Object {
-        try { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue } catch {}
+    $isNew = $false
+    $mutex = New-Object System.Threading.Mutex($true, "GitAutoPush_NetWatcher", [ref]$isNew)
+    if (-not $isNew) {
+        Write-Host "Another instance of .net watcher is already running."
+        return
     }
 }
 
