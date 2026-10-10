@@ -8,8 +8,8 @@ using Microsoft.Data.SqlClient;
 namespace FleetManagementApp.Data
 {
     /// <summary>
-    /// Centralized asynchronous ADO.NET helper.
-    /// Encapsulates connection lifecycle, command execution, and resource cleanup.
+    /// Centralized asynchronous ADO.NET helper compatible with .NET Framework (C# 7.3+).
+    /// Uses deterministic 'using' disposal to eliminate connection and resource leaks.
     /// </summary>
     public class SqlHelper
     {
@@ -17,7 +17,6 @@ namespace FleetManagementApp.Data
 
         public SqlHelper()
         {
-            // Read connection string from App.config
             _connectionString = ConfigurationManager.ConnectionStrings["FleetDbConnection"]?.ConnectionString
                 ?? throw new InvalidOperationException("Connection string 'FleetDbConnection' not found in App.config.");
         }
@@ -32,11 +31,11 @@ namespace FleetManagementApp.Data
         /// </summary>
         public async Task<int> ExecuteNonQueryAsync(string sql, params SqlParameter[] parameters)
         {
-            await using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                await using (var command = new SqlCommand(sql, connection))
+                using (var command = new SqlCommand(sql, connection))
                 {
                     command.CommandType = CommandType.Text;
                     if (parameters != null && parameters.Length > 0)
@@ -50,15 +49,15 @@ namespace FleetManagementApp.Data
         }
 
         /// <summary>
-        /// Executes a query that returns a single scalar value (e.g., SELECT SCOPE_IDENTITY() or COUNT).
+        /// Executes a query that returns a single scalar value (e.g., SCOPE_IDENTITY or COUNT).
         /// </summary>
         public async Task<T> ExecuteScalarAsync<T>(string sql, params SqlParameter[] parameters)
         {
-            await using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                await using (var command = new SqlCommand(sql, connection))
+                using (var command = new SqlCommand(sql, connection))
                 {
                     command.CommandType = CommandType.Text;
                     if (parameters != null && parameters.Length > 0)
@@ -70,7 +69,7 @@ namespace FleetManagementApp.Data
 
                     if (result == null || result == DBNull.Value)
                     {
-                        return default;
+                        return default(T);
                     }
 
                     return (T)Convert.ChangeType(result, typeof(T));
@@ -79,17 +78,17 @@ namespace FleetManagementApp.Data
         }
 
         /// <summary>
-        /// Executes a SELECT query and maps multiple rows into a List of entities.
+        /// Executes a SELECT query and maps multiple rows into a List.
         /// </summary>
         public async Task<List<T>> ExecuteReaderAsync<T>(string sql, Func<SqlDataReader, T> rowMapper, params SqlParameter[] parameters)
         {
             var results = new List<T>();
 
-            await using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                await using (var command = new SqlCommand(sql, connection))
+                using (var command = new SqlCommand(sql, connection))
                 {
                     command.CommandType = CommandType.Text;
                     if (parameters != null && parameters.Length > 0)
@@ -97,7 +96,7 @@ namespace FleetManagementApp.Data
                         command.Parameters.AddRange(parameters);
                     }
 
-                    await using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
+                    using (var reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                     {
                         while (await reader.ReadAsync().ConfigureAwait(false))
                         {
@@ -111,15 +110,15 @@ namespace FleetManagementApp.Data
         }
 
         /// <summary>
-        /// Executes a SELECT query and maps a single record (or returns default/null if not found).
+        /// Executes a SELECT query and maps a single record (or default if not found).
         /// </summary>
         public async Task<T> ExecuteSingleAsync<T>(string sql, Func<SqlDataReader, T> rowMapper, params SqlParameter[] parameters)
         {
-            await using (var connection = new SqlConnection(_connectionString))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                await using (var command = new SqlCommand(sql, connection))
+                using (var command = new SqlCommand(sql, connection))
                 {
                     command.CommandType = CommandType.Text;
                     if (parameters != null && parameters.Length > 0)
@@ -127,8 +126,7 @@ namespace FleetManagementApp.Data
                         command.Parameters.AddRange(parameters);
                     }
 
-                    // CommandBehavior.SingleRow optimizes internal buffer for single-row queries
-                    await using (var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow).ConfigureAwait(false))
+                    using (var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow).ConfigureAwait(false))
                     {
                         if (await reader.ReadAsync().ConfigureAwait(false))
                         {
@@ -138,7 +136,7 @@ namespace FleetManagementApp.Data
                 }
             }
 
-            return default;
+            return default(T);
         }
     }
 }
