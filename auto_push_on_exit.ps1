@@ -15,11 +15,11 @@ param(
     [int]$checkIntervalSeconds = 5
 )
 
-# Ensure only one instance of the watcher runs at a time
+# Ensure only one instance of this specific watcher runs at a time
 if (-not $Once) {
     $currentPid = $PID
     Get-CimInstance Win32_Process | Where-Object { 
-        $_.CommandLine -like "*auto_push_on_exit.ps1*" -and $_.ProcessId -ne $currentPid 
+        $_.CommandLine -like "*\.net\auto_push_on_exit.ps1*" -and $_.ProcessId -ne $currentPid 
     } | ForEach-Object {
         try { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue } catch {}
     }
@@ -107,7 +107,7 @@ function Get-WorkHintFromDiff {
     }
 
     if ($hints.Count -gt 0) {
-        return ($hints | Select-Object -Unique -First 1)[0]
+        return [string]($hints | Select-Object -Unique -First 1)
     }
     return ""
 }
