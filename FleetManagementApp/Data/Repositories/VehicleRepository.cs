@@ -42,7 +42,7 @@ namespace FleetManagementApp.Data.Repositories
                 SELECT CAST(SCOPE_IDENTITY() AS INT);";
             var parameters = new[]
             {
-                new SqlParameter("@VIN", SqlDbType.VarChar, 17) { Value = vehicle.VIN.Trim().ToUpper() },
+                new SqlParameter("@VIN", SqlDbType.VarChar, 20) { Value = vehicle.VIN.Trim().ToUpper() },
                 new SqlParameter("@Make", SqlDbType.NVarChar, 50) { Value = vehicle.Make.Trim() },
                 new SqlParameter("@Model", SqlDbType.NVarChar, 50) { Value = vehicle.Model.Trim() },
                 new SqlParameter("@Year", SqlDbType.Int) { Value = vehicle.Year },
@@ -70,7 +70,7 @@ namespace FleetManagementApp.Data.Repositories
                 SELECT Id, VIN, Make, Model, Year, OdometerReading, Status
                 FROM Vehicles
                 WHERE VIN = @VIN;";
-            var parameter = new SqlParameter("@VIN", SqlDbType.VarChar, 17) { Value = vin.Trim().ToUpper() };
+            var parameter = new SqlParameter("@VIN", SqlDbType.VarChar, 20) { Value = vin.Trim().ToUpper() };
             return await Db.ExecuteSingleAsync(sql, MapRecord, parameter);
         }
         // READ: Fetch All

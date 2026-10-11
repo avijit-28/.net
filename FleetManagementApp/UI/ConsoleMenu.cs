@@ -86,33 +86,26 @@ namespace FleetManagementApp.UI
         private async Task OnboardVehiclePromptAsync()
         {
             Console.WriteLine("--- [FLEET ONBOARDING] Add New Vehicle ---");
-
-            Console.Write("Enter VIN (17 characters): ");
+            Console.Write("Enter VIN (up to 20 characters): ");
             string vin = Console.ReadLine()?.Trim().ToUpper();
-
             Console.Write("Enter Make (e.g. Volvo, Freightliner): ");
             string make = Console.ReadLine()?.Trim();
-
             Console.Write("Enter Model (e.g. VNL 860, Cascadia): ");
             string model = Console.ReadLine()?.Trim();
-
             Console.Write("Enter Year: ");
             if (!int.TryParse(Console.ReadLine(), out int year))
             {
                 PrintError("Invalid year entered.");
                 return;
             }
-
             Console.Write("Enter Initial Odometer Reading: ");
             if (!decimal.TryParse(Console.ReadLine(), out decimal odometer))
             {
                 PrintError("Invalid odometer reading.");
                 return;
             }
-
             var vehicle = new Vehicle(vin, make, model, year, odometer);
             var result = await _fleetService.OnboardVehicleAsync(vehicle);
-
             if (result.Success)
             {
                 PrintSuccess($"{result.Message} Generated Vehicle ID: {result.VehicleId}");
@@ -161,49 +154,55 @@ namespace FleetManagementApp.UI
         private async Task LogTelemetryPromptAsync()
         {
             Console.WriteLine("--- [TELEMETRY LOGGING] Update Mileage & Operational Status ---");
-
             Console.Write("Enter Vehicle ID: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
             {
                 PrintError("Invalid ID format.");
                 return;
             }
-
             var vehicle = await _fleetService.GetVehicleByIdAsync(id);
             if (vehicle == null)
             {
                 PrintError($"Vehicle with ID {id} not found.");
                 return;
             }
-
             Console.WriteLine($"Current details: {vehicle.Make} {vehicle.Model} | Mileage: {vehicle.OdometerReading:N1} km | Status: {vehicle.Status}");
-
-            Console.Write($"Enter New Odometer Reading (must be >= {vehicle.OdometerReading:N1}): ");
-            if (!decimal.TryParse(Console.ReadLine(), out decimal newOdometer))
+            // 1. Odometer input (Optional)
+            Console.Write($"Enter New Odometer Reading (Press Enter to keep current {vehicle.OdometerReading:N1}): ");
+            string odoInput = Console.ReadLine()?.Trim();
+            decimal? newOdometer = null;
+            if (!string.IsNullOrEmpty(odoInput))
             {
-                PrintError("Invalid mileage format.");
-                return;
+                if (!decimal.TryParse(odoInput, out decimal parsedOdo))
+                {
+                    PrintError("Invalid mileage format.");
+                    return;
+                }
+                newOdometer = parsedOdo;
             }
-
-            Console.WriteLine("\nSelect New Operational Status:");
+            // 2. Status input (Optional)
+            Console.WriteLine($"\nSelect New Operational Status (Press Enter to keep '{vehicle.Status}'):");
             Console.WriteLine("1. Active");
             Console.WriteLine("2. InTransit");
             Console.WriteLine("3. Maintenance");
             Console.WriteLine("4. Decommissioned");
-            Console.Write("Choice (1-4): ");
-
-            VehicleStatus newStatus = vehicle.Status;
-            switch (Console.ReadLine()?.Trim())
+            Console.Write("Choice (1-4 or Enter to skip): ");
+            string statusInput = Console.ReadLine()?.Trim();
+            VehicleStatus? newStatus = null;
+            if (!string.IsNullOrEmpty(statusInput))
             {
-                case "1": newStatus = VehicleStatus.Active; break;
-                case "2": newStatus = VehicleStatus.InTransit; break;
-                case "3": newStatus = VehicleStatus.Maintenance; break;
-                case "4": newStatus = VehicleStatus.Decommissioned; break;
-                default:
-                    PrintError("Invalid status selection.");
-                    return;
+                switch (statusInput)
+                {
+                    case "1": newStatus = VehicleStatus.Active; break;
+                    case "2": newStatus = VehicleStatus.InTransit; break;
+                    case "3": newStatus = VehicleStatus.Maintenance; break;
+                    case "4": newStatus = VehicleStatus.Decommissioned; break;
+                    default:
+                        PrintError("Invalid status selection.");
+                        return;
+                }
             }
-
+            // Execute the update
             var result = await _fleetService.LogTelemetryAsync(id, newOdometer, newStatus);
             if (result.Success)
             {
@@ -214,6 +213,7 @@ namespace FleetManagementApp.UI
                 PrintError(result.Message);
             }
         }
+
 
         private async Task DecommissionVehiclePromptAsync()
         {

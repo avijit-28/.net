@@ -25,30 +25,23 @@ namespace FleetManagementApp.Services
         {
             if (vehicle == null)
                 return (false, "Vehicle details cannot be null.", 0);
-
-            if (string.IsNullOrWhiteSpace(vehicle.VIN) || vehicle.VIN.Trim().Length != 17)
-                return (false, "VIN must be exactly 17 alphanumeric characters.", 0);
-
+            // Flexible VIN: Not empty, maximum 20 characters
+            if (string.IsNullOrWhiteSpace(vehicle.VIN) || vehicle.VIN.Trim().Length > 20)
+                return (false, "VIN is required and must not exceed 20 characters.", 0);
             if (string.IsNullOrWhiteSpace(vehicle.Make) || string.IsNullOrWhiteSpace(vehicle.Model))
                 return (false, "Make and Model are required.", 0);
-
             if (vehicle.Year < 1980 || vehicle.Year > DateTime.UtcNow.Year + 1)
                 return (false, $"Year must be between 1980 and {DateTime.UtcNow.Year + 1}.", 0);
-
             if (vehicle.OdometerReading < 0)
                 return (false, "Initial odometer reading cannot be negative.", 0);
-
             // Business Check: Duplicate VIN check
             var existing = await _vehicleRepository.GetByVinAsync(vehicle.VIN);
             if (existing != null)
                 return (false, $"A vehicle with VIN '{vehicle.VIN}' already exists (ID: {existing.Id}).", 0);
-
             vehicle.Status = VehicleStatus.Active;
             int newId = await _vehicleRepository.AddAsync(vehicle);
-
             return (true, "Vehicle onboarded successfully.", newId);
         }
-
         /// <summary>
         /// Retrieves all active vehicles in the fleet.
         /// </summary>
@@ -77,25 +70,29 @@ namespace FleetManagementApp.Services
         /// <summary>
         /// Logs telemetry: updates odometer mileage and vehicle operational status.
         /// </summary>
-        public async Task<(bool Success, string Message)> LogTelemetryAsync(int vehicleId, decimal newOdometer, VehicleStatus newStatus)
+        public async Task<(bool Success, string Message)> LogTelemetryAsync(int vehicleId, decimal? newOdometer, VehicleStatus? newStatus)
         {
             var vehicle = await _vehicleRepository.GetByIdAsync(vehicleId);
             if (vehicle == null)
                 return (false, $"Vehicle with ID {vehicleId} was not found.");
-
-            // Business rule: Odometer cannot be rolled backwards
-            if (newOdometer < vehicle.OdometerReading)
+            // Use new values if provided, otherwise preserve existing values
+            decimal targetOdometer = newOdometer ?? vehicle.OdometerReading;
+            VehicleStatus targetStatus = newStatus ?? vehicle.Status;
+            // Check if neither changed
+            if (targetOdometer == vehicle.OdometerReading && targetStatus == vehicle.Status)
             {
-                return (false, $"Invalid reading! New odometer ({newOdometer:N1}) cannot be less than current odometer ({vehicle.OdometerReading:N1}).");
+                return (true, "No changes made. Vehicle details remain as they were.");
             }
-
-            bool updated = await _vehicleRepository.UpdateTelemetryAsync(vehicleId, newOdometer, newStatus);
+            // Business rule: Odometer cannot be rolled backwards
+            if (targetOdometer < vehicle.OdometerReading)
+            {
+                return (false, $"Invalid reading! New odometer ({targetOdometer:N1}) cannot be less than current odometer ({vehicle.OdometerReading:N1}).");
+            }
+            bool updated = await _vehicleRepository.UpdateTelemetryAsync(vehicleId, targetOdometer, targetStatus);
             if (!updated)
                 return (false, "Database update failed.");
-
-            return (true, $"Telemetry updated: Vehicle ID {vehicleId} is now '{newStatus}' at {newOdometer:N1} km.");
+            return (true, $"Telemetry updated: Vehicle ID {vehicleId} is now '{targetStatus}' at {targetOdometer:N1} km.");
         }
-
         /// <summary>
         /// Decommissions and purges a retired vehicle record.
         /// </summary>
