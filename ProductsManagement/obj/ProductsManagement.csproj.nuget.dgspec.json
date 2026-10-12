@@ -59,6 +59,10 @@
             "System.Configuration.ConfigurationManager": {
               "target": "Package",
               "version": "[10.0.12, )"
+            },
+            "System.Text.Json": {
+              "target": "Package",
+              "version": "[10.0.12, )"
             }
           },
           "imports": [
