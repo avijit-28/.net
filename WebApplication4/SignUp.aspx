@@ -14,8 +14,9 @@
             <asp:ImageMap ID="ImageMap1" runat="server" Height="400px" ImageUrl="https://images.unsplash.com/photo-1791724389897-0ece687f2b7a?q=80&amp;w=387&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0&amp;ixid=NHwxMjA3fDA%3D">
             </asp:ImageMap>
             
-            <br/>
+          
             <asp:Image ID="Image2" runat="server" Height="400px" ImageUrl="https://images.unsplash.com/photo-1791724389693-b873064e086d?q=80&amp;w=387&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0&amp;ixid=NHwxMjA3fDA%3D" />
+             <br/>
             <asp:Label ID="outUserName" runat="server" Text="Label"></asp:Label>
             
             <br />
