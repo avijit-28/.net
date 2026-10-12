@@ -18,5 +18,10 @@ namespace WebApplication4
         {
             lblEnd.Text = "khul ja zim zim";
         }
+
+        protected void Button2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
