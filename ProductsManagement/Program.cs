@@ -36,6 +36,7 @@ namespace ProductsManagement
                 Console.WriteLine("6. Exit");
                 Console.Write("Enter your choice (1-6): ");
 
+                Console.Clear();
                 string? choice = Console.ReadLine()?.Trim();
                 Console.WriteLine();
 
