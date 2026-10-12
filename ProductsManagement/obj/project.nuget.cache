@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "tHBoPMZtKyw=",
+  "dgSpecHash": "DR6hRkI39Fc=",
   "success": true,
   "projectFilePath": "D:\\avi\\C#\\ProductsManagement\\ProductsManagement.csproj",
   "expectedPackageFiles": [
@@ -13,7 +13,21 @@
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.extensions.primitives\\10.0.12\\microsoft.extensions.primitives.10.0.12.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\system.configuration.configurationmanager\\10.0.12\\system.configuration.configurationmanager.10.0.12.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\system.diagnostics.eventlog\\10.0.12\\system.diagnostics.eventlog.10.0.12.nupkg.sha512",
-    "C:\\Users\\avijitpakhira\\.nuget\\packages\\system.security.cryptography.protecteddata\\10.0.12\\system.security.cryptography.protecteddata.10.0.12.nupkg.sha512"
+    "C:\\Users\\avijitpakhira\\.nuget\\packages\\system.security.cryptography.protecteddata\\10.0.12\\system.security.cryptography.protecteddata.10.0.12.nupkg.sha512",
+    "C:\\Users\\avijitpakhira\\.nuget\\packages\\system.text.json\\10.0.12\\system.text.json.10.0.12.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1510",
+      "level": "Warning",
+      "message": "PackageReference System.Text.Json will not be pruned. This package is automatically available and does not need to be referenced explicitly. Remove the PackageReference item.",
+      "projectPath": "D:\\avi\\C#\\ProductsManagement\\ProductsManagement.csproj",
+      "warningLevel": 1,
+      "filePath": "D:\\avi\\C#\\ProductsManagement\\ProductsManagement.csproj",
+      "libraryId": "System.Text.Json",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
 }
