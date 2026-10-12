@@ -15,7 +15,7 @@
         </p>
         <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Click Me" />
         <p>
-            <asp:Button ID="Button2" runat="server" BackColor="#FFFF66" BorderColor="#FFFF66" Font-Italic="True" Font-Names="Arial Black" ForeColor="Red" OnClick="Button2_Click" Text="Go back" Visible="False" />
+            <asp:Button ID="Button2" runat="server" BackColor="#FFFF66" BorderColor="#FFFF66" Font-Italic="True" Font-Names="Arial Black" ForeColor="Red" OnClick="Button2_Click" OnClientClick="Button 1_click" Text="Go back" />
         </p>
     </form>
 </body>
