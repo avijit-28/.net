@@ -20,7 +20,10 @@ namespace WebApplication4
             Response.Redirect("SignUp.aspx");
 
         }
-       
-       
+
+        protected void txtUserName_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
