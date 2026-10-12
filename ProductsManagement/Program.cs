@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace ProductsManagement
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -72,6 +72,8 @@ namespace ProductsManagement
                         break;
                 }
             }
+            Console.WriteLine("Press Any Key...");
+            Console.ReadKey();
         }
 
         // 1. View All Products
@@ -208,5 +210,7 @@ namespace ProductsManagement
 
             repo.Deleteproduct(id);
         }
+
+    
     }
 }
