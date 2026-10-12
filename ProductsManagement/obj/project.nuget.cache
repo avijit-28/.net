@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "1UpVY1w9J2U=",
+  "dgSpecHash": "Ke2xaIvvDQg=",
   "success": true,
   "projectFilePath": "D:\\avi\\C#\\ProductsManagement\\ProductsManagement.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\avijitpakhira\\.nuget\\packages\\system.configuration.configurationmanager\\10.0.12\\system.configuration.configurationmanager.10.0.12.nupkg.sha512",
+    "C:\\Users\\avijitpakhira\\.nuget\\packages\\system.diagnostics.eventlog\\10.0.12\\system.diagnostics.eventlog.10.0.12.nupkg.sha512",
+    "C:\\Users\\avijitpakhira\\.nuget\\packages\\system.security.cryptography.protecteddata\\10.0.12\\system.security.cryptography.protecteddata.10.0.12.nupkg.sha512"
+  ],
   "logs": []
 }
