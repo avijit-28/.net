@@ -15,7 +15,10 @@
             </asp:ImageMap>
             <asp:Image ID="Image2" runat="server" Height="400px" ImageUrl="https://images.unsplash.com/photo-1791724389693-b873064e086d?q=80&amp;w=387&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0&amp;ixid=NHwxMjA3fDA%3D" />
             <asp:Label ID="outUserName" runat="server" Text="Label"></asp:Label>
-
+            
+            <br />
+            <asp:Label ID="outPassword" runat="server" Text="Label"></asp:Label>
+            
         </div>
     </form>
 </body>
