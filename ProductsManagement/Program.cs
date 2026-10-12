@@ -18,9 +18,7 @@ namespace ProductsManagement
 
             // Note: Aapke JSON me "DefaultConnecttion" (double 't') likha tha, isliye dono check kar rahe hain
             string connectionString = configuration.GetConnectionString("sqlDefaultConnection");
-                                    //?? configuration.GetConnectionString("DefaultConnection")
-                                    //?? "Data Source=.;Initial Catalog=Assignmet;User ID=sa;Password=mcc#1234;Encrypt=True;Trust Server Certificate=True;";
-
+                                   
             ProductRepo repo = new ProductRepo(connectionString);
 
             while (true)
