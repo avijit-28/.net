@@ -11,17 +11,16 @@ namespace WebApplication4
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            Session["UserName"] = txtUserName.Text;
+            Session["Password"] = txtPassword.Text;
         }
 
-        protected void Button1_Click(object sender, EventArgs e)
+        protected void BtnSign_Click(object sender, EventArgs e)
         {
-            lblEnd.Text = "khul ja zim zim";
-        }
+            Response.Redirect("SignUp.aspx");
 
-        protected void Button2_Click(object sender, EventArgs e)
-        {
-            lblMsg.InnerText= "nhi khulna";
         }
+       
+       
     }
 }
