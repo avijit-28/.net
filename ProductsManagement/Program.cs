@@ -25,6 +25,7 @@ namespace ProductsManagement
 
             while (true)
             {
+                Console.Clear();
                 Console.WriteLine("\n==========================================");
                 Console.WriteLine("        PRODUCT MANAGEMENT SYSTEM         ");
                 Console.WriteLine("==========================================");
@@ -36,7 +37,7 @@ namespace ProductsManagement
                 Console.WriteLine("6. Exit");
                 Console.Write("Enter your choice (1-6): ");
 
-                Console.Clear();
+                
                 string? choice = Console.ReadLine()?.Trim();
                 Console.WriteLine();
 
