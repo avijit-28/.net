@@ -11,7 +11,8 @@ namespace WebApplication4
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            outUserName.Text = Session["UserName"]?.ToString();
+            outPassword.Text = Session["Password"]?.ToString();
         }
     }
 }
