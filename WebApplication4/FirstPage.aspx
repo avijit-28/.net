@@ -11,7 +11,7 @@
         welcome<br />
         hiii how are you<br />
         <p>
-            <asp:Label ID="End" runat="server" Text="Thank you"></asp:Label>
+            <asp:Label ID="lblEnd" runat="server" Text="Thank you"></asp:Label>
         </p>
         <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Click Me" />
     </form>
