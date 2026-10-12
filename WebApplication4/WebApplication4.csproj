@@ -67,18 +67,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="FirstPage.aspx" />
     <Content Include="Web.config" />
-    <Content Include="WebForm.aspx" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebForm.aspx.cs">
-      <DependentUpon>WebForm.aspx</DependentUpon>
+    <Compile Include="FirstPage.aspx.cs">
+      <DependentUpon>FirstPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="WebForm.aspx.designer.cs">
-      <DependentUpon>WebForm.aspx</DependentUpon>
+    <Compile Include="FirstPage.aspx.designer.cs">
+      <DependentUpon>FirstPage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
