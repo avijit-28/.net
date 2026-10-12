@@ -66,3 +66,4 @@ D:\avi\C#\ProductsManagement\obj\Debug\net10.0\ProductsManagement.pdb
 D:\avi\C#\ProductsManagement\obj\Debug\net10.0\ProductsManagement.genruntimeconfig.cache
 D:\avi\C#\ProductsManagement\obj\Debug\net10.0\ref\ProductsManagement.dll
 D:\avi\C#\ProductsManagement\bin\Debug\net10.0\Microsoft.Extensions.Configuration.Json.dll
+D:\avi\C#\ProductsManagement\bin\Debug\net10.0\appsettings.json
