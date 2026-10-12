@@ -5,18 +5,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
+    <style type="text/css">
+        #form1 {
+            height: 147px;
+        }
+    </style>
 </head>
 <body>
-    <form id="lblMsg" runat="server">
-        welcome<br />
-        hiii how are you<br />
+
+    <form id="form1" runat="server">
+        <asp:Label ID="lblUser" runat="server" Text="UserName"></asp:Label>
+        <asp:TextBox ID="txtUserName" runat="server" Height="19px" OnTextChanged="txtUserName_TextChanged" TextMode="Email" Width="167px"></asp:TextBox>
         <p>
-            <asp:Label ID="lblEnd" runat="server" Text="Thank you"></asp:Label>
+            <asp:Label ID="lblPassword" runat="server" Text="Password"></asp:Label>
+            <asp:TextBox ID="txtPassword" runat="server" Height="19px" OnTextChanged="TextBox1_TextChanged" TextMode="Password" Width="167px"></asp:TextBox>
         </p>
-        <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Click Me" />
-        <p>
-            <asp:Button ID="Button2" runat="server" BackColor="#FFFF66" BorderColor="#FFFF66" Font-Italic="True" Font-Names="Arial Black" ForeColor="Red" OnClick="Button2_Click" Text="Go back" />
-        </p>
+        <asp:Button ID="BtnSign" runat="server" OnClick="BtnSign_Click" Text="Sign In" />
     </form>
+
 </body>
 </html>
