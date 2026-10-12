@@ -15,7 +15,7 @@
 
     <form id="form1" runat="server">
         <asp:Label ID="lblUser" runat="server" Text="UserName"></asp:Label>
-        <asp:TextBox ID="txtUserName" runat="server" Height="19px" OnTextChanged="txtUserName_TextChanged" TextMode="Email" Width="167px"></asp:TextBox>
+        <asp:TextBox ID="txtUserName" runat="server" Height="19px" OnTextChanged="txtUserName_TextChanged1" TextMode="Email" Width="167px"></asp:TextBox>
         <p>
             <asp:Label ID="lblPassword" runat="server" Text="Password"></asp:Label>
             <asp:TextBox ID="txtPassword" runat="server" Height="19px" OnTextChanged="TextBox1_TextChanged" TextMode="Password" Width="167px"></asp:TextBox>
