@@ -71,10 +71,12 @@ namespace ProductsManagement
                         Console.WriteLine("Invalid option. Please choose between 1 and 6.");
                         break;
                 }
+                Console.WriteLine("Press Any Key...");
+                Console.ReadKey();
             }
-            Console.WriteLine("Press Any Key...");
-            Console.ReadKey();
+            
         }
+        
 
         // 1. View All Products
         static void ShowAllProducts(ProductRepo repo)
