@@ -26,7 +26,7 @@ namespace ProductsManagement
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("\n==========================================");
+                Console.WriteLine("==========================================");
                 Console.WriteLine("        PRODUCT MANAGEMENT SYSTEM         ");
                 Console.WriteLine("==========================================");
                 Console.WriteLine("1. View All Products");
