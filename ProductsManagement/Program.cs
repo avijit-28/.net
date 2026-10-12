@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 
 namespace ProductsManagement
 {
@@ -7,8 +10,16 @@ namespace ProductsManagement
     {
         static void Main(string[] args)
         {
-            // Apne SQL Server ka Connection String yahan set karein:
-            string connectionString = "Server=localhost;Database=ProductDB;Trusted_Connection=True;TrustServerCertificate=True;";
+            // 1. appsettings.json se connection string read karna
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .Build();
+
+            // Note: Aapke JSON me "DefaultConnecttion" (double 't') likha tha, isliye dono check kar rahe hain
+            string? connectionString = configuration.GetConnectionString("DefaultConnecttion")
+                                    ?? configuration.GetConnectionString("DefaultConnection")
+                                    ?? "Data Source=.;Initial Catalog=Assignmet;User ID=sa;Password=mcc#1234;Encrypt=True;Trust Server Certificate=True;";
 
             ProductRepo repo = new ProductRepo(connectionString);
 
@@ -61,7 +72,7 @@ namespace ProductsManagement
             }
         }
 
-        // 1. View All
+        // 1. View All Products
         static void ShowAllProducts(ProductRepo repo)
         {
             List<Product> products = repo.GetAllProducts();
@@ -82,7 +93,7 @@ namespace ProductsManagement
             Console.WriteLine("------------------------------------------------------------------");
         }
 
-        // 2. View By ID
+        // 2. View Product By ID
         static void ShowProductById(ProductRepo repo)
         {
             Console.Write("Enter Product ID to search: ");
@@ -145,7 +156,7 @@ namespace ProductsManagement
             repo.AddProduct(newProduct);
         }
 
-        // 4. Update Product (Variable / Partial Update)
+        // 4. Update Product (Partial/Variable Update)
         static void UpdateProductDetails(ProductRepo repo)
         {
             Console.Write("Enter Product ID to update: ");
@@ -155,7 +166,6 @@ namespace ProductsManagement
                 return;
             }
 
-            // Pehle check karte hain product exist karta hai ya nahi
             var existing = repo.GetProductById(id);
             if (existing == null)
             {
@@ -181,7 +191,6 @@ namespace ProductsManagement
             string? inputStock = Console.ReadLine()?.Trim();
             int? stockToUpdate = int.TryParse(inputStock, out int s) ? s : null;
 
-            // Update call karte hain
             repo.UpdateProduct(id, nameToUpdate, priceToUpdate, stockToUpdate);
         }
 
