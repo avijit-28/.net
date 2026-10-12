@@ -11,8 +11,8 @@ namespace WebApplication4
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Session["UserName"] = txtUserName.Text;
-            Session["Password"] = txtPassword.Text;
+            //Session["UserName"] = txtUserName.Text;
+            //Session["Password"] = txtPassword.Text;
         }
 
         protected void BtnSign_Click(object sender, EventArgs e)
