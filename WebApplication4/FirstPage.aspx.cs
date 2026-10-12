@@ -21,7 +21,7 @@ namespace WebApplication4
 
         protected void Button2_Click(object sender, EventArgs e)
         {
-
+            lblMsg.InnerText= "nhi khulna";
         }
     }
 }
