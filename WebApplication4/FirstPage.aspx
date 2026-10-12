@@ -14,6 +14,9 @@
             <asp:Label ID="lblEnd" runat="server" Text="Thank you"></asp:Label>
         </p>
         <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Click Me" />
+        <p>
+            <asp:Button ID="Button2" runat="server" BackColor="#FFFF66" BorderColor="#FFFF66" Font-Italic="True" Font-Names="Arial Black" ForeColor="Red" OnClick="Button2_Click" OnClientClick="vapas aa ja" Text="Go back" />
+        </p>
     </form>
 </body>
 </html>
