@@ -69,7 +69,7 @@ namespace ProductsManagement
                         Console.WriteLine("Invalid option. Please choose between 1 and 6.");
                         break;
                 }
-                Console.WriteLine("Press Any Key...");
+                Console.WriteLine("\nPress Any Key...");
                 Console.ReadKey();
             }
             
