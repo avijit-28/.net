@@ -17,6 +17,8 @@ namespace WebApplication4
 
         }
 
+        protected void Session_Start(object sender, EventArgs e)
+        {
             Application.Lock();
             Application["user"] = ((int?)Application["user"] ?? 0) + 1;
             Application.UnLock();
