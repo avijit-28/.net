@@ -333,13 +333,17 @@
                             <span class="input-icon">&#8377;</span>
                             <asp:TextBox ID="TxtPrdPrc" runat="server" CssClass="form-input" placeholder="e.g. 499.00" autocomplete="off"></asp:TextBox>
                         </div>
-                        <asp:RequiredFieldValidator ID="RequiredFieldValidatorPrdPrc" runat="server" 
-                            ErrorMessage="Product Price is required" 
+                        <asp:RangeValidator ID="RangeValidatorPrdPrc" runat="server" 
+                            ErrorMessage="Product Price in between 10 and 1000 required" 
                             ForeColor="Red" 
                             ControlToValidate="TxtPrdPrc" 
                             Display="Dynamic" 
+                            MinimumValue="1" 
+                            MaximumValue="1000"
+                            Type ="Integer"
                             CssClass="val-error">
-                        </asp:RequiredFieldValidator>
+
+                        </asp:RangeValidator>
                     </div>
 
                     <!-- Stock -->
