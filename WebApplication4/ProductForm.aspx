@@ -44,7 +44,7 @@
                     </td>
                 </tr>
             </table>
-            <asp:Button ID="BtnAddPrd" runat="server" Height="32px" Text="Add Product" Width="115px" />
+            <asp:Button ID="BtnAddPrd" runat="server" Height="32px" OnClick="BtnAddPrd_Click" Text="Add Product" Width="115px" />
         </div>
         <asp:Label ID="LblMsg" runat="server" Height="35px" Width="283px"></asp:Label>
     </form>
