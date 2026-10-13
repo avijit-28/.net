@@ -14,6 +14,7 @@ namespace WebApplication4
             lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
             outUserName.Text = Session["UserName"] != null ? Session["UserName"].ToString() : "Guest";
             outPassword.Text = Session["Password"] != null ? Session["Password"].ToString() : "••••••••";
+            lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
         }
        
     }
