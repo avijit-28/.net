@@ -69,6 +69,7 @@
   <ItemGroup>
     <Content Include="FirstPage.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="ProductForm.aspx" />
     <Content Include="SignUp.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -82,6 +83,13 @@
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="ProductForm.aspx.cs">
+      <DependentUpon>ProductForm.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ProductForm.aspx.designer.cs">
+      <DependentUpon>ProductForm.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignUp.aspx.cs">
