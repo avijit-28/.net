@@ -13,6 +13,9 @@ namespace WebApplication4
         {
             outUserName.Text = Session["UserName"]?.ToString();
             outPassword.Text = Session["Password"]?.ToString();
+            Response.Write("The num of users online = " + Application["user"].ToString());
+
         }
+       
     }
 }
