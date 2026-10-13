@@ -11,7 +11,7 @@ namespace MiniProject
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
+            if (IsPostBack)
             {
                 //ViewState["Clicks"] = 0;
                 TextBox1.Text = "0";
@@ -33,7 +33,7 @@ namespace MiniProject
         protected void BtnReset_Click(object sender, EventArgs e)
         {
             //ViewState["Clicks"] = 0;
-            //TextBox1.Text = "0";
+            TextBox1.Text = "0";
         }
     }
 }
