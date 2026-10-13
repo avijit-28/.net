@@ -123,6 +123,39 @@
             color: #0f172a;
         }
 
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-product {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        .btn-product:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-product:active {
+            transform: translateY(0);
+        }
+
         .back-link {
             display: inline-flex;
             align-items: center;
