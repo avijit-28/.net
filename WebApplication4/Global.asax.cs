@@ -42,11 +42,12 @@ namespace WebApplication4
         protected void Session_End(object sender, EventArgs e)
         {
             Application.Lock();
-            Application["user"] = (int)Application["user"] - 1;
+            int count = (int?)Application["user"] ?? 0;
+            if (count > 0)
+            {
+                Application["user"] = count - 1;
+            }
             Application.UnLock();
-           
-
-
         }
 
         protected void Application_End(object sender, EventArgs e)
