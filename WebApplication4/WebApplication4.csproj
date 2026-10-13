@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Counting.aspx" />
     <Content Include="FirstPage.aspx" />
     <Content Include="Global.asax" />
     <Content Include="ProductForm.aspx" />
@@ -74,6 +75,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Counting.aspx.cs">
+      <DependentUpon>Counting.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Counting.aspx.designer.cs">
+      <DependentUpon>Counting.aspx</DependentUpon>
+    </Compile>
     <Compile Include="FirstPage.aspx.cs">
       <DependentUpon>FirstPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
