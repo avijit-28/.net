@@ -51,13 +51,13 @@ namespace WebApplication4
         protected global::System.Web.UI.WebControls.TextBox TxtPrdPrc;
 
         /// <summary>
-        /// TextBox4 control.
+        /// TxtPrdStk control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TextBox4;
+        protected global::System.Web.UI.WebControls.TextBox TxtPrdStk;
 
         /// <summary>
         /// Button1 control.
