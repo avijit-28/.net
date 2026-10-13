@@ -26,8 +26,8 @@ namespace MiniProject
             //ViewState["Clicks"] = count;
             //TextBox1.Text = count.ToString();
 
-            int count = Convert.ToInt32(TextBox1.Text) + 1;
-            TextBox1.Text = count.ToString();
+            int counts = Convert.ToInt32(TextBox1.Text) + 1;
+            TextBox1.Text = counts.ToString();
         }
 
         protected void BtnReset_Click(object sender, EventArgs e)
