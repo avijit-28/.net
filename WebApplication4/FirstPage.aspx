@@ -163,7 +163,7 @@
             <asp:TextBox ID="txtRePassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="Enter password"></asp:TextBox>
             <asp:CompareValidator ID="CompareValidatorPassword" runat="server"
                 ErrorMessage="Password and Retype Password must match"
-                ControlToValidate="txtRetypePassword" 
+                ControlToValidate="txtRePassword" 
                 ControlToCompare="txtPassword"
                 Type="String" 
                 Operator="Equal" 
