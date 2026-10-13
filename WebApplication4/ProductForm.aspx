@@ -167,6 +167,14 @@
             font-size: 13px;
         }
 
+        .val-error {
+            display: block;
+            font-size: 12px;
+            color: #ef4444;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
         /* Action Button */
         .btn-submit {
             display: inline-flex;
@@ -261,14 +269,6 @@
             transition: color 0.2s ease;
         }
 
-        .val-error {
-            display: block;
-            font-size: 12px;
-            color: #ef4444;
-            font-weight: 500;
-            margin-top: 4px;
-        }
-
         .nav-link:hover {
             color: #1d4ed8;
             text-decoration: underline;
@@ -296,10 +296,14 @@
                         <div class="input-wrapper">
                             <span class="input-icon">#</span>
                             <asp:TextBox ID="TxtPdrId" runat="server" CssClass="form-input" placeholder="e.g. PRD-101" autocomplete="off"></asp:TextBox>
-                            <asp:RequiredFieldValidator ID="RequiredFieldValidatorPdrId" runat="server" ErrorMessage="Product Id required" 
-                                    ForeColor="Red" ControlToValidate="TxtPdrId" Display="Dynamic">
-                            </asp:RequiredFieldValidator>
                         </div>
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidatorPdrId" runat="server" 
+                            ErrorMessage="Product Id is required" 
+                            ForeColor="Red" 
+                            ControlToValidate="TxtPdrId" 
+                            Display="Dynamic" 
+                            CssClass="val-error">
+                        </asp:RequiredFieldValidator>
                     </div>
 
                     <!-- Product Name -->
@@ -310,10 +314,14 @@
                         <div class="input-wrapper">
                             <span class="input-icon">&#128230;</span>
                             <asp:TextBox ID="TxtPrdName" runat="server" CssClass="form-input" placeholder="e.g. Wireless Mouse" autocomplete="off"></asp:TextBox>
-                            <asp:RequiredFieldValidator ID="RequiredFieldValidatorPrdName" runat="server" ErrorMessage="Product Name required" 
-                                    ForeColor="Red" ControlToValidate="TxtPrdName" Display="Dynamic">
-                            </asp:RequiredFieldValidator>
                         </div>
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidatorPrdName" runat="server" 
+                            ErrorMessage="Product Name is required" 
+                            ForeColor="Red" 
+                            ControlToValidate="TxtPrdName" 
+                            Display="Dynamic" 
+                            CssClass="val-error">
+                        </asp:RequiredFieldValidator>
                     </div>
 
                     <!-- Product Price -->
@@ -324,10 +332,14 @@
                         <div class="input-wrapper">
                             <span class="input-icon">&#8377;</span>
                             <asp:TextBox ID="TxtPrdPrc" runat="server" CssClass="form-input" placeholder="e.g. 499.00" autocomplete="off"></asp:TextBox>
-                            <asp:RequiredFieldValidator ID="RequiredFieldValidatorPrdPrc" runat="server" ErrorMessage="Product Price required" 
-                                ForeColor="Red" ControlToValidate="TxtPrdPrc" Display="Dynamic">
-                            </asp:RequiredFieldValidator>
                         </div>
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidatorPrdPrc" runat="server" 
+                            ErrorMessage="Product Price is required" 
+                            ForeColor="Red" 
+                            ControlToValidate="TxtPrdPrc" 
+                            Display="Dynamic" 
+                            CssClass="val-error">
+                        </asp:RequiredFieldValidator>
                     </div>
 
                     <!-- Stock -->
@@ -338,10 +350,14 @@
                         <div class="input-wrapper">
                             <span class="input-icon">&#128202;</span>
                             <asp:TextBox ID="TxtPrdStk" runat="server" CssClass="form-input" placeholder="e.g. 50" autocomplete="off"></asp:TextBox>
-                            <asp:RequiredFieldValidator ID="RequiredFieldValidatorPrdStk" runat="server" ErrorMessage="Product Stock required" 
-                                 ForeColor="Red" ControlToValidate="TxtPrdStk" Display="Dynamic">
-                            </asp:RequiredFieldValidator>
                         </div>
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidatorPrdStk" runat="server" 
+                            ErrorMessage="Product Stock is required" 
+                            ForeColor="Red" 
+                            ControlToValidate="TxtPrdStk" 
+                            Display="Dynamic" 
+                            CssClass="val-error">
+                        </asp:RequiredFieldValidator>
                     </div>
                 </div>
 
