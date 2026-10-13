@@ -154,8 +154,8 @@
                     ControlToValidate="txtUserName" 
                     ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"
                     ErrorMessage="Invalid Email" 
-                    ForeColor="Red">
-                    Display="Dynamic">
+                    ForeColor="Red"
+                    Display = "Dynamic">
             </asp:RegularExpressionValidator>
         </div>
 
