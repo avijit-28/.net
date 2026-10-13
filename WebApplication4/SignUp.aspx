@@ -227,8 +227,10 @@
                         <span class="info-label">Password</span>
                         <asp:Label ID="outPassword" runat="server" CssClass="info-value" Text="Label"></asp:Label>
                     </div>
+                <div class="action-group">
+                    <asp:Button ID="BtnProductForm" runat="server" Text="&#128230; Go to Product Form" OnClick="BtnProductForm_Click" CssClass="btn-product" />
+                    <a href="FirstPage.aspx" class="back-link">&larr; Back to Sign In</a>
                 </div>
-                <a href="FirstPage.aspx" class="back-link">&nbsp;Back to Sign In</a>
             </div>
 
             <!-- Image Gallery -->
