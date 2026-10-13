@@ -1,6 +1,3 @@
-D:\avi\C#\WebApplication4\bin\WebApplication4.dll.config
-D:\avi\C#\WebApplication4\bin\WebApplication4.dll
-D:\avi\C#\WebApplication4\bin\WebApplication4.pdb
 D:\avi\C#\WebApplication4\bin\roslyn\csc.exe
 D:\avi\C#\WebApplication4\bin\roslyn\csc.exe.config
 D:\avi\C#\WebApplication4\bin\roslyn\csc.rsp
@@ -55,5 +52,8 @@ D:\avi\C#\WebApplication4\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform
 D:\avi\C#\WebApplication4\obj\Debug\WebApplication4.csproj.AssemblyReference.cache
 D:\avi\C#\WebApplication4\obj\Debug\WebApplication4.csproj.CoreCompileInputs.cache
 D:\avi\C#\WebApplication4\obj\Debug\WebAppli.EC757EB8.Up2Date
-D:\avi\C#\WebApplication4\obj\Debug\WebApplication4.dll
-D:\avi\C#\WebApplication4\obj\Debug\WebApplication4.pdb
+D:\avi\C#\WebApplication4\bin\MiniProject.dll.config
+D:\avi\C#\WebApplication4\bin\MiniProject.dll
+D:\avi\C#\WebApplication4\bin\MiniProject.pdb
+D:\avi\C#\WebApplication4\obj\Debug\MiniProject.dll
+D:\avi\C#\WebApplication4\obj\Debug\MiniProject.pdb
