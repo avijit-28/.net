@@ -154,13 +154,15 @@
                     ControlToValidate="txtUserName" 
                     ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"
                     ErrorMessage="Invalid Email" 
-                    ForeColor="Red"></asp:RegularExpressionValidator>
+                    ForeColor="Red">
+                    Display="Dynamic">
+            </asp:RegularExpressionValidator>
         </div>
 
         <div class="form-group">
             <asp:Label ID="lblPassword" runat="server" Text="Password" AssociatedControlID="txtPassword"></asp:Label>
             <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="Enter password"></asp:TextBox>
-            <br>
+            <asp:Label ID="lblRePassword" runat="server" Text="Password" AssociatedControlID="txtRePassword"></asp:Label>
             <asp:TextBox ID="txtRePassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="Enter password"></asp:TextBox>
             <asp:CompareValidator ID="CompareValidatorPassword" runat="server"
                 ErrorMessage="Password and Retype Password must match"
@@ -168,7 +170,8 @@
                 ControlToCompare="txtPassword"
                 Type="String" 
                 Operator="Equal" 
-                ForeColor="Red">
+                ForeColor="Red"
+                Display ="Dynamic">
             </asp:CompareValidator>
         </div>
 
