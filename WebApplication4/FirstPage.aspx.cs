@@ -15,11 +15,14 @@ namespace WebApplication4
         }
 
         protected void BtnSign_Click(object sender, EventArgs e)
-        {
+        {   
+            if (txtUserName.Text == "avi@gmail.com" && txtPassword.Text == "123456789"){
+                Session["UserName"] = txtUserName.Text;
+                Session["Password"] = txtPassword.Text;
+                Response.Redirect("SignUp.aspx");
 
-            Session["UserName"] = txtUserName.Text;
-            Session["Password"] = txtPassword.Text;
-            Response.Redirect("SignUp.aspx");
+            }
+            
         }
 
        
