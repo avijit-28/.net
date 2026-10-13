@@ -29,5 +29,10 @@ namespace WebApplication4
         {
             Response.Redirect("ProductForm.aspx");
         }
+
+        protected void BtnCounting_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Counting.aspx");
+        }
     }
 }
