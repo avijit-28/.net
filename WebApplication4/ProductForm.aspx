@@ -261,6 +261,14 @@
             transition: color 0.2s ease;
         }
 
+        .val-error {
+            display: block;
+            font-size: 12px;
+            color: #ef4444;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
         .nav-link:hover {
             color: #1d4ed8;
             text-decoration: underline;
