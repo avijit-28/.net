@@ -1,17 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-
 namespace WebApplication4
 {
+    using System;
+    using System.Configuration;
+    using System.Data.SqlClient;
+
+    /// <summary>
+    /// Defines the <see cref="ProductForm" />
+    /// </summary>
     public partial class ProductForm : System.Web.UI.Page
     {
-        public string conStr
+        /// <summary>
+        /// Gets the ConStr
+        /// </summary>
+        public string ConStr
         {
             get
             {
@@ -20,6 +21,11 @@ namespace WebApplication4
             }
         }
 
+        /// <summary>
+        /// The Page_Load
+        /// </summary>
+        /// <param name="sender">The sender<see cref="object"/></param>
+        /// <param name="e">The e<see cref="EventArgs"/></param>
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -29,6 +35,11 @@ namespace WebApplication4
             }
         }
 
+        /// <summary>
+        /// The BtnAddPrd_Click
+        /// </summary>
+        /// <param name="sender">The sender<see cref="object"/></param>
+        /// <param name="e">The e<see cref="EventArgs"/></param>
         protected void BtnAddPrd_Click(object sender, EventArgs e)
         {
             string prdId = TxtPdrId.Text.Trim();
@@ -48,7 +59,7 @@ namespace WebApplication4
 
             try
             {
-                using (SqlConnection con = new SqlConnection(conStr))
+                using (SqlConnection con = new SqlConnection(ConStr))
                 {
                     string query = "insert into Products values(@PrdId,@PrdName,@PrdPrc,@PrdStk)";
 
