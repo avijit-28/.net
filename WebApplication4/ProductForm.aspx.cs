@@ -28,9 +28,9 @@ namespace WebApplication4
 
             using(SqlConnection con = new SqlConnection(conStr))
             {
-                string query = "insert into Products values(@PrdId,@PrdName,@PrdPrc,@PrdStk)"; 
-                
-                using(SqlCommand cmd = new Sqlcommand(query, con)
+                string query = "insert into Products values(@PrdId,@PrdName,@PrdPrc,@PrdStk)";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@PrdId", TxtPdrId.Text);
                     cmd.Parameters.AddWithValue("@PrdName", TxtPrdName.Text);
@@ -38,16 +38,16 @@ namespace WebApplication4
                     cmd.Parameters.AddWithValue("@PrdStk", TxtPrdStk.Text);
                     con.Open();
                     int rowsAffected = cmd.ExecuteNonQuery();
-                    
+
                     if (rowsAffected > 0)
-                {
-                    Dtls += "Product added successfully.";
+                    {
+                        Dtls += "Product added successfully.";
+                    }
+                    else
+                    {
+                        Dtls += "Failed to add product.";
+                    }
                 }
-                else
-                {
-                    Dtls += "Failed to add product.";
-                }
-            }
             }
 
 
