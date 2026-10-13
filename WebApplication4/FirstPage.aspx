@@ -180,6 +180,7 @@
         <asp:ValidationSummary ID="ValidationSummary1" runat="server" 
         ForeColor="Red" HeaderText="Page Errors" ShowMessageBox="True"
         ShowSummary="true" DisplayMode="List"  />
+        <asp:Label ID="lblStatus" runat="server" Font-Bold="true"></asp:Label>
     </form>
 
 </body>
