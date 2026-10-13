@@ -46,7 +46,7 @@
             </table>
             <asp:Button ID="BtnAddPrd" runat="server" Height="32px" Text="Add Product" Width="115px" />
         </div>
-        <asp:Label ID="LblMsg" runat="server" Height="35px" Width="283px"></asp:Label>
+        <asp:Label ID="LblMsg" runat="server" Height="35px" Text="Product successfully added" Width="283px"></asp:Label>
     </form>
 </body>
 </html>
