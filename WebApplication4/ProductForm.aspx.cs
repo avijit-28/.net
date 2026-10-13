@@ -11,11 +11,17 @@ namespace WebApplication4
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            
         }
 
-        protected void Button1_Click(object sender, EventArgs e)
+        protected void BtnAddPrd_Click(object sender, EventArgs e)
         {
+            String Dtls = "";
+            Dtls += TxtPdrId.Text + " ";
+            Dtls += TxtPrdName.Text + " ";
+            Dtls += TxtPrdPrc.Text + " ";
+            Dtls += TxtPrdStk.Text + " ";
+
 
         }
     }
