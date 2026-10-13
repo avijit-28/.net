@@ -21,7 +21,7 @@ namespace WebApplication4
             Dtls += TxtPrdName.Text + " ";
             Dtls += TxtPrdPrc.Text + " ";
             Dtls += TxtPrdStk.Text + " ";
-
+            LblMsg.InnerHtml = Dtls;
 
         }
     }
