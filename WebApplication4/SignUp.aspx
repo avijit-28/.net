@@ -195,7 +195,7 @@
                         <asp:Label ID="outPassword" runat="server" CssClass="info-value" Text="Label"></asp:Label>
                     </div>
                 </div>
-                <a href="FirstPage.aspx" class="back-link">← Back to Sign In</a>
+                <a href="FirstPage.aspx" class="back-link">&nbsp;Back to Sign In</a>
             </div>
 
             <!-- Image Gallery -->
