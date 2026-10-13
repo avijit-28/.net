@@ -151,7 +151,7 @@
             <asp:Label ID="lblUser" runat="server" Text="User Name" AssociatedControlID="txtUserName"></asp:Label>
             <asp:TextBox ID="txtUserName" runat="server" CssClass="form-control" placeholder="you@example.com"></asp:TextBox>
             <asp:RegularExpressionValidator ID="RegularExpressionValidatorEmail" runat="server" 
-                    ControlToValidate="txtEmail" 
+                    ControlToValidate="txtUserName" 
                     ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"
                     ErrorMessage="Invalid Email" 
                     ForeColor="Red"></asp:RegularExpressionValidator>
