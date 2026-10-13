@@ -177,10 +177,7 @@
         
 
         <asp:Button ID="BtnSign" runat="server" OnClick="BtnSign_Click" Text="Sign In" CssClass="btn-submit" />
-        <asp:ValidationSummary ID="ValidationSummary1" runat="server" 
-        ForeColor="Red" HeaderText="Page Errors" ShowMessageBox="True"
-        ShowSummary="true" DisplayMode="List"  />
-        <asp:Label ID="lblStatus" runat="server" Font-Bold="true"></asp:Label>
+       
     </form>
 
 </body>
