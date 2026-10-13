@@ -13,22 +13,27 @@ namespace MiniProject
         {
             if (!IsPostBack)
             {
-                ViewState["Clicks"] = 0;
+                //ViewState["Clicks"] = 0;
                 TextBox1.Text = "0";
             }
         }
 
         protected void Button1_Click(object sender, EventArgs e)
         {
-            int count = (ViewState["Clicks"] != null) ? (int)ViewState["Clicks"] + 1 : 1;
-            ViewState["Clicks"] = count;
+
+
+            //int count = (ViewState["Clicks"] != null) ? (int)ViewState["Clicks"] + 1 : 1;
+            //ViewState["Clicks"] = count;
+            //TextBox1.Text = count.ToString();
+
+            int count = Convert.ToInt32(TextBox1.Text) + 1;
             TextBox1.Text = count.ToString();
         }
 
         protected void BtnReset_Click(object sender, EventArgs e)
         {
-            ViewState["Clicks"] = 0;
-            TextBox1.Text = "0";
+            //ViewState["Clicks"] = 0;
+            //TextBox1.Text = "0";
         }
     }
 }
