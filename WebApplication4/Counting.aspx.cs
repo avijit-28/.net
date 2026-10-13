@@ -34,6 +34,7 @@ namespace MiniProject
         protected void BtnReset_Click(object sender, EventArgs e)
         {
             //ViewState["Clicks"] = 0;
+            Response.Write(IsPostBack);
             TextBox1.Text = "0";
         }
     }
