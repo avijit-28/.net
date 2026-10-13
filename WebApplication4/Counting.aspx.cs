@@ -30,10 +30,10 @@ namespace MiniProject
             TextBox1.Text = counts.ToString();
         }
 
-        //protected void BtnReset_Click(object sender, EventArgs e)
-        //{
-        //    //ViewState["Clicks"] = 0;
-        //    TextBox1.Text = "0";
-        //}
+        protected void BtnReset_Click(object sender, EventArgs e)
+        {
+            //ViewState["Clicks"] = 0;
+            //TextBox1.Text = "0";
+        }
     }
 }
