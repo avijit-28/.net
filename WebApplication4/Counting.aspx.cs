@@ -21,8 +21,14 @@ namespace MiniProject
 
         protected void Button1_Click(object sender, EventArgs e)
         {
-            count++;
+            //count++;
+            //TextBox1.Text = count.ToString();
+            if (ViewState["Clicks"] != null)
+            {
+                count = (int)ViewState["Clicks"] + 1;
+            }
             TextBox1.Text = count.ToString();
+            ViewState["Clicks"] = count;
 
         }
     }
