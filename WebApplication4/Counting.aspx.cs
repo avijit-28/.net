@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -9,27 +9,26 @@ namespace MiniProject
 {
     public partial class Counting : System.Web.UI.Page
     {
-        int count = 0;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
+                ViewState["Clicks"] = 0;
                 TextBox1.Text = "0";
             }
-
         }
 
         protected void Button1_Click(object sender, EventArgs e)
         {
-            //count++;
-            //TextBox1.Text = count.ToString();
-            if (ViewState["Clicks"] != null)
-            {
-                count = (int)ViewState["Clicks"] + 1;
-            }
-            TextBox1.Text = count.ToString();
+            int count = (ViewState["Clicks"] != null) ? (int)ViewState["Clicks"] + 1 : 1;
             ViewState["Clicks"] = count;
+            TextBox1.Text = count.ToString();
+        }
 
+        protected void BtnReset_Click(object sender, EventArgs e)
+        {
+            ViewState["Clicks"] = 0;
+            TextBox1.Text = "0";
         }
     }
 }
