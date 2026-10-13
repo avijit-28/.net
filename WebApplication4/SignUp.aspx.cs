@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,10 +11,9 @@ namespace WebApplication4
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            outUserName.Text = Session["UserName"]?.ToString();
-            outPassword.Text = Session["Password"]?.ToString();
-            Response.Write("The num of users online = " + Application["user"].ToString());
-
+            lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
+            outUserName.Text = Session["UserName"] != null ? Session["UserName"].ToString() : "Guest";
+            outPassword.Text = Session["Password"] != null ? Session["Password"].ToString() : "••••••••";
         }
        
     }
