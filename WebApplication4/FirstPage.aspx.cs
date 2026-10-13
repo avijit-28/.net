@@ -11,7 +11,7 @@ namespace WebApplication4
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
+            //lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
         }
 
         protected void BtnSign_Click(object sender, EventArgs e)
