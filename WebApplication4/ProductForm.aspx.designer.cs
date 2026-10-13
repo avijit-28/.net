@@ -69,13 +69,13 @@ namespace WebApplication4
         protected global::System.Web.UI.WebControls.TextBox TxtPrdPrc;
 
         /// <summary>
-        /// RequiredFieldValidatorPrdPrc control.
+        /// RangeValidatorPrdPrc control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidatorPrdPrc;
+        protected global::System.Web.UI.WebControls.RangeValidator RangeValidatorPrdPrc;
 
         /// <summary>
         /// TxtPrdStk control.
