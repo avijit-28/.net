@@ -12,7 +12,9 @@ namespace WebApplication4
 
         protected void Application_Start(object sender, EventArgs e)
         {
+            
             Application["user"] = 0;
+
         }
 
         protected void Session_Start(object sender, EventArgs e)
@@ -22,11 +24,7 @@ namespace WebApplication4
             Application.UnLock();
  
         }
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            Response.Write("The num of users online = " + Application["user"].ToString());
-
-        }
+        
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
