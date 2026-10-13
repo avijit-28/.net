@@ -156,6 +156,38 @@
             transform: translateY(0);
         }
 
+        .gallery-actions {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .btn-counting {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-counting:hover {
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+            box-shadow: 0 6px 18px rgba(5, 150, 105, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-counting:active {
+            transform: translateY(0);
+        }
+
         .back-link {
             display: inline-flex;
             align-items: center;
