@@ -11,9 +11,10 @@ namespace MiniProject
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (IsPostBack)
+            if (!IsPostBack)
             {
                 //ViewState["Clicks"] = 0;
+                Response.Write(IsPostBack);
                 TextBox1.Text = "0";
             }
         }
