@@ -3,20 +3,20 @@
   "WorkspaceRootPath": "D:\\avi\\C#\\DeparmentProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|D:\\avi\\C#\\DeparmentProject\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|d:\\avi\\c#\\deparmentproject\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|solutionrelative:app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|d:\\avi\\c#\\deparmentproject\\departmentrepo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|solutionrelative:departmentrepo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|D:\\avi\\C#\\DeparmentProject\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|D:\\avi\\C#\\DeparmentProject\\department.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|solutionrelative:department.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|D:\\avi\\C#\\DeparmentProject\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|solutionrelative:app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+      "AbsoluteMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|D:\\avi\\C#\\DeparmentProject\\departmentrepo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B9853351-8245-4E55-9756-89361CBB5880}|DeparmentProject.csproj|solutionrelative:departmentrepo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -38,28 +38,28 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "App.config",
               "DocumentMoniker": "D:\\avi\\C#\\DeparmentProject\\App.config",
               "RelativeDocumentMoniker": "App.config",
               "ToolTip": "D:\\avi\\C#\\DeparmentProject\\App.config",
               "RelativeToolTip": "App.config",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2026-10-07T11:48:33.133Z"
+              "WhenOpened": "2026-10-07T11:48:33.133Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "DepartmentRepo.cs",
               "DocumentMoniker": "D:\\avi\\C#\\DeparmentProject\\DepartmentRepo.cs",
               "RelativeDocumentMoniker": "DepartmentRepo.cs",
               "ToolTip": "D:\\avi\\C#\\DeparmentProject\\DepartmentRepo.cs",
               "RelativeToolTip": "DepartmentRepo.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAowC0AAAA6AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-07T11:45:55.095Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-07T11:45:55.095Z"
             },
             {
               "$type": "Document",
@@ -71,21 +71,19 @@
               "RelativeToolTip": "Department.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-07T11:41:55.52Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-07T11:41:55.52Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\avi\\C#\\DeparmentProject\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "D:\\avi\\C#\\DeparmentProject\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAQwBEAAAAtAAAAAAAAAA==",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAgwGkAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-07T11:26:53.896Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-07T11:26:53.896Z"
             }
           ]
         },
