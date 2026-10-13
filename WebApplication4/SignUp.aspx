@@ -275,6 +275,11 @@
                 <asp:Image ID="Image2" runat="server" Height="360px" ImageUrl="https://images.unsplash.com/photo-1791724389693-b873064e086d?q=80&amp;w=387&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0&amp;ixid=NHwxMjA3fDA%3D" Width="260px" />
             </div>
 
+            <!-- Button at the bottom of images -->
+            <div class="gallery-actions">
+                <asp:Button ID="BtnCounting" runat="server" Text="&#128290; Go to Counting Page" OnClick="BtnCounting_Click" CssClass="btn-counting" />
+            </div>
+
         </div>
     </form>
 </body>
