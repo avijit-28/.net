@@ -33,7 +33,7 @@ namespace MiniProject
         protected void BtnReset_Click(object sender, EventArgs e)
         {
             //ViewState["Clicks"] = 0;
-            //TextBox1.Text = "0";
+            TextBox1.Text = "0";
         }
     }
 }
