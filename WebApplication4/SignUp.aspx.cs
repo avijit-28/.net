@@ -16,6 +16,10 @@ namespace WebApplication4
             outPassword.Text = Session["Password"] != null ? Session["Password"].ToString() : "••••••••";
             lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
         }
-       
+
+        protected void BtnProductForm_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("ProductForm.aspx");
+        }
     }
 }
