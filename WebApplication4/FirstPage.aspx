@@ -162,7 +162,7 @@
         <div class="form-group">
             <asp:Label ID="lblPassword" runat="server" Text="Password" AssociatedControlID="txtPassword"></asp:Label>
             <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="Enter password"></asp:TextBox>
-            <asp:Label ID="lblRePassword" runat="server" Text="Password" AssociatedControlID="txtRePassword"></asp:Label>
+            <asp:Label ID="lblRePassword" runat="server" Text="Comfirm Password" AssociatedControlID="txtRePassword"></asp:Label>
             <asp:TextBox ID="txtRePassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="Enter password"></asp:TextBox>
             <asp:CompareValidator ID="CompareValidatorPassword" runat="server"
                 ErrorMessage="Password and Retype Password must match"
