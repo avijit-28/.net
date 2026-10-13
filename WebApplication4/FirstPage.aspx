@@ -31,6 +31,7 @@
             max-width: 400px;
         }
 
+
         /* Online Users Badge Design */
         .online-badge {
             display: inline-flex;
@@ -125,6 +126,13 @@
         .btn-submit:hover {
             background: #1d4ed8;
         }
+        .val-error {
+            display: block;
+            font-size: 12px;
+            color: #ef4444;
+            font-weight: 500;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -141,12 +149,26 @@
 
         <div class="form-group">
             <asp:Label ID="lblUser" runat="server" Text="User Name" AssociatedControlID="txtUserName"></asp:Label>
-            <asp:TextBox ID="txtUserName" runat="server" CssClass="form-control" TextMode="Email" placeholder="you@example.com"></asp:TextBox>
+            <asp:TextBox ID="txtUserName" runat="server" CssClass="form-control" placeholder="you@example.com"></asp:TextBox>
+            <asp:RegularExpressionValidator ID="RegularExpressionValidatorEmail" runat="server" 
+                    ControlToValidate="txtEmail" 
+                    ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"
+                    ErrorMessage="Invalid Email" 
+                    ForeColor="Red"></asp:RegularExpressionValidator>
         </div>
 
         <div class="form-group">
             <asp:Label ID="lblPassword" runat="server" Text="Password" AssociatedControlID="txtPassword"></asp:Label>
             <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="Enter password"></asp:TextBox>
+            <asp:TextBox ID="txtRePassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="Enter password"></asp:TextBox>
+            <asp:CompareValidator ID="CompareValidatorPassword" runat="server"
+                ErrorMessage="Password and Retype Password must match"
+                ControlToValidate="txtRetypePassword" 
+                ControlToCompare="txtPassword"
+                Type="String" 
+                Operator="Equal" 
+                ForeColor="Red">
+            </asp:CompareValidator>
         </div>
 
         <asp:Button ID="BtnSign" runat="server" OnClick="BtnSign_Click" Text="Sign In" CssClass="btn-submit" />
