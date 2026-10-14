@@ -19,10 +19,10 @@
         }
         .auto-style5 {
             width: 427px;
-            height: 37px;
+            height: 46px;
         }
         .auto-style6 {
-            height: 37px;
+            height: 46px;
         }
         .auto-style7 {
             width: 427px;
@@ -43,7 +43,7 @@
                             <asp:Label ID="LblUser" runat="server" Text="UserName"></asp:Label>
                         </td>
                         <td class="auto-style6">
-                            <asp:TextBox ID="TxtUser" runat="server" Height="22px" Width="190px"></asp:TextBox>
+                            <asp:TextBox ID="TxtUser" runat="server" Height="24px" Width="180px"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
@@ -51,14 +51,13 @@
                             <asp:Label ID="LblEmail" runat="server" Text="Email"></asp:Label>
                         </td>
                         <td class="auto-style4">
-                            <asp:TextBox ID="TxtEmail" runat="server" Height="22px" Width="190px"></asp:TextBox>
+                            <asp:TextBox ID="TextBox2" runat="server" Height="24px" Width="180px"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
                         <td class="auto-style7"></td>
                         <td class="auto-style8">
-                            <asp:Button ID="BtnSend" runat="server" OnClick="BtnSend_Click" Text="Send" Width="71px" />
-                        </td>
+                            &nbsp;</td>
                     </tr>
                 </table>
             </div>
