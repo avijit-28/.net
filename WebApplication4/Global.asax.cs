@@ -21,6 +21,7 @@ namespace WebApplication4
         public static void RegisterRoutes(RouteCollection routeCollection)
         {
             routeCollection.MapPageRoute("RouteForArticle", "Articles/{id}/{Title}", "~/DetailPage.aspx");
+            routeCollection.MapPageRoute("RouteUrlTitle", "Articles/{id}/{Title}", "~/DetailPage.aspx");
         }
 
         protected void Session_Start(object sender, EventArgs e)
