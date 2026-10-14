@@ -78,6 +78,9 @@
     <Content Include="ProductForm.aspx" />
     <Content Include="SearchUser.aspx" />
     <Content Include="SignUp.aspx" />
+    <Content Include="images\Accepted.png" />
+    <Content Include="images\Cancel.png" />
+    <Content Include="images\loading.gif" />
     <Content Include="URLRouting.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
