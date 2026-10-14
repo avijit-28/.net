@@ -29,11 +29,11 @@ namespace WebApplication4
                     String query = "SELECT COUNT(*) FROM Users WHERE [UserName] = @un";
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
-                        checkun.Visible = true;
+                        
                         cmd.Parameters.AddWithValue("@un", txtun.Text);
                         con.Open();
                         SqlDataReader dr = cmd.ExecuteReader();
-                        if (dr.HasRows)
+                        if (dr.Read())
                         {
                             checkun.Visible = true;
                             shwimg.ImageUrl = "~/images/Cancel.png";
