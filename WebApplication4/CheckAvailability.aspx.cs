@@ -23,6 +23,7 @@ namespace WebApplication4
         {
             if (!string.IsNullOrEmpty(txtun.Text))
             {
+                checkun.Visible = true;
                 using (SqlConnection con = new SqlConnection(_conStr))
                 {
                     String query = "SELECT COUNT(*) FROM Users WHERE [UserName] = @un";
