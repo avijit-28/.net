@@ -13,5 +13,10 @@ namespace MiniProject
         {
 
         }
+
+        protected void BtnSearch_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
