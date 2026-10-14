@@ -51,7 +51,7 @@
                             <asp:Label ID="LblEmail" runat="server" Text="Email"></asp:Label>
                         </td>
                         <td class="auto-style4">
-                            <asp:TextBox ID="TextBox2" runat="server" Height="24px" Width="180px"></asp:TextBox>
+                            <asp:TextBox ID="TxtEmail" runat="server" Height="24px" Width="180px"></asp:TextBox>
                         </td>
                     </tr>
                     <tr>
