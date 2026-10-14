@@ -57,7 +57,8 @@
                     <tr>
                         <td class="auto-style7"></td>
                         <td class="auto-style8">
-                            &nbsp;</td>
+                            <asp:Button ID="Search" runat="server" Text="Search User" />
+                        </td>
                     </tr>
                 </table>
             </div>
