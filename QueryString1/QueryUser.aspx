@@ -12,10 +12,10 @@
         }
         .auto-style3 {
             width: 427px;
-            height: 45px;
+            height: 58px;
         }
         .auto-style4 {
-            height: 45px;
+            height: 58px;
         }
         .auto-style5 {
             width: 427px;
@@ -57,7 +57,7 @@
                     <tr>
                         <td class="auto-style7"></td>
                         <td class="auto-style8">
-                            <asp:Button ID="Button1" runat="server" Text="Button" Width="71px" />
+                            <asp:Button ID="BtnSend" runat="server" OnClick="Button1_Click" Text="Send" Width="71px" />
                         </td>
                     </tr>
                 </table>
