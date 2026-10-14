@@ -57,7 +57,7 @@
                     <tr>
                         <td class="auto-style7"></td>
                         <td class="auto-style8">
-                            <asp:Button ID="BtnSend" runat="server" OnClick="Button1_Click" Text="Send" Width="71px" />
+                            <asp:Button ID="BtnSend" runat="server" OnClick="BtnSend_Click" Text="Send" Width="71px" />
                         </td>
                     </tr>
                 </table>
