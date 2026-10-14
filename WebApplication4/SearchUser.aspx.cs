@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -16,7 +16,7 @@ namespace MiniProject
 
         protected void BtnSearch_Click(object sender, EventArgs e)
         {
-            Response.Redirect("GetUser.aspx?UserName=" + Server.UrlEncode(TxtUser.Text) + "&UserEmail=" + Server.UrlEncode(TxtEmail.Text));
+
         }
     }
 }
