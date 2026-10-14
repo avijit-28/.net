@@ -11,7 +11,12 @@ namespace MiniProject
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            HttpCookie cookie = Request.Cookies["UserDetails"];
+            if (cookie != null)
+            {
+                LblName.Text = cookie["Name"];
+                LblEmail.Text = cookie["Email"];
+            }
         }
     }
 }
