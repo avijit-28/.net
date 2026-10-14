@@ -33,13 +33,13 @@ namespace QueryString1
         protected global::System.Web.UI.WebControls.Label LblUser;
 
         /// <summary>
-        /// TextBox1 control.
+        /// TxtUser control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TextBox1;
+        protected global::System.Web.UI.WebControls.TextBox TxtUser;
 
         /// <summary>
         /// LblEmail control.
@@ -51,12 +51,21 @@ namespace QueryString1
         protected global::System.Web.UI.WebControls.Label LblEmail;
 
         /// <summary>
-        /// TextBox2 control.
+        /// TxtEmail control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TextBox2;
+        protected global::System.Web.UI.WebControls.TextBox TxtEmail;
+
+        /// <summary>
+        /// Button1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button Button1;
     }
 }
