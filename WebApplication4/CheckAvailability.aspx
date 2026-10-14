@@ -10,8 +10,8 @@
     <form id="form1" runat="server">
         <asp:ScriptManager ID="scriptmanager1" runat="server">   </asp:ScriptManager>  
         <div>
-            <asp:UpdatePanel ID="updatepnl" runat="server">
-    <ContentTemplate>
+        <asp:UpdatePanel ID="updatepnl" runat="server"> 
+        <ContentTemplate>
 
         <table>
             <tr>
@@ -66,7 +66,7 @@
                 <td colspan="3" align="center">
                     <asp:Button ID="txtbtn"
                         runat="server"
-                        Text="SUBMIT" />
+                        Text="SUBMIT" OnClick="txtbtn_Click" />
                 </td>
             </tr>
         </table>
