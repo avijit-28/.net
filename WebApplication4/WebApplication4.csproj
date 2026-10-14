@@ -67,6 +67,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CookiesGet.aspx" />
+    <Content Include="CookiesSend.aspx" />
     <Content Include="Counting.aspx" />
     <Content Include="FirstPage.aspx" />
     <Content Include="GetUser.aspx" />
@@ -77,6 +79,20 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CookiesGet.aspx.cs">
+      <DependentUpon>CookiesGet.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CookiesGet.aspx.designer.cs">
+      <DependentUpon>CookiesGet.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CookiesSend.aspx.cs">
+      <DependentUpon>CookiesSend.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CookiesSend.aspx.designer.cs">
+      <DependentUpon>CookiesSend.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Counting.aspx.cs">
       <DependentUpon>Counting.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
