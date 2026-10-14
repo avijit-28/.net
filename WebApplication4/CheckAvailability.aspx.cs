@@ -21,6 +21,9 @@ namespace WebApplication4
 
         protected void CheckUserNameAvailability(object sender, EventArgs e)
         {
+            System.Threading.Thread.Sleep(3000);
+            checkun.Visible = true;
+            lblmsg.Text = "Username Checked";
             if (!string.IsNullOrEmpty(txtun.Text))
             {
                 
