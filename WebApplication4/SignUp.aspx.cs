@@ -52,5 +52,10 @@ namespace WebApplication4
         {
             Response.Redirect("CookiesSend.aspx");
         }
+
+        protected void BtnCheckAvailability_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("CheckAvailability.aspx");
+        }
     }
 }
