@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.SessionState;
+using System.Web.Routing;
 
 namespace WebApplication4
 {
@@ -14,7 +15,12 @@ namespace WebApplication4
         {
             
             Application["user"] = 0;
+            RegisterRoutes(RouteTable.Routes);
 
+        }
+        public static void RegisterRoutes(RouteCollection routeCollection)
+        {
+            routeCollection.MapPageRoute("RouteForArticle", "Articles/{id}/{Title}", "~/DetailPage.aspx");
         }
 
         protected void Session_Start(object sender, EventArgs e)
