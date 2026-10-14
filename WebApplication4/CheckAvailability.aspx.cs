@@ -26,7 +26,7 @@ namespace WebApplication4
                 
                 using (SqlConnection con = new SqlConnection(_conStr))
                 {
-                    String query = "SELECT COUNT(*) FROM Users WHERE [UserName] = @un";
+                    String query = "SELECT * FROM Users WHERE [UserName] = @un";
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
                         
