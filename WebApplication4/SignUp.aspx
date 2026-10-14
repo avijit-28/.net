@@ -170,6 +170,7 @@
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
             transition: all 0.2s ease;
+            margin-left : 10px;
         }
 
         .btn-search-nav:hover {
