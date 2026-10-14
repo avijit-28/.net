@@ -14,7 +14,7 @@ namespace MiniProject
             if (!IsPostBack)
             {
                 //ViewState["Clicks"] = 0;
-                //Response.Write(IsPostBack);
+                Response.Write(IsPostBack);
                 TextBox1.Text = "0";
             }
         }
