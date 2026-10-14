@@ -23,12 +23,13 @@ namespace WebApplication4
         {
             if (!string.IsNullOrEmpty(txtun.Text))
             {
-                checkun.Visible = true;
+                
                 using (SqlConnection con = new SqlConnection(_conStr))
                 {
                     String query = "SELECT COUNT(*) FROM Users WHERE [UserName] = @un";
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
+                        checkun.Visible = true;
                         cmd.Parameters.AddWithValue("@un", txtun.Text);
                         con.Open();
                         SqlDataReader dr = cmd.ExecuteReader();
