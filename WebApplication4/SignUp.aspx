@@ -335,7 +335,7 @@
             <div class="gallery-actions">
                 <asp:Button ID="BtnCounting" runat="server" Text="&#128290; Go to Counting Page" OnClick="BtnCounting_Click" CssClass="btn-counting" />
                 <asp:Button ID="BtnSearchUser" runat="server" Text="&#128269; Search User" OnClick="BtnSearchUser_Click" CssClass="btn-search-nav" />
-
+                <asp:Button ID="BtnCookiesSend" runat="server" Text="&#127850; Go to Cookies Page" OnClick="BtnCookiesSend_Click" CssClass="btn-cookies-nav" />
             </div>
 
 
