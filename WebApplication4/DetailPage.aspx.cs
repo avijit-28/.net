@@ -22,7 +22,7 @@ namespace WebApplication4
                 {
                     string strId = Page.RouteData.Values["id"].ToString();
                     DisplayArticle(strId);
-                }
+                } 
                 else
                 {
                     lblTitle.Text = "No Article Specified";
