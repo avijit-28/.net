@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CheckAvailability.aspx" />
     <Content Include="CookiesGet.aspx" />
     <Content Include="CookiesSend.aspx" />
     <Content Include="Counting.aspx" />
@@ -81,6 +82,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckAvailability.aspx.cs">
+      <DependentUpon>CheckAvailability.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CheckAvailability.aspx.designer.cs">
+      <DependentUpon>CheckAvailability.aspx</DependentUpon>
+    </Compile>
     <Compile Include="CookiesGet.aspx.cs">
       <DependentUpon>CookiesGet.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
