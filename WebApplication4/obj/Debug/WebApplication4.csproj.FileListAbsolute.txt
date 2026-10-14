@@ -1,7 +1,6 @@
 D:\avi\C#\WebApplication4\bin\WebApplication4.dll.config
 D:\avi\C#\WebApplication4\bin\WebApplication4.dll
 D:\avi\C#\WebApplication4\bin\WebApplication4.pdb
-D:\avi\C#\WebApplication4\bin\roslyn\.gitkeep
 D:\avi\C#\WebApplication4\bin\roslyn\csc.exe
 D:\avi\C#\WebApplication4\bin\roslyn\csc.exe.config
 D:\avi\C#\WebApplication4\bin\roslyn\csc.rsp
