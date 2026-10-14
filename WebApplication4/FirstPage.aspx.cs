@@ -14,10 +14,10 @@ namespace WebApplication4
         /// <param name="e">The e<see cref="EventArgs"/></param>
         protected void Page_Load(object sender, EventArgs e)
         {
-            if ((Session["UserName"] != null) || (Session["Password"] != null))
-            {
-                lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
-            }
+            //if ((Session["UserName"] != null) || (Session["Password"] != null))
+            //{
+                //lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
+            //}
         }
 
         /// <summary>
