@@ -21,6 +21,11 @@ namespace WebApplication4
 
         protected void CheckUserNameAvailability(object sender, EventArgs e)
         {
+            
+        }
+
+        protected void txtbtn_Click(object sender, EventArgs e)
+        {
             if (!string.IsNullOrEmpty(txtun.Text))
             {
                 using (SqlConnection con = new SqlConnection(_conStr))
@@ -50,7 +55,7 @@ namespace WebApplication4
             else
             {
                 checkun.Visible = false;
-                
+
             }
         }
     }
