@@ -288,7 +288,6 @@
                 </div>
                 <div class="action-group">
                     <asp:Button ID="BtnProductForm" runat="server" Text="&#128230; Go to Product Form" OnClick="BtnProductForm_Click" CssClass="btn-product" />
-                    <asp:Button ID="BtnSearchUser" runat="server" Text="&#128269; Search User" OnClick="BtnSearchUser_Click" CssClass="btn-search-nav" />
                     <a href="FirstPage.aspx" class="back-link">&larr; Back to Sign In</a>
                 </div>
             </div>
@@ -305,7 +304,12 @@
             <!-- Button at the bottom of images -->
             <div class="gallery-actions">
                 <asp:Button ID="BtnCounting" runat="server" Text="&#128290; Go to Counting Page" OnClick="BtnCounting_Click" CssClass="btn-counting" />
+                <asp:Button ID="BtnSearchUser" runat="server" Text="&#128269; Search User" OnClick="BtnSearchUser_Click" CssClass="btn-search-nav" />
+
             </div>
+
+
+
 
         </div>
     </form>
