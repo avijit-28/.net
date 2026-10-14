@@ -13,5 +13,9 @@ namespace MiniProject
         {
 
         }
+        protected void BtnSend_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("GetUser.aspx?UserName=" + Server.UrlEncode(TxtUser.Text) + "&UserEmail=" + Server.UrlEncode(TxtEmail.Text));
+        }
     }
 }
