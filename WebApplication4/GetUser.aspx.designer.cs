@@ -33,7 +33,7 @@ namespace MiniProject
         protected global::System.Web.UI.WebControls.Label LblName;
 
         /// <summary>
-        /// Label2 control.
+        /// LblEmail control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
