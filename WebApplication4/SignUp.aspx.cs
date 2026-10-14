@@ -34,5 +34,10 @@ namespace WebApplication4
         {
             Response.Redirect("Counting.aspx");
         }
+
+        protected void BtnSearchUser_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("SearchUser.aspx");
+        }
     }
 }
