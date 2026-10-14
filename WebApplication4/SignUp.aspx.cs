@@ -39,5 +39,10 @@ namespace WebApplication4
         {
             Response.Redirect("SearchUser.aspx");
         }
+
+        protected void BtnCookiesSend_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("CookiesSend.aspx");
+        }
     }
 }
