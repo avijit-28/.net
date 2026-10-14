@@ -57,7 +57,10 @@ namespace WebApplication4
             {
                 return string.Empty;
             }
-            return title.ToString().Trim().Replace(" ", "-");
+            string str = title.ToString().Trim();
+            // Sanitize characters that conflict with URL routing segments
+            str = str.Replace("/", "-").Replace("\\", "-").Replace("?", "").Replace("#", "");
+            return str.Replace(" ", "-");
         }
     }
 }
