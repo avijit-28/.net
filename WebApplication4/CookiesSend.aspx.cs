@@ -16,6 +16,13 @@ namespace MiniProject
 
         protected void BtnCookies_Click(object sender, EventArgs e)
         {
+            HttpCookie cookie = new HttpCookie("UserDetails");
+
+            cookie["Name"] = TxtName.Text;
+            cookie["Email"] = TxtEmail.Text;
+            cookie.Expires = DateTime.Now.AddMinutes(10); // Set cookie expiration time to 10 minutes
+            Response.Cookies.Add(cookie);
+            Response.Redirect("CookiesGet.aspx");
 
         }
     }
