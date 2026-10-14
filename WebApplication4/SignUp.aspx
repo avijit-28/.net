@@ -288,6 +288,7 @@
                 </div>
                 <div class="action-group">
                     <asp:Button ID="BtnProductForm" runat="server" Text="&#128230; Go to Product Form" OnClick="BtnProductForm_Click" CssClass="btn-product" />
+                    <asp:Button ID="BtnSearchUser" runat="server" Text="&#128269; Search User" OnClick="BtnSearchUser_Click" CssClass="btn-search-nav" />
                     <a href="FirstPage.aspx" class="back-link">&larr; Back to Sign In</a>
                 </div>
             </div>
