@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,8 +11,7 @@ namespace MiniProject
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            LblName.Text = Request.QueryString["UserName"];
-            LblEmail.Text = Request.QueryString["UserEmail"];
+
         }
     }
 }
