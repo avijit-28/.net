@@ -26,7 +26,7 @@ namespace MiniProject
             //int count = (ViewState["Clicks"] != null) ? (int)ViewState["Clicks"] + 1 : 1;
             //ViewState["Clicks"] = count;
             //TextBox1.Text = count.ToString();
-            //Response.Write(IsPostBack);
+            Response.Write(IsPostBack);
             int counts = Convert.ToInt32(TextBox1.Text) + 1;
             TextBox1.Text = counts.ToString();
         }
