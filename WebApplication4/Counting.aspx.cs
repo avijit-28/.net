@@ -14,7 +14,7 @@ namespace MiniProject
             if (!IsPostBack)
             {
                 //ViewState["Clicks"] = 0;
-                Response.Write(IsPostBack);
+                //Response.Write(IsPostBack);
                 TextBox1.Text = "0";
             }
         }
@@ -26,7 +26,7 @@ namespace MiniProject
             //int count = (ViewState["Clicks"] != null) ? (int)ViewState["Clicks"] + 1 : 1;
             //ViewState["Clicks"] = count;
             //TextBox1.Text = count.ToString();
-            Response.Write(IsPostBack);
+            //Response.Write(IsPostBack);
             int counts = Convert.ToInt32(TextBox1.Text) + 1;
             TextBox1.Text = counts.ToString();
         }
@@ -34,7 +34,7 @@ namespace MiniProject
         protected void BtnReset_Click(object sender, EventArgs e)
         {
             //ViewState["Clicks"] = 0;
-            Response.Write(IsPostBack);
+            //Response.Write(IsPostBack);
             TextBox1.Text = "0";
         }
     }
