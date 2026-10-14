@@ -10,6 +10,17 @@
     <form id="form1" runat="server">
         <asp:ScriptManager ID="scriptmanager1" runat="server">   </asp:ScriptManager>  
         <div>
+            <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="updatepnl">
+
+            <ProgressTemplate>
+                <div style="color:red; font-weight:bold;">
+                       Please Wait...
+                </div>
+            </ProgressTemplate>
+
+            </asp:UpdateProgress>
+
+
         <asp:UpdatePanel ID="updatepnl" runat="server"> 
         <ContentTemplate>
 
