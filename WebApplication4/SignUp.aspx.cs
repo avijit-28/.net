@@ -14,10 +14,18 @@ namespace WebApplication4
         /// <param name="e">The e<see cref="EventArgs"/></param>
         protected void Page_Load(object sender, EventArgs e)
         {
-            lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
-            outUserName.Text = Session["UserName"] != null ? Session["UserName"].ToString() : "Guest";
-            outPassword.Text = Session["Password"] != null ? Session["Password"].ToString() : "••••••••";
-            //lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
+
+            if ((Session["UserName"] != null)|| (Session["Password"] != null))
+            {
+                lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
+                outUserName.Text = Session["UserName"].ToString();
+                outPassword.Text = Session["Password"].ToString();
+                //lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
+            }
+            else
+            {
+                Response.Redirect("FirstPage.aspx");
+            }
         }
 
         /// <summary>
