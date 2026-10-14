@@ -186,6 +186,9 @@
         .gallery-actions {
             margin-top: 24px;
             display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
             justify-content: flex-start;
         }
 
@@ -212,6 +215,32 @@
         }
 
         .btn-counting:active {
+            transform: translateY(0);
+        }
+
+        .btn-cookies-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-cookies-nav:hover {
+            background: linear-gradient(135deg, #b45309 0%, #92400e 100%);
+            box-shadow: 0 6px 18px rgba(217, 119, 6, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-cookies-nav:active {
             transform: translateY(0);
         }
 
