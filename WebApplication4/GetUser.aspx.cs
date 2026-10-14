@@ -11,7 +11,24 @@ namespace MiniProject
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                string user = Request.QueryString["user"];
+                string email = Request.QueryString["email"];
 
+                LblName.Text = !string.IsNullOrWhiteSpace(user) ? Server.HtmlEncode(user) : "No Username Provided";
+                LblEmail.Text = !string.IsNullOrWhiteSpace(email) ? Server.HtmlEncode(email) : "No Email Provided";
+            }
+        }
+
+        protected void BtnBackToSearch_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("SearchUser.aspx");
+        }
+
+        protected void BtnGoToDashboard_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("SignUp.aspx");
         }
     }
 }
