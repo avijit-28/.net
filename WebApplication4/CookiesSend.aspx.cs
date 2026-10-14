@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -18,12 +18,11 @@ namespace MiniProject
         {
             HttpCookie cookie = new HttpCookie("UserDetails");
 
-            cookie["Name"] = TxtName.Text;
-            cookie["Email"] = TxtEmail.Text;
+            cookie["Name"] = !string.IsNullOrWhiteSpace(TxtName.Text) ? TxtName.Text.Trim() : "Guest";
+            cookie["Email"] = !string.IsNullOrWhiteSpace(TxtEmail.Text) ? TxtEmail.Text.Trim() : "N/A";
             cookie.Expires = DateTime.Now.AddMinutes(2); // Set cookie expiration time to 2 minutes
             Response.Cookies.Add(cookie);
             Response.Redirect("CookiesGet.aspx");
-
         }
     }
 }
