@@ -20,7 +20,7 @@ namespace MiniProject
 
             cookie["Name"] = TxtName.Text;
             cookie["Email"] = TxtEmail.Text;
-            cookie.Expires = DateTime.Now.AddMinutes(2); // Set cookie expiration time to 10 minutes
+            cookie.Expires = DateTime.Now.AddMinutes(2); // Set cookie expiration time to 2 minutes
             Response.Cookies.Add(cookie);
             Response.Redirect("CookiesGet.aspx");
 
