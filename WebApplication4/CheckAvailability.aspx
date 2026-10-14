@@ -10,15 +10,25 @@
     <form id="form1" runat="server">
         <asp:ScriptManager ID="scriptmanager1" runat="server">   </asp:ScriptManager>  
         <div>
-            <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="updatepnl">
+            <asp:UpdateProgress ID="UpdateProgress1"
+                                runat="server"
+                                AssociatedUpdatePanelID="updatepnl">
 
             <ProgressTemplate>
-                <div style="color:red; font-weight:bold;">
-                       Please Wait...
-                </div>
-            </ProgressTemplate>
 
-            </asp:UpdateProgress>
+            <div style="padding:10px;">
+                <asp:Image ID="imgLoading"
+                    runat="server"
+                    ImageUrl="~/Images/loading.gif"
+                    Width="30px"
+                    Height="30px" />
+
+                    Loading...
+            </div>
+
+    </ProgressTemplate>
+
+</asp:UpdateProgress>
 
 
         <asp:UpdatePanel ID="updatepnl" runat="server"> 
