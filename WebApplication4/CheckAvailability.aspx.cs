@@ -28,9 +28,29 @@ namespace WebApplication4
                     String query = "SELECT COUNT(*) FROM Users WHERE [UserName] = @un";
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
+                        cmd.Parameters.AddWithValue("@un", txtun.Text);
+                        con.Open();
+                        SqlDataReader dr = cmd.ExecuteReader();
+                        if (dr.HasRows)
+                        {
+                            checkun.Visible = true;
+                            shwimg.ImageUrl = "~/images/Cancel.png";
+                            lblmsg.Text = "UserName Already Exist..!!";
 
+                        }
+                        else
+                        {
+                            checkun.Visible = true;
+                            shwimg.ImageUrl = "~/images/Accepted.png";
+                            lblmsg.Text = "Congratulation created Successfully..!!";
+                        }
                     }
                 }
+            }
+            else
+            {
+                checkun.Visible = false;
+                
             }
         }
     }
