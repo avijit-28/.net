@@ -69,8 +69,10 @@
   <ItemGroup>
     <Content Include="Counting.aspx" />
     <Content Include="FirstPage.aspx" />
+    <Content Include="GetUser.aspx" />
     <Content Include="Global.asax" />
     <Content Include="ProductForm.aspx" />
+    <Content Include="SearchUser.aspx" />
     <Content Include="SignUp.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -89,6 +91,13 @@
     <Compile Include="FirstPage.aspx.designer.cs">
       <DependentUpon>FirstPage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="GetUser.aspx.cs">
+      <DependentUpon>GetUser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GetUser.aspx.designer.cs">
+      <DependentUpon>GetUser.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -100,6 +109,13 @@
       <DependentUpon>ProductForm.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchUser.aspx.cs">
+      <DependentUpon>SearchUser.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SearchUser.aspx.designer.cs">
+      <DependentUpon>SearchUser.aspx</DependentUpon>
+    </Compile>
     <Compile Include="SignUp.aspx.cs">
       <DependentUpon>SignUp.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
