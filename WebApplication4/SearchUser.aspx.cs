@@ -16,7 +16,16 @@ namespace MiniProject
 
         protected void BtnSearch_Click(object sender, EventArgs e)
         {
+            string userName = TxtUser.Text.Trim();
+            string email = TxtEmail.Text.Trim();
 
+            // Navigate to GetUser.aspx with query string data
+            Response.Redirect($"GetUser.aspx?user={Server.UrlEncode(userName)}&email={Server.UrlEncode(email)}");
+        }
+
+        protected void BtnGoToSignUp_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("SignUp.aspx");
         }
     }
 }
