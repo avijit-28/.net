@@ -160,17 +160,17 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 9px 18px;
+            padding: 12px 24px;
             background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
             color: #ffffff;
             border: none;
-            border-radius: 6px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
             transition: all 0.2s ease;
-            margin-left : 10px;
+/*            margin-left : 10px;*/
         }
 
         .btn-search-nav:hover {
