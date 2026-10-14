@@ -17,7 +17,7 @@ namespace QueryString1
 
         protected void BtnSend_Click(object sender, EventArgs e)
         {
-            Response.Redirect("StringGet.aspx?UserName=" + Server.UrlEncode(TxtUser.Text) + "UserEmail=" + Server.UrlEncode(TxtEmail.Text));
+            Response.Redirect("StringGet.aspx?UserName=" + Server.UrlEncode(TxtUser.Text) + "&UserEmail=" + Server.UrlEncode(TxtEmail.Text));
         }
     }
 }
