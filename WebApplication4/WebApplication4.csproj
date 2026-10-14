@@ -70,12 +70,14 @@
     <Content Include="CookiesGet.aspx" />
     <Content Include="CookiesSend.aspx" />
     <Content Include="Counting.aspx" />
+    <Content Include="DetailPage.aspx" />
     <Content Include="FirstPage.aspx" />
     <Content Include="GetUser.aspx" />
     <Content Include="Global.asax" />
     <Content Include="ProductForm.aspx" />
     <Content Include="SearchUser.aspx" />
     <Content Include="SignUp.aspx" />
+    <Content Include="URLRouting.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -99,6 +101,13 @@
     </Compile>
     <Compile Include="Counting.aspx.designer.cs">
       <DependentUpon>Counting.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="DetailPage.aspx.cs">
+      <DependentUpon>DetailPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DetailPage.aspx.designer.cs">
+      <DependentUpon>DetailPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="FirstPage.aspx.cs">
       <DependentUpon>FirstPage.aspx</DependentUpon>
@@ -138,6 +147,13 @@
     </Compile>
     <Compile Include="SignUp.aspx.designer.cs">
       <DependentUpon>SignUp.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="URLRouting.aspx.cs">
+      <DependentUpon>URLRouting.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="URLRouting.aspx.designer.cs">
+      <DependentUpon>URLRouting.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
