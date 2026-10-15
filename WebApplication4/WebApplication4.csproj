@@ -138,6 +138,17 @@
     <Compile Include="GetUser.aspx.designer.cs">
       <DependentUpon>GetUser.aspx</DependentUpon>
     </Compile>
+    <Compile Include="GetUserDetails.aspx.cs">
+      <DependentUpon>GetUserDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GetUserDetails.aspx.designer.cs">
+      <DependentUpon>GetUserDetails.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebService1.asmx.cs">
+      <DependentUpon>WebService1.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
