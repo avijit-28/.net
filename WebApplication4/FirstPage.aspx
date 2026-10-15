@@ -339,7 +339,7 @@
 
             <!-- Footer -->
             <div class="card-footer">
-                <a href="Default.aspx" class="home-link">&larr; Back to Home Portal</a>
+                <a href="<%= ResolveUrl("~/Home") %>" class="home-link">&larr; Back to Home Portal</a>
             </div>
         </form>
     </div>
