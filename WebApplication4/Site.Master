@@ -1,0 +1,356 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="WebApplication4.SiteMaster" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%: Page.Title %> - WebApplication4</title>
+
+    <style type="text/css">
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-dark: #1e40af;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: var(--slate-800);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navigation Header */
+        .site-header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--slate-200);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        /* Brand */
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--slate-900);
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--slate-900);
+        }
+
+        .brand-subtitle {
+            font-size: 11px;
+            color: var(--slate-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Nav Links */
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-item a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--slate-700);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item a:hover {
+            color: var(--primary);
+            background: var(--slate-100);
+        }
+
+        /* Header Right Controls */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .online-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .online-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .user-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: var(--slate-100);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--slate-800);
+        }
+
+        .btn-auth {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+        }
+
+        .btn-auth:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            transform: translateY(-1px);
+        }
+
+        /* Main Content Container */
+        .main-wrapper {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Footer */
+        .site-footer {
+            background: #ffffff;
+            border-top: 1px solid var(--slate-200);
+            padding: 24px 20px;
+            margin-top: auto;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--slate-600);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 16px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--slate-600);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 900px) {
+            .nav-container {
+                height: auto;
+                padding: 14px 16px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .nav-menu {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 4px;
+            }
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
+
+        <!-- Main Master Header -->
+        <header class="site-header">
+            <div class="nav-container">
+                <!-- Brand Logo & Name -->
+                <a href="<%= ResolveUrl("~/Default.aspx") %>" class="brand">
+                    <div class="brand-icon">&#127760;</div>
+                    <div class="brand-text">
+                        <span class="brand-title">WebApplication4</span>
+                        <span class="brand-subtitle">ASP.NET WebForms Portal</span>
+                    </div>
+                </a>
+
+                <!-- Navigation Menu Links -->
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="<%= ResolveUrl("~/Default.aspx") %>">&#127968; Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<%= ResolveUrl("~/SignUp.aspx") %>">&#128100; Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<%= ResolveUrl("~/ProductForm.aspx") %>">&#128230; Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<%= ResolveUrl("~/SearchUser.aspx") %>">&#128269; Search User</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<%= ResolveUrl("~/CheckAvailability.aspx") %>">&#128737; Availability</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<%= ResolveUrl("~/CookiesSend.aspx") %>">&#127850; Cookies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<%= ResolveUrl("~/URLRouting.aspx") %>">&#128279; Routing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<%= ResolveUrl("~/Counting.aspx") %>">&#128290; Counter</a>
+                    </li>
+                </ul>
+
+                <!-- Header Actions & Status Badges -->
+                <div class="header-actions">
+                    <div class="online-pill" title="Live Users Online (Application State)">
+                        <span class="online-dot"></span>
+                        <span>Online: </span>
+                        <asp:Label ID="lblOnlineUsers" runat="server" Text="0"></asp:Label>
+                    </div>
+
+                    <div class="user-badge">
+                        <span>&#128100;</span>
+                        <asp:Label ID="lblCurrentUser" runat="server" Text="Guest"></asp:Label>
+                    </div>
+
+                    <a href="<%= ResolveUrl("~/FirstPage.aspx") %>" class="btn-auth">
+                        Sign In / Out
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body Content Placeholder -->
+        <main class="main-wrapper">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+        </main>
+
+        <!-- Master Footer -->
+        <footer class="site-footer">
+            <div class="footer-container">
+                <div>
+                    &copy; <%= DateTime.Now.Year %> <strong>WebApplication4</strong>. Built with ASP.NET WebForms &amp; C#.
+                </div>
+                <ul class="footer-links">
+                    <li><a href="<%= ResolveUrl("~/Default.aspx") %>">Home</a></li>
+                    <li><a href="<%= ResolveUrl("~/SignUp.aspx") %>">User Dashboard</a></li>
+                    <li><a href="<%= ResolveUrl("~/ProductForm.aspx") %>">Inventory</a></li>
+                    <li><a href="<%= ResolveUrl("~/URLRouting.aspx") %>">Articles</a></li>
+                    <li><a href="<%= ResolveUrl("~/CheckAvailability.aspx") %>">Live Validation</a></li>
+                </ul>
+            </div>
+        </footer>
+    </form>
+</body>
+</html>
