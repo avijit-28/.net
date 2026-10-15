@@ -332,7 +332,7 @@
 
         <!-- Main Body Content Placeholder -->
         <main class="main-wrapper">
-            
+            <asp:ContentPlaceHolder ID="MainContent" runat="server"></asp:ContentPlaceHolder>
         </main>
 
         <!-- Master Footer -->
