@@ -14,51 +14,59 @@ namespace MiniProject
     public partial class SearchUser
     {
 
-
         /// <summary>
-        /// Label1 control.
+        /// btnShowAllTop control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label1;
+        protected global::System.Web.UI.WebControls.Button btnShowAllTop;
 
         /// <summary>
-        /// TxtUser control.
+        /// lblRecordCount control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TxtUser;
+        protected global::System.Web.UI.WebControls.Label lblRecordCount;
 
         /// <summary>
-        /// Label2 control.
+        /// pnlActiveFilter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label2;
+        protected global::System.Web.UI.WebControls.Panel pnlActiveFilter;
 
         /// <summary>
-        /// TxtEmail control.
+        /// lblFilterTerm control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TxtEmail;
+        protected global::System.Web.UI.WebControls.Label lblFilterTerm;
 
         /// <summary>
-        /// BtnSearch control.
+        /// btnShowAll control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button BtnSearch;
+        protected global::System.Web.UI.WebControls.Button btnShowAll;
+
+        /// <summary>
+        /// GridViewUsers control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView GridViewUsers;
 
         /// <summary>
         /// BtnGoToSignUp control.
@@ -68,5 +76,19 @@ namespace MiniProject
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button BtnGoToSignUp;
+
+        /// <summary>
+        /// Master property.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated property.
+        /// </remarks>
+        public new WebApplication4.SiteMaster Master
+        {
+            get
+            {
+                return ((WebApplication4.SiteMaster)(base.Master));
+            }
+        }
     }
 }
