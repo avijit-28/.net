@@ -257,8 +257,8 @@
 
             <!-- Footer -->
             <div class="card-footer">
-                <a href="SearchUser.aspx" class="nav-link">&larr; Back to Search</a>
-                <a href="SignUp.aspx" class="nav-link">Dashboard &rarr;</a>
+                <a href="<%= ResolveUrl("~/SearchUser") %>" class="nav-link">&larr; Back to Search</a>
+                <a href="<%= ResolveUrl("~/SignUp") %>" class="nav-link">Dashboard &rarr;</a>
             </div>
         </div>
     </div>
