@@ -328,8 +328,8 @@
 
             <!-- Footer -->
             <div class="card-footer">
-                <a href="SignUp.aspx" class="nav-link">&larr; Back to Dashboard</a>
-                <a href="CookiesGet.aspx" class="nav-link">View Stored Cookie &rarr;</a>
+                <a href="<%= ResolveUrl("~/SignUp") %>" class="nav-link">&larr; Back to Dashboard</a>
+                <a href="<%= ResolveUrl("~/CookiesGet") %>" class="nav-link">View Stored Cookie &rarr;</a>
             </div>
         </div>
     </div>
