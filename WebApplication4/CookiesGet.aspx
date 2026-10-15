@@ -1,33 +1,11 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CookiesGet.aspx.cs" Inherits="MiniProject.CookiesGet" %>
+<%@ Page Title="Retrieved Cookie Data" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="CookiesGet.aspx.cs" Inherits="MiniProject.CookiesGet" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cookie Management - Retrieved Cookies</title>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style type="text/css">
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #fef3c7 0%, #f1f5f9 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 30px 15px;
-            color: #1e293b;
-        }
-
-        .container {
+        .cookies-container {
             width: 100%;
             max-width: 520px;
+            margin: 0 auto;
         }
 
         /* Card Container */
@@ -320,9 +298,10 @@
             }
         }
     </style>
-</head>
-<body>
-    <form id="form1" runat="server" class="container">
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+    <div class="cookies-container">
         <div class="card">
             <!-- Header -->
             <div class="card-header">
@@ -393,6 +372,5 @@
                 <a href="CookiesSend.aspx" class="nav-link">Configure Cookies &rarr;</a>
             </div>
         </div>
-    </form>
-</body>
-</html>
+    </div>
+</asp:Content>
