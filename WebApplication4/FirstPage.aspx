@@ -334,7 +334,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <asp:Button ID="BtnSign" runat="server" OnClick="BtnSign_Click" Text="&#10148; Sign In to Dashboard" CssClass="btn-submit" />
+                <asp:Button ID="BtnSign" runat="server" OnClick="BtnSign_Click" Text="&#10148; Sign In to OMG-YAHOO" CssClass="btn-submit" />
             </div>
 
             <!-- Footer -->
