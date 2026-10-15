@@ -32,7 +32,7 @@ namespace WebServices1
         {
             using (SqlConnection con = new SqlConnection(_conStr))
             {
-                string query = "Select * from Student where Name like @StdName+'%' ";
+                string query = "Select * from Students where Name like @StdName+'%' ";
                 using(SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@StdName", StdName);
