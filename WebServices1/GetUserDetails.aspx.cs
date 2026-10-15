@@ -20,11 +20,9 @@ namespace WebServices1
         }
         protected void BindUserDetails(string userName)
         {
-            // Use the local WebService1 implementation instead of a missing 'localhost' proxy
-            WebService1 objUserDetails = new WebService1();
+            localhost.Service objUserDetails = new localhost.Service();
             DataSet dsresult = new DataSet();
-            // Call GetSdtDetails which returns XmlElement for student details
-            XmlElement exelement = objUserDetails.GetSdtDetails(userName);
+            XmlElement exelement = objUserDetails.GetUserDetails(userName);
             if (exelement != null)
             {
                 XmlNodeReader nodereader = new XmlNodeReader(exelement);
