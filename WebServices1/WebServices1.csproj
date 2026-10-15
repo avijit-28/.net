@@ -159,6 +159,13 @@
     <Content Include="Content\bootstrap-grid.rtl.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <None Include="Connected Services\localhost\WebService1.wsdl" />
+    <Content Include="Connected Services\localhost\WebServices1.localhost.GetSdtDetailsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\localhost\WebServices1.localhost.HelloWorldResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -170,13 +177,6 @@
     <None Include="Web References\localhost\WebService1.disco" />
     <Content Include="WebService1.asmx" />
     <Content Include="Properties\DataSources\System.Xml.Linq.XElement.datasource" />
-    <None Include="Connected Services\localhost\WebService1.wsdl" />
-    <Content Include="Connected Services\localhost\WebServices1.localhost.GetSdtDetailsResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Content>
-    <Content Include="Connected Services\localhost\WebServices1.localhost.HelloWorldResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Content>
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -305,10 +305,10 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadataStorage Include="Connected Services\localhost\" />
+    <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferences Include="Web References\" />
+    <WCFMetadataStorage Include="Connected Services\localhost\" />
   </ItemGroup>
   <ItemGroup>
     <WebReferenceUrl Include="http://localhost:8050/WebService1.asmx">
