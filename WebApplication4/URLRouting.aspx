@@ -1,33 +1,11 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="URLRouting.aspx.cs" Inherits="WebApplication4.URLRouting" %>
+<%@ Page Title="Article Catalog - URL Routing" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="URLRouting.aspx.cs" Inherits="WebApplication4.URLRouting" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>URL Routing - Article Catalog</title>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style type="text/css">
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #f0fdf4 0%, #e2e8f0 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 30px 15px;
-            color: #1e293b;
-        }
-
-        .container {
+        .catalog-container {
             width: 100%;
             max-width: 860px;
+            margin: 0 auto;
         }
 
         /* Card Container */
@@ -201,9 +179,10 @@
             }
         }
     </style>
-</head>
-<body>
-    <form id="form1" runat="server" class="container">
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+    <div class="catalog-container">
         <div class="card">
             <!-- Header -->
             <div class="card-header">
@@ -259,6 +238,5 @@
                 <span style="color: #94a3b8; font-size: 12px;">Route: /Articles/{id}/{Title}</span>
             </div>
         </div>
-    </form>
-</body>
-</html>
+    </div>
+</asp:Content>
