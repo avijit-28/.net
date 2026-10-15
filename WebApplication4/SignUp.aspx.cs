@@ -24,7 +24,7 @@ namespace WebApplication4
             }
             else
             {
-                Response.Redirect("FirstPage.aspx");
+                Response.Redirect("~/FirstPage");
             }
         }
 
@@ -35,27 +35,27 @@ namespace WebApplication4
         /// <param name="e">The e<see cref="EventArgs"/></param>
         protected void BtnProductForm_Click(object sender, EventArgs e)
         {
-            Response.Redirect("ProductForm.aspx");
+            Response.Redirect("~/ProductForm");
         }
 
         protected void BtnCounting_Click(object sender, EventArgs e)
         {
-            Response.Redirect("Counting.aspx");
+            Response.Redirect("~/Counting");
         }
 
         protected void BtnSearchUser_Click(object sender, EventArgs e)
         {
-            Response.Redirect("SearchUser.aspx");
+            Response.Redirect("~/SearchUser");
         }
 
         protected void BtnCookiesSend_Click(object sender, EventArgs e)
         {
-            Response.Redirect("CookiesSend.aspx");
+            Response.Redirect("~/CookiesSend");
         }
 
         protected void BtnCheckAvailability_Click(object sender, EventArgs e)
         {
-            Response.Redirect("CheckAvailability.aspx");
+            Response.Redirect("~/CheckAvailability");
         }
     }
 }
