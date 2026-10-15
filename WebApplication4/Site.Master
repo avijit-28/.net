@@ -277,7 +277,7 @@
                 <a href="<%= ResolveUrl("~/Home") %>" class="brand">
                     <div class="brand-icon">&#127760;</div>
                     <div class="brand-text">
-                        <span class="brand-title">WebApplication4</span>
+                        <span class="brand-title">OMG-YAHOO</span>
                         <span class="brand-subtitle">ASP.NET WebForms Portal</span>
                     </div>
                 </a>
