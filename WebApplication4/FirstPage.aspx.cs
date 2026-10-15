@@ -31,7 +31,7 @@ namespace WebApplication4
             {
                 Session["UserName"] = txtUserName.Text;
                 Session["Password"] = txtPassword.Text;
-                Response.Redirect("~/SignUp");
+                Response.Redirect("~/Home");
             }
             else
             {
