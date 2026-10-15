@@ -42,6 +42,33 @@ namespace WebApplication4
         protected global::System.Web.UI.ScriptManager ScriptManager1;
 
         /// <summary>
+        /// pnlMasterSearch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlMasterSearch;
+
+        /// <summary>
+        /// txtMasterSearch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtMasterSearch;
+
+        /// <summary>
+        /// btnMasterSearch control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnMasterSearch;
+
+        /// <summary>
         /// lblOnlineUsers control.
         /// </summary>
         /// <remarks>
