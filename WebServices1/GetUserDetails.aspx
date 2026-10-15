@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true"
+<%@ Page Language="C#" AutoEventWireup="true"
     CodeBehind="GetUserDetails.aspx.cs"
     Inherits="WebServices1.GetUserDetails" %>
 
@@ -103,13 +103,14 @@
                 User Details Search Portal
             </div>
 
-            <div class="search-panel">
+            <asp:Panel runat="server" CssClass="search-panel" DefaultButton="btnSubmit">
 
                 <label>Enter User Name :</label>
 
                 <asp:TextBox ID="txtUserName"
                     runat="server"
-                    CssClass="textbox">
+                    CssClass="textbox"
+                    placeholder="Enter name to search...">
                 </asp:TextBox>
 
                 &nbsp;
@@ -120,7 +121,7 @@
                     CssClass="btn"
                     OnClick="btnSubmit_Click" />
 
-            </div>
+            </asp:Panel>
 
             <div>
 
@@ -129,7 +130,10 @@
                     CssClass="grid"
                     Width="100%"
                     AutoGenerateColumns="False"
+                    ShowHeaderWhenEmpty="True"
                     EmptyDataText="No User Found">
+
+                    <EmptyDataRowStyle ForeColor="#dc3545" Font-Bold="True" HorizontalAlign="Center" />
 
                     <Columns>
 
