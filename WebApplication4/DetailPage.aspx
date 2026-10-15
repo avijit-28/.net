@@ -285,14 +285,14 @@
 
                 <!-- Actions -->
                 <div class="actions-group">
-                    <a href="<%= ResolveUrl("~/URLRouting.aspx") %>" class="btn-back">&larr; Back to Article Catalog</a>
-                    <a href="<%= ResolveUrl("~/SignUp.aspx") %>" class="btn-outline">&#127968; Dashboard</a>
+                    <a href="<%= ResolveUrl("~/URLRouting") %>" class="btn-back">&larr; Back to Article Catalog</a>
+                    <a href="<%= ResolveUrl("~/SignUp") %>" class="btn-outline">&#127968; Dashboard</a>
                 </div>
             </div>
 
             <!-- Footer -->
             <div class="card-footer">
-                <a href="<%= ResolveUrl("~/URLRouting.aspx") %>" class="nav-link">&larr; Articles</a>
+                <a href="<%= ResolveUrl("~/URLRouting") %>" class="nav-link">&larr; Articles</a>
                 <span style="color: #94a3b8; font-size: 12px;">ASP.NET WebForms URL Routing</span>
             </div>
         </div>
