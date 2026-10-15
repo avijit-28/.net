@@ -1,33 +1,11 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Counting.aspx.cs" Inherits="MiniProject.Counting" %>
+<%@ Page Title="Click Counter" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Counting.aspx.cs" Inherits="MiniProject.Counting" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Click Counter - ViewState Demo</title>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style type="text/css">
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #f0fdf4 0%, #e2e8f0 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 30px 15px;
-            color: #1e293b;
-        }
-
-        .container {
+        .counting-container {
             width: 100%;
             max-width: 480px;
+            margin: 0 auto;
         }
 
         /* Card Container */
@@ -216,9 +194,10 @@
             text-decoration: underline;
         }
     </style>
-</head>
-<body>
-    <form id="form1" runat="server" class="container">
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+    <div class="counting-container">
         <div class="card">
             <!-- Header -->
             <div class="card-header">
@@ -253,6 +232,5 @@
                 <a href="ProductForm.aspx" class="nav-link">&#128230; Product Form &rarr;</a>
             </div>
         </div>
-    </form>
-</body>
-</html>
+    </div>
+</asp:Content>
