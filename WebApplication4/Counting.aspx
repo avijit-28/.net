@@ -1,6 +1,6 @@
 <%@ Page Title="Click Counter" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Counting.aspx.cs" Inherits="MiniProject.Counting" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style type="text/css">
         .counting-container {
             width: 100%;
