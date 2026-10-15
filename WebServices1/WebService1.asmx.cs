@@ -28,7 +28,7 @@ namespace WebServices1
             return "Hello World";
         }
         [WebMethod]
-        public XmlElement GetSdtDetails(string UserName)
+        public XmlElement GetUserDetails(string UserName)
         {
             using (SqlConnection con = new SqlConnection(_conStr))
             {
