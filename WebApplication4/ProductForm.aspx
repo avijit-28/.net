@@ -368,7 +368,7 @@
             <!-- Footer -->
             <div class="card-footer">
                 <span>&#128717; Product Catalog</span>
-                <a href="SignUp.aspx" class="nav-link">&larr; Back to Dashboard</a>
+                <a href="<%= ResolveUrl("~/SignUp") %>" class="nav-link">&larr; Back to Dashboard</a>
             </div>
         </div>
     </div>
