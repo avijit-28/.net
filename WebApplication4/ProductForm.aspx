@@ -1,33 +1,11 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ProductForm.aspx.cs" Inherits="WebApplication4.ProductForm" %>
+<%@ Page Title="Product Management - Add Product" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ProductForm.aspx.cs" Inherits="WebApplication4.ProductForm" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Product Management - Add Product</title>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style type="text/css">
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 30px 15px;
-            color: #1e293b;
-        }
-
-        .container {
+        .product-container {
             width: 100%;
             max-width: 620px;
+            margin: 0 auto;
         }
 
         /* Card Container */
@@ -274,9 +252,10 @@
             text-decoration: underline;
         }
     </style>
-</head>
-<body>
-    <form id="form1" runat="server" class="container">
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+    <div class="product-container">
         <div class="card">
             <!-- Header -->
             <div class="card-header">
@@ -298,7 +277,7 @@
                             <asp:TextBox ID="TxtPdrId" runat="server" CssClass="form-input" placeholder="e.g. PRD-101" autocomplete="off"></asp:TextBox>
                         </div>
                         <asp:RequiredFieldValidator ID="RequiredFieldValidatorPdrId" runat="server" 
-                            ErrorMessage="Product Id is required" 
+                            ErrorMessage="Product Id required" 
                             ForeColor="Red" 
                             ControlToValidate="TxtPdrId" 
                             Display="Dynamic" 
@@ -316,7 +295,7 @@
                             <asp:TextBox ID="TxtPrdName" runat="server" CssClass="form-input" placeholder="e.g. Wireless Mouse" autocomplete="off"></asp:TextBox>
                         </div>
                         <asp:RequiredFieldValidator ID="RequiredFieldValidatorPrdName" runat="server" 
-                            ErrorMessage="Product Name is required" 
+                            ErrorMessage="Product Name required" 
                             ForeColor="Red" 
                             ControlToValidate="TxtPrdName" 
                             Display="Dynamic" 
@@ -324,29 +303,43 @@
                         </asp:RequiredFieldValidator>
                     </div>
 
-                    <!-- Product Price -->
+                    <!-- Product Category -->
                     <div class="form-group">
-                        <label class="form-label" for="TxtPrdPrc">
-                            Product Price <span class="req-star">*</span>
+                        <label class="form-label" for="TxtPrdCat">
+                            Category <span class="req-star">*</span>
                         </label>
                         <div class="input-wrapper">
-                            <span class="input-icon">&#8377;</span>
-                            <asp:TextBox ID="TxtPrdPrc" runat="server" CssClass="form-input" placeholder="e.g. 499.00" autocomplete="off"></asp:TextBox>
+                            <span class="input-icon">&#128194;</span>
+                            <asp:TextBox ID="TxtPrdCat" runat="server" CssClass="form-input" placeholder="e.g. Electronics" autocomplete="off"></asp:TextBox>
                         </div>
-                        <asp:RangeValidator ID="RangeValidatorPrdPrc" runat="server" 
-                            ErrorMessage="Product Price in between 10 and 1000 required" 
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidatorPrdCat" runat="server" 
+                            ErrorMessage="Product Category is required" 
                             ForeColor="Red" 
-                            ControlToValidate="TxtPrdPrc" 
+                            ControlToValidate="TxtPrdCat" 
                             Display="Dynamic" 
-                            MinimumValue="1" 
-                            MaximumValue="1000"
-                            Type ="Integer"
                             CssClass="val-error">
-
-                        </asp:RangeValidator>
+                        </asp:RequiredFieldValidator>
                     </div>
 
-                    <!-- Stock -->
+                    <!-- Product Price -->
+                    <div class="form-group">
+                        <label class="form-label" for="TxtPrdPrice">
+                            Price (USD) <span class="req-star">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">&#36;</span>
+                            <asp:TextBox ID="TxtPrdPrice" runat="server" CssClass="form-input" placeholder="e.g. 29.99" autocomplete="off"></asp:TextBox>
+                        </div>
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidatorPrdPrice" runat="server" 
+                            ErrorMessage="Product Price is required" 
+                            ForeColor="Red" 
+                            ControlToValidate="TxtPrdPrice" 
+                            Display="Dynamic" 
+                            CssClass="val-error">
+                        </asp:RequiredFieldValidator>
+                    </div>
+
+                    <!-- Product Stock (Full Width) -->
                     <div class="form-group">
                         <label class="form-label" for="TxtPrdStk">
                             Available Stock <span class="req-star">*</span>
@@ -378,6 +371,5 @@
                 <a href="SignUp.aspx" class="nav-link">&larr; Back to Dashboard</a>
             </div>
         </div>
-    </form>
-</body>
-</html>
+    </div>
+</asp:Content>
