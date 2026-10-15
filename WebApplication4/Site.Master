@@ -274,7 +274,7 @@
         <header class="site-header">
             <div class="nav-container">
                 <!-- Brand Logo & Name -->
-                <a href="<%= ResolveUrl("~/Default.aspx") %>" class="brand">
+                <a href="<%= ResolveUrl("~/Home") %>" class="brand">
                     <div class="brand-icon">&#127760;</div>
                     <div class="brand-text">
                         <span class="brand-title">WebApplication4</span>
@@ -285,28 +285,28 @@
                 <!-- Navigation Menu Links -->
                 <ul class="nav-menu">
                     <li class="nav-item">
-                        <a href="<%= ResolveUrl("~/Default.aspx") %>">&#127968; Home</a>
+                        <a href="<%= ResolveUrl("~/Home") %>">&#127968; Home</a>
                     </li>
                     <li class="nav-item">
-                        <a href="<%= ResolveUrl("~/SignUp.aspx") %>">&#128100; Dashboard</a>
+                        <a href="<%= ResolveUrl("~/SignUp") %>">&#128100; Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a href="<%= ResolveUrl("~/ProductForm.aspx") %>">&#128230; Products</a>
+                        <a href="<%= ResolveUrl("~/ProductForm") %>">&#128230; Products</a>
                     </li>
                     <li class="nav-item">
-                        <a href="<%= ResolveUrl("~/SearchUser.aspx") %>">&#128269; Search User</a>
+                        <a href="<%= ResolveUrl("~/SearchUser") %>">&#128269; Search User</a>
                     </li>
                     <li class="nav-item">
-                        <a href="<%= ResolveUrl("~/CheckAvailability.aspx") %>">&#128737; Availability</a>
+                        <a href="<%= ResolveUrl("~/CheckAvailability") %>">&#128737; Availability</a>
                     </li>
                     <li class="nav-item">
-                        <a href="<%= ResolveUrl("~/CookiesSend.aspx") %>">&#127850; Cookies</a>
+                        <a href="<%= ResolveUrl("~/CookiesSend") %>">&#127850; Cookies</a>
                     </li>
                     <li class="nav-item">
-                        <a href="<%= ResolveUrl("~/URLRouting.aspx") %>">&#128279; Routing</a>
+                        <a href="<%= ResolveUrl("~/URLRouting") %>">&#128279; Routing</a>
                     </li>
                     <li class="nav-item">
-                        <a href="<%= ResolveUrl("~/Counting.aspx") %>">&#128290; Counter</a>
+                        <a href="<%= ResolveUrl("~/Counting") %>">&#128290; Counter</a>
                     </li>
                 </ul>
 
@@ -323,7 +323,7 @@
                         <asp:Label ID="lblCurrentUser" runat="server" Text="Guest"></asp:Label>
                     </div>
 
-                    <a href="<%= ResolveUrl("~/FirstPage.aspx") %>" class="btn-auth">
+                    <a href="<%= ResolveUrl("~/FirstPage") %>" class="btn-auth">
                         Sign In / Out
                     </a>
                 </div>
@@ -343,11 +343,11 @@
                     &copy; <%= DateTime.Now.Year %> <strong>WebApplication4</strong>. Built with ASP.NET WebForms &amp; C#.
                 </div>
                 <ul class="footer-links">
-                    <li><a href="<%= ResolveUrl("~/Default.aspx") %>">Home</a></li>
-                    <li><a href="<%= ResolveUrl("~/SignUp.aspx") %>">User Dashboard</a></li>
-                    <li><a href="<%= ResolveUrl("~/ProductForm.aspx") %>">Inventory</a></li>
-                    <li><a href="<%= ResolveUrl("~/URLRouting.aspx") %>">Articles</a></li>
-                    <li><a href="<%= ResolveUrl("~/CheckAvailability.aspx") %>">Live Validation</a></li>
+                    <li><a href="<%= ResolveUrl("~/Home") %>">Home</a></li>
+                    <li><a href="<%= ResolveUrl("~/SignUp") %>">User Dashboard</a></li>
+                    <li><a href="<%= ResolveUrl("~/ProductForm") %>">Inventory</a></li>
+                    <li><a href="<%= ResolveUrl("~/URLRouting") %>">Articles</a></li>
+                    <li><a href="<%= ResolveUrl("~/CheckAvailability") %>">Live Validation</a></li>
                 </ul>
             </div>
         </footer>
