@@ -23,12 +23,12 @@ namespace MiniProject
 
         protected void BtnBackToSearch_Click(object sender, EventArgs e)
         {
-            Response.Redirect("SearchUser.aspx");
+            Response.Redirect("~/SearchUser");
         }
 
         protected void BtnGoToDashboard_Click(object sender, EventArgs e)
         {
-            Response.Redirect("SignUp.aspx");
+            Response.Redirect("~/SignUp");
         }
     }
 }
