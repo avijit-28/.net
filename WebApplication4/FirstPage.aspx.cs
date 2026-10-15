@@ -31,12 +31,11 @@ namespace WebApplication4
             {
                 Session["UserName"] = txtUserName.Text;
                 Session["Password"] = txtPassword.Text;
-                Response.Redirect("Default.aspx");
-
+                Response.Redirect("~/SignUp");
             }
             else
             {
-                Response.Redirect("FirstPage.aspx");
+                Response.Redirect("~/FirstPage");
             }
         }
     }
