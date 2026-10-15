@@ -32,7 +32,7 @@ namespace WebServices1
         {
             using (SqlConnection con = new SqlConnection(_conStr))
             {
-                string query = "Select * from [UserDetails] where Name like @UserName+'%' ";
+                string query = "Select * from UserDetails where UserName like @UserName+'%' ";
                 using(SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@UserName", UserName);
