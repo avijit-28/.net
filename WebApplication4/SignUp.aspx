@@ -474,7 +474,7 @@
 
             <div class="cred-actions">
                 <asp:Button ID="BtnProductForm" runat="server" Text="&#128230; Open Product Form" OnClick="BtnProductForm_Click" CssClass="btn-primary-action" />
-                <a href="FirstPage.aspx" class="btn-signout">&#128682; Sign Out</a>
+                <a href="<%= ResolveUrl("~/FirstPage") %>" class="btn-signout">&#128682; Sign Out</a>
             </div>
         </div>
 
