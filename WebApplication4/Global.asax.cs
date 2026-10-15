@@ -19,6 +19,7 @@ namespace WebApplication4
         public static void RegisterRoutes(RouteCollection routeCollection)
         {
             routeCollection.Ignore("{resource}.axd/{*pathInfo}");
+            routeCollection.Ignore("{resource}.asmx/{*pathInfo}");
 
             // Clean, friendly extensionless page routes
             routeCollection.MapPageRoute("HomeRoute", "Home", "~/Default.aspx");
@@ -30,6 +31,8 @@ namespace WebApplication4
             routeCollection.MapPageRoute("ProductsSlug", "products", "~/ProductForm.aspx");
             routeCollection.MapPageRoute("SearchUserRoute", "SearchUser", "~/SearchUser.aspx");
             routeCollection.MapPageRoute("SearchSlug", "search", "~/SearchUser.aspx");
+            routeCollection.MapPageRoute("GetUserDetailsRoute", "GetUserDetails", "~/GetUserDetails.aspx");
+            routeCollection.MapPageRoute("UserDetailsSlug", "user-details", "~/GetUserDetails.aspx");
             routeCollection.MapPageRoute("GetUserRoute", "GetUser", "~/GetUser.aspx");
             routeCollection.MapPageRoute("CookiesSendRoute", "CookiesSend", "~/CookiesSend.aspx");
             routeCollection.MapPageRoute("CookiesGetRoute", "CookiesGet", "~/CookiesGet.aspx");
