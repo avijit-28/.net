@@ -20,7 +20,7 @@ namespace WebServices1
         }
         protected void BindUserDetails(string userName)
         {
-            localhost. objUserDetails = new localhost.WebService1();
+            localhost.Service objUserDetails = new localhost.Service();
             DataSet dsresult = new DataSet();
             XmlElement exelement = objUserDetails.GetUserDetails(userName);
             if (exelement != null)
@@ -37,9 +37,6 @@ namespace WebServices1
             }
         }
 
-        protected void btnSubmit_Click(object sender, EventArgs e)
-        {
-            BindUserDetails(txtUserName.Text);
-        }
+      
     }
 }
