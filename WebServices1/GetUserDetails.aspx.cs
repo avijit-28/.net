@@ -22,7 +22,7 @@ namespace WebServices1
         {
             localhost.WebService1 objUserDetails = new localhost.WebService1();
             DataSet dsresult = new DataSet();
-            XmlElement exelement = objUserDetails.GetSdtDetails(userName);
+            XmlElement exelement = objUserDetails.GetUserDetails(userName);
             if (exelement != null)
             {
                 XmlNodeReader nodereader = new XmlNodeReader(exelement);
