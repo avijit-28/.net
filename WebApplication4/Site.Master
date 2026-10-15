@@ -433,6 +433,7 @@
                     <li><a href="<%= ResolveUrl("~/ProductForm") %>">Inventory</a></li>
                     <li><a href="<%= ResolveUrl("~/URLRouting") %>">Articles</a></li>
                     <li><a href="<%= ResolveUrl("~/CheckAvailability") %>">Live Validation</a></li>
+                    <li><a href="<%= ResolveUrl("~/GetUserDetails") %>">WS Search</a></li>
                 </ul>
             </div>
         </footer>
