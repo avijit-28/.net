@@ -303,7 +303,7 @@
                     </asp:Label>
                     <div class="input-wrapper">
                         <span class="input-icon">&#128274;</span>
-                        <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="••••••••"></asp:TextBox>
+                        <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="********"></asp:TextBox>
                     </div>
                 </div>
 
@@ -314,7 +314,7 @@
                     </asp:Label>
                     <div class="input-wrapper">
                         <span class="input-icon">&#128270;</span>
-                        <asp:TextBox ID="txtRePassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="••••••••"></asp:TextBox>
+                        <asp:TextBox ID="txtRePassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="********"></asp:TextBox>
                     </div>
                     <asp:CompareValidator ID="CompareValidatorPassword" runat="server"
                         ErrorMessage="Passwords do not match."
