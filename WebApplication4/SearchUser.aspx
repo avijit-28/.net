@@ -1,4 +1,4 @@
-<%@ Page Title="Students Directory - Search" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="SearchUser.aspx.cs" Inherits="MiniProject.SearchUser" %>
+<%@ Page Title="User Directory - Search" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="SearchUser.aspx.cs" Inherits="MiniProject.SearchUser" %>
 <%@ MasterType VirtualPath="~/Site.Master" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
@@ -223,7 +223,7 @@
             border: 1px solid #bae6fd;
         }
 
-        .student-name-cell {
+        .User-name-cell {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -231,7 +231,7 @@
             color: #0f172a;
         }
 
-        .student-avatar {
+        .User-avatar {
             width: 32px;
             height: 32px;
             border-radius: 50%;
@@ -372,7 +372,7 @@
         <div class="directory-header-card">
             <div class="header-content">
                 <span class="demo-badge">&#9881; Master &rarr; Content Data Passing</span>
-                <h1 class="header-title">&#128101; Student &amp; User Directory</h1>
+                <h1 class="header-title">&#128101; User &amp; User Directory</h1>
                 <p class="header-subtitle">
                     Live record viewer bound to database table <code>[Assignmet].[dbo].[UserDetails]</code>. Filter records by entering keywords in the Master Page search bar above.
                 </p>
@@ -383,7 +383,7 @@
         <div class="demo-notice">
             <div class="demo-notice-text">
                 <span>&#128161;</span>
-                <span><strong>How to search:</strong> Enter any student's name into the search bar in the top navigation header and click <strong>Search</strong>.</span>
+                <span><strong>How to search:</strong> Enter any User's name into the search bar in the top navigation header and click <strong>Search</strong>.</span>
             </div>
             <div>
                 <asp:Button ID="btnShowAllTop" runat="server" Text="&#128260; View All Records" OnClick="btnShowAll_Click" CssClass="btn-clear-filter" CausesValidation="false" />
@@ -428,11 +428,11 @@
                             </ItemTemplate>
                         </asp:TemplateField>
 
-                        <%-- Student / User Name Column --%>
-                        <asp:TemplateField HeaderText="Student / User Name" HeaderStyle-Width="220px">
+                        <%-- User / User Name Column --%>
+                        <asp:TemplateField HeaderText="User / User Name" HeaderStyle-Width="220px">
                             <ItemTemplate>
-                                <div class="student-name-cell">
-                                    <div class="student-avatar">
+                                <div class="User-name-cell">
+                                    <div class="User-avatar">
                                         <%# Eval("UserName") != null && Eval("UserName").ToString().Length > 0 ? Eval("UserName").ToString().Substring(0, 1).ToUpper() : "U" %>
                                     </div>
                                     <span><%# Eval("UserName") %></span>
@@ -473,11 +473,11 @@
                     <EmptyDataTemplate>
                         <div class="empty-state">
                             <div class="empty-icon">&#128269;</div>
-                            <h3 class="empty-title">No Students Found</h3>
+                            <h3 class="empty-title">No Users Found</h3>
                             <p class="empty-desc">
-                                We couldn't find any students whose name contains your search keyword. Try another name or click below to view the full directory.
+                                We couldn't find any Users whose name contains your search keyword. Try another name or click below to view the full directory.
                             </p>
-                            <asp:Button ID="btnEmptyReset" runat="server" Text="&#128260; Show All Students" OnClick="btnShowAll_Click" CssClass="btn-clear-filter" CausesValidation="false" />
+                            <asp:Button ID="btnEmptyReset" runat="server" Text="&#128260; Show All Users" OnClick="btnShowAll_Click" CssClass="btn-clear-filter" CausesValidation="false" />
                         </div>
                     </EmptyDataTemplate>
                 </asp:GridView>
