@@ -84,6 +84,8 @@
     <Content Include="Site.Master" />
     <Content Include="Default.aspx" />
     <Content Include="URLRouting.aspx" />
+    <Content Include="GetUserDetails.aspx" />
+    <Content Include="WebService1.asmx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
