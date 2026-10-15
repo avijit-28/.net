@@ -22,7 +22,7 @@ namespace MiniProject
             cookie["Email"] = !string.IsNullOrWhiteSpace(TxtEmail.Text) ? TxtEmail.Text.Trim() : "N/A";
             cookie.Expires = DateTime.Now.AddMinutes(2); // Set cookie expiration time to 2 minutes
             Response.Cookies.Add(cookie);
-            Response.Redirect("CookiesGet.aspx");
+            Response.Redirect("~/CookiesGet");
         }
     }
 }
