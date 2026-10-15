@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
 using System.Xml;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.Reflection.Emit;
+
 namespace WebServices1
 {
     /// <summary>
@@ -22,29 +22,29 @@ namespace WebServices1
     public class WebService1 : System.Web.Services.WebService
     {
         private readonly string _conStr = ConfigurationManager.ConnectionStrings["DBConn"].ConnectionString;
+
         [WebMethod]
         public string HelloWorld()
         {
             return "Hello World";
         }
+
         [WebMethod]
         public XmlElement GetSdtDetails(string UserName)
         {
             using (SqlConnection con = new SqlConnection(_conStr))
             {
-                string query = "Select * from UserDetails where UserName like @UserName+'%' ";
-                using(SqlCommand cmd = new SqlCommand(query, con))
+                string query = "SELECT UserId, UserName, Password, Email, MobileNo, City FROM UserDetails WHERE UserName LIKE @UserName + '%'";
+                using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-                    cmd.Parameters.AddWithValue("@UserName", UserName);
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-                    using(SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    cmd.Parameters.AddWithValue("@UserName", (object)UserName ?? string.Empty);
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
                     {
-                        DataSet ds = new DataSet();
-                        da.Fill(ds);
-                        XmlDataDocument xmlDoc = new XmlDataDocument(ds);
-                        XmlElement xmlElement = xmlDoc.DocumentElement;
-                        return xmlElement;
+                        DataSet ds = new DataSet("UserDetailsSet");
+                        da.Fill(ds, "UserDetails");
+                        XmlDocument xmlDoc = new XmlDocument();
+                        xmlDoc.LoadXml(ds.GetXml());
+                        return xmlDoc.DocumentElement;
                     }
                 }
             }
