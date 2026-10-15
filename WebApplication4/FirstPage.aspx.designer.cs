@@ -10,7 +10,8 @@
 namespace WebApplication4
 {
 
-
+    public partial class FirstPage
+    {
         /// <summary>
         /// form1 control.
         /// </summary>
