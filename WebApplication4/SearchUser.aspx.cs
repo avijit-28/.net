@@ -36,7 +36,7 @@ namespace MiniProject
                 }
                 else
                 {
-                    // Default: display all users / students
+                    // Default: display all users / Users
                     BindUserGrid(string.Empty);
                 }
             }
@@ -73,7 +73,7 @@ namespace MiniProject
         }
 
         /// <summary>
-        /// Queries the database table [Assignmet].[dbo].[UserDetails] for students whose name
+        /// Queries the database table [Assignmet].[dbo].[UserDetails] for Users whose name
         /// contains the search term and binds the result set to GridViewUsers.
         /// </summary>
         private void BindUserGrid(string searchTerm)
@@ -102,7 +102,7 @@ namespace MiniProject
 
                         // Update record count badge and active filter readout
                         int count = dt.Rows.Count;
-                        lblRecordCount.Text = $"{count} student{(count == 1 ? "" : "s")} found";
+                        lblRecordCount.Text = $"{count} User{(count == 1 ? "" : "s")} found";
 
                         if (!string.IsNullOrWhiteSpace(searchTerm))
                         {
