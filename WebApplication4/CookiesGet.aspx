@@ -361,15 +361,15 @@
 
                 <!-- Actions -->
                 <div class="actions-row">
-                    <a href="CookiesSend.aspx" class="btn-primary">&#127850; Send New Cookie</a>
-                    <a href="CookiesGet.aspx" class="btn-secondary">&#128260; Refresh Cookie</a>
+                    <a href="<%= ResolveUrl("~/CookiesSend") %>" class="btn-primary">&#127850; Send New Cookie</a>
+                    <a href="<%= ResolveUrl("~/CookiesGet") %>" class="btn-secondary">&#128260; Refresh Cookie</a>
                 </div>
             </div>
 
             <!-- Footer -->
             <div class="card-footer">
-                <a href="SignUp.aspx" class="nav-link">&larr; Back to Dashboard</a>
-                <a href="CookiesSend.aspx" class="nav-link">Configure Cookies &rarr;</a>
+                <a href="<%= ResolveUrl("~/SignUp") %>" class="nav-link">&larr; Back to Dashboard</a>
+                <a href="<%= ResolveUrl("~/CookiesSend") %>" class="nav-link">Configure Cookies &rarr;</a>
             </div>
         </div>
     </div>
