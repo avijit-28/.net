@@ -6,80 +6,90 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Student Search</title>
+    <title>User Search Portal</title>
 
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f4f6f9;
+            font-family: Segoe UI, Arial, sans-serif;
+            background: #eef2f7;
             margin: 0;
-            padding: 0;
         }
 
         .container {
-            width: 800px;
-            margin: 50px auto;
-            background: white;
+            width: 90%;
+            max-width: 1000px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
             padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 12px #ccc;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
 
         .header {
             text-align: center;
+            background: #0d6efd;
             color: white;
-            background-color: #0078D7;
             padding: 15px;
-            border-radius: 8px;
-            font-size: 28px;
+            border-radius: 10px;
+            font-size: 30px;
             font-weight: bold;
         }
 
         .search-panel {
-            margin-top: 25px;
             text-align: center;
+            margin-top: 25px;
+        }
+
+        .search-panel label {
+            font-size: 16px;
+            font-weight: bold;
         }
 
         .textbox {
-            width: 250px;
-            padding: 8px;
+            width: 280px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
 
         .btn {
-            background-color: #28a745;
+            padding: 10px 20px;
+            background-color: #198754;
             color: white;
             border: none;
-            padding: 9px 18px;
             border-radius: 5px;
-            cursor: pointer;
             font-weight: bold;
+            cursor: pointer;
         }
 
         .btn:hover {
-            background-color: #218838;
+            background-color: #157347;
         }
 
         .grid {
             margin-top: 25px;
             width: 100%;
+            border-collapse: collapse;
         }
 
         .grid th {
-            background-color: #0078D7;
+            background-color: #0d6efd;
             color: white;
-            padding: 10px;
+            padding: 12px;
+            text-align: center;
         }
 
         .grid td {
-            padding: 8px;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
         }
 
         .footer {
             text-align: center;
             margin-top: 20px;
             color: gray;
+            font-size: 13px;
         }
     </style>
 </head>
@@ -90,12 +100,12 @@
         <div class="container">
 
             <div class="header">
-                Student Search Using Web Service
+                User Details Search Portal
             </div>
 
             <div class="search-panel">
 
-                <label><b>Enter Student Name :</b></label>
+                <label>Enter User Name :</label>
 
                 <asp:TextBox ID="txtUserName"
                     runat="server"
@@ -106,37 +116,49 @@
 
                 <asp:Button ID="btnSubmit"
                     runat="server"
-                    Text="Search"
+                    Text="Search User"
                     CssClass="btn"
                     OnClick="btnSubmit_Click" />
 
             </div>
 
-            <div style="margin-top:20px;">
+            <div>
 
                 <asp:GridView ID="gvUserDetails"
                     runat="server"
                     CssClass="grid"
                     Width="100%"
-                    CellPadding="6"
-                    GridLines="Horizontal"
-                    EmptyDataText="No Record Found"
-                    AutoGenerateColumns="true">
+                    AutoGenerateColumns="False"
+                    EmptyDataText="No User Found">
 
-                    <HeaderStyle BackColor="#0078D7"
-                        ForeColor="White"
-                        Font-Bold="true" />
+                    <Columns>
 
-                    <RowStyle BackColor="White" />
+                        <asp:BoundField DataField="UserId"
+                            HeaderText="User ID" />
 
-                    <AlternatingRowStyle BackColor="#F2F2F2" />
+                        <asp:BoundField DataField="UserName"
+                            HeaderText="User Name" />
+
+                        <asp:BoundField DataField="Password"
+                            HeaderText="Password" />
+
+                        <asp:BoundField DataField="Email"
+                            HeaderText="Email" />
+
+                        <asp:BoundField DataField="MobileNo"
+                            HeaderText="Mobile No" />
+
+                        <asp:BoundField DataField="City"
+                            HeaderText="City" />
+
+                    </Columns>
 
                 </asp:GridView>
 
             </div>
 
             <div class="footer">
-                ASP.NET Web Service Demo
+                User Management System | ASP.NET Web Service Demo
             </div>
 
         </div>
