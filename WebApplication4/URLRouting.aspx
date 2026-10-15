@@ -234,7 +234,7 @@
 
             <!-- Footer -->
             <div class="card-footer">
-                <a href="SignUp.aspx" class="nav-link">&larr; Back to Dashboard</a>
+                <a href="<%= ResolveUrl("~/SignUp") %>" class="nav-link">&larr; Back to Dashboard</a>
                 <span style="color: #94a3b8; font-size: 12px;">Route: /Articles/{id}/{Title}</span>
             </div>
         </div>
