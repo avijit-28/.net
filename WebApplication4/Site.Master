@@ -390,7 +390,7 @@
                     <asp:Panel ID="pnlMasterSearch" runat="server" DefaultButton="btnMasterSearch" CssClass="master-search-bar">
                         <div class="search-input-group">
                             <span class="search-icon">&#128269;</span>
-                            <asp:TextBox ID="txtMasterSearch" runat="server" CssClass="master-search-input" placeholder="Search student..." autocomplete="off"></asp:TextBox>
+                            <asp:TextBox ID="txtMasterSearch" runat="server" CssClass="master-search-input" placeholder="Search User..." autocomplete="off"></asp:TextBox>
                             <asp:Button ID="btnMasterSearch" runat="server" Text="Search" OnClick="btnMasterSearch_Click" CssClass="master-search-btn" CausesValidation="false" />
                         </div>
                     </asp:Panel>
