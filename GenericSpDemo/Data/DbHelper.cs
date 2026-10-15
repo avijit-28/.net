@@ -10,7 +10,7 @@ namespace GenericSpDemo.Data
 {
     public static class DbHelper
     {
-        private static readonly string ConnStr = ConfigurationManager.ConnectionStrings["DbConn"].ConnectionString;
+        private static readonly string ConnStr = ConfigurationManager.ConnectionStrings["DBConn"].ConnectionString;
 
         /// <summary>
         /// Generic method: runs a stored procedure and returns a DataSet.
