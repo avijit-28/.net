@@ -283,8 +283,8 @@
 
             <!-- Footer -->
             <div class="card-footer">
-                <a href="FirstPage.aspx" class="nav-link">&larr; Sign In Page</a>
-                <a href="ProductForm.aspx" class="nav-link">&#128230; Product Form &rarr;</a>
+                <a href="<%= ResolveUrl("~/FirstPage") %>" class="nav-link">&larr; Sign In Page</a>
+                <a href="<%= ResolveUrl("~/ProductForm") %>" class="nav-link">&#128230; Product Form &rarr;</a>
             </div>
         </div>
     </div>
