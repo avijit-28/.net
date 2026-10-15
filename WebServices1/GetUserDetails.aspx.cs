@@ -50,9 +50,9 @@ namespace WebServices1
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Trace.TraceError("Error fetching user details: " + ex.Message);
                 gvUserDetails.DataSource = null;
                 gvUserDetails.DataBind();
-                // Optionally log exception or handle error
             }
         }
 
