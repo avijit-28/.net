@@ -310,9 +310,9 @@
                 Welcome to the unified WebApplication4 hub. Explore modern ASP.NET WebForms features including unified master layout, user state, database inventory management, real-time AJAX validation, client-side cookies, and SEO URL routing.
             </p>
             <div class="hero-actions">
-                <a href="SignUp.aspx" class="btn-hero-primary">&#128100; View User Dashboard</a>
-                <a href="ProductForm.aspx" class="btn-hero-secondary">&#128230; Open Product Form</a>
-                <a href="FirstPage.aspx" class="btn-hero-secondary">&#128272; Sign In Page</a>
+                <a href="SignUp" class="btn-hero-primary">&#128100; View User Dashboard</a>
+                <a href="ProductForm" class="btn-hero-secondary">&#128230; Open Product Form</a>
+                <a href="FirstPage" class="btn-hero-secondary">&#128272; Sign In Page</a>
             </div>
         </div>
 
@@ -380,7 +380,7 @@
                         <div class="module-name">Product Management</div>
                         <p class="module-desc">Add, validate, and persist catalog inventory products with formatted prices and category selection in a GridView.</p>
                     </div>
-                    <a href="ProductForm.aspx" class="module-link">Open Product Form &rarr;</a>
+                    <a href="ProductForm" class="module-link">Open Product Form &rarr;</a>
                 </div>
 
                 <!-- 2. Check Availability -->
@@ -393,7 +393,7 @@
                         <div class="module-name">Username Availability</div>
                         <p class="module-desc">Real-time asynchronous checking against SQL database using ASP.NET AJAX UpdatePanel without full page reload.</p>
                     </div>
-                    <a href="CheckAvailability.aspx" class="module-link">Test Availability &rarr;</a>
+                    <a href="CheckAvailability" class="module-link">Test Availability &rarr;</a>
                 </div>
 
                 <!-- 3. Search User -->
@@ -406,7 +406,7 @@
                         <div class="module-name">Search User Directory</div>
                         <p class="module-desc">Search users and safely transfer parameters via URL query strings to the recipient GetUser detail page.</p>
                     </div>
-                    <a href="SearchUser.aspx" class="module-link">Search Directory &rarr;</a>
+                    <a href="SearchUser" class="module-link">Search Directory &rarr;</a>
                 </div>
 
                 <!-- 4. Cookie State -->
@@ -419,7 +419,7 @@
                         <div class="module-name">HTTP Cookie Management</div>
                         <p class="module-desc">Demonstrates client-side multi-value cookies, expiration lifecycles, and reading cookie values from incoming HTTP headers.</p>
                     </div>
-                    <a href="CookiesSend.aspx" class="module-link">Manage Cookies &rarr;</a>
+                    <a href="CookiesSend" class="module-link">Manage Cookies &rarr;</a>
                 </div>
 
                 <!-- 5. URL Routing -->
@@ -432,7 +432,7 @@
                         <div class="module-name">SEO URL Routing</div>
                         <p class="module-desc">Demonstrates ASP.NET RouteTable with dynamic slug generation and parameterized detail views for articles.</p>
                     </div>
-                    <a href="URLRouting.aspx" class="module-link">View Articles &rarr;</a>
+                    <a href="URLRouting" class="module-link">View Articles &rarr;</a>
                 </div>
 
                 <!-- 6. Counting & Metrics -->
@@ -445,7 +445,7 @@
                         <div class="module-name">ViewState Click Counter</div>
                         <p class="module-desc">Tracks button click counters and state preservation across postback cycles using ASP.NET ViewState.</p>
                     </div>
-                    <a href="Counting.aspx" class="module-link">View Counter &rarr;</a>
+                    <a href="Counting" class="module-link">View Counter &rarr;</a>
                 </div>
             </div>
         </div>
