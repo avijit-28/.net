@@ -228,8 +228,8 @@
 
             <!-- Footer Navigation -->
             <div class="card-footer">
-                <a href="SignUp.aspx" class="nav-link">&larr; Back to Dashboard</a>
-                <a href="ProductForm.aspx" class="nav-link">&#128230; Product Form &rarr;</a>
+                <a href="<%= ResolveUrl("~/SignUp") %>" class="nav-link">&larr; Back to Dashboard</a>
+                <a href="<%= ResolveUrl("~/ProductForm") %>" class="nav-link">&#128230; Product Form &rarr;</a>
             </div>
         </div>
     </div>
