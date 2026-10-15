@@ -28,16 +28,15 @@ namespace WebServices1
             return "Hello World";
         }
         [WebMethod]
-        public XmlElement GetSdtDetails(string userName)
+        public XmlElement GetSdtDetails(string StdName)
         {
             using (SqlConnection con = new SqlConnection(_conStr))
             {
-                string query = "Select * from UserDetails where UserName like @UserName+'%' ";
+                string query = "Select * from Student where Name like @StdName+'%' ";
                 using(SqlCommand cmd = new SqlCommand(query, con))
                 {
+                    cmd.Parameters.AddWithValue("@StdName", StdName);
                     con.Open();
-                    cmd.Parameters.AddWithValue("@UserName", userName);
-                    
                     cmd.ExecuteNonQuery();
                     using(SqlDataAdapter da = new SqlDataAdapter(cmd))
                     {
