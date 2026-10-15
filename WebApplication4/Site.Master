@@ -49,14 +49,15 @@
         }
 
         .nav-container {
-            max-width: 1200px;
+            max-width: 1240px;
             margin: 0 auto;
-            padding: 0 20px;
-            height: 68px;
+            padding: 10px 20px;
+            min-height: 68px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 16px;
+            flex-wrap: wrap;
         }
 
         /* Brand */
