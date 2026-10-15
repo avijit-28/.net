@@ -382,6 +382,9 @@
                     <li class="nav-item">
                         <a href="<%= ResolveUrl("~/Counting") %>">&#128290; Counter</a>
                     </li>
+                    <li class="nav-item">
+                        <a href="<%= ResolveUrl("~/GetUserDetails") %>">&#9881; WS Search</a>
+                    </li>
                 </ul>
 
                 <!-- Header Actions & Status Badges -->
