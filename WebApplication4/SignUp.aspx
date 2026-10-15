@@ -1,26 +1,8 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SignUp.aspx.cs" Inherits="WebApplication4.SignUp" %>
+<%@ Page Title="User Dashboard" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="SignUp.aspx.cs" Inherits="WebApplication4.SignUp" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title>User Dashboard</title>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style type="text/css">
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: #f8fafc;
-            color: #1e293b;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-
-        .container {
+        .dashboard-container {
             max-width: 900px;
             margin: 0 auto;
         }
@@ -35,7 +17,7 @@
             margin-bottom: 24px;
         }
 
-        h1 {
+        h1.dashboard-title {
             font-size: 24px;
             font-weight: 700;
             color: #0f172a;
@@ -88,6 +70,7 @@
             background: #ffffff;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
             padding: 24px;
             margin-bottom: 28px;
             display: flex;
@@ -170,7 +153,6 @@
             cursor: pointer;
             box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
             transition: all 0.2s ease;
-/*            margin-left : 10px;*/
         }
 
         .btn-search-nav:hover {
@@ -313,62 +295,55 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
         }
     </style>
-</head>
-<body>
-    <form id="form1" runat="server">
-        <div class="container">
+</asp:Content>
 
-            <!-- Top Bar with Header & Live Online Users Status -->
-            <div class="top-bar">
-                <h1>User Dashboard</h1>
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+    <div class="dashboard-container">
+        <!-- Top Bar with Header & Live Online Users Status -->
+        <div class="top-bar">
+            <h1 class="dashboard-title">User Dashboard</h1>
 
-                <!-- Online Users Counter Badge -->
-                <div class="online-badge">
-                    <span class="status-dot"></span>
-                    <span>The num of users online = </span>
-                    <asp:Label ID="lblOnlineUsers" runat="server" CssClass="online-count" Text="0"></asp:Label>
-                </div>
+            <!-- Online Users Counter Badge -->
+            <div class="online-badge">
+                <span class="status-dot"></span>
+                <span>The num of users online = </span>
+                <asp:Label ID="lblOnlineUsers" runat="server" CssClass="online-count" Text="0"></asp:Label>
             </div>
-
-            <!-- Profile Info Card -->
-            <div class="profile-card">
-                <div class="info-row">
-                    <div class="info-item">
-                        <span class="info-label">Signed-in User</span>
-                        <asp:Label ID="outUserName" runat="server" CssClass="info-value" Text="Label"></asp:Label>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Password</span>
-                        <asp:Label ID="outPassword" runat="server" CssClass="info-value" Text="Label"></asp:Label>
-                    </div>
-                </div>
-                <div class="action-group">
-                    <asp:Button ID="BtnProductForm" runat="server" Text="&#128230; Go to Product Form" OnClick="BtnProductForm_Click" CssClass="btn-product" />
-                    <a href="FirstPage.aspx" class="back-link">&larr; Back to Sign In</a>
-                </div>
-            </div>
-
-            <!-- Image Gallery -->
-            <div class="section-title">Gallery</div>
-            <div class="gallery">
-                <asp:Image ID="Image1" runat="server" Height="360px" ImageUrl="https://images.unsplash.com/photo-1791608047988-9c48157584ad?q=80&amp;w=387&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0&amp;ixid=NHwxMjA3fDA%3D" Width="260px" />
-                <asp:ImageMap ID="ImageMap1" runat="server" Height="360px" Width="260px" ImageUrl="https://images.unsplash.com/photo-1791724389897-0ece687f2b7a?q=80&amp;w=387&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0&amp;ixid=NHwxMjA3fDA%3D">
-                </asp:ImageMap>
-                <asp:Image ID="Image2" runat="server" Height="360px" ImageUrl="https://images.unsplash.com/photo-1791724389693-b873064e086d?q=80&amp;w=387&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0&amp;ixid=NHwxMjA3fDA%3D" Width="260px" />
-            </div>
-
-            <!-- Button at the bottom of images -->
-            <div class="gallery-actions">
-                <asp:Button ID="BtnCounting" runat="server" Text="&#128290; Go to Counting Page" OnClick="BtnCounting_Click" CssClass="btn-counting" />
-                <asp:Button ID="BtnSearchUser" runat="server" Text="&#128269; Search User" OnClick="BtnSearchUser_Click" CssClass="btn-search-nav" />
-                <asp:Button ID="BtnCookiesSend" runat="server" Text="&#127850; Go to Cookies Page" OnClick="BtnCookiesSend_Click" CssClass="btn-cookies-nav" />
-                <asp:Button ID="BtnCheckAvailability" runat="server" Text="&#9989; Check Availability" OnClick="BtnCheckAvailability_Click" CssClass="btn-check-nav" />
-            </div>
-
-
-
-
         </div>
-    </form>
-</body>
-</html>
+
+        <!-- Profile Info Card -->
+        <div class="profile-card">
+            <div class="info-row">
+                <div class="info-item">
+                    <span class="info-label">Signed-in User</span>
+                    <asp:Label ID="outUserName" runat="server" CssClass="info-value" Text="Label"></asp:Label>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Password</span>
+                    <asp:Label ID="outPassword" runat="server" CssClass="info-value" Text="Label"></asp:Label>
+                </div>
+            </div>
+            <div class="action-group">
+                <asp:Button ID="BtnProductForm" runat="server" Text="&#128230; Go to Product Form" OnClick="BtnProductForm_Click" CssClass="btn-product" />
+                <a href="FirstPage.aspx" class="back-link">&larr; Back to Sign In</a>
+            </div>
+        </div>
+
+        <!-- Image Gallery -->
+        <div class="section-title">Gallery</div>
+        <div class="gallery">
+            <asp:Image ID="Image1" runat="server" Height="360px" ImageUrl="https://images.unsplash.com/photo-1791608047988-9c48157584ad?q=80&amp;w=387&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0&amp;ixid=NHwxMjA3fDA%3D" Width="260px" />
+            <asp:ImageMap ID="ImageMap1" runat="server" Height="360px" Width="260px" ImageUrl="https://images.unsplash.com/photo-1791724389897-0ece687f2b7a?q=80&amp;w=387&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0&amp;ixid=NHwxMjA3fDA%3D">
+            </asp:ImageMap>
+            <asp:Image ID="Image2" runat="server" Height="360px" ImageUrl="https://images.unsplash.com/photo-1791724389693-b873064e086d?q=80&amp;w=387&amp;auto=format&amp;fit=crop&amp;ixlib=rb-4.1.0&amp;ixid=NHwxMjA3fDA%3D" Width="260px" />
+        </div>
+
+        <!-- Button at the bottom of images -->
+        <div class="gallery-actions">
+            <asp:Button ID="BtnCounting" runat="server" Text="&#128290; Go to Counting Page" OnClick="BtnCounting_Click" CssClass="btn-counting" />
+            <asp:Button ID="BtnSearchUser" runat="server" Text="&#128269; Search User" OnClick="BtnSearchUser_Click" CssClass="btn-search-nav" />
+            <asp:Button ID="BtnCookiesSend" runat="server" Text="&#127850; Go to Cookies Page" OnClick="BtnCookiesSend_Click" CssClass="btn-cookies-nav" />
+            <asp:Button ID="BtnCheckAvailability" runat="server" Text="&#9989; Check Availability" OnClick="BtnCheckAvailability_Click" CssClass="btn-check-nav" />
+        </div>
+    </div>
+</asp:Content>
