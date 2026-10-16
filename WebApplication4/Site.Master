@@ -694,6 +694,14 @@
                                             <div class="menu-item-desc">QueryString user details view</div>
                                         </div>
                                     </a>
+
+                                    <a href="<%= ResolveUrl("~/GridViewAll") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-teal">&#128203;</div>
+                                        <div>
+                                            <div class="menu-item-title">Employee Directory</div>
+                                            <div class="menu-item-desc">WebService GridView with paging</div>
+                                        </div>
+                                    </a>
                                 </div>
 
                                 <!-- Column 2: State & Developer Tools -->
