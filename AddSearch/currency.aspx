@@ -18,7 +18,7 @@
                  <Columns>
                     <asp:BoundField DataField="EmployeeId" HeaderText="EmployeeId" InsertVisible="False" ReadOnly="True" SortExpression="EmployeeId" />
                     <asp:BoundField DataField="FirstName" HeaderText="FirstName" SortExpression="FirstName" />
-                    <asp:BoundField DataField="Salary" HeaderText="Salary" SortExpression="Salary"/>
+                    <asp:BoundField DataField="AnnualSalary" HeaderText="Salary" SortExpression="Salary"/>
                     <asp:BoundField DataField="Country" HeaderText="Country" SortExpression="Country" />
                  </Columns>
             </asp:GridView>
