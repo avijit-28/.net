@@ -70,15 +70,19 @@ namespace WebApplication4
 
                 string rawPath = Request.Path ?? string.Empty;
                 if (rawPath.TrimEnd('/').EndsWith("/Home", StringComparison.OrdinalIgnoreCase) ||
-                    rawPath.TrimEnd('/').EndsWith("/Default", StringComparison.OrdinalIgnoreCase))
+                    rawPath.TrimEnd('/').EndsWith("/Default", StringComparison.OrdinalIgnoreCase) ||
+                    string.IsNullOrEmpty(rawPath.Trim('/')) ||
+                    rawPath.Equals(Request.ApplicationPath, StringComparison.OrdinalIgnoreCase))
                 {
                     isHomePage = true;
                 }
 
-                // If not signed in and trying to go to any page other than Home, keep user on Home page
+                // Default.aspx is open to everyone (signed in or not).
+                // But navigating to any other internal page requires signing in first!
                 if (!isHomePage)
                 {
-                    Response.Redirect("~/Home?restricted=1", true);
+                    string target = Request.RawUrl;
+                    Response.Redirect("~/FirstPage?returnUrl=" + Server.UrlEncode(target) + "&auth=1", true);
                     return;
                 }
             }
@@ -102,10 +106,12 @@ namespace WebApplication4
 
         protected void btnMasterSearch_Click(object sender, EventArgs e)
         {
-            // If user is not signed in, restrict navigation and stay on Home page
+            // If user is not signed in, navigating to search requires signing in first
             if (Session["UserName"] == null || string.IsNullOrWhiteSpace(Session["UserName"].ToString()))
             {
-                Response.Redirect("~/Home?restricted=1");
+                string term = SearchTerm;
+                string target = !string.IsNullOrEmpty(term) ? "~/SearchUser?term=" + Server.UrlEncode(term) : "~/SearchUser";
+                Response.Redirect("~/FirstPage?returnUrl=" + Server.UrlEncode(ResolveUrl(target)) + "&auth=1");
                 return;
             }
 
