@@ -599,7 +599,7 @@
                     </div>
                 </a>
 
-                <!-- Primary / Necessary Navigation Links -->
+                <!-- Primary / Necessary Navigation Links & Shifted Menu Dropdown -->
                 <ul class="nav-menu">
                     <li class="nav-item">
                         <a href="<%= ResolveUrl("~/Home") %>">&#127968; Home</a>
@@ -610,17 +610,107 @@
                     <li class="nav-item">
                         <a href="<%= ResolveUrl("~/ProductForm") %>">&#128230; Products</a>
                     </li>
-                    <li class="nav-item top-menu-dropdown">
-                        <a href="javascript:void(0);" class="top-menu-toggle">
-                            &#9776; More Modules <span class="arrow">&#9662;</span>
-                        </a>
-                        <div class="top-menu-dropdown-panel">
-                            <a href="<%= ResolveUrl("~/SearchUser") %>">&#128269; Search User</a>
-                            <a href="<%= ResolveUrl("~/GetUserDetails") %>">&#9881; WS Search</a>
-                            <a href="<%= ResolveUrl("~/CheckAvailability") %>">&#128737; Live Availability</a>
-                            <a href="<%= ResolveUrl("~/CookiesSend") %>">&#127850; Cookies State</a>
-                            <a href="<%= ResolveUrl("~/URLRouting") %>">&#128279; URL Routing</a>
-                            <a href="<%= ResolveUrl("~/Counting") %>">&#128290; Hit Counter</a>
+
+                    <!-- Menu Dropdown: All other shifted navigation items live here cleanly -->
+                    <li class="nav-item menu-dropdown-wrapper">
+                        <button type="button" class="menu-trigger-btn" id="megaMenuBtn" aria-label="Toggle Navigation Menu">
+                            <span class="menu-hamburger">&#9776;</span>
+                            <span>Menu</span>
+                            <span class="menu-chevron">&#9662;</span>
+                        </button>
+                        
+                        <div class="menu-dropdown-panel" id="megaMenuPanel">
+                            <div class="menu-panel-header">
+                                <span class="menu-panel-badge">&#9776; Application Modules</span>
+                                <span class="menu-panel-sub">Shifted navigation items &amp; services</span>
+                            </div>
+
+                            <div class="menu-columns">
+                                <!-- Column 1: User Services & Discovery -->
+                                <div class="menu-col">
+                                    <div class="menu-col-header">
+                                        <span>&#128101;</span>
+                                        <span>User Services &amp; Discovery</span>
+                                    </div>
+
+                                    <a href="<%= ResolveUrl("~/SearchUser") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-blue">&#128269;</div>
+                                        <div>
+                                            <div class="menu-item-title">Search User</div>
+                                            <div class="menu-item-desc">SQL database student search</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="<%= ResolveUrl("~/GetUserDetails") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-purple">&#9881;</div>
+                                        <div>
+                                            <div class="menu-item-title">WS Search</div>
+                                            <div class="menu-item-desc">ASMX XML Web Service lookup</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="<%= ResolveUrl("~/CheckAvailability") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-green">&#128737;</div>
+                                        <div>
+                                            <div class="menu-item-title">Check Availability</div>
+                                            <div class="menu-item-desc">Real-time AJAX validation</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="<%= ResolveUrl("~/GetUser") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-sky">&#128100;</div>
+                                        <div>
+                                            <div class="menu-item-title">User Profile</div>
+                                            <div class="menu-item-desc">QueryString user details view</div>
+                                        </div>
+                                    </a>
+                                </div>
+
+                                <!-- Column 2: State & Developer Tools -->
+                                <div class="menu-col">
+                                    <div class="menu-col-header">
+                                        <span>&#9881;</span>
+                                        <span>State &amp; Developer Tools</span>
+                                    </div>
+
+                                    <a href="<%= ResolveUrl("~/CookiesSend") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-amber">&#127850;</div>
+                                        <div>
+                                            <div class="menu-item-title">Cookies Management</div>
+                                            <div class="menu-item-desc">State persistence &amp; retrieval</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="<%= ResolveUrl("~/URLRouting") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-indigo">&#128279;</div>
+                                        <div>
+                                            <div class="menu-item-title">URL Routing</div>
+                                            <div class="menu-item-desc">Friendly URLs &amp; routing handler</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="<%= ResolveUrl("~/Counting") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-rose">&#128290;</div>
+                                        <div>
+                                            <div class="menu-item-title">Visitor Counter</div>
+                                            <div class="menu-item-desc">Application &amp; session counters</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="<%= ResolveUrl("~/Articles/1/Introduction-to-ASP.NET") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-teal">&#128196;</div>
+                                        <div>
+                                            <div class="menu-item-title">Knowledge Articles</div>
+                                            <div class="menu-item-desc">Routed article repository sample</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="menu-panel-footer">
+                                <span>Looking for something else?</span>
+                                <a href="<%= ResolveUrl("~/Home") %>">&#8594; Quick Return Home</a>
+                            </div>
                         </div>
                     </li>
                 </ul>
