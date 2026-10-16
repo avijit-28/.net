@@ -9,7 +9,10 @@
 <body>
     <form id="form1" runat="server">
         <div>
+            <asp:GridView ID="GridView1" runat="server">
+            </asp:GridView>
         </div>
+        <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:AssignmetConnectionString %>" ProviderName="<%$ ConnectionStrings:AssignmetConnectionString.ProviderName %>" SelectCommand="SELECT [UserId], [UserName], [Password], [Email], [MobileNo], [City] FROM [UserDetails]"></asp:SqlDataSource>
     </form>
 </body>
 </html>
