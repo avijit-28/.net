@@ -37,7 +37,7 @@ namespace WebApplication4
 
         private void BindEmployees(string name)
         {
-            localhost2.WebService1SoapClient obj = new localhost2.WebService1SoapClient();
+            ServiceReference1.WebService1SoapClient obj = new ServiceReference1.WebService1SoapClient();
             XmlElement xml = obj.GetEmployeeDetails(name);
             DataSet ds = new DataSet();
             ds.ReadXml(new StringReader(xml.OuterXml));
