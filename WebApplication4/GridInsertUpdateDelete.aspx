@@ -1,153 +1,322 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="GridInsertUpdateDelete.aspx.cs" Inherits="WebApplication4.GridInsertUpdateDelete" %>
+<%@ Page Title="Inline Record Management (CRUD)" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="GridInsertUpdateDelete.aspx.cs" Inherits="WebApplication4.GridInsertUpdateDelete" %>
 
-<!DOCTYPE html>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    <style type="text/css">
+        .module-page-container {
+            width: 100%;
+            max-width: 1050px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title>GridView Insert, Update, and Delete (Slides 27 - 38)</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 30px; background-color: #f4f6f9; }
-        .box { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 900px; }
-        h2 { color: #333; margin-top: 0; }
-        p { color: #666; font-size: 14px; }
-        .back-link { display: inline-block; margin-bottom: 15px; color: #0066cc; text-decoration: none; font-weight: bold; }
-        .back-link:hover { text-decoration: underline; }
-        .val-summary { margin-top: 15px; padding: 10px; background: #fee2e2; border: 1px solid #f87171; border-radius: 4px; }
-        .status { margin-top: 10px; color: green; font-weight: bold; }
-        .btn-insert { font-weight: bold; color: #059669; text-decoration: none; }
-        .btn-insert:hover { text-decoration: underline; }
+        .module-header-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 16px;
+            padding: 24px 30px;
+            color: #ffffff;
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .module-header-info h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+            letter-spacing: -0.02em;
+        }
+
+        .module-header-info p {
+            font-size: 13.5px;
+            color: #94a3b8;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .btn-hub-return {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-hub-return:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .content-card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+        }
+
+        .val-summary-box {
+            background: #fee2e2;
+            border: 1px solid #f87171;
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 14px;
+            color: #b91c1c;
+            font-size: 13px;
+        }
+
+        .status-msg {
+            display: inline-block;
+            margin-bottom: 14px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .grid-responsive-wrap {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .gridview-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: inherit;
+            font-size: 13.5px;
+        }
+
+        .gridview-table th {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        .gridview-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #1e293b;
+            vertical-align: middle;
+        }
+
+        .gridview-table tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        .gridview-table tr:hover td {
+            background: #f1f5f9;
+        }
+
+        .gridview-table tfoot td {
+            background: #f1f5f9;
+            border-top: 2px solid #cbd5e1;
+            padding: 12px 16px;
+        }
+
+        .gridview-table select,
+        .gridview-table input[type="text"] {
+            padding: 6px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            width: 100%;
+            max-width: 160px;
+            box-sizing: border-box;
+        }
+
+        .gridview-table select:focus,
+        .gridview-table input[type="text"]:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-action-link {
+            color: #2563eb;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .btn-action-link:hover {
+            background: #eff6ff;
+            text-decoration: underline;
+        }
+
+        .btn-insert-confirm {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff !important;
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
+            transition: all 0.2s;
+        }
+
+        .btn-insert-confirm:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35);
+        }
     </style>
-</head>
-<body>
-    <form id="form1" runat="server">
-        <div class="box">
-            <a href="AllGridProp.aspx" class="back-link">&larr; Back to Topics List</a>
-            <h2>Part 6: GridView Inline Insert, Update, and Delete</h2>
-            <p>
-                Demonstrates complete inline data manipulation:<br />
-                &bull; <strong>ShowFooter="True"</strong> to enable the footer row for inserting new records.<br />
-                &bull; <strong>LinkButton (lbInsert)</strong> in the FooterTemplate with <code>ValidationGroup="Insert"</code> and <code>OnClick="lbInsert_Click"</code>.<br />
-                &bull; <strong>CommandField</strong> with <code>ShowEditButton="True"</code> and <code>ShowDeleteButton="True"</code>.<br />
-                &bull; Separate <strong>ValidationSummary</strong> controls for Edit (<code>ValidationGroup="Edit"</code>) and Insert (<code>ValidationGroup="Insert"</code>).
-            </p>
-            
-            <asp:GridView ID="GridView1" runat="server" 
-                AutoGenerateColumns="False" 
-                DataKeyNames="EmployeeId" 
-                ShowFooter="True" 
-                BackColor="#DEBA84" 
-                BorderColor="#DEBA84" 
-                BorderStyle="None" 
-                BorderWidth="1px" 
-                CellPadding="5" 
-                CellSpacing="2"
-                OnRowEditing="GridView1_RowEditing"
-                OnRowCancelingEdit="GridView1_RowCancelingEdit"
-                OnRowUpdating="GridView1_RowUpdating"
-                OnRowDeleting="GridView1_RowDeleting">
-                <Columns>
-                    <asp:CommandField ShowDeleteButton="True" ShowEditButton="True" ValidationGroup="Edit" />
+</asp:Content>
 
-                    <asp:TemplateField HeaderText="EmployeeId" InsertVisible="False" SortExpression="EmployeeId">
-                        <EditItemTemplate>
-                            <asp:Label ID="Label1" runat="server" Text='<%# Eval("EmployeeId") %>'></asp:Label>
-                        </EditItemTemplate>
-                        <ItemTemplate>
-                            <asp:Label ID="Label1" runat="server" Text='<%# Bind("EmployeeId") %>'></asp:Label>
-                        </ItemTemplate>
-                        <FooterTemplate>
-                            <asp:LinkButton ID="lbInsert" ValidationGroup="Insert" runat="server" OnClick="lbInsert_Click" CssClass="btn-insert">+ Insert</asp:LinkButton>
-                        </FooterTemplate>
-                    </asp:TemplateField>
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+    <div class="module-page-container">
+        
+        <!-- Header Card -->
+        <div class="module-header-card">
+            <div class="module-header-info">
+                <h1>Inline Record Management (Insert, Update &amp; Delete)</h1>
+                <p>Complete inline data maintenance utilizing <code>ShowFooter="True"</code> with dedicated validation groups for edit and insert operations.</p>
+            </div>
+            <a href="<%= ResolveUrl("~/AllGridProp") %>" class="btn-hub-return">&larr; Back to GridView Hub</a>
+        </div>
 
-                    <asp:TemplateField HeaderText="Name" SortExpression="Name">
-                        <EditItemTemplate>
-                            <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Name") %>'></asp:TextBox>
-                            <asp:RequiredFieldValidator ID="rfvEditName" runat="server" 
-                                ErrorMessage="Name is a required field"
-                                ControlToValidate="TextBox1" Text="*" ForeColor="Red" ValidationGroup="Edit">
-                            </asp:RequiredFieldValidator>
-                        </EditItemTemplate>
-                        <ItemTemplate>
-                            <asp:Label ID="Label2" runat="server" Text='<%# Bind("Name") %>'></asp:Label>
-                        </ItemTemplate>
-                        <FooterTemplate>
-                            <asp:TextBox ID="txtName" runat="server" placeholder="Name"></asp:TextBox>
-                            <asp:RequiredFieldValidator ID="rfvInsertName" runat="server" 
-                                ErrorMessage="Name is a required field" 
-                                ControlToValidate="txtName" Text="*" ForeColor="Red"
-                                ValidationGroup="Insert">
-                            </asp:RequiredFieldValidator>
-                        </FooterTemplate>
-                    </asp:TemplateField>
-
-                    <asp:TemplateField HeaderText="Gender" SortExpression="Gender">
-                        <EditItemTemplate>
-                            <asp:DropDownList ID="DropDownList1" runat="server" SelectedValue='<%# Bind("Gender") %>'>
-                                <asp:ListItem>Select Gender</asp:ListItem>
-                                <asp:ListItem>Male</asp:ListItem>
-                                <asp:ListItem>Female</asp:ListItem>
-                            </asp:DropDownList>
-                            <asp:RequiredFieldValidator ID="rfvEditGender" runat="server" 
-                                ErrorMessage="Gender is a required field" Text="*"
-                                ControlToValidate="DropDownList1" ForeColor="Red" 
-                                InitialValue="Select Gender" ValidationGroup="Edit">
-                            </asp:RequiredFieldValidator>
-                        </EditItemTemplate>
-                        <ItemTemplate>
-                            <asp:Label ID="Label3" runat="server" Text='<%# Bind("Gender") %>'></asp:Label>
-                        </ItemTemplate>
-                        <FooterTemplate>
-                            <asp:DropDownList ID="ddlInsertGender" runat="server">
-                                <asp:ListItem>Select Gender</asp:ListItem>
-                                <asp:ListItem>Male</asp:ListItem>
-                                <asp:ListItem>Female</asp:ListItem>
-                            </asp:DropDownList>
-                            <asp:RequiredFieldValidator ID="rfvInsertGender" runat="server" 
-                                ErrorMessage="Gender is a required field" Text="*"
-                                ControlToValidate="ddlInsertGender" ForeColor="Red" 
-                                InitialValue="Select Gender" ValidationGroup="Insert">
-                            </asp:RequiredFieldValidator>
-                        </FooterTemplate>
-                    </asp:TemplateField>
-
-                    <asp:TemplateField HeaderText="City" SortExpression="City">
-                        <EditItemTemplate>
-                            <asp:TextBox ID="TextBox3" runat="server" Text='<%# Bind("City") %>'></asp:TextBox>
-                            <asp:RequiredFieldValidator ID="rfvEditCity" runat="server" 
-                                ErrorMessage="City is a required field" Text="*"
-                                ControlToValidate="TextBox3" ForeColor="Red" ValidationGroup="Edit">
-                            </asp:RequiredFieldValidator>
-                        </EditItemTemplate>
-                        <ItemTemplate>
-                            <asp:Label ID="Label4" runat="server" Text='<%# Bind("City") %>'></asp:Label>
-                        </ItemTemplate>
-                        <FooterTemplate>
-                            <asp:TextBox ID="txtCity" runat="server" placeholder="City"></asp:TextBox>
-                            <asp:RequiredFieldValidator ID="rfvInsertCity" runat="server" 
-                                ErrorMessage="City is a required field" Text="*" 
-                                ControlToValidate="txtCity" ForeColor="Red" 
-                                ValidationGroup="Insert">
-                            </asp:RequiredFieldValidator>
-                        </FooterTemplate>
-                    </asp:TemplateField>
-                </Columns>
-                <FooterStyle BackColor="#F7DFB5" ForeColor="#8C4510" />
-                <HeaderStyle BackColor="#A55129" Font-Bold="True" ForeColor="White" />
-                <PagerStyle ForeColor="#8C4510" HorizontalAlign="Center" />
-                <RowStyle BackColor="#FFF7E7" ForeColor="#8C4510" />
-            </asp:GridView>
-
+        <!-- Content Card -->
+        <div class="content-card">
             <asp:ValidationSummary ID="ValidationSummary1" runat="server" 
-                ForeColor="Red" HeaderText="Please correct the following edit errors:" 
-                ValidationGroup="Edit" CssClass="val-summary" />
+                ForeColor="#b91c1c" 
+                HeaderText="Please correct the following edit errors:" 
+                ValidationGroup="Edit" 
+                CssClass="val-summary-box" />
 
             <asp:ValidationSummary ID="ValidationSummaryInsert" runat="server" 
-                ForeColor="Red" HeaderText="Please correct the following insert errors:" 
-                ValidationGroup="Insert" CssClass="val-summary" />
+                ForeColor="#b91c1c" 
+                HeaderText="Please correct the following insert errors:" 
+                ValidationGroup="Insert" 
+                CssClass="val-summary-box" />
 
-            <asp:Label ID="lblStatus" runat="server" CssClass="status" Visible="false"></asp:Label>
+            <asp:Label ID="lblStatus" runat="server" CssClass="status-msg" Visible="false"></asp:Label>
+
+            <div class="grid-responsive-wrap">
+                <asp:GridView ID="GridView1" runat="server" 
+                    AutoGenerateColumns="False" 
+                    DataKeyNames="EmployeeId" 
+                    ShowFooter="True" 
+                    CssClass="gridview-table"
+                    GridLines="None"
+                    OnRowEditing="GridView1_RowEditing"
+                    OnRowCancelingEdit="GridView1_RowCancelingEdit"
+                    OnRowUpdating="GridView1_RowUpdating"
+                    OnRowDeleting="GridView1_RowDeleting">
+                    <Columns>
+                        <asp:CommandField ShowDeleteButton="True" ShowEditButton="True" ValidationGroup="Edit" ControlStyle-CssClass="btn-action-link" />
+
+                        <%-- Employee ID & Footer Insert Trigger --%>
+                        <asp:TemplateField HeaderText="Employee ID" InsertVisible="False" SortExpression="EmployeeId">
+                            <EditItemTemplate>
+                                <asp:Label ID="Label1" runat="server" Text='<%# Eval("EmployeeId") %>'></asp:Label>
+                            </EditItemTemplate>
+                            <ItemTemplate>
+                                <asp:Label ID="Label1" runat="server" Text='<%# Bind("EmployeeId") %>'></asp:Label>
+                            </ItemTemplate>
+                            <FooterTemplate>
+                                <asp:LinkButton ID="lbInsert" ValidationGroup="Insert" runat="server" OnClick="lbInsert_Click" CssClass="btn-insert-confirm">&#10010; Insert</asp:LinkButton>
+                            </FooterTemplate>
+                        </asp:TemplateField>
+
+                        <%-- Employee Name --%>
+                        <asp:TemplateField HeaderText="Employee Name" SortExpression="Name">
+                            <EditItemTemplate>
+                                <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Name") %>'></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="rfvEditName" runat="server" 
+                                    ErrorMessage="Employee Name is required."
+                                    ControlToValidate="TextBox1" Text="*" ForeColor="#dc2626" ValidationGroup="Edit">
+                                </asp:RequiredFieldValidator>
+                            </EditItemTemplate>
+                            <ItemTemplate>
+                                <asp:Label ID="Label2" runat="server" Text='<%# Bind("Name") %>'></asp:Label>
+                            </ItemTemplate>
+                            <FooterTemplate>
+                                <asp:TextBox ID="txtName" runat="server" placeholder="Enter Full Name"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="rfvInsertName" runat="server" 
+                                    ErrorMessage="Employee Name is required." 
+                                    ControlToValidate="txtName" Text="*" ForeColor="#dc2626"
+                                    ValidationGroup="Insert">
+                                </asp:RequiredFieldValidator>
+                            </FooterTemplate>
+                        </asp:TemplateField>
+
+                        <%-- Gender --%>
+                        <asp:TemplateField HeaderText="Gender" SortExpression="Gender">
+                            <EditItemTemplate>
+                                <asp:DropDownList ID="DropDownList1" runat="server" SelectedValue='<%# Bind("Gender") %>'>
+                                    <asp:ListItem>Select Gender</asp:ListItem>
+                                    <asp:ListItem>Male</asp:ListItem>
+                                    <asp:ListItem>Female</asp:ListItem>
+                                </asp:DropDownList>
+                                <asp:RequiredFieldValidator ID="rfvEditGender" runat="server" 
+                                    ErrorMessage="Gender is required (Please select Male or Female)." Text="*"
+                                    ControlToValidate="DropDownList1" ForeColor="#dc2626" 
+                                    InitialValue="Select Gender" ValidationGroup="Edit">
+                                </asp:RequiredFieldValidator>
+                            </EditItemTemplate>
+                            <ItemTemplate>
+                                <asp:Label ID="Label3" runat="server" Text='<%# Bind("Gender") %>'></asp:Label>
+                            </ItemTemplate>
+                            <FooterTemplate>
+                                <asp:DropDownList ID="ddlInsertGender" runat="server">
+                                    <asp:ListItem>Select Gender</asp:ListItem>
+                                    <asp:ListItem>Male</asp:ListItem>
+                                    <asp:ListItem>Female</asp:ListItem>
+                                </asp:DropDownList>
+                                <asp:RequiredFieldValidator ID="rfvInsertGender" runat="server" 
+                                    ErrorMessage="Gender is required (Please select Male or Female)." Text="*"
+                                    ControlToValidate="ddlInsertGender" ForeColor="#dc2626" 
+                                    InitialValue="Select Gender" ValidationGroup="Insert">
+                                </asp:RequiredFieldValidator>
+                            </FooterTemplate>
+                        </asp:TemplateField>
+
+                        <%-- City --%>
+                        <asp:TemplateField HeaderText="City" SortExpression="City">
+                            <EditItemTemplate>
+                                <asp:TextBox ID="TextBox3" runat="server" Text='<%# Bind("City") %>'></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="rfvEditCity" runat="server" 
+                                    ErrorMessage="City is required." Text="*"
+                                    ControlToValidate="TextBox3" ForeColor="#dc2626" ValidationGroup="Edit">
+                                </asp:RequiredFieldValidator>
+                            </EditItemTemplate>
+                            <ItemTemplate>
+                                <asp:Label ID="Label4" runat="server" Text='<%# Bind("City") %>'></asp:Label>
+                            </ItemTemplate>
+                            <FooterTemplate>
+                                <asp:TextBox ID="txtCity" runat="server" placeholder="Enter City"></asp:TextBox>
+                                <asp:RequiredFieldValidator ID="rfvInsertCity" runat="server" 
+                                    ErrorMessage="City is required." Text="*" 
+                                    ControlToValidate="txtCity" ForeColor="#dc2626" 
+                                    ValidationGroup="Insert">
+                                </asp:RequiredFieldValidator>
+                            </FooterTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                </asp:GridView>
+            </div>
         </div>
-    </form>
-</body>
-</html>
+    </div>
+</asp:Content>
