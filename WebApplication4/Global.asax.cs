@@ -45,6 +45,12 @@ namespace WebApplication4
             routeCollection.MapPageRoute("URLGridView", "GridViewAll", "~/GridViewAll.aspx");
             routeCollection.MapPageRoute("AllGridPropRoute", "AllGridProp", "~/AllGridProp.aspx");
             routeCollection.MapPageRoute("URLAllGridProperty", "AllGridProperty", "~/AllGridProp.aspx");
+            routeCollection.MapPageRoute("GridMultiCultureRoute", "GridMultiCulture", "~/GridMultiCulture.aspx");
+            routeCollection.MapPageRoute("GridHiddenCultureRoute", "GridHiddenCulture", "~/GridHiddenCulture.aspx");
+            routeCollection.MapPageRoute("GridConditionalFormattingRoute", "GridConditionalFormatting", "~/GridConditionalFormatting.aspx");
+            routeCollection.MapPageRoute("GridTemplateFieldRoute", "GridTemplateField", "~/GridTemplateField.aspx");
+            routeCollection.MapPageRoute("GridValidationRoute", "GridValidation", "~/GridValidation.aspx");
+            routeCollection.MapPageRoute("GridInsertUpdateDeleteRoute", "GridInsertUpdateDelete", "~/GridInsertUpdateDelete.aspx");
 
 
             // Dynamic Article Routes
