@@ -182,6 +182,35 @@
             background: linear-gradient(135deg, #059669 0%, #047857 100%);
             box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35);
         }
+
+        .gridview-pager {
+            background: #f8fafc;
+            padding: 10px 16px;
+            text-align: center;
+        }
+        .gridview-pager td {
+            padding: 6px 10px;
+        }
+        .gridview-pager a, .gridview-pager span {
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin: 0 2px;
+            text-decoration: none;
+            font-weight: 700;
+        }
+        .gridview-pager span {
+            background: #2563eb;
+            color: #ffffff;
+        }
+        .gridview-pager a {
+            background: #ffffff;
+            color: #1e293b;
+            border: 1px solid #cbd5e1;
+        }
+        .gridview-pager a:hover {
+            background: #eff6ff;
+            border-color: #2563eb;
+        }
     </style>
 </asp:Content>
 
@@ -199,6 +228,12 @@
 
         <!-- Content Card -->
         <div class="content-card">
+            <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                <span style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
+                    &#128451; Live SQL Table: <code>[Assignmet].[dbo].[Employee]</code> (Full INSERT, UPDATE, DELETE Enabled)
+                </span>
+            </div>
+
             <asp:ValidationSummary ID="ValidationSummary1" runat="server" 
                 ForeColor="#b91c1c" 
                 HeaderText="Please correct the following edit errors:" 
@@ -220,10 +255,14 @@
                     ShowFooter="True" 
                     CssClass="gridview-table"
                     GridLines="None"
+                    AllowPaging="True"
+                    PageSize="10"
+                    OnPageIndexChanging="GridView1_PageIndexChanging"
                     OnRowEditing="GridView1_RowEditing"
                     OnRowCancelingEdit="GridView1_RowCancelingEdit"
                     OnRowUpdating="GridView1_RowUpdating"
                     OnRowDeleting="GridView1_RowDeleting">
+                    <PagerStyle CssClass="gridview-pager" HorizontalAlign="Center" />
                     <Columns>
                         <asp:CommandField ShowDeleteButton="True" ShowEditButton="True" ValidationGroup="Edit" ControlStyle-CssClass="btn-action-link" />
 
