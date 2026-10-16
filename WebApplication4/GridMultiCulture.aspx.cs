@@ -1,5 +1,7 @@
 using System;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -8,6 +10,12 @@ namespace WebApplication4
 {
     public partial class GridMultiCulture : System.Web.UI.Page
     {
+        private string GetConnectionString()
+        {
+            return ConfigurationManager.ConnectionStrings["DBConn"]?.ConnectionString
+                ?? ConfigurationManager.ConnectionStrings["AssignmetConnectionString"]?.ConnectionString;
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -18,20 +26,20 @@ namespace WebApplication4
 
         private void BindGrid()
         {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("EmployeeId", typeof(int));
-            dt.Columns.Add("FirstName", typeof(string));
-            dt.Columns.Add("Salary", typeof(int));
-            dt.Columns.Add("Country", typeof(string));
-
-            dt.Rows.Add(1, "John", 55000, "US");
-            dt.Rows.Add(2, "Pam", 62000, "India");
-            dt.Rows.Add(3, "David", 45000, "UK");
-            dt.Rows.Add(4, "Rose", 78000, "South Africa");
-            dt.Rows.Add(5, "Mark", 69000, "Malaysia");
-
-            GridView1.DataSource = dt;
-            GridView1.DataBind();
+            using (SqlConnection con = new SqlConnection(GetConnectionString()))
+            {
+                string sql = "SELECT EmployeeId, FirstName, AnnualSalary AS Salary, Country FROM AllEmployee ORDER BY EmployeeId ASC";
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        GridView1.DataSource = dt;
+                        GridView1.DataBind();
+                    }
+                }
+            }
         }
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
