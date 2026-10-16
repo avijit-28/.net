@@ -1,0 +1,2 @@
+D:\avi\C#\AddSearch\obj\Debug\AddSearch.csproj.AssemblyReference.cache
+D:\avi\C#\AddSearch\obj\Debug\AddSearch.csproj.CoreCompileInputs.cache
