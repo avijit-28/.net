@@ -69,6 +69,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AllGridProp.aspx" />
     <Content Include="CheckAvailability.aspx" />
     <None Include="Connected Services\localhost1\WebService1.wsdl" />
     <None Include="Connected Services\localhost2\WebService1.wsdl" />
@@ -122,6 +123,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AllGridProp.aspx.cs">
+      <DependentUpon>AllGridProp.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AllGridProp.aspx.designer.cs">
+      <DependentUpon>AllGridProp.aspx</DependentUpon>
+    </Compile>
     <Compile Include="CheckAvailability.aspx.cs">
       <DependentUpon>CheckAvailability.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
