@@ -362,7 +362,7 @@
           <CustomServerUrl>
           </CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
-          <StartPageUrl>AllGridProp.aspx</StartPageUrl>
+          <StartPageUrl>Default.aspx</StartPageUrl>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>
