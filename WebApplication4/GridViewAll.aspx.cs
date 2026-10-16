@@ -20,8 +20,8 @@ namespace WebApplication4
             }
 
         }
-        protected void btnSearch_Click(object sender, EventArgs e)
-        {
+        //protected void btnSearch_Click(object sender, EventArgs e)
+        //{
             //string Name = txtSearch.Text.Trim();
             //localhost2.WebService1SoapClient obj = new localhost2.WebService1SoapClient();
             //XmlElement xmlData = obj.GetUserDetails(Name);
@@ -32,8 +32,8 @@ namespace WebApplication4
             //}
             //gvEmployees.DataSource = ds.Tables[0];
             //gvEmployees.DataBind();
-            BindEmployees(txtSearch.Text);
-        }
+            //BindEmployees(txtSearch.Text);
+        //}
 
         private void BindEmployees(string name)
         {
