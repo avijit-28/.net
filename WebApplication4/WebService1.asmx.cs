@@ -55,6 +55,27 @@ namespace WebApplication4
         {
             return GetSdtDetails(UserName);
         }
+
+        [WebMethod]
+        public XmlElement GetEmployeeDetails(string Name)
+        {
+            using (SqlConnection con = new SqlConnection(_conStr))
+            {
+                string query = "SELECT [ID],[Name],[Salary],[Gender],[City],[Dept] FROM [Employee] WHERE Name LIKE @Name + '%'";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@Name", (object)Name ?? string.Empty);
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataSet ds = new DataSet("EmployeeDetailsSet");
+                        da.Fill(ds, "EmployeeDetails");
+                        XmlDocument xmlDoc = new XmlDocument();
+                        xmlDoc.LoadXml(ds.GetXml());
+                        return xmlDoc.DocumentElement;
+                    }
+                }
+            }
+        }
     }
 }
 
