@@ -31,7 +31,7 @@
                              <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Country") %>'></asp:TextBox>
                          </EditItemTemplate>
                          <ItemTemplate>
-                             <asp:DropDownList ID="DropDownList1" runat="server" AutoPostBack="true" nSelectedIndexChanged="DropDownList1_SelectedIndexChanged">>
+                             <asp:DropDownList ID="DropDownList1" runat="server" AutoPostBack="true" nSelectedIndexChanged="DropDownList1_SelectedIndexChanged">
                                  <asp:ListItem>US</asp:ListItem>
                                  <asp:ListItem>India</asp:ListItem>
                                  <asp:ListItem>UK</asp:ListItem>
