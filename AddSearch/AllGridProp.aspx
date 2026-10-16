@@ -11,9 +11,7 @@
         <div style="height: 233px">
             <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:AssignmetConnectionString %>" SelectCommand="SELECT [UserId], [UserName], [Password], [Email], [MobileNo], [City] FROM [UserDetails]"></asp:SqlDataSource>
 
-            <asp:GridView ID="gvUsers" DataSourceID="SqlDataSource1"   DataKeyNames="UserID"
-    runat="server"
-    AutoGenerateColumns="False">
+            <asp:GridView ID="gvUsers" DataSourceID="SqlDataSource1"   DataKeyNames="UserId" runat="server" AutoGenerateColumns="False">
 
     <Columns>
         <asp:BoundField DataField="UserId"
