@@ -984,6 +984,70 @@
                                         </div>
                                     </a>
                                 </div>
+
+                                <!-- Column 3: GridView Feature Modules -->
+                                <div class="menu-col">
+                                    <div class="menu-col-header">
+                                        <span>&#128202;</span>
+                                        <span>GridView Modules</span>
+                                    </div>
+
+                                    <a href="<%= ResolveUrl("~/AllGridProp") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-blue">&#128203;</div>
+                                        <div>
+                                            <div class="menu-item-title">GridView Hub</div>
+                                            <div class="menu-item-desc">All capabilities overview</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="<%= ResolveUrl("~/GridMultiCulture") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-green">&#128181;</div>
+                                        <div>
+                                            <div class="menu-item-title">Multi-Culture Currency</div>
+                                            <div class="menu-item-desc">RowDataBound multi-currency</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="<%= ResolveUrl("~/GridHiddenCulture") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-purple">&#128065;</div>
+                                        <div>
+                                            <div class="menu-item-title">Hidden Column Binding</div>
+                                            <div class="menu-item-desc">Hidden culture column format</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="<%= ResolveUrl("~/GridConditionalFormatting") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-rose">&#127912;</div>
+                                        <div>
+                                            <div class="menu-item-title">Conditional Formatting</div>
+                                            <div class="menu-item-desc">Dynamic high-salary row highlight</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="<%= ResolveUrl("~/GridTemplateField") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-sky">&#9997;</div>
+                                        <div>
+                                            <div class="menu-item-title">TemplateField Editing</div>
+                                            <div class="menu-item-desc">DropDownList for Gender</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="<%= ResolveUrl("~/GridValidation") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-amber">&#9888;</div>
+                                        <div>
+                                            <div class="menu-item-title">Field Validation</div>
+                                            <div class="menu-item-desc">RequiredFieldValidator &amp; summary</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="<%= ResolveUrl("~/GridInsertUpdateDelete") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-teal">&#10010;</div>
+                                        <div>
+                                            <div class="menu-item-title">Inline CRUD Operations</div>
+                                            <div class="menu-item-desc">Full Insert, Update, and Delete</div>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
 
                             <div class="menu-panel-footer">
