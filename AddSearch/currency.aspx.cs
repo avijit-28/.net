@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -16,7 +13,7 @@ namespace AddSearch
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            
+
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 if (e.Row.Cells[3].Text == "US")
@@ -48,6 +45,12 @@ namespace AddSearch
                     int salary = Convert.ToInt32(e.Row.Cells[2].Text);
                     string formattedString = string.Format(new System.Globalization.CultureInfo("en-MY"), "{0:c}", salary);
                     e.Row.Cells[2].Text = formattedString;
+                }
+                int AnnualSalary = Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "AnnualSalary"));
+                if(AnnualSalary > 60000)
+                {
+                    e.Row.BackColor = System.Drawing.Color.Red;
+                    e.Row.ForeColor = System.Drawing.Color.White;
                 }
             }
         }
