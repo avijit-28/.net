@@ -1,6 +1,7 @@
 namespace WebApplication4
 {
     using System;
+    using System.Web;
 
     /// <summary>
     /// Defines the <see cref="FirstPage" />
@@ -14,10 +15,44 @@ namespace WebApplication4
         /// <param name="e">The e<see cref="EventArgs"/></param>
         protected void Page_Load(object sender, EventArgs e)
         {
-            //if ((Session["UserName"] != null) || (Session["Password"] != null))
-            //{
-                //lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
-            //}
+            // 1. Handle Logout Action
+            if (string.Equals(Request.QueryString["action"], "logout", StringComparison.OrdinalIgnoreCase))
+            {
+                Session.Clear();
+                Session.Abandon();
+
+                if (Request.Cookies["UserWasLoggedIn"] != null)
+                {
+                    HttpCookie c = new HttpCookie("UserWasLoggedIn", "")
+                    {
+                        Expires = DateTime.Now.AddDays(-1),
+                        Path = "/"
+                    };
+                    Response.Cookies.Add(c);
+                }
+
+                Response.Redirect("~/FirstPage?logout=1", true);
+                return;
+            }
+
+            // 2. Clear tracking cookie when landing from timeout or logout
+            if (Request.QueryString["timeout"] == "1" || Request.QueryString["logout"] == "1")
+            {
+                if (Request.Cookies["UserWasLoggedIn"] != null)
+                {
+                    HttpCookie c = new HttpCookie("UserWasLoggedIn", "")
+                    {
+                        Expires = DateTime.Now.AddDays(-1),
+                        Path = "/"
+                    };
+                    Response.Cookies.Add(c);
+                }
+            }
+
+            if (!IsPostBack)
+            {
+                lblOnlineUsers.Text = (Application["user"] != null ? Application["user"].ToString() : "0");
+            }
         }
 
         /// <summary>
@@ -27,15 +62,27 @@ namespace WebApplication4
         /// <param name="e">The e<see cref="EventArgs"/></param>
         protected void BtnSign_Click(object sender, EventArgs e)
         {
-            if (txtUserName.Text.ToString() == "avijit@gmail.com" && txtPassword.Text.ToString() == "1234")
+            string email = (txtUserName.Text ?? string.Empty).Trim();
+            string password = (txtPassword.Text ?? string.Empty).Trim();
+
+            if (string.Equals(email, "avijit@gmail.com", StringComparison.OrdinalIgnoreCase) && password == "1234")
             {
-                Session["UserName"] = txtUserName.Text;
-                Session["Password"] = txtPassword.Text;
-                Response.Redirect("~/Home");
+                Session["UserName"] = email;
+                Session["Password"] = password;
+
+                // Set tracking cookie so the system detects when the session expires
+                HttpCookie authCookie = new HttpCookie("UserWasLoggedIn", "1")
+                {
+                    HttpOnly = true,
+                    Path = "/"
+                };
+                Response.Cookies.Add(authCookie);
+
+                Response.Redirect("~/Home", true);
             }
             else
             {
-                Response.Redirect("~/FirstPage");
+                Response.Redirect("~/FirstPage?error=1", true);
             }
         }
     }
