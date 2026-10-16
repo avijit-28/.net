@@ -360,7 +360,7 @@
             text-decoration: underline;
         }
 
-        @media (max-width: 640px) {
+        @media (max-width: 860px) {
             .menu-dropdown-panel {
                 width: 94vw;
                 left: 0;
