@@ -1120,6 +1120,7 @@
                     <li><a href="<%= ResolveUrl("~/CheckAvailability") %>">Live Validation</a></li>
                     <li><a href="<%= ResolveUrl("~/GetUserDetails") %>">WS Search</a></li>
                     <li><a href="<%= ResolveUrl("~/GridViewAll") %>">Employee Directory</a></li>
+                    <li><a href="<%= ResolveUrl("~/AllGridProp") %>">GridView Hub</a></li>
                 </ul>
             </div>
         </footer>
@@ -1132,7 +1133,7 @@
                 if (!panel || !btn) return;
 
                 var btnRect = btn.getBoundingClientRect();
-                var panelWidth = panel.offsetWidth || 530;
+                var panelWidth = panel.offsetWidth || 780;
                 var viewportWidth = window.innerWidth;
 
                 if (viewportWidth > 640) {
