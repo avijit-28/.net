@@ -129,6 +129,12 @@
 
         <!-- Content Card -->
         <div class="content-card">
+            <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                <span style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
+                    &#128451; Live SQL Table: <code>[Assignmet].[dbo].[AllEmployee]</code>
+                </span>
+            </div>
+
             <div class="info-box">
                 <strong>Mechanism:</strong> The <code>CountryCulture</code> column (index 4) contains culture codes (<code>en-US</code>, <code>en-IN</code>, etc.). In <code>RowDataBound</code>, <code>e.Row.Cells[4].Visible = false</code> is invoked on both the Header and Data rows after extracting the value.
             </div>
