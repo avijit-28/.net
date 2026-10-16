@@ -10,95 +10,44 @@ namespace AddSearch
         {
 
         }
-        protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DropDownList ddl =
-                (DropDownList)sender;
-
-            GridViewRow row =
-                (GridViewRow)ddl.NamingContainer;
-
-            Label lblSalary =
-                (Label)row.FindControl("lblSalary");
-
-            int salary = Convert.ToInt32(lblSalary.Text);
-
-            if (ddl.SelectedValue == "US")
-            {
-                lblSalary.Text =
-                    string.Format(
-                        new System.Globalization.CultureInfo("en-US"),
-                        "{0:c}", salary);
-            }
-            else if (ddl.SelectedValue == "India")
-            {
-                lblSalary.Text =
-                    string.Format(
-                        new System.Globalization.CultureInfo("en-IN"),
-                        "{0:c}", salary);
-            }
-            else if (ddl.SelectedValue == "UK")
-            {
-                lblSalary.Text =
-                    string.Format(
-                        new System.Globalization.CultureInfo("en-GB"),
-                        "{0:c}", salary);
-            }
-            else if (ddl.SelectedValue == "South Africa")
-            {
-                lblSalary.Text =
-                    string.Format(
-                        new System.Globalization.CultureInfo("en-ZA"),
-                        "{0:c}", salary);
-            }
-            else if (ddl.SelectedValue == "Malaysia")
-            {
-                lblSalary.Text =
-                    string.Format(
-                        new System.Globalization.CultureInfo("ms-MY"),
-                        "{0:c}", salary);
-            }
-        }
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
+
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                string country = DataBinder.Eval(e.Row.DataItem, "Country").ToString();
-
-                DropDownList ddlCountry =
-                    (DropDownList)e.Row.FindControl("DropDownList1");
-
-                ddlCountry.SelectedValue = country;
-
-                int salary = Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "AnnualSalary"));
-
-                if (country == "US")
-                    e.Row.Cells[2].Text = string.Format(
-                        new System.Globalization.CultureInfo("en-US"),
-                        "{0:c}", salary);
-
-                else if (country == "UK")
-                    e.Row.Cells[2].Text = string.Format(
-                        new System.Globalization.CultureInfo("en-GB"),
-                        "{0:c}", salary);
-
-                else if (country == "India")
-                    e.Row.Cells[2].Text = string.Format(
-                        new System.Globalization.CultureInfo("en-IN"),
-                        "{0:c}", salary);
-
-                else if (country == "South Africa")
-                    e.Row.Cells[2].Text = string.Format(
-                        new System.Globalization.CultureInfo("en-ZA"),
-                        "{0:c}", salary);
-
-                else if (country == "Malaysia")
-                    e.Row.Cells[2].Text = string.Format(
-                        new System.Globalization.CultureInfo("ms-MY"),
-                        "{0:c}", salary);
-
-                if (salary > 60000)
+                if (e.Row.Cells[3].Text == "US")
+                {
+                    int salary = Convert.ToInt32(e.Row.Cells[2].Text);
+                    string formattedString = string.Format(new System.Globalization.CultureInfo("en-US"), "{0:c}", salary);
+                    e.Row.Cells[2].Text = formattedString;
+                }
+                else if (e.Row.Cells[3].Text == "UK")
+                {
+                    int salary = Convert.ToInt32(e.Row.Cells[2].Text);
+                    string formattedString = string.Format(new System.Globalization.CultureInfo("en-GB"), "{0:c}", salary);
+                    e.Row.Cells[2].Text = formattedString;
+                }
+                else if (e.Row.Cells[3].Text == "India")
+                {
+                    int salary = Convert.ToInt32(e.Row.Cells[2].Text);
+                    string formattedString = string.Format(new System.Globalization.CultureInfo("en-IN"), "{0:c}", salary);
+                    e.Row.Cells[2].Text = formattedString;
+                }
+                else if (e.Row.Cells[3].Text == "South Africa")
+                {
+                    int salary = Convert.ToInt32(e.Row.Cells[2].Text);
+                    string formattedString = string.Format(new System.Globalization.CultureInfo("en-ZA"), "{0:c}", salary);
+                    e.Row.Cells[2].Text = formattedString;
+                }
+                else if (e.Row.Cells[3].Text == "Malaysia")
+                {
+                    int salary = Convert.ToInt32(e.Row.Cells[2].Text);
+                    string formattedString = string.Format(new System.Globalization.CultureInfo("en-MY"), "{0:c}", salary);
+                    e.Row.Cells[2].Text = formattedString;
+                }
+                int AnnualSalary = Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "AnnualSalary"));
+                if(AnnualSalary > 60000)   
                 {
                     e.Row.BackColor = System.Drawing.Color.Red;
                     e.Row.ForeColor = System.Drawing.Color.White;
@@ -107,10 +56,3 @@ namespace AddSearch
         }
     }
 }
-
-//int AnnualSalary = Convert.ToInt32(DataBinder.Eval(e.Row.DataItem, "AnnualSalary"));
-//if (AnnualSalary > 60000)
-//{
-//    e.Row.BackColor = System.Drawing.Color.Red;
-//    e.Row.ForeColor = System.Drawing.Color.White;
-//}
