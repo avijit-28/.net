@@ -738,8 +738,32 @@
                     <li><a href="<%= ResolveUrl("~/CheckAvailability") %>">Live Validation</a></li>
                     <li><a href="<%= ResolveUrl("~/GetUserDetails") %>">WS Search</a></li>
                 </ul>
-            </div>
         </footer>
+
+        <script type="text/javascript">
+            document.addEventListener('click', function (e) {
+                if (!e.target.closest('.menu-dropdown') && !e.target.closest('.top-menu-dropdown')) {
+                    document.querySelectorAll('.menu-dropdown.active, .top-menu-dropdown.active').forEach(function (el) {
+                        el.classList.remove('active');
+                    });
+                }
+            });
+
+            document.querySelectorAll('.menu-dropdown-toggle, .top-menu-toggle').forEach(function (toggle) {
+                toggle.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var parent = this.closest('.menu-dropdown, .top-menu-dropdown');
+                    var wasActive = parent.classList.contains('active');
+                    document.querySelectorAll('.menu-dropdown.active, .top-menu-dropdown.active').forEach(function (el) {
+                        el.classList.remove('active');
+                    });
+                    if (!wasActive) {
+                        parent.classList.add('active');
+                    }
+                });
+            });
+        </script>
     </form>
 </body>
 </html>
