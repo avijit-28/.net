@@ -78,11 +78,27 @@ namespace WebApplication4
                 };
                 Response.Cookies.Add(authCookie);
 
-                Response.Redirect("~/Home", true);
+                string returnUrl = Request.QueryString["returnUrl"];
+                if (!string.IsNullOrEmpty(returnUrl) &&
+                    !returnUrl.Contains("://") &&
+                    (returnUrl.StartsWith("/") || returnUrl.StartsWith("~")))
+                {
+                    Response.Redirect(returnUrl, true);
+                }
+                else
+                {
+                    Response.Redirect("~/Home", true);
+                }
             }
             else
             {
-                Response.Redirect("~/FirstPage?error=1", true);
+                string returnUrl = Request.QueryString["returnUrl"];
+                string redirect = "~/FirstPage?error=1";
+                if (!string.IsNullOrEmpty(returnUrl))
+                {
+                    redirect += "&returnUrl=" + Server.UrlEncode(returnUrl);
+                }
+                Response.Redirect(redirect, true);
             }
         }
     }
