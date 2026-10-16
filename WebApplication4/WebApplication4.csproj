@@ -102,6 +102,12 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
     <Content Include="AllGridProp.aspx" />
+    <Content Include="GridMultiCulture.aspx" />
+    <Content Include="GridHiddenCulture.aspx" />
+    <Content Include="GridConditionalFormatting.aspx" />
+    <Content Include="GridTemplateField.aspx" />
+    <Content Include="GridValidation.aspx" />
+    <Content Include="GridInsertUpdateDelete.aspx" />
     <Content Include="CookiesGet.aspx" />
     <Content Include="CookiesSend.aspx" />
     <Content Include="Counting.aspx" />
