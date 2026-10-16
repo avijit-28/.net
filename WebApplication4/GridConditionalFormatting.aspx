@@ -120,6 +120,12 @@
 
         <!-- Content Card -->
         <div class="content-card">
+            <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                <span style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px;">
+                    &#128451; Live SQL Table: <code>[Assignmet].[dbo].[AllEmployee]</code>
+                </span>
+            </div>
+
             <div class="legend-bar">
                 <div class="legend-badge">
                     <span class="legend-indicator-default"></span>
