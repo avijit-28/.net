@@ -9,12 +9,7 @@
 <body>
     <form id="form1" runat="server">
         <div>
-            <asp:TextBox ID="txtSearch" runat="server"></asp:TextBox>
-
-    <asp:Button ID="btnSearch"
-    runat="server"
-    Text="Search"
-    OnClick="btnSearch_Click" />
+            
 
 <br /><br />
 
