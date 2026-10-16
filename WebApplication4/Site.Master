@@ -128,212 +128,238 @@
             background: var(--slate-100);
         }
 
-        /* Top Nav Quick Dropdown */
-        .top-menu-dropdown {
+        /* Modern High-Contrast Menu Dropdown */
+        .menu-dropdown-wrapper {
             position: relative;
         }
 
-        .top-menu-toggle {
+        .menu-trigger-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 14px;
+            background: #f1f5f9;
+            color: #0f172a;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 700;
             cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             user-select: none;
         }
 
-        .top-menu-dropdown-panel {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            min-width: 230px;
-            background: #ffffff;
-            border: 1px solid var(--slate-200);
-            border-radius: 12px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-            padding: 8px;
-            margin-top: 6px;
-            display: none;
-            z-index: 210;
-        }
-
-        .top-menu-dropdown:hover .top-menu-dropdown-panel,
-        .top-menu-dropdown.active .top-menu-dropdown-panel {
-            display: block;
-        }
-
-        .top-menu-dropdown-panel a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 9px 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            color: var(--slate-700);
-            text-decoration: none;
-            transition: all 0.15s ease;
-        }
-
-        .top-menu-dropdown-panel a:hover {
-            background: var(--slate-100);
+        .menu-trigger-btn .menu-hamburger {
+            font-size: 15px;
+            line-height: 1;
             color: var(--primary);
         }
 
-        /* Secondary Dedicated Menu Section / Menu Bar */
-        .site-menu-bar {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            border-bottom: 1px solid var(--slate-300);
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
-        }
-
-        .menu-bar-container {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 0 20px;
-            min-height: 46px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        .menu-bar-container::-webkit-scrollbar {
-            display: none;
-        }
-
-        .menu-bar-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(37, 99, 235, 0.25);
-            border: 1px solid rgba(96, 165, 250, 0.35);
-            color: #93c5fd;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            padding: 4px 10px;
-            border-radius: 6px;
-            white-space: nowrap;
-            user-select: none;
-            flex-shrink: 0;
-        }
-
-        .menu-bar-nav {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            flex-wrap: nowrap;
-            flex-shrink: 0;
-        }
-
-        .menu-bar-item a,
-        .menu-dropdown-toggle {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 9px 13px;
-            color: #cbd5e1;
-            font-size: 13px;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 6px;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .menu-bar-item a:hover,
-        .menu-dropdown:hover .menu-dropdown-toggle,
-        .menu-dropdown.active .menu-dropdown-toggle {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.12);
-        }
-
-        .menu-dropdown {
-            position: relative;
-        }
-
-        .menu-dropdown-toggle .arrow {
+        .menu-trigger-btn .menu-chevron {
             font-size: 10px;
             transition: transform 0.2s ease;
+            color: #64748b;
         }
 
-        .menu-dropdown:hover .arrow,
-        .menu-dropdown.active .arrow {
+        .menu-trigger-btn:hover,
+        .menu-dropdown-wrapper:hover .menu-trigger-btn,
+        .menu-dropdown-wrapper.active .menu-trigger-btn {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .menu-trigger-btn:hover .menu-hamburger,
+        .menu-dropdown-wrapper:hover .menu-hamburger,
+        .menu-dropdown-wrapper.active .menu-hamburger,
+        .menu-trigger-btn:hover .menu-chevron,
+        .menu-dropdown-wrapper:hover .menu-chevron,
+        .menu-dropdown-wrapper.active .menu-chevron {
+            color: #ffffff;
+        }
+
+        .menu-dropdown-wrapper:hover .menu-chevron,
+        .menu-dropdown-wrapper.active .menu-chevron {
             transform: rotate(180deg);
         }
 
-        .menu-dropdown-menu {
+        /* The Mega Dropdown Menu Panel */
+        .menu-dropdown-panel {
             position: absolute;
-            top: 100%;
+            top: calc(100% + 8px);
             left: 0;
-            min-width: 270px;
+            width: 580px;
+            max-width: 92vw;
             background: #ffffff;
-            border: 1px solid var(--slate-200);
-            border-radius: 12px;
-            box-shadow: 0 14px 35px rgba(0, 0, 0, 0.18);
-            padding: 8px;
-            margin-top: 6px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.2), 0 0 1px 1px rgba(15, 23, 42, 0.05);
+            padding: 20px;
             display: none;
-            z-index: 220;
-            animation: fadeInMenu 0.18s ease forwards;
+            z-index: 500;
+            animation: menuFlyIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        @keyframes fadeInMenu {
-            from { opacity: 0; transform: translateY(-6px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes menuFlyIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
-        .menu-dropdown:hover .menu-dropdown-menu,
-        .menu-dropdown.active .menu-dropdown-menu {
+        .menu-dropdown-wrapper:hover .menu-dropdown-panel,
+        .menu-dropdown-wrapper.active .menu-dropdown-panel {
             display: block;
         }
 
-        .dropdown-link {
+        /* Menu Panel Header */
+        .menu-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 14px;
+            margin-bottom: 14px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .menu-panel-badge {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #2563eb;
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            padding: 3px 10px;
+            border-radius: 6px;
+        }
+
+        .menu-panel-sub {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* 2-Column Grid inside Menu */
+        .menu-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .menu-col-header {
+            font-size: 11.5px;
+            font-weight: 800;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .menu-item-link {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px 12px;
-            border-radius: 8px;
+            padding: 9px 10px;
+            border-radius: 10px;
             text-decoration: none;
-            color: var(--slate-800);
+            color: #0f172a;
             transition: all 0.15s ease;
         }
 
-        .dropdown-link:hover {
-            background: var(--slate-100);
-            color: var(--primary);
+        .menu-item-link:hover {
+            background: #f8fafc;
+            transform: translateX(3px);
         }
 
-        .dropdown-link .link-icon {
-            font-size: 18px;
-            width: 32px;
-            height: 32px;
+        .menu-item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--slate-100);
-            border-radius: 8px;
+            font-size: 17px;
             flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
         }
 
-        .dropdown-link:hover .link-icon {
-            background: rgba(37, 99, 235, 0.12);
-        }
+        /* Colorful vibrant icon tiles */
+        .icon-blue   { background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; }
+        .icon-purple { background: #faf5ff; color: #7e22ce; border: 1px solid #f3e8ff; }
+        .icon-green  { background: #f0fdf4; color: #15803d; border: 1px solid #dcfce7; }
+        .icon-sky    { background: #f0f9ff; color: #0369a1; border: 1px solid #e0f2fe; }
+        .icon-amber  { background: #fffbeb; color: #b45309; border: 1px solid #fef3c7; }
+        .icon-indigo { background: #eef2ff; color: #4338ca; border: 1px solid #e0e7ff; }
+        .icon-rose   { background: #fff1f2; color: #be123c; border: 1px solid #ffe4e6; }
+        .icon-teal   { background: #f0fdfa; color: #0f766e; border: 1px solid #ccfbf1; }
 
-        .dropdown-link .link-title {
+        .menu-item-title {
             font-size: 13.5px;
-            font-weight: 600;
-            line-height: 1.2;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.25;
+            transition: color 0.15s ease;
         }
 
-        .dropdown-link .link-desc {
+        .menu-item-link:hover .menu-item-title {
+            color: #2563eb;
+        }
+
+        .menu-item-desc {
             font-size: 11.5px;
-            color: var(--slate-600);
+            color: #64748b;
             margin-top: 2px;
             line-height: 1.2;
+        }
+
+        /* Menu Panel Footer */
+        .menu-panel-footer {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .menu-panel-footer a {
+            color: #2563eb;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.15s ease;
+        }
+
+        .menu-panel-footer a:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            .menu-dropdown-panel {
+                width: 94vw;
+                left: 0;
+                padding: 16px;
+            }
+            .menu-columns {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
         }
 
         /* Header Right Controls & Master Search Bar */
