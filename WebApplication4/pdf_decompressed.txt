@@ -1,0 +1,3723 @@
+GridView
+GridView
+
+What is ASP.NET 
+GridView
+?
+
+GridView
+is a control used to display data in tables on a web page. It displays data in both rows and columns, where each column 
+represents a field, and each row represents a record. 
+It 
+helps 
+you to 
+perform key 
+operations 
+like Insert, 
+Update, Delete, 
+Sorting, 
+and Paging
+.
+
+The 
+GridView
+control supports the following features:
+1.
+Binding to data source 
+controls.
+2.
+Built
+-
+in sort capabilities.
+3.
+Built
+-
+in update and delete capabilities.
+4.
+Built
+-
+in paging capabilities.
+5.
+Built
+-
+in row selection capabilities.
+6.
+Programmatic access to the 
+GridView
+object model to dynamically set properties, handle events, and so on.
+7.
+Multiple key fields.
+8.
+Multiple data fields for the hyperlink columns.
+
+In 
+general, 
+we perform the following operations on 
+GridView
+.
+1.
+Bind data to 
+GridView
+column
+2.
+Edit data in 
+GridView
+3.
+Delete rows from 
+GridView
+4.
+Update row from database
+GridView
+
+How 
+to display data in 
+GridView
+from database in ASP.Net using C
+#? 
+
+The data will be fetched from database and then will be displayed in 
+GridView
+. The following 
+.
+aspx
+consists 
+of an ASP.Net 
+GridView
+with four BoundField columns. 
+
+In 
+order to implement Paging in 
+GridView
+, AllowPaging property is set to true and OnPageIndexChanging event has been handled
+.
+<
+asp:GridView
+ID="GridView1" runat="server" 
+AutoGenerateColumns
+="false" AllowPaging="true"
+OnPageIndexChanging="OnPageIndexChanging" PageSize="10">
+<Columns>
+<
+asp:BoundField
+ItemStyle
+-
+Width
+="50px
+" 
+DataField
+="
+CustomerID
+" 
+HeaderText
+="Customer ID" />
+<
+asp:BoundField
+ItemStyle
+-
+Width="
+100px
+" 
+DataField
+="
+ContactName
+" 
+HeaderText
+="Contact Name" />
+<
+asp:BoundField
+ItemStyle
+-
+Width
+="50px
+" 
+DataField
+="City" 
+HeaderText
+="City" />
+<
+asp:BoundField
+ItemStyle
+-
+Width
+="50px
+" 
+DataField
+="Country" 
+HeaderText
+="Country" />
+</Columns>
+</
+asp:GridView
+>
+
+Namespaces
+
+You will need to import the following 
+namespaces when you writing code in .aspx.cs file.
+
+using 
+System.Data
+;
+
+using 
+System.Data.SqlClient
+;
+
+using 
+System.Configuration
+;
+GridView
+
+Populating 
+GridView
+from database
+
+Inside the Page Load event of the page, the 
+GridView
+is populated with records from the Customers table of the 
+your database.
+protected void 
+Page_Load
+\(object sender, 
+EventArgs
+e\
+{
+if \(!
+this.IsPostBack
+\
+{
+this.BindGrid\(\
+}
+}
+private void BindGrid
+\(\ {
+string 
+constr
+= ConfigurationManager.ConnectionStrings["
+constr
+"].ConnectionString;
+using \(SqlConnection con = new SqlConnection\(
+constr
+\\ 
+{
+using \(SqlCommand 
+cmd
+= new SqlCommand\("SELECT 
+CustomerId
+, 
+ContactName
+, City, Country FROM Customers
+"\  
+{
+using \(
+SqlDataAdapter
+sda
+= new 
+SqlDataAdapter
+\(\\  
+{
+cmd.Connection
+= con;
+sda.SelectCommand
+= 
+cmd
+;
+using \(
+DataTable
+dt
+= new 
+DataTable
+\(\\ 
+{
+sda.Fill
+\(
+dt
+\
+GridView1.DataSource = 
+dt
+;
+GridView1.DataBind\(\;
+}
+}
+}
+}
+}
+GridView
+
+Implementing Paging in 
+GridView
+
+The following event handler is executed when a page is changed inside the 
+GridView
+.
+
+The value of the 
+PageIndex
+of the Page which was clicked is present inside the 
+NewPageIndex
+property of the 
+GridViewPageEventArgs object and it is set to the PageIndex property of the 
+GridView
+and the 
+GridView
+is again populated by 
+calling the BindGrid function
+.
+protected void 
+OnPaging
+\(object sender, GridViewPageEventArgs e\
+{
+GridView1.PageIndex = e.NewPageIndex;
+this.BindGrid\(\;
+}
+GridView
+
+Formatting asp.net gridview 
+control: 
+
+We will be using tblEmployee table for this demo. Use the script below to create employees table and populate it with sample 
+dat
+a.
+CREATE 
+TABLE [tblEmployee]
+\(
+[EmployeeId] [int] IDENTITY PRIMARY KEY,
+[FirstName] [
+nvarchar
+]\(50\,
+[LastName] [
+nvarchar
+]\(50\,
+[
+DateOfBirth
+] [
+datetime
+],
+[Salary
+] [int],
+[Gender] [
+nvarchar
+]\(50\
+[
+DepartmentName
+] [
+nvarchar
+]\(50\
+\
+
+Insert into tblEmployee 
+values \(
+'John','Johnson','08/10/1982',55000,'Male','IT'\
+
+Insert into tblEmployee 
+values \(
+'Pam','Roberts','11/11/1979',62000,'Female','HR'\
+
+Insert into tblEmployee 
+values \(
+'David','John','01/15/1980',45000,'Male','IT'\
+
+Insert into tblEmployee 
+values \(
+'Rose','Mary','08/18/1967',78000,'Female','Payroll'\
+
+Insert into tblEmployee 
+values \(
+'Mark','Mell','12/10/1974',69000,'Male','HR'\
+GridView
+
+Use 
+"
+SqlDataSource
+" 
+control to retrieve data from the database and bind it to gridview control. The HTML of the webform, is shown below.
+<div style="font
+-
+family: Arial">
+<
+asp:SqlDataSource
+ID="SqlDataSource1" runat="server" 
+ConnectionString="<%$ 
+ConnectionStrings:DBConnectionString
+%>" 
+SelectCommand
+="SELECT * FROM [tblEmployee]"></
+asp:SqlDataSource
+>
+<
+br
+/>
+<
+asp:GridView
+ID="GridView1" runat="server" 
+AutoGenerateColumns
+="False" 
+DataKeyNames
+="EmployeeId" DataSourceID="SqlDataSource1">
+<Columns>
+<
+asp:BoundField
+DataField
+="EmployeeId" 
+HeaderText
+="EmployeeId" 
+InsertVisible
+="False" 
+ReadOnly
+="True" 
+SortExpression
+="EmployeeId" />
+<
+asp:BoundField
+DataField
+="FirstName" 
+HeaderText
+="FirstName" 
+SortExpression
+="FirstName" />
+<
+asp:BoundField
+DataField
+="LastName" 
+HeaderText
+="LastName" 
+SortExpression
+="LastName" />
+<
+asp:BoundField
+DataField
+="
+DateOfBirth
+" 
+HeaderText
+="
+DateOfBirth
+" 
+SortExpression
+="
+DateOfBirth
+" />
+<
+asp:BoundField
+DataField
+="Salary
+" 
+HeaderText
+="Salary
+" 
+SortExpression
+="Salary
+" />
+<
+asp:BoundField
+DataField
+="Gender" 
+HeaderText
+="Gender" 
+SortExpression
+="Gender" />
+<
+asp:BoundField
+DataField
+="
+DepartmentName
+" 
+HeaderText
+="
+DepartmentName
+" 
+SortExpression
+="
+DepartmentName
+" />
+</Columns>
+</
+asp:GridView
+>
+</div>
+GridView
+
+Notice that, by default, all the columns from the table are displayed in the gridview control. For example, I don't want to d
+isp
+lay 
+EmployeeId column in the gridview control. There are 3 ways to achieve this
+1. You can modify "
+SqlDataSource
+" control "SELECT" query, to include only the columns that you need
+.
+2. Remove the "BoundField" column from gridview control that displays, EmployeeId
+3. Set visibility property to false on the "BoundField" column from gridview control that displays, EmployeeId
+
+Notice the column headers in the gridview control. They are same as the column names in the table. For example, we want a 
+space between First and Name in FirstName. 
+Similary
+, we want spaces for LastName, 
+DateOfBirth
+, 
+AnnualSalary
+and 
+DepartmentName
+.
+
+FirstName = First Name
+
+LastName = Last Name
+
+DateOfBirth
+= Date Of Birth
+
+AnnualSalary
+= Annual Salary
+
+DepartmentName
+= Department Name
+
+To 
+achieve this, change "
+HeaderText
+" property of the respective column, in the gridview control.
+
+When you run the application, 
+DateOfBirth
+column displays both Date and Time. I want only the "date" to be displayed. We can 
+very easily achieve this using 
+DataFormatString
+property as shown below. We have set 
+DataFormatString
+="{0:d}", which will 
+display short date pattern. Setting 
+DataFormatString
+="{0:D}", will display long date pattern
+.
+
+<
+asp:BoundField
+DataField
+="
+DateOfBirth
+" 
+DataFormatString
+="{0:d}" 
+HeaderText
+="
+DateOfBirth
+" 
+SortExpression
+="
+DateOfBirth
+" />
+GridView
+
+For the annual salary column, I want to display currency symbol. For example, depending on your application requirement, you 
+may want to display, either United States dollar \($\Great British Pound\(�\ or Indian Rupee Symbol. To achieve this use curr
+enc
+y 
+format string "0:c" as shown below. If you want to display 2 decimal places using "0:c2"
+
+<
+asp:BoundField
+DataField
+="
+AnnualSalary
+" 
+DataFormatString
+="{0:c}" 
+
+HeaderText
+="
+AnnualSalary
+" 
+SortExpression
+="
+AnnualSalary
+" />
+
+Currency 
+symbol will be displayed, based on the default culture setting. For example, 
+
+If your default culture setting is "en
+-
+US", United States Dollar symbol will be displayed
+
+If your default culture setting is "en
+-
+GB", Great British Pound symbol will be displayed
+
+If your default culture setting is "en
+-
+IN", Indian Rupee symbol will be displayed
+
+Culture 
+can be specified in web.config as shown below. This setting will be applicable for all pages in the asp.net web application.
+
+<
+system.web
+>
+
+<globalization culture="en
+-
+US"/>
+
+</
+system.web
+>
+
+It 
+is possible to override culture setting on a page
+-
+by
+-
+page basis. To set the culture declaratively in the 
+aspx
+page, use "Culture" 
+attribute of the "Page" directive as shown below.
+
+<%@ Page Culture="en
+-
+GB" 
+>
+GridView
+
+How can we have multiple cultures for a single page. For example, each row of the grid displays a record for a person belongi
+ng 
+to 
+a different country
+.
+
+Let us understand this with an example. I have a table, tblEmployee as shown below
+.
+
+When, this data is displayed in a gridview control, we want the country specific currency symbol to be displayed, next to the
+ir 
+salary. The output should be as shown below
+.
+GridView
+<div style="
+font
+-
+family:Arial
+">
+<
+asp:SqlDataSource
+ID="SqlDataSource1" runat="server" 
+ConnectionString="<%$ 
+ConnectionStrings:DBConnectionString
+%>" 
+SelectCommand
+="SELECT * FROM [tblEmployee]"></
+asp:SqlDataSource
+>
+<
+br
+/>
+<
+asp:GridView
+ID="GridView1" runat="server" 
+AutoGenerateColumns
+="False" 
+DataKeyNames
+="EmployeeId" DataSourceID="SqlDataSource1" 
+BackColor
+="#DEBA84" 
+BorderColor
+="#DEBA84" 
+BorderStyle
+="None" 
+BorderWidth
+="1px" 
+CellPadding
+="3" 
+CellSpacing
+="2" 
+onrowdatabound
+="GridView1_RowDataBound">
+<Columns>
+<
+asp:BoundField
+DataField
+="EmployeeId" 
+HeaderText
+="EmployeeId" 
+InsertVisible
+="False" 
+ReadOnly
+="True" 
+SortExpression
+="EmployeeId" />
+<
+asp:BoundField
+DataField
+="FirstName" 
+HeaderText
+="FirstName" 
+SortExpression
+="FirstName" />
+<
+asp:BoundField
+DataField
+="Salary
+" 
+HeaderText
+="Salary
+" 
+SortExpression
+="Salary
+"/>
+<
+asp:BoundField
+DataField
+="Country" 
+HeaderText
+="Country" 
+SortExpression
+="Country" />
+</Columns>
+</
+asp:GridView
+>
+</div>
+GridView
+
+To achieve this, we can make use of 
+RowDataBound
+event of 
+GridView
+control. 
+RowDataBound
+event is raised when a record in 
+the datasource is bound to a row in gridview control. Please note that in 
+RowDataBound
+event, we are first checking, if the row, 
+that is being bound, is a 
+datarow
+. This event is also raised for other row types like Header, Footer etc
+.
+protected void GridView1_RowDataBound\(object sender, 
+GridViewRowEventArgs
+e\
+{
+// Check if the row that is being bound, is a 
+datarow
+if \(
+e.Row.RowType
+== 
+DataControlRowType.DataRow
+\
+{
+if \(
+e.Row.Cells
+[3].Text == "US"\
+{
+int salary = Convert.ToInt32\(
+e.Row.Cells
+[2].Text\
+string 
+formattedString
+= 
+string.Format
+\(new 
+System.Globalization.CultureInfo
+\("en
+-
+US"\, "{0:c}", salary\
+e.Row.Cells
+[2].Text = 
+formattedString
+;
+}
+else if \(
+e.Row.Cells
+[3].Text == "UK"\
+{
+int salary = Convert.ToInt32\(
+e.Row.Cells
+[2].Text\
+string 
+formattedString
+= 
+string.Format
+\(new 
+System.Globalization.CultureInfo
+\("en
+-
+GB"\"{0:c}", salary\
+e.Row.Cells
+[2].Text = 
+formattedString
+;
+}
+GridView
+else if \(
+e.Row.Cells
+[3].Text == "India
+"\  
+{
+int salary = Convert.ToInt32\(
+e.Row.Cells
+[2].Text\
+string 
+formattedString
+= 
+string.Format
+\(new 
+System.Globalization.CultureInfo
+\("en
+-
+IN"\"{0:c}", salary\
+e.Row.Cells
+[2].Text = 
+formattedString
+;
+}
+else if \(
+e.Row.Cells
+[3].Text == "South Africa
+"\
+{
+int salary = Convert.ToInt32\(
+e.Row.Cells
+[2].Text\
+string 
+formattedString
+= 
+string.Format
+\(new 
+System.Globalization.CultureInfo
+\("en
+-
+ZA"\, "{0:c}", salary\
+e.Row.Cells
+[2].Text = 
+formattedString
+;
+}
+else if \(
+e.Row.Cells
+[3].Text == "Malaysia
+"\ 
+{
+int salary = Convert.ToInt32\(
+e.Row.Cells
+[2].Text\
+string 
+formattedString
+= 
+string.Format
+\(new 
+System.Globalization.CultureInfo
+\("en
+-
+MY"\, "{0:c}", salary\
+e.Row.Cells
+[2].Text = 
+formattedString
+;
+}
+}
+}
+
+Use 
+the code below, to get the list of all supported cultures in asp.net
+foreach
+\(
+CultureInfo
+ci in 
+CultureInfo.GetCultures
+\(
+CultureTypes.AllCultures
+\ {
+Response.Write
+\(
+ci.Name
++ " => " + 
+ci.DisplayName
++ "<
+br
+/>"\;
+}
+GridView
+
+Formatting gridview based on row data: 
+I have tblEmployee table, as shown below
+.
+
+Now, we want to retrieve and display above data in a gridview control. The data in the gridview control, should be formatted 
+as 
+shown in the image below. Notice that, based on the country culture, we need to format and display 
+AnnualSalary
+column with 
+correct currency symbol. The important thing is that, Culture column should not visible to the end user in the gridview contr
+ol
+.
+GridView
+<div style="
+font
+-
+family:Arial
+">
+<
+asp:SqlDataSource
+ID="SqlDataSource1" runat="server" 
+ConnectionString="<%$ 
+ConnectionStrings:DBConnectionString
+%>" 
+SelectCommand
+="SELECT * FROM [tblEmployee]"></
+asp:SqlDataSource
+>
+<
+br
+/>
+<
+asp:GridView
+ID="GridView1" runat="server" 
+AutoGenerateColumns
+="False" 
+DataKeyNames
+="EmployeeId" DataSourceID="SqlDataSource1" 
+onrowdatabound
+="GridView1_RowDataBound">
+<Columns>
+<
+asp:BoundField
+DataField
+="EmployeeId" 
+HeaderText
+="EmployeeId" 
+InsertVisible
+="False" 
+ReadOnly
+="True" 
+SortExpression
+="EmployeeId" />
+<
+asp:BoundField
+DataField
+="FirstName" 
+HeaderText
+="FirstName" 
+SortExpression
+="FirstName" />
+<
+asp:BoundField
+DataField
+="
+AnnualSalary
+" 
+HeaderText
+="
+AnnualSalary
+" 
+SortExpression
+="
+AnnualSalary
+" />
+<
+asp:BoundField
+DataField
+="Country" 
+HeaderText
+="Country" 
+SortExpression
+="Country" />
+<
+asp:BoundField
+DataField
+="
+CountryCulture
+" 
+HeaderText
+="
+CountryCulture
+" 
+SortExpression
+="
+CountryCulture
+" />
+</Columns>
+</
+asp:GridView
+>
+</div>
+GridView
+
+RowDataBound
+event of the 
+GridView
+control can be used to achieve this very easily. 
+RowDataBound
+event is raised every time, a row 
+from the datasource is bound to row in the gridview control. In row 
+RowDataBound
+event retrieve country culture information and turn off the 
+visibility of 
+CountryCulture
+cell. Make sure to hide 
+CountryCulture
+header table cell as well
+.
+protected void GridView1_RowDataBound\(object sender, 
+GridViewRowEventArgs
+e
+\{
+// If the row being 
+databound
+is a header row
+if \(
+e.Row.RowType
+== 
+DataControlRowType.Header
+\
+{
+// Hide 
+CountryCulture
+header table cell 
+e.Row.Cells
+[4].Visible = false;
+}
+// If the row being 
+databound
+is a data row
+else if \(
+e.Row.RowType
+== 
+DataControlRowType.DataRow
+\ 
+{
+// Retrieve the unformatted salary
+int salary = Convert.ToInt32\(
+e.Row.Cells
+[2].Text\;
+// Retrieve the culture 
+string 
+countryCulture
+= 
+e.Row.Cells
+[4].Text;
+// Turn off the visibility of 
+CountryCulture
+cell
+e.Row.Cells
+[4].Visible = false;
+// Format the currency using specific country culture
+string 
+formattedString
+= 
+string.Format
+\(new 
+System.Globalization.CultureInfo
+\(
+countryCulture
+\ "{0:c}", salary\
+// Finally set the formatted currency as text for 
+// display purpose in the gridview control
+e.Row.Cells
+[2].Text = 
+formattedString
+;
+}
+}
+GridView
+
+Design time and runtime formatting of 
+gridview.
+
+GridView
+control provides several inbuilt styles to format different sections of the gridview. The following are some of the style 
+properties and the sections they can format.
+
+ControlStyle
+-
+Use to apply the formatting on the entire gridview control
+
+RowStyle
+-
+Use to format all rows in the gridview
+
+AlternatingRowStyle
+-
+Use to format all alternating rows in the gridview
+
+HeaderStyle
+-
+Use to format the header of the gridview control
+
+FooterStyle
+-
+Use to format the footer of the gridview control
+
+EditRowStyle
+-
+Use to format when the row is in edit mode.
+
+By 
+default, the footer of the 
+girdview
+control is not visible. To show the footer, set "ShowFooter" property of the gridview control to 
+true.
+
+If you are not very good at designing, then you may use "AutoFormat" feature of the gridview control
+.
+
+These styles can be applied declaratively at design time or dynamically at runtime based on the underlying data. At design ti
+me,
+the styles can be applied using properties window or directly in the HTML source.
+
+Now, let us understand changing the styles dynamically based on underlying data.
+GridView
+
+I want to display this data in a gridview control. All the employee rows, with salary greater than 70,000 should have a "RED"
+background color and white font 
+colour
+. Obviously this cannot be done at design time. At runtime, we need to check the value in 
+"Salary
+" column for each row, and if it is greater than 70,000, then we need to set the "
+BackColor
+" property of that row to "Red". 
+This can be very easily achieved using 
+RowDataBound
+event. The output should be as shown below.
+GridView
+protected void GridView1_RowDataBound\(object sender, 
+GridViewRowEventArgs
+e\
+{
+// Loop thru each 
+datarow
+in the gridview
+if \(
+e.Row.RowType
+== 
+DataControlRowType.DataRow
+\
+{
+// You can also retrieve salary using cell index in the row
+// Avoid using index, as this may not work correctly if the
+// order of columns is changed in the gridview control
+// int salary = Convert.ToInt32\(
+e.Row.Cells
+[2].Text\;
+// Retrieve salary
+int salary = Convert.ToInt32
+\(
+DataBinder.Eval
+\(
+e.Row.DataItem
+, "
+AnnualSalary
+"\
+// If Salary > 70000, set your styles
+if \(salary > 70000\
+{
+e.Row.BackColor
+= 
+System.Drawing.Color.Red
+;
+e.Row.ForeColor
+= 
+System.Drawing.Color.White
+;
+}
+}
+}
+GridView
+
+GridView
+TemplateField
+: 
+we will discuss about using 
+TemplateField
+with 
+GridView
+control when editing data
+.
+
+By default, when editing data, a textbox is rendered for all the bound columns. It would make more sense to use 
+dropdownlist
+as 
+the editing interface for "Gender". To achieve this we have to use a "
+TemplateField
+" instead of "BoundField" for "Gender" column. 
+This can be very easily achieved using the 
+designer 
+or directly thru the HTML source
+.
+
+Step 1: Click on "Edit Columns" link from 
+GridView
+Tasks 
+pane.
+GridView
+
+Step 2: Click on "Gender" from "Selected Fields" section, and then click on "Convert this field into a Template Field" link a
+nd 
+finally 
+click OK
+.
+
+Step 3: At this point, you should be back on gridview tasks pane. 
+Click 
+on "Edit Templates" 
+link. 
+GridView
+
+Step 4: From "Display" 
+dropdownlist
+, select "
+EditItemTemplate
+". Replace the "TextBox" control with a "
+DropDownList
+". 
+
+Step 5: Now click on "Edit Items" link from "
+DropDownList
+Tasks" pane. Add the 3 
+listem
+items \(Please Select, Male, Female\to the 
+dropdownlist
+and click OK. Finally click on "End Template Editing" from 
+GridView
+Tasks pane
+.
+GridView
+
+Now run the application and click on EDIT. Notice that, "Gender" 
+DropDownList
+always has "Please Select" as the selected item. 
+This is incorrect. When the row is in "Edit" mode we want to have the correct "Gender" selected. To achieve this follow the 
+instructions in Step 6 below.
+
+Step 
+6: Now 
+open 
+the webform to 
+.
+aspx
+source mode. Set "
+SelectedValue
+" property of 
+dropdownlist
+as shown below. Steps 1 to 6 
+has converted, the gender bound field to template field. The template field HTML markup that is auto
+-
+generated is shown below.
+GridView
+
+Now run the application and click on EDIT. Notice that a 
+dropdownlist
+control is now used as editing interface for gender column in 
+the gridview control
+.
+GridView
+
+We want to make "Gender" required field. When editing data in the gridview control, if a user has selected "Select Gender", t
+hen
+the user should not be able to submit the page. We should get "Gender is a required field" error message as shown in the scre
+en 
+shot below
+.
+
+At the moment we do not have any validation in place when editing data in gridview control. If you have selected "Select Gend
+er"
+from 
+dropdownlist
+and submit the page, we get a crash with error message 
+-
+String or binary data would be truncated.
+
+This 
+is because "Gender" column length in the database is 
+nvrahcar
+\(10\. This size is not enough to store the word "Select Gender". 
+To get rid of the error change the length to 
+nvarchar
+\(20
+\
+GridView
+
+Now, if you have selected "Select Gender" from 
+dropdownlist
+and submit the page, the word "Select Gender" will be stored in the database 
+table. We want to avoid this. We only want the page to be submitted, if the user has selected the gender 
+-
+Male or Female
+.
+
+Since 
+we are already using a 
+TemplateField
+to display Gender in the 
+GridView
+control, this should be very easy to achieve. All we need to 
+do is drag and drop a "RequiredFieldValidator" control next to the 
+dropdownlist
+in 
+EditItemTemplate
+. Then configure 
+"RequiredFieldValidator" as shown below
+.
+<
+asp:TemplateField
+HeaderText
+="Gender" 
+SortExpression
+="Gender">
+<
+EditItemTemplate
+>
+<
+asp:DropDownList
+ID="DropDownList1" runat="server" 
+SelectedValue
+= '<%# Bind\("Gender"\%>'>
+<
+asp:ListItem
+>Select Gender</
+asp:ListItem
+>
+<
+asp:ListItem
+>Male</
+asp:ListItem
+>
+<
+asp:ListItem
+>Female</
+asp:ListItem
+>
+</
+asp:DropDownList
+>
+<
+asp:RequiredFieldValidator
+ID="RequiredFieldValidator1" 
+runat="server" 
+ErrorMessage
+="Gender is a required field" 
+ControlToValidate
+="DropDownList1" 
+InitialValue
+="Select Gender" 
+Text="*" ForeColor="Red" >
+</
+asp:RequiredFieldValidator
+>
+</
+EditItemTemplate
+>
+<
+ItemTemplate
+>
+<
+asp:Label
+ID="Label1" runat="server" Text='<%# Bind\("Gender"\ %>'>
+</
+asp:Label
+>
+</
+ItemTemplate
+>
+</
+asp:TemplateField
+GridView
+
+Finally drag and drop a "
+ValidationSummary
+" control on the webform, after the closing tag of 
+GridView
+. Set ForeColor="Red" on 
+"
+ValidationSummary
+" control. 
+
+<
+asp:ValidationSummary
+ID="ValidationSummary1" runat="server" ForeColor="Red" 
+/>
+
+Run the application, and when you try to submit the page without selecting "Gender", you get a validation error message as 
+expected
+.
+
+GridView
+Insert Update and Delete
+
+We want to design and write code to achieve the  following: 
+GridView
+
+Create an asp.net web application. Drag and drop a gridview and a sqldatasource control on WebForm1.aspx. 
+
+Configure "SqlDataSource1" control 
+1. Right click on "SqlDataSource1" control and select "Show Smart Tag" 
+2. Now click on "Configure Data Source" link
+3. Select connection string, from the 
+dropdownlist
+on "Choose your data connection" screen. You need to have a connection 
+string specified in web.config file.
+4. Click Next
+5. On "Configure the Select Statement" screen, select "tblEmployee" table from 
+dropdownlist
+.
+6. Click on "Advanced" button
+7. Select "Generate INSERT, UPDATE and DELETE statements" checkbox and click OK
+8. Click Next and Finish
+
+Drag and drop gridview control on WebForm1.aspx. Now let us associate "SqlDataSource1" control with "GridView1" control
+1. Right click on "GridView1" control and select "Show Smart Tag" 
+2. Select "SqlDataSource1" from "Choose Data Source" 
+dropdownlist
+.
+3. Select "Enable Deleting" and "Enable Editing" checkboxes. At this point "Delete" and "Edit" buttons should appear on the 
+gridview control.
+GridView
+
+We will be using gridview control's footer for inserting a new record. Set "ShowFooter" property of the GridView1 control to 
+"tr
+ue". 
+This can be done from the properties 
+window.
+
+By default 
+GridView
+control has generated bound fields to display EmployeeId, Name, Gender and City columns. 
+<
+asp:GridView
+ID="GridView1" runat="server" 
+AutoGenerateColumns
+="False" 
+DataKeyNames
+="EmployeeId" DataSourceID="SqlDataSource1" 
+ShowFooter="true">
+<Columns>
+<
+asp:CommandField
+ShowDeleteButton
+="True" 
+ShowEditButton
+="True" />
+<
+asp:BoundField
+DataField
+="EmployeeId" 
+HeaderText
+="EmployeeId" 
+InsertVisible
+="False" 
+ReadOnly
+="True" 
+SortExpression
+="EmployeeId" />
+<
+asp:BoundField
+DataField
+="Name" 
+HeaderText
+="Name" 
+SortExpression
+="Name" />
+<
+asp:BoundField
+DataField
+="Gender" 
+HeaderText
+="Gender" 
+SortExpression
+="Gender" />
+<
+asp:BoundField
+DataField
+="City" 
+HeaderText
+="City" 
+SortExpression
+="City" />
+</Columns>
+</
+asp:GridView
+>
+GridView
+
+We need to convert these bound fields into template fields. This can be done very easily using the designer. 
+1. On the "
+GridView
+Tasks" pane click on "Edit Columns" link button
+.
+2. Select "EmployeeId" from "Selected Fields" section and click on "Convert this field into a template field" link
+3. Do the same for Name, Gender and 
+City
+GridView
+
+Now modify the template fields in the .ASPX, as shown below. Please note
+1. In every 
+TemplateField
+, along with 
+EditItemTemplate
+and 
+ItemTemplate
+, we also need FooterTemplate.
+2
+. A 
+dropdownlist
+is used in 
+EditItemTemplate
+and FooterTemplate of "Gender" template field, instead of a textbox control.
+3. To validate data during edit and insert operations, notice that, we are using validation controls, in 
+EditItemTemplate
+and 
+FooterTemplate.
+4. A 
+linkbutton
+is used in the footer template of "EmployeeId" template field, to enable the user to insert a new employee row
+5. We have used ValidationGroup="Insert" for all the validation controls in 
+FooterTemplates
+. 
+LinkButton's
+ValidationGroup is 
+aslo
+set to "Insert", so that all the validation controls in in 
+FooterTemplates
+are fired only on Insert LinkButton click.
+6. We have set 
+LinkButton's
+OnClick
+="
+lbInsert_Click
+".
+7. After the closing tag of 
+GridView
+, notice that we are using 2 
+validationsummary
+controls, to display all the validation messages 
+in one place. ValidationSummary1 control's ValidationGroup is set to "Insert". ValidationSummary1 control displays all insert
+related validation errors, and edit related validation errors are displayed using ValidationSummary2 control.
+GridView
+<div style="font
+-
+family: Arial">
+<
+asp:GridView
+ID="GridView1" runat="server" 
+AutoGenerateColumns
+="False" 
+DataKeyNames
+="EmployeeId" DataSourceID="SqlDataSource1" 
+ShowFooter="True" 
+BackColor
+="#DEBA84" 
+BorderColor
+="#DEBA84"
+BorderStyle
+="None" 
+BorderWidth
+="1px" 
+CellPadding
+="3" 
+CellSpacing
+="2">
+<Columns>
+<
+asp:CommandField
+ShowDeleteButton
+="True" 
+ShowEditButton
+="True" />
+<
+asp:TemplateField
+HeaderText
+="EmployeeId" 
+InsertVisible
+="False" 
+SortExpression
+="EmployeeId">
+<
+EditItemTemplate
+>
+<
+asp:Label
+ID="Label1" runat="server" 
+Text='<%# 
+Eval
+\("EmployeeId"\%>'>
+</
+asp:Label
+>
+</
+EditItemTemplate
+>
+<
+ItemTemplate
+>
+<
+asp:Label
+ID="Label1" runat="server" 
+Text='<%# Bind\("EmployeeId"\%>'>
+</
+asp:Label
+>
+</
+ItemTemplate
+>
+<FooterTemplate>
+<asp:LinkButton ID="lbInsert" ValidationGroup="Insert" 
+runat="server" 
+OnClick
+="
+lbInsert_Click
+">Insert
+</asp:LinkButton>
+</FooterTemplate>
+</
+asp:TemplateField
+>
+GridView
+<
+asp:TemplateField
+HeaderText
+="Name" 
+SortExpression
+="Name">
+<
+EditItemTemplate
+>
+<
+asp:TextBox
+ID="TextBox1" runat="server" 
+Text='<%# Bind\("Name"\%>'>
+</
+asp:TextBox
+>
+<
+asp:RequiredFieldValidator
+ID="
+rfvEditName
+" runat="server" 
+ErrorMessage
+="Name is a required field"
+ControlToValidate
+="TextBox1" Text="*" ForeColor="Red">
+</
+asp:RequiredFieldValidator
+>
+</
+EditItemTemplate
+>
+<
+ItemTemplate
+>
+<
+asp:Label
+ID="Label2" runat="server" 
+Text='<%# Bind\("Name"\%>'>
+</
+asp:Label
+>
+</
+ItemTemplate
+>
+<FooterTemplate>
+<
+asp:TextBox
+ID="
+txtName
+" runat="server"></
+asp:TextBox
+>
+<
+asp:RequiredFieldValidator
+ID="
+rfvInsertName
+" runat="server" 
+ErrorMessage
+="Name is a required field" 
+ControlToValidate
+="
+txtName
+" Text="*" ForeColor="Red"
+ValidationGroup="Insert">
+</
+asp:RequiredFieldValidator
+>
+</FooterTemplate>
+</
+asp:TemplateField
+>
+GridView
+<
+asp:TemplateField
+HeaderText
+="Gender" 
+SortExpression
+="Gender">
+<
+EditItemTemplate
+>
+<
+asp:DropDownList
+ID="DropDownList1" runat="server" 
+SelectedValue
+='<%# Bind\("Gender"\ %>'>
+<
+asp:ListItem
+>Select Gender</
+asp:ListItem
+>
+<
+asp:ListItem
+>Male</
+asp:ListItem
+>
+<
+asp:ListItem
+>Female</
+asp:ListItem
+>
+</
+asp:DropDownList
+>
+<
+asp:RequiredFieldValidator
+ID="
+rfvEditGender
+" runat="server" 
+ErrorMessage
+="Gender is a required field" Text="*"
+ControlToValidate
+="DropDownList1" ForeColor="Red" 
+InitialValue
+="Select Gender">
+</
+asp:RequiredFieldValidator
+>
+</
+EditItemTemplate
+>
+<
+ItemTemplate
+>
+<
+asp:Label
+ID="Label3" runat="server" 
+Text='<%# Bind\("Gender"\ %>'>
+</
+asp:Label
+>
+</
+ItemTemplate
+>
+<FooterTemplate>
+<
+asp:DropDownList
+ID="
+ddlInsertGender
+" runat="server">
+<
+asp:ListItem
+>Select Gender</
+asp:ListItem
+>
+<
+asp:ListItem
+>Male</
+asp:ListItem
+>
+<
+asp:ListItem
+>Female</
+asp:ListItem
+>
+</
+asp:DropDownList
+>
+<
+asp:RequiredFieldValidator
+ID="
+rfvInsertGender
+" runat="server" 
+ErrorMessage
+="Gender is a required field" Text="*"
+ControlToValidate
+="
+ddlInsertGender
+" ForeColor="Red" 
+InitialValue
+="Select Gender" ValidationGroup="Insert">
+</
+asp:RequiredFieldValidator
+>
+</FooterTemplate>
+</
+asp:TemplateField
+>
+GridView
+<
+asp:TemplateField
+HeaderText
+="City" 
+SortExpression
+="City">
+<
+EditItemTemplate
+>
+<
+asp:TextBox
+ID="TextBox3" runat="server" 
+Text='<%# Bind\("City"\ %>'></
+asp:TextBox
+>
+<
+asp:RequiredFieldValidator
+ID="
+rfvEditCity
+" runat="server" 
+ErrorMessage
+="City is a required field" Text="*"
+ControlToValidate
+="TextBox3" ForeColor="Red">
+</
+asp:RequiredFieldValidator
+>
+</
+EditItemTemplate
+>
+<
+ItemTemplate
+>
+<
+asp:Label
+ID="Label4" runat="server" 
+Text='<%# Bind\("City"\ %>'></
+asp:Label
+>
+</
+ItemTemplate
+>
+<FooterTemplate>
+<
+asp:TextBox
+ID="txtCity" runat="server"></
+asp:TextBox
+>
+<
+asp:RequiredFieldValidator
+ID="
+rfvInsertCity
+" runat="server" 
+ErrorMessage
+="City is a required field" Text="*" 
+ControlToValidate
+="txtCity" ForeColor="Red" 
+ValidationGroup="Insert">
+</
+asp:RequiredFieldValidator
+>
+</FooterTemplate>
+</
+asp:TemplateField
+>
+</Columns
+>
+GridView
+
+<
+FooterStyle
+BackColor
+="#F7DFB5" 
+ForeColor
+="#8C4510" />
+
+<
+HeaderStyle
+BackColor
+="#A55129" Font
+-
+Bold="True" 
+ForeColor
+="White" />
+
+<
+PagerStyle
+ForeColor
+="#8C4510" 
+HorizontalAlign
+="
+Center
+" />
+
+<
+RowStyle
+BackColor
+="#FFF7E7" 
+ForeColor
+="#8C4510" />
+
+<
+SelectedRowStyle
+BackColor
+="#738A9C" Font
+-
+Bold="True" 
+ForeColor
+="White" />
+
+<
+SortedAscendingCellStyle
+BackColor
+="#FFF1D4" />
+
+<
+SortedAscendingHeaderStyle
+BackColor
+="#B95C30" />
+
+<
+SortedDescendingCellStyle
+BackColor
+="#F1E5CE" />
+
+<
+SortedDescendingHeaderStyle
+BackColor
+="#93451F" />
+
+</
+asp:GridView
+>
+GridView
+<
+asp:SqlDataSource
+ID="SqlDataSource1" 
+runat
+="server" 
+ConnectionString
+="<%$ 
+ConnectionStrings:SampleConnectionString
+%>"
+DeleteCommand
+="DELETE FROM [
+tblEmployee
+] WHERE [
+EmployeeId
+] = @
+EmployeeId
+" 
+InsertCommand
+="INSERT INTO [
+tblEmployee
+] \([Name], [Gender], [City]\ 
+VALUES \(@Name, @Gender, @City\
+SelectCommand
+="SELECT * FROM [
+tblEmployee
+]" 
+UpdateCommand
+="UPDATE [
+tblEmployee
+] SET [Name] = @Name, [Gender] = @Gender,
+[City] = @City WHERE [
+EmployeeId
+] = @
+EmployeeId
+">
+<
+DeleteParameters
+>
+<
+asp:Parameter
+Name="
+EmployeeId
+" Type="Int32" />
+</
+DeleteParameters
+>
+<
+InsertParameters
+>
+<
+asp:Parameter
+Name="Name" Type="String" />
+<
+asp:Parameter
+Name="Gender" Type="String" />
+<
+asp:Parameter
+Name="City" Type="String" />
+</
+InsertParameters
+>
+<
+UpdateParameters
+>
+<
+asp:Parameter
+Name="Name" Type="String" />
+<
+asp:Parameter
+Name="Gender" Type="String" />
+<
+asp:Parameter
+Name="City" Type="String" />
+<
+asp:Parameter
+Name="
+EmployeeId
+" Type="Int32" />
+</
+UpdateParameters
+>
+</
+asp:SqlDataSource
+>
+</div>
+GridView
+
+Finally 
+following 
+event handler method in WebForm1.aspx.cs
+protected void 
+lbInsert_Click
+\(object sender, 
+EventArgs
+e\
+{
+SqlDataSource1.InsertParameters["Name"].
+DefaultValue
+= 
+\(\(
+TextBox
+\dView1.FooterRow.FindControl\("
+txtName
+"\.Text;
+SqlDataSource1.InsertParameters["Gender"].
+DefaultValue
+= 
+\(\(
+DropDownList
+\ridView1.FooterRow.FindControl\("
+ddlInsertGender
+"\
+SelectedValue
+;
+SqlDataSource1.InsertParameters["City"].
+DefaultValue
+= 
+\(\(
+TextBox
+\dView1.FooterRow.FindControl\("
+txtCity
+"\.Text;
+SqlDataSource1.Insert\(\
+}
+GridView
+
+GridView
+insert update delete in asp.net using 
+objectdatasource:
+So 
+we will be modifying the same example to use 
+objectdatasource 
+control instead of sqldatasource control.
+
+we will discuss about performing an insert, update and delete on asp.net 
+gridview
+control using objectdatasource
+
+Add a class file with name 
+EmployeeDataAccessLayer.cs
+to your project
+.
+using System;
+using 
+System.Data
+;
+using 
+System.Configuration
+;
+using 
+System.Data.SqlClient
+;
+using 
+System.Collections.Generic
+;
+namespace Demo {
+public class 
+Employee {
+public 
+int
+EmployeeId
+{ get; set; }
+public string Name { get; 
+set
+; }
+public string Gender { get; set; }
+public string City { get; set; }
+}
+GridView
+public class 
+EmployeeDataAccessLayer
+{
+// Select Method for 
+ObjectDataSource
+control
+public static List<Employee> 
+GetAllEmployees
+\(\    
+{
+List<Employee> 
+listEmployees
+= new List<Employee>\(\;
+string CS = 
+ConfigurationManager.ConnectionStrings
+["DBCS"].
+ConnectionString
+;
+using \(
+SqlConnection
+con = new 
+SqlConnection
+\(CS
+\   
+{
+SqlCommand
+cmd
+= new 
+SqlCommand
+\("Select * from 
+tblEmployee
+", con\;
+con.Open
+\(\
+SqlDataReader
+rdr
+= 
+cmd.ExecuteReader
+\(\
+while \(
+rdr.Read
+\(\
+{
+Employee 
+employee
+= new Employee\(\;
+employee.EmployeeId
+= Convert.ToInt32\(
+rdr
+["
+EmployeeId
+"]\;
+employee.Name
+= 
+rdr
+["Name"].
+ToString
+\(\
+employee.Gender
+= 
+rdr
+["Gender"].
+ToString
+\(\
+employee.City
+= 
+rdr
+["City"].
+ToString
+\(\
+listEmployees.Add
+\(employee\;
+}
+}
+return 
+listEmployees
+;
+}
+GridView
+// Delete Method for 
+ObjectDataSource
+control
+public static void 
+DeleteEmployee
+\(
+int
+EmployeeId
+\
+{
+string CS = 
+ConfigurationManager.ConnectionStrings
+["DBCS"].
+ConnectionString
+;
+using \(
+SqlConnection
+con = new 
+SqlConnection
+\(CS\
+{
+SqlCommand
+cmd
+= new 
+SqlCommand
+\("Delete from 
+tblEmployee
+where 
+EmployeeId
+= @
+EmployeeId
+", con\
+SqlParameter
+param
+= new 
+SqlParameter
+\("@
+EmployeeId
+", 
+EmployeeId
+\
+cmd.Parameters.Add
+\(
+param
+\
+con.Open
+\(\
+cmd.ExecuteNonQuery
+\(\
+}
+}
+GridView
+
+// Update Method for 
+ObjectDataSource
+control
+public static 
+int
+UpdateEmployee
+\(
+int
+EmployeeId
+, string Name, string Gender, string City
+\
+{
+string CS = 
+ConfigurationManager.ConnectionStrings
+["DBCS"].
+ConnectionString
+;
+using \(
+SqlConnection
+con = new 
+SqlConnection
+\(CS
+\   
+{
+string 
+updateQuery
+= "Update 
+tblEmployee
+SET Name = @Name,  " +
+"Gender = @Gender, City = @City WHERE 
+EmployeeId
+= @
+EmployeeId
+";
+SqlCommand
+cmd
+= new 
+SqlCommand
+\(
+updateQuery
+, con\;
+SqlParameter
+paramOriginalEmployeeId
+= new 
+SqlParameter
+\("@
+EmployeeId
+", 
+EmployeeId
+\
+cmd.Parameters.Add
+\(
+paramOriginalEmployeeId
+\
+SqlParameter
+paramName
+= new 
+SqlParameter
+\("@Name", Name\
+cmd.Parameters.Add
+\(
+paramName
+\
+SqlParameter
+paramGender
+= new 
+SqlParameter
+\("@Gender", Gender\
+cmd.Parameters.Add
+\(
+paramGender
+\
+SqlParameter
+paramCity
+= new 
+SqlParameter
+\("@City", City\
+cmd.Parameters.Add
+\(
+paramCity
+\
+con.Open
+\(\
+return 
+cmd.ExecuteNonQuery
+\(\
+}
+}
+GridView
+
+// Insert Method for 
+ObjectDataSource
+control
+public static 
+int
+InsertEmployee
+\(string Name, string Gender, string City\
+{
+string CS = 
+ConfigurationManager.ConnectionStrings
+["DBCS"].
+ConnectionString
+;
+using \(
+SqlConnection
+con = new 
+SqlConnection
+\(CS\
+{
+string 
+updateQuery
+= "Insert into 
+tblEmployee
+\(Name, Gender, City\ + 
+" values \(@Name, @Gender, @City\;
+SqlCommand
+cmd
+= new 
+SqlCommand
+\(
+updateQuery
+, con\
+SqlParameter
+paramName
+= new 
+SqlParameter
+\("@Name", Name\
+cmd.Parameters.Add
+\(
+paramName
+\
+SqlParameter
+paramGender
+= new 
+SqlParameter
+\("@Gender", Gender\
+cmd.Parameters.Add
+\(
+paramGender
+\
+SqlParameter
+paramCity
+= new 
+SqlParameter
+\("@City", City\
+cmd.Parameters.Add
+\(
+paramCity
+\
+con.Open
+\(\
+return 
+cmd.ExecuteNonQuery
+\(\
+}
+}
+}
+}
+GridView
+1. Compile your project. 
+2. On WebForm1.aspx delete "SqlDataSource1" control. 
+3. Drag and drop 
+ObjectDataSource
+control onto the 
+webform
+. 
+4. Now configure 
+ObjectDataSource
+control to use 
+
+GetAllEmployees
+\(\ as "Select" Method
+
+DeleteEmployee
+\(
+int
+EmployeeId
+\as "Delete" method
+
+UpdateEmployee
+\(
+int
+EmployeeId
+, string Name, string Gender, string City\as "Update" method
+
+InsertEmployee
+\(string Name, string Gender, string City\as "Insert" method
+GridView
+
+The HTML of ObjectDataSource1 control, should be as shown below
+<
+asp:ObjectDataSource
+ID="ObjectDataSource1" 
+runat
+="server" 
+DeleteMethod
+="
+DeleteEmployee
+" 
+InsertMethod
+="
+InsertEmployee
+" 
+SelectMethod
+="
+GetAllEmployees
+" 
+TypeName
+="
+Demo.EmployeeDataAccessLayer
+" 
+UpdateMethod
+="
+UpdateEmployee
+">
+<
+DeleteParameters
+>
+<
+asp:Parameter
+Name="
+EmployeeId
+" Type="Int32" />
+</
+DeleteParameters
+>
+<
+InsertParameters
+>
+<
+asp:Parameter
+Name="Name" Type="String" />
+<
+asp:Parameter
+Name="Gender" Type="String" />
+<
+asp:Parameter
+Name="City" Type="String" />
+</
+InsertParameters
+>
+<
+UpdateParameters
+>
+<
+asp:Parameter
+Name="
+EmployeeId
+" Type="Int32" />
+<
+asp:Parameter
+Name="Name" Type="String" />
+<
+asp:Parameter
+Name="Gender" Type="String" />
+<
+asp:Parameter
+Name="City" Type="String" />
+</
+UpdateParameters
+>
+</
+asp:ObjectDataSource
+>
+GridView
+
+Now change 
+DataSourceID
+property of GridView1 control from "SqlDataSource1" to "ObjectDataSource1" and Save. You will get a 
+message asking, if you want to "Refresh Fields and Keys for GridView1". Click No.
+
+Finally 
+in code
+-
+behind file change the implementation of "
+lbInsert_Click
+" as shown below.
+protected void 
+lbInsert_Click
+\(object sender, 
+EventArgs
+e\
+{
+ObjectDataSource1.InsertParameters["Name"].
+DefaultValue
+=
+\(\(
+TextBox
+\iew1.FooterRow.FindControl\("
+txtName
+"\ext;
+ObjectDataSource1.InsertParameters["Gender"].
+DefaultValue
+=
+\(\(
+DropDownList
+\ridView1.FooterRow.FindControl\("
+ddlInsertGender
+"\.
+SelectedValue
+;
+ObjectDataSource1.InsertParameters["City"].
+DefaultValue
+=
+\(\(
+TextBox
+\dView1.FooterRow.FindControl\("
+txtCity
+"\.Text;
+ObjectDataSource1.Insert\(\
+}
+GridView
+
+GridView
+insert update delete without using data source controls.
+1. As we don't want to use 
+datasource
+controls. Please delete "ObjectDataSource1" control from the 
+webform
+.
+2
+. Delete 
+DataSourceID
+="ObjectDataSource1" from GridView1. This should remove the dependency of GridVIew1 on 
+ObjectDataSource1 control.
+3. From the code behind file, delete 
+lbInsert_Click
+\(\ event handler method.
+4
+. In the "
+FooterTemplate
+" of "
+EmployeeId
+" 
+TemplateField
+, please delete 
+OnClick
+="
+lbInsert_Click
+", as we no longer have this 
+event handler method.
+5
+. Delete "
+CommandField
+" column from GridView1
+<
+asp:CommandField
+ShowDeleteButton
+="True" 
+ShowEditButton
+="True" />
+6
+. Now, include a template field in the place of 
+CommandField
+. This template field is used to display Edit, Update, Cancel and 
+Delete link buttons. We don't want delete and cancel buttons to cause validation, so set 
+CausesValidaion
+property of these 
+buttons to false. 
+GridView
+<
+asp:TemplateField
+>
+<
+ItemTemplate
+>
+<
+asp:LinkButton
+ID="
+lbEdit
+" 
+CommandArgument
+='<%# 
+Eval
+\("
+EmployeeId
+"\ %>' 
+CommandName
+="
+EditRow
+" 
+ForeColor
+="#8C4510" 
+runat
+="server">Edit</
+asp:LinkButton
+>
+<
+asp:LinkButton
+ID="
+lbDelete
+" 
+CommandArgument
+='<%# 
+Eval
+\("
+EmployeeId
+"\ %>' 
+CommandName
+="
+DeleteRow
+" 
+ForeColor
+="#8C4510" 
+runat
+="server" 
+CausesValidation
+="false">Delete</
+asp:LinkButton
+>
+</
+ItemTemplate
+>
+<
+EditItemTemplate
+>
+<
+asp:LinkButton
+ID="
+lbUpdate
+" 
+CommandArgument
+='<%# 
+Eval
+\("
+EmployeeId
+"\ %>' 
+CommandName
+="
+UpdateRow
+" 
+ForeColor
+="#8C4510" 
+runat
+="server">Update</
+asp:LinkButton
+>
+<
+asp:LinkButton
+ID="
+lbCancel
+" 
+CommandArgument
+='<%# 
+Eval
+\("
+EmployeeId
+"\ %>' 
+CommandName
+="
+CancelUpdate
+" 
+ForeColor
+="#8C4510" 
+runat
+="server" 
+CausesValidation
+="false">Cancel</
+asp:LinkButton
+>
+</
+EditItemTemplate
+>
+</
+asp:TemplateField
+>
+7. 
+This 
+method binds employee data with gridview1 control. 
+private void 
+BindGridViewData
+\(\
+{
+GridView1.DataSource = 
+EmployeeDataAccessLayer.GetAllEmployees
+\(\
+GridView1.DataBind\(\;
+}
+GridView
+8. Call 
+BindGridViewData
+\(\ in 
+Page_Load
+\(\ event.
+protected void 
+Page_Load
+\(object sender, 
+EventArgs
+e\
+{
+if \(!
+IsPostBack
+\
+{
+BindGridViewData
+\(\
+}
+}
+9. Finally generate GridView1_RowCommand\(\ event handler method.
+protected void GridView1_RowCommand\(object sender, 
+GridViewCommandEventArgs
+e\
+{
+if \(
+e.CommandName
+== "
+EditRow
+"\
+{
+int
+rowIndex
+= \(\(
+GridViewRow
+\\(
+LinkButton
+\
+e.CommandSource
+\
+NamingContainer
+\
+RowIndex
+;
+GridView1.EditIndex = 
+rowIndex
+;
+BindGridViewData
+\(\
+}
+GridView
+else if \(
+e.CommandName
+== "
+DeleteRow
+"\
+{
+EmployeeDataAccessLayer.DeleteEmployee
+\(Convert.ToInt32\(
+e.CommandArgument
+\
+BindGridViewData
+\(\
+}
+else if \(
+e.CommandName
+== "
+CancelUpdate
+"\
+{
+GridView1.EditIndex = 
+-
+1;
+BindGridViewData
+\(\
+}
+else if \(
+e.CommandName
+== "
+UpdateRow
+"\
+{
+int
+rowIndex
+= \(\(
+GridViewRow
+\\(
+LinkButton
+\
+e.CommandSource
+\
+NamingContainer
+\
+RowIndex
+;
+int
+employeeId
+= Convert.ToInt32\(
+e.CommandArgument
+\
+string name = \(\(
+TextBox
+\dView1.Rows[
+rowIndex
+].
+FindControl
+\("TextBox1"\\ext;
+string gender = \(\(
+DropDownList
+\ridView1.Rows[
+rowIndex
+].
+FindControl
+\("DropDownList1"\.
+SelectedValue
+;
+string city = \(\(
+TextBox
+\dView1.Rows[
+rowIndex
+].
+FindControl
+\("TextBox3"\\.Text;
+EmployeeDataAccessLayer.UpdateEmployee
+\(
+employeeId
+, name, gender, city\
+GridView1.EditIndex = 
+-
+1;
+BindGridViewData
+\(\
+}
+GridView
+else if \(
+e.CommandName
+== "
+InsertRow
+"\
+{
+string name = \(\(
+TextBox
+\iew1.FooterRow.FindControl\("
+txtName
+"\ext;
+string gender = \(\(
+DropDownList
+\ridView1.FooterRow.FindControl\("
+ddlGender
+"\.
+SelectedValue
+;
+string city = \(\(
+TextBox
+\iew1.FooterRow.FindControl\("
+txtCity
+"\\.Text;
+EmployeeDataAccessLayer.InsertEmployee
+\(name, gender, city\
+BindGridViewData
+\(\
+}
+}
+10. In the 
+FooterTemplate
+of 
+EmployeeId
+TemplateField
+, set 
+CommandName
+property 
+lbInsert
+link button to "
+InsertRow
+"
+<
+asp:LinkButton
+ID="
+lbInsert
+" 
+CommandName
+="
+InsertRow
+" 
+ForeColor
+="#8C4510"  
+ValidationGroup
+="Insert" 
+runat
+="server">Insert</
+asp:LinkButton
+> 
+11
+. If you want to show a confirmation dialog box, before a row is deleted, include 
+javascript
+confirm\(\ function, using 
+"
+OnClientClick
+" attribute of 
+LinkButton
+"
+lbDelete
+".
+<
+asp:LinkButton
+ID="
+lbDelete
+" 
+CommandArgument
+='<%# 
+Eval
+\("
+EmployeeId
+"\ %>' 
+CommandName
+="
+DeleteRow
+" 
+ForeColor
+="#8C4510" 
+runat
+="server" 
+CausesValidation
+="false" 
+OnClientClick
+="return confirm\('Are you sure you want to delete 
+this row'\>Delete</
+asp:LinkButton
+>
+GridView
+
+we will discuss about implementing custom paging in a gridview control that does not use any data source controls.
+
+We 
+will be using tblEmployee table for this 
+demo
+
+Create a stored procedure to retrieve employees by page index and page size. This procedure also has an output parameter to 
+return the total number of rows in the database table
+.
+Create proc spGetEmployees_by_PageIndex_and_PageSize
+@PageIndex int,  
+@PageSize int,
+@TotalRows int output
+as  
+Begin  
+Declare @StartRowIndex int 
+Declare @EndRowIndex int
+Set @StartRowIndex = \(@PageIndex * @PageSize\+ 1;
+Set @EndRowIndex = \(@PageIndex + 1\* @PageSize;
+Select EmployeeId, Name, Gender, City from  
+\(Select ROW_NUMBER\(\ over \(order by EmployeeId\ as RowNumber, EmployeeId, Name, Gender, City  
+from tblEmployee\Employees  
+Where RowNumber >= @StartRowIndex and RowNumber <= @EndRowIndex
+Select @TotalRows = COUNT\(*\from tblEmployee
+End
+GridView
+Step 2: Add a class file with name = "
+EmployeeDataAccessLayer.cs
+". 
+using System;
+using 
+System.Collections.Generic
+;
+using 
+System.Linq
+;
+using 
+System.Web
+;
+using 
+System.Data
+;
+using 
+System.Data.SqlClient
+;
+using 
+System.Configuration
+;
+namespace 
+Demo
+{
+public class Employee
+{
+public int EmployeeId { get; set; }
+public string Name { get; set; }
+public string Gender { get; set; }
+public string City { get; set; }
+}
+GridView
+public class 
+EmployeeDataAccessLayer    
+{
+public static List<Employee> 
+GetEmployees
+\(
+int
+pageIndex
+, 
+int
+pageSize
+, out 
+int
+totalRows
+\
+{
+List<Employee> 
+listEmployees
+= new List<Employee>\(\;
+string 
+conStr
+= 
+ConfigurationManager.ConnectionStrings
+["
+DBCon
+"].
+ConnectionString
+;
+using \(
+SqlConnection
+con = new 
+SqlConnection
+\(
+conStr
+\
+{
+SqlCommand
+cmd
+= new 
+SqlCommand
+\("
+spGetEmployees_by_PageIndex
+", con\
+cmd.CommandType
+= 
+CommandType.StoredProcedure
+;
+cmd.Parameters.AddWithValue
+\("@
+PageIndex
+", 
+pageIndex
+\
+cmd.Parameters.AddWithValue
+\("@
+PageSize
+", 
+pageSize
+\
+SqlParameter
+paramOut
+= new 
+SqlParameter
+\(\
+paramOut.ParameterName
+= "@
+TotalRows
+";
+paramOut.Direction
+= 
+ParameterDirection.Output
+;
+paramOut.SqlDbType
+= 
+SqlDbType.Int
+;
+cmd.Parameters.Add
+\(
+paramOut
+\
+con.Open
+\(\
+GridView
+SqlDataReader rdr = cmd.ExecuteReader\(\;
+while \(rdr.Read\(\\
+{
+Employee employee = new Employee\(\;
+employee.EmployeeId = Convert.ToInt32\(rdr["EmployeeId"]\;
+employee.Name = rdr["Name"].ToString\(\;
+employee.Gender = rdr["Gender"].ToString\(\;
+employee.City = rdr["City"].ToString\(\
+listEmployees.Add\(employee\
+}
+rdr.Close\(\;
+totalRows = \(int\
+cmd.Parameters
+["@TotalRows"].Value;
+}
+return listEmployees;
+}
+}
+}
+GridView
+<
+asp:GridView
+ID="GridView1" runat="server" 
+AllowPaging
+="true" PageSize="3">
+</
+asp:GridView
+>
+<
+asp:Repeater
+ID="
+repeaterPaging
+" runat="server">
+<
+ItemTemplate
+>
+<asp:LinkButton ID="
+pagingLinkButton
+" runat="
+
+='<%#
+Eval
+\("Text"\ %>' 
+CommandArgument
+='<%# 
+Eval
+\("Value"\
+
+='<%# 
+Eval
+\("Enabled"\%>' 
+OnClick
+="
+linkButton_Click
+">
+</asp:LinkButton>
+</
+ItemTemplate
+>
+</
+asp:Repeater
+>
+Step 4: 
+Code 
+in webform1.aspx.cs
+protected void 
+Page_Load
+\(object sender, 
+EventArgs
+e
+\{
+if \(!
+IsPostBack
+\
+{
+int totalRows = 0;
+GridView1.DataSource = EmployeeDataAccessLayer.
+GetEmployees\(0, GridView1.PageSize, out totalRows\
+GridView1.DataBind\(\;
+DatabindRepeater
+\(0, GridView1.PageSize, totalRows\
+}
+}
+GridView
+protected void 
+linkButton_Click
+\(object sender, 
+EventArgs
+e
+\
+int totalRows = 0;
+int pageIndex = 
+int.Parse
+\(\(sender as LinkButton\.CommandArgument\;
+pageIndex 
+-
+= 1;
+GridView1.PageIndex = pageIndex;
+GridView1.DataSource = 
+EmployeeDataAccessLayer.GetEmployees
+\(pageIndex
+, GridView1.PageSize, out totalRows\
+GridView1.DataBind\(\;
+DatabindRepeater
+\(pageIndex, GridView1.PageSize, totalRows\
+}
+private void 
+DatabindRepeater
+\(int pageIndex, int pageSize, int totalRows
+\{
+int 
+totalPages
+= totalRows / pageSize;
+if \(\(totalRows % pageSize\!= 0
+\ 
+{
+totalPages
++= 1;
+}
+List<
+ListItem
+> pages = new List<
+ListItem
+>\(\
+if \(
+totalPages
+> 1
+\ 
+{
+for \(int 
+i
+= 1; 
+i
+<= 
+totalPages
+; 
+i
+++\
+{
+pages.Add
+\(new 
+ListItem
+\(
+i.ToString
+\(\, 
+i.ToString
+\(\, 
+i
+!= \(pageIndex + 1\\
+}
+}
+repeaterPaging.DataSource
+= pages;
+repeaterPaging.DataBind
+\(\
+}
+GridView
+
+How 
+to get value from a control that is present inside an itemtemplate of a gridview templatefield column
+.
+
+We will be using the following 2 tables in this 
+demo.
+
+We 
+want to retrieve products from Products table and display them in a 
+GridView
+control as shown below. The ID field in the 
+GridView
+control should be a 
+TemplateField
+. Inside the Template field we should have a LinkButton, this should display the 
+Product ID and it must be clickable
+.
+GridView
+
+Upon clicking on the Product ID, the user should be redirected to product details page and this page should display all the d
+eta
+ils of 
+the selected product as shown below
+.
+
+Step 
+1 : Create Products and 
+ProductDetails
+tables
+Create table Products
+\(
+ID int primary key,
+Name 
+nvarchar
+\(50\
+Price int
+\
+Create table 
+ProductDetails
+\(
+ProductID
+int foreign key references Products\(ID\
+Color 
+nvarchar
+\(20\
+Size 
+nvarchar
+\(10\
+Weight decimal\(8,2\
+QuantityInStock
+int,
+Discontinued bit,
+Supplier 
+nvarchar
+\(20\
+\
+GridView
+
+Insert into Products values \(1, 'DVD', 10\
+
+Insert into Products values \(2, 'Clips', 20\
+
+Insert into Products values \(3, 'USB', 35\
+
+Insert into Products values \(4, 'CD Player', 25\
+
+Insert into Products values \(5, 'LCD', 99
+\
+
+Insert into 
+ProductDetails
+values \(1, 'White', 'Normal', 10.00, 250, 0, 'ABC Supplier'\
+
+Insert into 
+ProductDetails
+values \(2, 'White', 'Large', 12.56, 350, 0, 'XYZ Supplier'\
+
+Insert 
+into 
+ProductDetails
+values \(3, 'Black', 'Small', 5.5, 550, 0, '
+Pragim
+Technologies'\
+
+Insert 
+into 
+ProductDetails
+values \(4, 'Silver', 'Medium', 55.00, 750, 0, 'ABC Supplier'\
+
+Insert into 
+ProductDetails
+values \(5, 'Silver', 'Normal', 15.5, 250, 0, 'XYZ Supplier'\
+GridView
+
+Step 2 : Create stored procedures. The first stored procedure gets all the products from Products table. The second stored 
+procedure gets the details of a specific product by ID by joining Products and 
+ProductDetails
+tables.
+Create 
+proc 
+spGetBasicProductDetails
+as
+Begin
+Select ID, Name, Price from Products
+End
+Create proc 
+spGetProductDetailsByID
+@ID int
+as
+Begin
+Select ID, Name, Price, Color, Size, Weight
+, 
+QuantityInStock
+, Discontinued, Supplier
+from Products
+join 
+ProductDetails
+on Products.ID = 
+ProductDetails.ProductID
+where Products.ID =  @ID
+End
+GridView
+
+Step 3 : Create a new empty asp.net web application project. Name it 
+as Demo
+. Add a connection string in web.config file to 
+your database.
+<
+connectionStrings
+>
+<add name="CS"
+connectionString
+="server=.;database=
+Sample;integrated
+security=true"/>
+</
+connectionStrings
+>
+Step 4 : Add a webform to the project. 
+Namt
+it products.aspx. Copy and paste the following HTML in the 
+aspx
+page.
+<div style="
+font
+-
+family:Arial
+">
+<
+asp:GridView
+ID="GridView1" runat="server" 
+AutoGenerateColumns
+="False">
+<Columns>
+<
+asp:TemplateField
+HeaderText
+="ID">
+<
+ItemTemplate
+>
+<asp:LinkButton ID="LinkButton1" 
+OnClick
+="LinkButton1_Click"
+Text='<%#
+Eval
+\("ID"\ %>' runat="server"></asp:LinkButton>
+</
+ItemTemplate
+>
+</
+asp:TemplateField
+>
+<
+asp:BoundField
+DataField
+="Name" 
+HeaderText
+="Name" />
+<
+asp:BoundField
+DataField
+="Price" 
+HeaderText
+="Price" />
+</Columns>
+</
+asp:GridView
+>
+</div>
+GridView
+
+Step 5 : 
+Code 
+in 
+products.aspx.cs
+using System;
+using 
+System.Configuration
+;
+using 
+System.Data
+;
+using 
+System.Data.SqlClient
+;
+using System.Web.UI.WebControls;
+namespace Demo{
+public partial class Products : 
+System.Web.UI.Page   
+{
+protected void 
+Page_Load
+\(object sender, 
+EventArgs
+e
+\    
+{
+if \(!
+IsPostBack
+\  
+{
+string 
+cs
+= ConfigurationManager.ConnectionStrings["CS"].ConnectionString;
+using \(SqlConnection con = new SqlConnection\(
+cs
+\  
+{
+SqlCommand 
+cmd
+= new SqlCommand\("
+spGetBasicProductDetails
+", con\
+cmd.CommandType = CommandType.StoredProcedure;
+con.Open\(\;
+GridView1.DataSource = cmd.ExecuteReader\(\
+GridView1.DataBind\(\;
+}
+}
+}
+protected void LinkButton1_Click\(object sender, 
+EventArgs
+e
+\
+{
+Response.Redirect
+\("~/ProductDetails.aspx?" + "ID=" + \(\(
+LinkButton
+\nder\.Text\;
+}
+}
+}
+GridView
+
+Step 6 : Add another web form to the project. Name it ProductDetails.aspx. Copy and paste the following HTML in the 
+aspx
+page.
+<div style="font
+-
+family: Arial">
+<table border="1" style="background: 
+LightGoldenrodYellow
+">
+<
+tr
+>
+<td>
+<b>ID</b>
+</td>
+<td>
+<
+asp:Label
+ID="
+lblID
+" runat="server"></
+asp:Label
+>
+</td>
+</
+tr
+>
+<
+tr
+>
+<td>
+<b>Name</b>
+</td>
+<td>
+<
+asp:Label
+ID="
+lblName
+" runat="server"></
+asp:Label
+>
+</td>
+</
+tr
+>
+<
+tr
+>
+<td>
+<b>Price</b>
+</td>
+<td>
+<
+asp:Label
+ID="
+lblPrice
+" runat="server"></
+asp:Label
+>
+</td>
+</
+tr
+>
+<
+tr
+>
+<td>
+<b>Color</b>
+</td>
+<td>
+<
+asp:Label
+ID="
+lblColor
+" runat="server"></
+asp:Label
+>
+</td>
+</
+tr
+>
+GridView
+<
+tr
+>
+<td>
+<b>Size</b>
+</td>
+<td>
+<
+asp:Label
+ID="
+lblSize
+" runat="server"></
+asp:Label
+>
+</td>
+</
+tr
+>
+<
+tr
+>
+<td>
+<b>Weight</b>
+</td>
+<td>
+<
+asp:Label
+ID="
+lblWeight
+" runat="server"></
+asp:Label
+>
+</td>
+</
+tr
+>
+<
+tr
+>
+<td>
+<b>Quantity In 
+Stoc
+</b>
+</td>
+<td>
+<
+asp:Label
+ID="
+lblQuantityInStock
+" runat="server"></
+asp:Label
+>
+</td>
+</
+tr
+>
+GridView
+<
+tr
+>
+<td>
+<b>Discontinued</b>
+</td>
+<td>
+<
+asp:Label
+ID="
+lblDiscontinued
+" runat="server"></
+asp:Label
+>
+</td>
+</
+tr
+>
+<
+tr
+>
+<td>
+<b>Supplier</b>
+</td>
+<td>
+<
+asp:Label
+ID="
+lblSupplier
+" runat="server"></
+asp:Label
+>
+</td>
+</
+tr
+>
+</table>
+</div>
+GridView
+Step 7 : Copy and paste the following code in 
+ProductDetails.aspx.cs
+using System;
+using 
+System.Configuration
+;
+using 
+System.Data
+;
+using 
+System.Data.SqlClient
+;
+namespace 
+Demo {
+public partial class 
+ProductDetails
+: 
+System.Web.UI.Page  
+{
+protected void 
+Page_Load
+\(object sender, 
+EventArgs
+e
+\ 
+{
+if \(!
+IsPostBack
+\   
+{
+string 
+productId
+= 
+Request.QueryString
+["ID"];
+if \(
+productId
+== null
+\  
+{
+Response.Redirect
+\("Products.aspx"\;
+}
+string 
+cs
+= ConfigurationManager.ConnectionStrings["CS"].ConnectionString;
+using \(SqlConnection con = new SqlConnection\(
+cs
+\
+{
+SqlCommand 
+cmd
+= new SqlCommand\("
+spGetProductDetailsByID
+", con\
+cmd.CommandType = CommandType.StoredProcedure;
+SqlParameter parameter = new SqlParameter\("@ID", 
+productId
+\
+cmd.Parameters.Add
+\(parameter
+GridView
+using \(SqlDataReader rdr = cmd.ExecuteReader\(\\
+{
+while \(rdr.Read\(\
+{
+lblID.Text
+= rdr["ID"].ToString\(\;
+lblName.Text
+= rdr["Name"].ToString\(\;
+lblPrice.Text
+= rdr["Price"].ToString\(\;
+lblColor.Text
+= rdr["Color"].ToString\(\;
+lblSize.Text
+= rdr["Size"].ToString\(\;
+lblWeight.Text
+= rdr["Weight"].ToString\(\;
+lblQuantityInStock.Text
+= rdr["
+QuantityInStock
+"].ToString\(\
+lblDiscontinued.Text
+= rdr["Discontinued"].ToString\(\;
+lblSupplier.Text
+= rdr["Supplier"].ToString\(\;
+}
+}
+}
+}
+}
+}
+}
+Happy Learning!
+@MCC IT
