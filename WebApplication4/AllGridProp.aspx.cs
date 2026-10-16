@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Globalization;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -8,140 +12,243 @@ namespace WebApplication4
 {
     public partial class AllGridProp : System.Web.UI.Page
     {
-        private const string SessionTableKey = "AllGridProp_EmployeeTable";
+        private const string SessionCultureTableKey = "AllGridProp_CultureEmployees";
+        private const string SessionCrudTableKey = "AllGridProp_CrudEmployees";
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                BindGrid();
+                InitializeDataSources();
+                BindAllGrids();
             }
         }
 
-        #region Data Source & Binding
+        #region Data Source Initialization
 
-        private DataTable GetEmployeeTable()
+        private void InitializeDataSources()
         {
-            if (Session[SessionTableKey] == null)
+            // 1. Data for Section 1 & Section 2 (Slides 10 - 19)
+            DataTable dtCulture = new DataTable();
+            dtCulture.Columns.Add("EmployeeId", typeof(int));
+            dtCulture.Columns.Add("FirstName", typeof(string));
+            dtCulture.Columns.Add("LastName", typeof(string));
+            dtCulture.Columns.Add("Salary", typeof(int));
+            dtCulture.Columns.Add("AnnualSalary", typeof(int));
+            dtCulture.Columns.Add("Gender", typeof(string));
+            dtCulture.Columns.Add("Department", typeof(string));
+            dtCulture.Columns.Add("Country", typeof(string));
+            dtCulture.Columns.Add("CountryCulture", typeof(string));
+
+            // Populate exact slide records (US, India, UK, South Africa, Malaysia)
+            dtCulture.Rows.Add(1, "John", "Johnson", 55000, 55000, "Male", "IT", "US", "en-US");
+            dtCulture.Rows.Add(2, "Pam", "Roberts", 62000, 62000, "Female", "HR", "India", "en-IN");
+            dtCulture.Rows.Add(3, "David", "John", 45000, 45000, "Male", "IT", "UK", "en-GB");
+            dtCulture.Rows.Add(4, "Rose", "Mary", 78000, 78000, "Female", "Payroll", "South Africa", "en-ZA"); // High salary > 70000 (Highlights RED)
+            dtCulture.Rows.Add(5, "Mark", "Mell", 69000, 69000, "Male", "HR", "Malaysia", "en-MY");
+
+            Session[SessionCultureTableKey] = dtCulture;
+
+            // 2. Data for Section 3 CRUD (Slides 20 - 30)
+            DataTable dtCrud = new DataTable();
+            dtCrud.Columns.Add("EmployeeId", typeof(int));
+            dtCrud.Columns.Add("Name", typeof(string));
+            dtCrud.Columns.Add("Gender", typeof(string));
+            dtCrud.Columns.Add("City", typeof(string));
+
+            dtCrud.Rows.Add(1, "Mark Hastings", "Male", "London");
+            dtCrud.Rows.Add(2, "Steve Pavez", "Male", "Sydney");
+            dtCrud.Rows.Add(3, "Mary Sava", "Female", "New York");
+            dtCrud.Rows.Add(4, "Valarie Vik", "Female", "Tokyo");
+            dtCrud.Rows.Add(5, "John Doe", "Male", "Chicago");
+
+            Session[SessionCrudTableKey] = dtCrud;
+        }
+
+        private DataTable GetCultureDataTable()
+        {
+            if (Session[SessionCultureTableKey] == null)
             {
-                DataTable dt = new DataTable();
-                dt.Columns.Add("EmployeeId", typeof(int));
-                dt.Columns.Add("Name", typeof(string));
-                dt.Columns.Add("Gender", typeof(string));
-                dt.Columns.Add("City", typeof(string));
-                dt.Columns.Add("AnnualSalary", typeof(int));
-                dt.Columns.Add("Country", typeof(string));
-                dt.Columns.Add("CountryCulture", typeof(string));
-
-                // Sample data from slides
-                dt.Rows.Add(1, "John Johnson", "Male", "New York", 55000, "US", "en-US");
-                dt.Rows.Add(2, "Pam Roberts", "Female", "Mumbai", 62000, "India", "en-IN");
-                dt.Rows.Add(3, "David John", "Male", "London", 45000, "UK", "en-GB");
-                dt.Rows.Add(4, "Rose Mary", "Female", "Cape Town", 78000, "South Africa", "en-ZA"); // Salary > 70000 -> Red highlight
-                dt.Rows.Add(5, "Mark Mell", "Male", "Kuala Lumpur", 69000, "Malaysia", "en-MY");
-
-                Session[SessionTableKey] = dt;
+                InitializeDataSources();
             }
-
-            return (DataTable)Session[SessionTableKey];
+            return (DataTable)Session[SessionCultureTableKey];
         }
 
-        private void BindGrid()
+        private DataTable GetCrudDataTable()
         {
-            GridView1.DataSource = GetEmployeeTable();
+            if (Session[SessionCrudTableKey] == null)
+            {
+                InitializeDataSources();
+            }
+            return (DataTable)Session[SessionCrudTableKey];
+        }
+
+        #endregion
+
+        #region Grid Binding Methods
+
+        private void BindAllGrids()
+        {
+            BindGridView1();
+            BindGridView2();
+            BindGridView3();
+        }
+
+        private void BindGridView1()
+        {
+            DataTable dt = GetCultureDataTable();
+            GridView1.DataSource = dt;
             GridView1.DataBind();
         }
 
+        private void BindGridView2()
+        {
+            DataTable dt = GetCultureDataTable();
+            GridView2.DataSource = dt;
+            GridView2.DataBind();
+        }
+
+        private void BindGridView3()
+        {
+            DataTable dt = GetCrudDataTable();
+            GridView3.DataSource = dt;
+            GridView3.DataBind();
+        }
+
         #endregion
 
-        #region RowDataBound: Multi-Culture Currency, Hidden Column & Red Highlighting (Pages 10 - 19)
+        #region SECTION 1: Multi-Culture Currency Formatting (Slides 10 - 13)
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            // Column 7 is CountryCulture. Hide it on Header, DataRow, and Footer (Pages 14 - 16)
-            if (e.Row.RowType == DataControlRowType.Header || e.Row.RowType == DataControlRowType.Footer)
+            // Check if the row that is being bound, is a datarow
+            if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                if (e.Row.Cells.Count > 7)
+                // Cell index 2 = Salary, Cell index 3 = Country
+                string country = e.Row.Cells[3].Text.Trim();
+                int salary = 0;
+                int.TryParse(e.Row.Cells[2].Text.Trim(), out salary);
+
+                string formattedString = string.Empty;
+
+                if (country == "US")
                 {
-                    e.Row.Cells[7].Visible = false;
+                    formattedString = string.Format(new CultureInfo("en-US"), "{0:c}", salary);
                 }
+                else if (country == "UK")
+                {
+                    formattedString = string.Format(new CultureInfo("en-GB"), "{0:c}", salary);
+                }
+                else if (country == "India")
+                {
+                    formattedString = string.Format(new CultureInfo("en-IN"), "{0:c}", salary);
+                }
+                else if (country == "South Africa")
+                {
+                    formattedString = string.Format(new CultureInfo("en-ZA"), "{0:c}", salary);
+                }
+                else if (country == "Malaysia")
+                {
+                    formattedString = string.Format(new CultureInfo("en-MY"), "{0:c}", salary);
+                }
+                else
+                {
+                    formattedString = string.Format(CultureInfo.InvariantCulture, "{0:c}", salary);
+                }
+
+                e.Row.Cells[2].Text = formattedString;
             }
+        }
+
+        #endregion
+
+        #region SECTION 2: Hidden Culture Column & Conditional Highlight (Slides 14 - 19)
+
+        protected void GridView2_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            // If the row being databound is a header row
+            if (e.Row.RowType == DataControlRowType.Header)
+            {
+                // Hide CountryCulture header table cell (Cell index 4)
+                e.Row.Cells[4].Visible = false;
+            }
+            // If the row being databound is a data row
             else if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                if (e.Row.Cells.Count > 7)
+                // Retrieve unformatted salary from cell index 2
+                int salary = 0;
+                int.TryParse(e.Row.Cells[2].Text.Trim(), out salary);
+
+                // Retrieve the culture code from cell index 4
+                string countryCulture = e.Row.Cells[4].Text.Trim();
+
+                // Turn off visibility of CountryCulture cell
+                e.Row.Cells[4].Visible = false;
+
+                // Format the currency using specific country culture
+                try
                 {
-                    e.Row.Cells[7].Visible = false;
+                    string formattedString = string.Format(new CultureInfo(countryCulture), "{0:c}", salary);
+                    e.Row.Cells[2].Text = formattedString;
+                }
+                catch
+                {
+                    e.Row.Cells[2].Text = salary.ToString("c");
                 }
 
-                DataRowView drv = e.Row.DataItem as DataRowView;
-                if (drv != null)
+                // Conditional row formatting: If Salary > 70000, set RED background and WHITE text
+                if (salary > 70000)
                 {
-                    int salary = Convert.ToInt32(drv["AnnualSalary"]);
-                    string culture = drv["CountryCulture"].ToString();
-
-                    // Format AnnualSalary with country specific currency (Pages 10 - 16)
-                    Label lblSalary = (Label)e.Row.FindControl("LabelSalary");
-                    if (lblSalary != null)
-                    {
-                        try
-                        {
-                            lblSalary.Text = string.Format(new CultureInfo(culture), "{0:c}", salary);
-                        }
-                        catch
-                        {
-                            lblSalary.Text = salary.ToString("c");
-                        }
-                    }
-
-                    // Conditional Highlighting: If Salary > 70000, set Red background and White text (Pages 17 - 19)
-                    if (salary > 70000)
-                    {
-                        e.Row.BackColor = System.Drawing.Color.Red;
-                        e.Row.ForeColor = System.Drawing.Color.White;
-                        e.Row.Font.Bold = true;
-                    }
+                    e.Row.BackColor = System.Drawing.ColorTranslator.FromHtml("#e11d48");
+                    e.Row.ForeColor = System.Drawing.Color.White;
+                    e.Row.Font.Bold = true;
                 }
             }
         }
 
         #endregion
 
-        #region Inline Editing, Updating, and Deleting (Pages 20 - 30)
+        #region SECTION 3: Inline CRUD Operations & Event Handlers (Slides 20 - 30)
 
-        protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
+        protected void GridView3_RowEditing(object sender, GridViewEditEventArgs e)
         {
-            GridView1.EditIndex = e.NewEditIndex;
-            BindGrid();
+            GridView3.EditIndex = e.NewEditIndex;
+            BindGridView3();
+            lblCrudStatus.Text = "&#9998; Editing record at row #" + (e.NewEditIndex + 1);
+            lblCrudStatus.Visible = true;
         }
 
-        protected void GridView1_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
+        protected void GridView3_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
         {
-            GridView1.EditIndex = -1;
-            BindGrid();
+            GridView3.EditIndex = -1;
+            BindGridView3();
+            lblCrudStatus.Text = "&#10006; Edit mode canceled.";
+            lblCrudStatus.Visible = true;
         }
 
-        protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
+        protected void GridView3_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
-            int employeeId = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
-            GridViewRow row = GridView1.Rows[e.RowIndex];
+            int employeeId = Convert.ToInt32(GridView3.DataKeys[e.RowIndex].Value);
+            GridViewRow row = GridView3.Rows[e.RowIndex];
 
-            TextBox tbName = (TextBox)row.FindControl("txtNameEdit");
+            TextBox tbName = (TextBox)row.FindControl("TextBox1");
             DropDownList ddlGender = (DropDownList)row.FindControl("DropDownList1");
-            TextBox tbCity = (TextBox)row.FindControl("txtCityEdit");
-            TextBox tbSalary = (TextBox)row.FindControl("txtSalaryEdit");
-            TextBox tbCountry = (TextBox)row.FindControl("txtCountryEdit");
+            TextBox tbCity = (TextBox)row.FindControl("TextBox3");
 
-            if (tbName != null && ddlGender != null && tbCity != null && tbSalary != null)
+            if (tbName != null && ddlGender != null && tbCity != null)
             {
                 string name = tbName.Text.Trim();
                 string gender = ddlGender.SelectedValue;
                 string city = tbCity.Text.Trim();
-                int salary = 0;
-                int.TryParse(tbSalary.Text.Trim(), out salary);
-                string country = tbCountry != null ? tbCountry.Text.Trim() : "US";
-                string culture = ResolveCulture(country);
 
-                DataTable dt = GetEmployeeTable();
+                // Validate selection
+                if (gender == "Select Gender" || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(city))
+                {
+                    e.Cancel = true;
+                    return;
+                }
+
+                DataTable dt = GetCrudDataTable();
                 foreach (DataRow dr in dt.Rows)
                 {
                     if (Convert.ToInt32(dr["EmployeeId"]) == employeeId)
@@ -149,26 +256,23 @@ namespace WebApplication4
                         dr["Name"] = name;
                         dr["Gender"] = gender;
                         dr["City"] = city;
-                        dr["AnnualSalary"] = salary;
-                        dr["Country"] = country;
-                        dr["CountryCulture"] = culture;
                         break;
                     }
                 }
 
-                Session[SessionTableKey] = dt;
-                GridView1.EditIndex = -1;
-                BindGrid();
+                Session[SessionCrudTableKey] = dt;
+                GridView3.EditIndex = -1;
+                BindGridView3();
 
-                lblMessage.Text = "Employee updated successfully!";
-                lblMessage.Visible = true;
+                lblCrudStatus.Text = string.Format("&#10004; Employee ID {0} ('{1}') updated successfully!", employeeId, name);
+                lblCrudStatus.Visible = true;
             }
         }
 
-        protected void GridView1_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        protected void GridView3_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
-            int employeeId = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Value);
-            DataTable dt = GetEmployeeTable();
+            int employeeId = Convert.ToInt32(GridView3.DataKeys[e.RowIndex].Value);
+            DataTable dt = GetCrudDataTable();
 
             for (int i = dt.Rows.Count - 1; i >= 0; i--)
             {
@@ -179,40 +283,36 @@ namespace WebApplication4
                 }
             }
 
-            Session[SessionTableKey] = dt;
-            GridView1.EditIndex = -1;
-            BindGrid();
+            Session[SessionCrudTableKey] = dt;
+            GridView3.EditIndex = -1;
+            BindGridView3();
 
-            lblMessage.Text = "Employee deleted successfully!";
-            lblMessage.Visible = true;
+            lblCrudStatus.Text = string.Format("&#128465; Employee ID {0} deleted successfully!", employeeId);
+            lblCrudStatus.Visible = true;
         }
-
-        #endregion
-
-        #region Inline Insert via FooterTemplate (Pages 27 - 30)
 
         protected void lbInsert_Click(object sender, EventArgs e)
         {
-            if (GridView1.FooterRow == null) return;
+            if (GridView3.FooterRow == null) return;
 
-            TextBox txtName = (TextBox)GridView1.FooterRow.FindControl("txtName");
-            DropDownList ddlInsertGender = (DropDownList)GridView1.FooterRow.FindControl("ddlInsertGender");
-            TextBox txtCity = (TextBox)GridView1.FooterRow.FindControl("txtCity");
-            TextBox txtSalary = (TextBox)GridView1.FooterRow.FindControl("txtSalary");
-            TextBox txtCountry = (TextBox)GridView1.FooterRow.FindControl("txtCountry");
+            TextBox txtName = (TextBox)GridView3.FooterRow.FindControl("txtName");
+            DropDownList ddlInsertGender = (DropDownList)GridView3.FooterRow.FindControl("ddlInsertGender");
+            TextBox txtCity = (TextBox)GridView3.FooterRow.FindControl("txtCity");
 
-            if (txtName != null && ddlInsertGender != null && txtCity != null && txtSalary != null)
+            if (txtName != null && ddlInsertGender != null && txtCity != null)
             {
                 string name = txtName.Text.Trim();
                 string gender = ddlInsertGender.SelectedValue;
                 string city = txtCity.Text.Trim();
-                int salary = 0;
-                int.TryParse(txtSalary.Text.Trim(), out salary);
-                string country = (txtCountry != null && !string.IsNullOrEmpty(txtCountry.Text.Trim())) ? txtCountry.Text.Trim() : "US";
-                string culture = ResolveCulture(country);
 
-                DataTable dt = GetEmployeeTable();
+                if (gender == "Select Gender" || string.IsNullOrEmpty(name) || string.IsNullOrEmpty(city))
+                {
+                    return;
+                }
 
+                DataTable dt = GetCrudDataTable();
+
+                // Calculate next ID
                 int maxId = 0;
                 foreach (DataRow dr in dt.Rows)
                 {
@@ -221,23 +321,29 @@ namespace WebApplication4
                 }
                 int newId = maxId + 1;
 
-                dt.Rows.Add(newId, name, gender, city, salary, country, culture);
-                Session[SessionTableKey] = dt;
+                dt.Rows.Add(newId, name, gender, city);
+                Session[SessionCrudTableKey] = dt;
 
-                BindGrid();
+                BindGridView3();
 
-                lblMessage.Text = "New employee inserted successfully!";
-                lblMessage.Visible = true;
+                lblCrudStatus.Text = string.Format("&#10004; New Employee '{0}' ({1}, {2}) inserted successfully with ID #{3}!", name, gender, city, newId);
+                lblCrudStatus.Visible = true;
             }
         }
 
-        private string ResolveCulture(string country)
+        #endregion
+
+        #region Reset Demo Records
+
+        protected void btnResetData_Click(object sender, EventArgs e)
         {
-            if (string.Equals(country, "UK", StringComparison.OrdinalIgnoreCase)) return "en-GB";
-            if (string.Equals(country, "India", StringComparison.OrdinalIgnoreCase)) return "en-IN";
-            if (string.Equals(country, "South Africa", StringComparison.OrdinalIgnoreCase)) return "en-ZA";
-            if (string.Equals(country, "Malaysia", StringComparison.OrdinalIgnoreCase)) return "en-MY";
-            return "en-US";
+            InitializeDataSources();
+            GridView3.EditIndex = -1;
+            BindAllGrids();
+
+            lblTopMessage.Text = "&#10004; Demo data reset successfully to slide defaults!";
+            lblTopMessage.Visible = true;
+            lblCrudStatus.Visible = false;
         }
 
         #endregion
