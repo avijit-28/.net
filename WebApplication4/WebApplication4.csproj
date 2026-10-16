@@ -137,6 +137,48 @@
     <Compile Include="AllGridProp.aspx.designer.cs">
       <DependentUpon>AllGridProp.aspx</DependentUpon>
     </Compile>
+    <Compile Include="GridMultiCulture.aspx.cs">
+      <DependentUpon>GridMultiCulture.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GridMultiCulture.aspx.designer.cs">
+      <DependentUpon>GridMultiCulture.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="GridHiddenCulture.aspx.cs">
+      <DependentUpon>GridHiddenCulture.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GridHiddenCulture.aspx.designer.cs">
+      <DependentUpon>GridHiddenCulture.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="GridConditionalFormatting.aspx.cs">
+      <DependentUpon>GridConditionalFormatting.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GridConditionalFormatting.aspx.designer.cs">
+      <DependentUpon>GridConditionalFormatting.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="GridTemplateField.aspx.cs">
+      <DependentUpon>GridTemplateField.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GridTemplateField.aspx.designer.cs">
+      <DependentUpon>GridTemplateField.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="GridValidation.aspx.cs">
+      <DependentUpon>GridValidation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GridValidation.aspx.designer.cs">
+      <DependentUpon>GridValidation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="GridInsertUpdateDelete.aspx.cs">
+      <DependentUpon>GridInsertUpdateDelete.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GridInsertUpdateDelete.aspx.designer.cs">
+      <DependentUpon>GridInsertUpdateDelete.aspx</DependentUpon>
+    </Compile>
     <Compile Include="CheckAvailability.aspx.cs">
       <DependentUpon>CheckAvailability.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
