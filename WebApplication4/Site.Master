@@ -189,8 +189,8 @@
             top: calc(100% + 8px);
             right: 0;
             left: auto;
-            width: 530px;
-            max-width: min(530px, calc(100vw - 24px));
+            width: 780px;
+            max-width: min(780px, calc(100vw - 24px));
             background: #ffffff;
             border: 1.5px solid #cbd5e1;
             border-radius: 14px;
@@ -254,10 +254,10 @@
             font-weight: 500;
         }
 
-        /* 2-Column Grid inside Menu */
+        /* 3-Column Grid inside Menu */
         .menu-columns {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 16px;
         }
 
