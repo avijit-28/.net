@@ -9,7 +9,7 @@
 <body>
     <form id="form1" runat="server">
         <div style="height: 233px">
-            <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:AssignmetConnectionString %>" SelectCommand="SELECT [UserId], [UserName], [Password], [Email], [MobileNo], [City] FROM [UserDetails]"></asp:SqlDataSource>
+            <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:AssignConn %>" SelectCommand="SELECT [UserId], [UserName], [Password], [Email], [MobileNo], [City] FROM [UserDetails]" ProviderName="<%$ ConnectionStrings:AssignConn.ProviderName %>"></asp:SqlDataSource>
 
             <asp:GridView ID="gvUsers" DataSourceID="SqlDataSource1"   DataKeyNames="UserId" runat="server" AutoGenerateColumns="False">
 
