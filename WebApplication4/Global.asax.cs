@@ -41,6 +41,7 @@ namespace WebApplication4
             routeCollection.MapPageRoute("FirstPageRoute", "FirstPage", "~/FirstPage.aspx");
             routeCollection.MapPageRoute("LoginSlug", "login", "~/FirstPage.aspx");
             routeCollection.MapPageRoute("URLRoutingRoute", "URLRouting", "~/URLRouting.aspx");
+            routeCollection.MapPageRoute("URLGridView", "GridViewAll", "~/GridViewAll.aspx");
 
             // Dynamic Article Routes
             routeCollection.MapPageRoute("RouteForArticle", "Articles/{id}/{Title}", "~/DetailPage.aspx");
