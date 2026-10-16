@@ -69,6 +69,7 @@
   <ItemGroup>
     <Content Include="AllGridProp.aspx" />
     <Content Include="currency.aspx" />
+    <Content Include="GridViewTemplateField.aspx" />
     <Content Include="Web.config" />
     <Content Include="WebForm1.aspx" />
   </ItemGroup>
@@ -86,6 +87,13 @@
     </Compile>
     <Compile Include="currency.aspx.designer.cs">
       <DependentUpon>currency.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="GridViewTemplateField.aspx.cs">
+      <DependentUpon>GridViewTemplateField.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GridViewTemplateField.aspx.designer.cs">
+      <DependentUpon>GridViewTemplateField.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebForm1.aspx.cs">
