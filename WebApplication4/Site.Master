@@ -800,6 +800,7 @@
                     <li><a href="<%= ResolveUrl("~/URLRouting") %>">Articles</a></li>
                     <li><a href="<%= ResolveUrl("~/CheckAvailability") %>">Live Validation</a></li>
                     <li><a href="<%= ResolveUrl("~/GetUserDetails") %>">WS Search</a></li>
+                    <li><a href="<%= ResolveUrl("~/GridViewAll") %>">Employee Directory</a></li>
                 </ul>
             </div>
         </footer>
