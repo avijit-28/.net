@@ -22,31 +22,35 @@ namespace WebApplication4
         }
         //protected void btnSearch_Click(object sender, EventArgs e)
         //{
-            //string Name = txtSearch.Text.Trim();
-            //localhost2.WebService1SoapClient obj = new localhost2.WebService1SoapClient();
-            //XmlElement xmlData = obj.GetUserDetails(Name);
-            //DataSet ds = new DataSet();
-            //using (StringReader sr = new StringReader(xmlData.OuterXml))
-            //{
-            //    ds.ReadXml(sr);
-            //}
-            //gvEmployees.DataSource = ds.Tables[0];
-            //gvEmployees.DataBind();
-            //BindEmployees(txtSearch.Text);
+        //string Name = txtSearch.Text.Trim();
+        //localhost2.WebService1SoapClient obj = new localhost2.WebService1SoapClient();
+        //XmlElement xmlData = obj.GetUserDetails(Name);
+        //DataSet ds = new DataSet();
+        //using (StringReader sr = new StringReader(xmlData.OuterXml))
+        //{
+        //    ds.ReadXml(sr);
+        //}
+        //gvEmployees.DataSource = ds.Tables[0];
+        //gvEmployees.DataBind();
+        //BindEmployees(txtSearch.Text);
         //}
 
         private void BindEmployees(string name)
         {
             ServiceReference1.WebService1SoapClient obj =
-    new ServiceReference1.WebService1SoapClient("WebService1Soap");
+                new ServiceReference1.WebService1SoapClient("WebService1Soap");
+
             XmlElement xml = obj.GetEmployeeDetails(name);
+
             DataSet ds = new DataSet();
-            ds.ReadXml(new StringReader(xml.OuterXml));
 
-            gvEmployees.DataSource = ds.Tables["EmployeesDetails"];
+            using (StringReader sr = new StringReader(xml.OuterXml))
+            {
+                ds.ReadXml(sr);
+            }
+
+            gvEmployees.DataSource = ds.Tables["EmployeeDetails"];
             gvEmployees.DataBind();
-
-
         }
     }
 }
