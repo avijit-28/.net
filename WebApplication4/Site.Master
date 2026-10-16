@@ -797,7 +797,28 @@
         </footer>
 
         <script type="text/javascript">
-            // Toggle dropdown on button click and dismiss on click outside
+            // Smart dropdown alignment to prevent overflowing screen edges
+            function alignMenuDropdown() {
+                var panel = document.getElementById('megaMenuPanel');
+                var btn = document.getElementById('megaMenuBtn');
+                if (!panel || !btn) return;
+
+                var btnRect = btn.getBoundingClientRect();
+                var panelWidth = panel.offsetWidth || 530;
+                var viewportWidth = window.innerWidth;
+
+                if (viewportWidth > 640) {
+                    // Check if opening towards the right overflows screen
+                    if (btnRect.left + panelWidth > viewportWidth - 20) {
+                        panel.style.left = 'auto';
+                        panel.style.right = '0';
+                    } else {
+                        panel.style.left = '0';
+                        panel.style.right = 'auto';
+                    }
+                }
+            }
+
             document.addEventListener('DOMContentLoaded', function () {
                 var menuBtn = document.getElementById('megaMenuBtn');
                 var menuWrapper = document.querySelector('.menu-dropdown-wrapper');
@@ -806,7 +827,15 @@
                     menuBtn.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
+                        var willBeActive = !menuWrapper.classList.contains('active');
                         menuWrapper.classList.toggle('active');
+                        if (willBeActive) {
+                            alignMenuDropdown();
+                        }
+                    });
+
+                    menuWrapper.addEventListener('mouseenter', function () {
+                        alignMenuDropdown();
                     });
                 }
 
@@ -820,6 +849,12 @@
                 document.addEventListener('keydown', function (e) {
                     if (e.key === 'Escape' && menuWrapper) {
                         menuWrapper.classList.remove('active');
+                    }
+                });
+
+                window.addEventListener('resize', function () {
+                    if (menuWrapper && menuWrapper.classList.contains('active')) {
+                        alignMenuDropdown();
                     }
                 });
             });
