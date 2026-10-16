@@ -48,7 +48,8 @@ namespace WebApplication4
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 string country = e.Row.Cells[3].Text;
-                int salary = Convert.ToInt32(e.Row.Cells[2].Text);
+                decimal salary = 0;
+                decimal.TryParse(e.Row.Cells[2].Text, out salary);
                 string formattedString = string.Empty;
 
                 if (country == "US")
