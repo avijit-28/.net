@@ -767,25 +767,29 @@
         </footer>
 
         <script type="text/javascript">
-            document.addEventListener('click', function (e) {
-                if (!e.target.closest('.menu-dropdown') && !e.target.closest('.top-menu-dropdown')) {
-                    document.querySelectorAll('.menu-dropdown.active, .top-menu-dropdown.active').forEach(function (el) {
-                        el.classList.remove('active');
+            // Toggle dropdown on button click and dismiss on click outside
+            document.addEventListener('DOMContentLoaded', function () {
+                var menuBtn = document.getElementById('megaMenuBtn');
+                var menuWrapper = document.querySelector('.menu-dropdown-wrapper');
+
+                if (menuBtn && menuWrapper) {
+                    menuBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        menuWrapper.classList.toggle('active');
                     });
                 }
-            });
 
-            document.querySelectorAll('.menu-dropdown-toggle, .top-menu-toggle').forEach(function (toggle) {
-                toggle.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    var parent = this.closest('.menu-dropdown, .top-menu-dropdown');
-                    var wasActive = parent.classList.contains('active');
-                    document.querySelectorAll('.menu-dropdown.active, .top-menu-dropdown.active').forEach(function (el) {
-                        el.classList.remove('active');
-                    });
-                    if (!wasActive) {
-                        parent.classList.add('active');
+                document.addEventListener('click', function (e) {
+                    if (menuWrapper && !menuWrapper.contains(e.target)) {
+                        menuWrapper.classList.remove('active');
+                    }
+                });
+
+                // Close dropdown on Escape key
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape' && menuWrapper) {
+                        menuWrapper.classList.remove('active');
                     }
                 });
             });
