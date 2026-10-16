@@ -20,7 +20,7 @@
         <div class="box">
             <a href="AllGridProp.aspx" class="back-link">&larr; Back to Topics List</a>
             <h2>Part 4: TemplateField with DropDownList for Editing</h2>
-            <p>Converts the <strong>Gender</strong> column to a <code>TemplateField</code>. In edit mode (<code>EditItemTemplate</code>), a <strong>DropDownList</strong> is displayed instead of a default TextBox, with <code>SelectedValue='<%# Bind("Gender") %>'</code>.</p>
+            <p>Converts the <strong>Gender</strong> column to a <code>TemplateField</code>. In edit mode (<code>EditItemTemplate</code>), a <strong>DropDownList</strong> is displayed instead of a default TextBox, with <code>SelectedValue='&lt;%# Bind("Gender") %&gt;'</code>.</p>
             
             <asp:GridView ID="GridView1" runat="server" 
                 AutoGenerateColumns="False" 
