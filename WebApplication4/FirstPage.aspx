@@ -359,12 +359,12 @@
                             <p>Invalid email or password. Use demo account <code>avijit@gmail.com</code> / <code>1234</code>.</p>
                         </div>
                     </div>
-                <% } else if (Request.QueryString["restricted"] == "1") { %>
+                <% } else if (Request.QueryString["restricted"] == "1" || Request.QueryString["auth"] == "1") { %>
                     <div class="auth-banner banner-restricted">
                         <span class="banner-icon">&#128272;</span>
                         <div class="banner-text">
                             <strong>Sign In Required</strong>
-                            <p>You must sign in to navigate to internal pages and modules.</p>
+                            <p>You must sign in to navigate to internal pages. Please enter your credentials below to proceed.</p>
                         </div>
                     </div>
                 <% } else if (Session["UserName"] != null && !string.IsNullOrWhiteSpace(Session["UserName"].ToString())) { %>
