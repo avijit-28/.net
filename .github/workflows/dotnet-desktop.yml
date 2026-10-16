@@ -1,0 +1,22 @@
+name: Build GenericSpDemo
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build GenericSpDemo
+        run: msbuild GenericSpDemo/GenericSpDemo.csproj /p:Configuration=Release
