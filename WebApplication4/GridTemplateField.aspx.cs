@@ -1,5 +1,7 @@
 using System;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -7,47 +9,42 @@ namespace WebApplication4
 {
     public partial class GridTemplateField : System.Web.UI.Page
     {
-        private const string TableKey = "GridTemplateField_Data";
+        private string GetConnectionString()
+        {
+            return ConfigurationManager.ConnectionStrings["DBConn"]?.ConnectionString
+                ?? ConfigurationManager.ConnectionStrings["AssignmetConnectionString"]?.ConnectionString;
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                InitializeData();
                 BindGrid();
             }
         }
 
-        private void InitializeData()
-        {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("EmployeeId", typeof(int));
-            dt.Columns.Add("Name", typeof(string));
-            dt.Columns.Add("Gender", typeof(string));
-            dt.Columns.Add("City", typeof(string));
-
-            dt.Rows.Add(1, "Mark Hastings", "Male", "London");
-            dt.Rows.Add(2, "Steve Pavez", "Male", "Sydney");
-            dt.Rows.Add(3, "Mary Sava", "Female", "New York");
-            dt.Rows.Add(4, "Valarie Vik", "Female", "Tokyo");
-            dt.Rows.Add(5, "John Doe", "Male", "Chicago");
-
-            Session[TableKey] = dt;
-        }
-
-        private DataTable GetData()
-        {
-            if (Session[TableKey] == null)
-            {
-                InitializeData();
-            }
-            return (DataTable)Session[TableKey];
-        }
-
         private void BindGrid()
         {
-            GridView1.DataSource = GetData();
-            GridView1.DataBind();
+            using (SqlConnection con = new SqlConnection(GetConnectionString()))
+            {
+                string sql = "SELECT ID AS EmployeeId, Name, Gender, City FROM Employee ORDER BY ID ASC";
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+                        GridView1.DataSource = dt;
+                        GridView1.DataBind();
+                    }
+                }
+            }
+        }
+
+        protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            GridView1.PageIndex = e.NewPageIndex;
+            BindGrid();
         }
 
         protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
@@ -72,28 +69,30 @@ namespace WebApplication4
             GridViewRow row = GridView1.Rows[e.RowIndex];
 
             // In BoundField columns, TextBox controls are generated at runtime
-            string name = ((TextBox)row.Cells[2].Controls[0]).Text;
+            string name = ((TextBox)row.Cells[2].Controls[0]).Text.Trim();
             DropDownList ddlGender = (DropDownList)row.FindControl("DropDownList1");
             string gender = ddlGender != null ? ddlGender.SelectedValue : "Select Gender";
-            string city = ((TextBox)row.Cells[4].Controls[0]).Text;
+            string city = ((TextBox)row.Cells[4].Controls[0]).Text.Trim();
 
-            DataTable dt = GetData();
-            foreach (DataRow dr in dt.Rows)
+            using (SqlConnection con = new SqlConnection(GetConnectionString()))
             {
-                if (Convert.ToInt32(dr["EmployeeId"]) == employeeId)
+                string sql = "UPDATE Employee SET Name = @Name, Gender = @Gender, City = @City WHERE ID = @ID";
+                using (SqlCommand cmd = new SqlCommand(sql, con))
                 {
-                    dr["Name"] = name;
-                    dr["Gender"] = gender;
-                    dr["City"] = city;
-                    break;
+                    cmd.Parameters.AddWithValue("@Name", name);
+                    cmd.Parameters.AddWithValue("@Gender", gender);
+                    cmd.Parameters.AddWithValue("@City", city);
+                    cmd.Parameters.AddWithValue("@ID", employeeId);
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
                 }
             }
 
-            Session[TableKey] = dt;
             GridView1.EditIndex = -1;
             BindGrid();
 
-            lblStatus.Text = "Employee updated successfully!";
+            lblStatus.Text = string.Format("Employee #{0} updated successfully in SQL Server!", employeeId);
             lblStatus.Visible = true;
         }
     }
