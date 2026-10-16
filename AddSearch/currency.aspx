@@ -19,9 +19,23 @@
                     <asp:BoundField DataField="EmployeeId" HeaderText="EmployeeId" InsertVisible="False" ReadOnly="True" SortExpression="EmployeeId" />
                     <asp:BoundField DataField="FirstName" HeaderText="FirstName" SortExpression="FirstName" />
                     <asp:BoundField DataField="AnnualSalary" HeaderText="Salary" SortExpression="Salary"/>
-                    <asp:BoundField DataField="Country" HeaderText="Country" SortExpression="Country" />
+                     <asp:TemplateField HeaderText="Country" SortExpression="Country">
+                         <EditItemTemplate>
+                             <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("Country") %>'></asp:TextBox>
+                         </EditItemTemplate>
+                         <ItemTemplate>
+                             <asp:DropDownList ID="DropDownList1" runat="server">
+                                 <asp:ListItem>US</asp:ListItem>
+                                 <asp:ListItem>India</asp:ListItem>
+                                 <asp:ListItem>UK</asp:ListItem>
+                                 <asp:ListItem>South Africa</asp:ListItem>
+                                 <asp:ListItem>Malaysia</asp:ListItem>
+                             </asp:DropDownList>
+                         </ItemTemplate>
+                     </asp:TemplateField>
                  </Columns>
             </asp:GridView>
+
         </div>
     </form>
 </body>
