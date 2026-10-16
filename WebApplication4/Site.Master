@@ -1240,6 +1240,10 @@
                     menuWrapper.addEventListener('mouseenter', function () {
                         alignMenuDropdown();
                     });
+
+                    menuBtn.addEventListener('focus', function () {
+                        alignMenuDropdown();
+                    });
                 }
 
                 document.addEventListener('click', function (e) {
@@ -1258,7 +1262,7 @@
                 });
 
                 window.addEventListener('resize', function () {
-                    if (menuWrapper && menuWrapper.classList.contains('active')) {
+                    if (menuWrapper && (menuWrapper.classList.contains('active') || menuWrapper.matches(':hover'))) {
                         alignMenuDropdown();
                     }
                 });
