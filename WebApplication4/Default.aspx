@@ -296,23 +296,128 @@
             font-weight: 700;
             color: #0f172a;
         }
+
+        /* Access Restricted Warning Alert Banner */
+        .restricted-alert-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            border: 1.5px solid #fdba74;
+            border-radius: 16px;
+            padding: 18px 24px;
+            box-shadow: 0 4px 15px rgba(234, 88, 12, 0.1);
+            animation: bannerSlideIn 0.3s ease;
+        }
+
+        @keyframes bannerSlideIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .restricted-alert-banner .alert-icon {
+            font-size: 32px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .restricted-alert-banner .alert-content {
+            flex: 1;
+        }
+
+        .restricted-alert-banner .alert-content h3 {
+            font-size: 16px;
+            font-weight: 800;
+            color: #9a3412;
+            margin-bottom: 4px;
+        }
+
+        .restricted-alert-banner .alert-content p {
+            font-size: 13.5px;
+            color: #7c2d12;
+            line-height: 1.45;
+            margin: 0;
+        }
+
+        .btn-alert-signin {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ea580c;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13.5px;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.2s;
+            box-shadow: 0 3px 8px rgba(234, 88, 12, 0.3);
+            flex-shrink: 0;
+        }
+
+        .btn-alert-signin:hover {
+            background: #c2410c;
+            transform: translateY(-1px);
+        }
+
+        .btn-hero-locked {
+            opacity: 0.75;
+            border-style: dashed;
+            cursor: pointer;
+        }
+
+        .btn-hero-locked:hover {
+            opacity: 1;
+            background: rgba(239, 68, 68, 0.2) !important;
+            border-color: #f87171 !important;
+        }
+
+        .module-link-locked {
+            color: #dc2626 !important;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .module-link-locked:hover {
+            color: #b91c1c !important;
+        }
     </style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <div class="home-container">
         
+        <!-- Access Restricted Alert Banner (shown when unauthenticated visitor tries to reach internal pages) -->
+        <% if (Request.QueryString["restricted"] == "1") { %>
+            <div class="restricted-alert-banner">
+                <div class="alert-icon">&#128272;</div>
+                <div class="alert-content">
+                    <h3>Navigation Restricted &mdash; Sign In Required</h3>
+                    <p>You attempted to access a protected application page without signing in. Visitors who are not signed in can only stay on this Home portal and cannot navigate to internal pages. Please sign in to unlock all modules.</p>
+                </div>
+                <a href="<%= ResolveUrl("~/FirstPage?restricted=1") %>" class="btn-alert-signin">&#10148; Sign In Now</a>
+            </div>
+        <% } %>
+
         <!-- 1. Hero Welcome Section -->
         <div class="hero">
             <div class="hero-badge">&#127760; ASP.NET WebForms Master Portal</div>
             <h1 class="hero-title">WebApplication4 Central Portal</h1>
             <p class="hero-desc">
-                Welcome to the unified WebApplication4 hub. Explore modern ASP.NET WebForms features including unified master layout, user state, database inventory management, real-time AJAX validation, client-side cookies, and SEO URL routing.
+                Welcome to the unified WebApplication4 hub. Explore modern ASP.NET WebForms features including unified master layout, session security, database inventory management, real-time AJAX validation, client-side cookies, and SEO URL routing.
             </p>
             <div class="hero-actions">
-                <a href="SignUp" class="btn-hero-primary">&#128100; View User Dashboard</a>
-                <a href="ProductForm" class="btn-hero-secondary">&#128230; Open Product Form</a>
-                <a href="FirstPage" class="btn-hero-secondary">&#128272; Sign In Page</a>
+                <% if (Session["UserName"] != null && !string.IsNullOrWhiteSpace(Session["UserName"].ToString())) { %>
+                    <a href="<%= ResolveUrl("~/SignUp") %>" class="btn-hero-primary">&#128100; View User Dashboard</a>
+                    <a href="<%= ResolveUrl("~/ProductForm") %>" class="btn-hero-secondary">&#128230; Open Product Form</a>
+                    <a href="<%= ResolveUrl("~/GridViewAll") %>" class="btn-hero-secondary">&#128203; Employee Directory</a>
+                <% } else { %>
+                    <a href="<%= ResolveUrl("~/FirstPage") %>" class="btn-hero-primary">&#128272; Sign In to Unlock Portal</a>
+                    <a href="javascript:void(0);" onclick="return showRestrictedNotice('User Dashboard');" class="btn-hero-secondary btn-hero-locked">&#128272; Dashboard (Locked)</a>
+                    <a href="javascript:void(0);" onclick="return showRestrictedNotice('Product Form');" class="btn-hero-secondary btn-hero-locked">&#128272; Products (Locked)</a>
+                <% } %>
             </div>
         </div>
 
@@ -380,23 +485,48 @@
                         <div class="module-name">Product Management</div>
                         <p class="module-desc">Add, validate, and persist catalog inventory products with formatted prices and category selection in a GridView.</p>
                     </div>
-                    <a href="ProductForm" class="module-link">Open Product Form &rarr;</a>
+                    <% if (Session["UserName"] != null && !string.IsNullOrWhiteSpace(Session["UserName"].ToString())) { %>
+                        <a href="<%= ResolveUrl("~/ProductForm") %>" class="module-link">Open Product Form &rarr;</a>
+                    <% } else { %>
+                        <a href="javascript:void(0);" onclick="return showRestrictedNotice('Product Management');" class="module-link module-link-locked">&#128272; Sign in to Access &rarr;</a>
+                    <% } %>
                 </div>
 
-                <!-- 2. Check Availability -->
+                <!-- 2. Employee Directory (GridViewAll) -->
                 <div class="module-card">
                     <div>
                         <div class="module-header">
-                            <div class="module-icon icon-teal">&#128737;</div>
+                            <div class="module-icon icon-teal">&#128203;</div>
+                            <span class="tech-pill">SOAP WebService</span>
+                        </div>
+                        <div class="module-name">Employee Directory</div>
+                        <p class="module-desc">ASMX Web Service data feed rendered in a styled GridView with server-side page indexing, search filtering, and badges.</p>
+                    </div>
+                    <% if (Session["UserName"] != null && !string.IsNullOrWhiteSpace(Session["UserName"].ToString())) { %>
+                        <a href="<%= ResolveUrl("~/GridViewAll") %>" class="module-link">Open Directory &rarr;</a>
+                    <% } else { %>
+                        <a href="javascript:void(0);" onclick="return showRestrictedNotice('Employee Directory');" class="module-link module-link-locked">&#128272; Sign in to Access &rarr;</a>
+                    <% } %>
+                </div>
+
+                <!-- 3. Check Availability -->
+                <div class="module-card">
+                    <div>
+                        <div class="module-header">
+                            <div class="module-icon icon-emerald">&#128737;</div>
                             <span class="tech-pill">AJAX UpdatePanel</span>
                         </div>
                         <div class="module-name">Username Availability</div>
                         <p class="module-desc">Real-time asynchronous checking against SQL database using ASP.NET AJAX UpdatePanel without full page reload.</p>
                     </div>
-                    <a href="CheckAvailability" class="module-link">Test Availability &rarr;</a>
+                    <% if (Session["UserName"] != null && !string.IsNullOrWhiteSpace(Session["UserName"].ToString())) { %>
+                        <a href="<%= ResolveUrl("~/CheckAvailability") %>" class="module-link">Test Availability &rarr;</a>
+                    <% } else { %>
+                        <a href="javascript:void(0);" onclick="return showRestrictedNotice('Username Availability');" class="module-link module-link-locked">&#128272; Sign in to Access &rarr;</a>
+                    <% } %>
                 </div>
 
-                <!-- 3. Search User -->
+                <!-- 4. Search User -->
                 <div class="module-card">
                     <div>
                         <div class="module-header">
@@ -406,10 +536,14 @@
                         <div class="module-name">Search User Directory</div>
                         <p class="module-desc">Search users and safely transfer parameters via URL query strings to the recipient GetUser detail page.</p>
                     </div>
-                    <a href="SearchUser" class="module-link">Search Directory &rarr;</a>
+                    <% if (Session["UserName"] != null && !string.IsNullOrWhiteSpace(Session["UserName"].ToString())) { %>
+                        <a href="<%= ResolveUrl("~/SearchUser") %>" class="module-link">Search Directory &rarr;</a>
+                    <% } else { %>
+                        <a href="javascript:void(0);" onclick="return showRestrictedNotice('Search User Directory');" class="module-link module-link-locked">&#128272; Sign in to Access &rarr;</a>
+                    <% } %>
                 </div>
 
-                <!-- 4. Cookie State -->
+                <!-- 5. Cookie State -->
                 <div class="module-card">
                     <div>
                         <div class="module-header">
@@ -419,20 +553,11 @@
                         <div class="module-name">HTTP Cookie Management</div>
                         <p class="module-desc">Demonstrates client-side multi-value cookies, expiration lifecycles, and reading cookie values from incoming HTTP headers.</p>
                     </div>
-                    <a href="CookiesSend" class="module-link">Manage Cookies &rarr;</a>
-                </div>
-
-                <!-- 5. URL Routing -->
-                <div class="module-card">
-                    <div>
-                        <div class="module-header">
-                            <div class="module-icon icon-emerald">&#128279;</div>
-                            <span class="tech-pill">MapPageRoute</span>
-                        </div>
-                        <div class="module-name">SEO URL Routing</div>
-                        <p class="module-desc">Demonstrates ASP.NET RouteTable with dynamic slug generation and parameterized detail views for articles.</p>
-                    </div>
-                    <a href="URLRouting" class="module-link">View Articles &rarr;</a>
+                    <% if (Session["UserName"] != null && !string.IsNullOrWhiteSpace(Session["UserName"].ToString())) { %>
+                        <a href="<%= ResolveUrl("~/CookiesSend") %>" class="module-link">Manage Cookies &rarr;</a>
+                    <% } else { %>
+                        <a href="javascript:void(0);" onclick="return showRestrictedNotice('Cookie Management');" class="module-link module-link-locked">&#128272; Sign in to Access &rarr;</a>
+                    <% } %>
                 </div>
 
                 <!-- 6. Counting & Metrics -->
@@ -445,7 +570,11 @@
                         <div class="module-name">ViewState Click Counter</div>
                         <p class="module-desc">Tracks button click counters and state preservation across postback cycles using ASP.NET ViewState.</p>
                     </div>
-                    <a href="Counting" class="module-link">View Counter &rarr;</a>
+                    <% if (Session["UserName"] != null && !string.IsNullOrWhiteSpace(Session["UserName"].ToString())) { %>
+                        <a href="<%= ResolveUrl("~/Counting") %>" class="module-link">View Counter &rarr;</a>
+                    <% } else { %>
+                        <a href="javascript:void(0);" onclick="return showRestrictedNotice('ViewState Click Counter');" class="module-link module-link-locked">&#128272; Sign in to Access &rarr;</a>
+                    <% } %>
                 </div>
             </div>
         </div>
