@@ -57,3 +57,4 @@ D:\avi\C#\WebApplication4\obj\Debug\WebApplication4.csproj.CoreCompileInputs.cac
 D:\avi\C#\WebApplication4\obj\Debug\WebAppli.EC757EB8.Up2Date
 D:\avi\C#\WebApplication4\obj\Debug\WebApplication4.dll
 D:\avi\C#\WebApplication4\obj\Debug\WebApplication4.pdb
+D:\avi\C#\WebApplication4\bin\roslyn\.gitkeep
