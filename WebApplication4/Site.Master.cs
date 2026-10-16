@@ -62,30 +62,31 @@ namespace WebApplication4
             }
 
             // Case B: User has not signed in
-            //if (!isAuthenticated)
-            //{
-            //    string appRelative = Request.AppRelativeCurrentExecutionFilePath ?? string.Empty;
-            //    bool isHomePage = string.Equals(appRelative, "~/Default.aspx", StringComparison.OrdinalIgnoreCase)
-            //                   || string.Equals(appRelative, "~/", StringComparison.OrdinalIgnoreCase);
+            if (!isAuthenticated)
+            {
+                string appRelative = Request.AppRelativeCurrentExecutionFilePath ?? string.Empty;
+                bool isHomePage = string.Equals(appRelative, "~/Default.aspx", StringComparison.OrdinalIgnoreCase)
+                               || string.Equals(appRelative, "~/AllGridProp.aspx", StringComparison.OrdinalIgnoreCase)
+                               || string.Equals(appRelative, "~/", StringComparison.OrdinalIgnoreCase);
 
-            //    string rawPath = Request.Path ?? string.Empty;
-            //    if (rawPath.TrimEnd('/').EndsWith("/Home", StringComparison.OrdinalIgnoreCase) ||
-            //        rawPath.TrimEnd('/').EndsWith("/Default", StringComparison.OrdinalIgnoreCase) ||
-            //        string.IsNullOrEmpty(rawPath.Trim('/')) ||
-            //        rawPath.Equals(Request.ApplicationPath, StringComparison.OrdinalIgnoreCase))
-            //    {
-            //        isHomePage = true;
-            //    }
+                string rawPath = Request.Path ?? string.Empty;
+                if (rawPath.TrimEnd('/').EndsWith("/Home", StringComparison.OrdinalIgnoreCase) ||
+                    rawPath.TrimEnd('/').EndsWith("/Default", StringComparison.OrdinalIgnoreCase) ||
+                    string.IsNullOrEmpty(rawPath.Trim('/')) ||
+                    rawPath.Equals(Request.ApplicationPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    isHomePage = true;
+                }
 
-            //    // Default.aspx is open to everyone (signed in or not).
-            //    // But navigating to any other internal page requires signing in first!
-            //    if (!isHomePage)
-            //    {
-            //        string target = Request.RawUrl;
-            //        Response.Redirect("~/FirstPage?returnUrl=" + Server.UrlEncode(target) + "&auth=1", true);
-            //        return;
-            //    }
-            //}
+                // Default.aspx is open to everyone (signed in or not).
+                // But navigating to any other internal page requires signing in first!
+                if (!isHomePage)
+                {
+                    string target = Request.RawUrl;
+                    Response.Redirect("~/FirstPage?returnUrl=" + Server.UrlEncode(target) + "&auth=1", true);
+                    return;
+                }
+            }
         }
 
         protected void Page_Load(object sender, EventArgs e)
