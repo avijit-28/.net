@@ -101,6 +101,7 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+    <Content Include="AllGridProp.aspx" />
     <Content Include="CookiesGet.aspx" />
     <Content Include="CookiesSend.aspx" />
     <Content Include="Counting.aspx" />
