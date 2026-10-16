@@ -22,6 +22,7 @@ namespace WebApplication4
             routeCollection.Ignore("{resource}.asmx/{*pathInfo}");
 
             // Clean, friendly extensionless page routes
+            routeCollection.MapPageRoute("RootHomeRoute", "", "~/Default.aspx");
             routeCollection.MapPageRoute("HomeRoute", "Home", "~/Default.aspx");
             routeCollection.MapPageRoute("CheckAvailabilityRoute", "CheckAvailability", "~/CheckAvailability.aspx");
             routeCollection.MapPageRoute("CheckAvailabilitySlug", "check-availability", "~/CheckAvailability.aspx");
