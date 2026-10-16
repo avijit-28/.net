@@ -187,10 +187,11 @@
         .menu-dropdown-panel {
             position: absolute;
             top: calc(100% + 8px);
-            right: 0;
-            left: auto;
-            width: 780px;
-            max-width: min(780px, calc(100vw - 24px));
+            left: 0;
+            right: auto;
+            width: 820px;
+            max-width: calc(100vw - 32px);
+            box-sizing: border-box;
             background: #ffffff;
             border: 1.5px solid #cbd5e1;
             border-radius: 14px;
