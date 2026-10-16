@@ -18,5 +18,4 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Build GenericSpDemo
-        run: msbuild GenericSpDemo/GenericSpDemo.csproj /p:Configuration=Release
+      
