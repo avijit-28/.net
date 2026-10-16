@@ -70,10 +70,26 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CheckAvailability.aspx" />
+    <None Include="Connected Services\localhost1\WebService1.wsdl" />
+    <None Include="Connected Services\localhost2\WebService1.wsdl" />
     <None Include="Connected Services\localhost\WebService1.disco" />
     <None Include="Connected Services\localhost\configuration91.svcinfo" />
     <None Include="Connected Services\localhost\configuration.svcinfo" />
     <None Include="Connected Services\localhost\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\localhost1\WebService1.disco" />
+    <None Include="Connected Services\localhost1\configuration91.svcinfo" />
+    <None Include="Connected Services\localhost1\configuration.svcinfo" />
+    <None Include="Connected Services\localhost1\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\localhost2\WebService1.disco" />
+    <None Include="Connected Services\localhost2\configuration91.svcinfo" />
+    <None Include="Connected Services\localhost2\configuration.svcinfo" />
+    <None Include="Connected Services\localhost2\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
@@ -105,6 +121,16 @@
     </Compile>
     <Compile Include="CheckAvailability.aspx.designer.cs">
       <DependentUpon>CheckAvailability.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\localhost1\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\localhost2\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="Connected Services\localhost\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -233,6 +259,8 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\localhost1\" />
+    <WCFMetadataStorage Include="Connected Services\localhost2\" />
     <WCFMetadataStorage Include="Connected Services\localhost\" />
   </ItemGroup>
   <PropertyGroup>
