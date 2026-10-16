@@ -22,7 +22,7 @@ namespace WebApplication4
             routeCollection.Ignore("{resource}.asmx/{*pathInfo}");
 
             // Clean, friendly extensionless page routes
-            routeCollection.MapPageRoute("RootHomeRoute", "", "~/Default.aspx");
+            routeCollection.MapPageRoute("RootHomeRoute", "", "~/AllGridProp.aspx");
             routeCollection.MapPageRoute("HomeRoute", "Home", "~/Default.aspx");
             routeCollection.MapPageRoute("CheckAvailabilityRoute", "CheckAvailability", "~/CheckAvailability.aspx");
             routeCollection.MapPageRoute("CheckAvailabilitySlug", "check-availability", "~/CheckAvailability.aspx");
@@ -43,6 +43,7 @@ namespace WebApplication4
             routeCollection.MapPageRoute("LoginSlug", "login", "~/FirstPage.aspx");
             routeCollection.MapPageRoute("URLRoutingRoute", "URLRouting", "~/URLRouting.aspx");
             routeCollection.MapPageRoute("URLGridView", "GridViewAll", "~/GridViewAll.aspx");
+            routeCollection.MapPageRoute("AllGridPropRoute", "AllGridProp", "~/AllGridProp.aspx");
             routeCollection.MapPageRoute("URLAllGridProperty", "AllGridProperty", "~/AllGridProp.aspx");
 
 
