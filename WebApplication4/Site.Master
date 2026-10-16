@@ -1141,19 +1141,39 @@
                 var btn = document.getElementById('megaMenuBtn');
                 if (!panel || !btn) return;
 
-                var btnRect = btn.getBoundingClientRect();
-                var panelWidth = panel.offsetWidth || 780;
-                var viewportWidth = window.innerWidth;
+                // Temporarily ensure panel can be measured
+                panel.style.left = '0px';
+                panel.style.right = 'auto';
 
-                if (viewportWidth > 640) {
-                    if (btnRect.left + panelWidth > viewportWidth - 20) {
-                        panel.style.left = 'auto';
-                        panel.style.right = '0';
-                    } else {
-                        panel.style.left = '0';
-                        panel.style.right = 'auto';
-                    }
+                var btnRect = btn.getBoundingClientRect();
+                var panelWidth = panel.offsetWidth;
+                if (!panelWidth || panelWidth <= 0) {
+                    var prevDisplay = panel.style.display;
+                    var prevVisibility = panel.style.visibility;
+                    panel.style.visibility = 'hidden';
+                    panel.style.display = 'block';
+                    panelWidth = panel.offsetWidth || 820;
+                    panel.style.display = prevDisplay;
+                    panel.style.visibility = prevVisibility;
                 }
+
+                var viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+                var screenLeft = btnRect.left;
+                var maxScreenRight = viewportWidth - 16;
+
+                // If menu panel overflows the right edge of viewport, shift it left
+                if (screenLeft + panelWidth > maxScreenRight) {
+                    screenLeft = maxScreenRight - panelWidth;
+                }
+
+                // Never allow left edge of panel to go off-screen (minimum 16px from screen edge)
+                if (screenLeft < 16) {
+                    screenLeft = 16;
+                }
+
+                var relativeLeft = screenLeft - btnRect.left;
+                panel.style.left = relativeLeft + 'px';
+                panel.style.right = 'auto';
             }
 
             <% if (Session["UserName"] != null && !string.IsNullOrWhiteSpace(Session["UserName"].ToString())) { %>
