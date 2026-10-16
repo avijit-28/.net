@@ -173,13 +173,14 @@
         <!-- Header Banner -->
         <div class="grid-hero-card">
             <div class="grid-badge-row">
-                <span class="grid-badge">&#128203; ASP.NET WebForms</span>
+                <span class="grid-badge" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.5); color: #6ee7b7;">&#128451; <%= DbServerStatus %></span>
+                <span class="grid-badge">&#128101; AllEmployee: <%= AllEmployeeCount %> records</span>
+                <span class="grid-badge">&#128100; Employee: <%= EmployeeCount %> records</span>
                 <span class="grid-badge">&#9881; GridView Mastery</span>
-                <span class="grid-badge">&#128188; Core Architecture</span>
             </div>
             <h1 class="grid-hero-title">GridView Capabilities &amp; Feature Modules</h1>
             <p class="grid-hero-desc">
-                Select any module below to inspect its dedicated implementation, including multi-culture currency formatting, hidden column binding, runtime conditional highlighting, TemplateField editing, field validation, and complete inline CRUD operations.
+                All modules below are connected directly to live Microsoft SQL Server database tables (<code>AllEmployee</code> &amp; <code>Employee</code>), demonstrating multi-culture currency formatting, hidden column binding, runtime conditional highlighting, TemplateField editing, field validation, and complete inline CRUD operations.
             </p>
         </div>
 
