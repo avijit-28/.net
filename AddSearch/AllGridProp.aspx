@@ -8,11 +8,37 @@
 </head>
 <body>
     <form id="form1" runat="server">
-        <div>
-            <asp:GridView ID="GridView1" runat="server">
-            </asp:GridView>
+        <div style="height: 233px">
+            <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:AssignmetConnectionString %>" ProviderName="<%$ ConnectionStrings:AssignmetConnectionString.ProviderName %>" SelectCommand="SELECT [UserId], [UserName], [Password], [Email], [MobileNo], [City] FROM [UserDetails]"></asp:SqlDataSource>
+
+            <asp:GridView ID="gvUsers" DataSourceID="SqlDataSource1"   DataKeyNames="UserID"
+    runat="server"
+    AutoGenerateColumns="False">
+
+    <Columns>
+        <asp:BoundField DataField="UserId"
+            HeaderText="User ID" />
+
+        <asp:BoundField DataField="UserName"
+            HeaderText="User Name" />
+
+        <asp:BoundField DataField="Password"
+            HeaderText="Password" />
+
+        <asp:BoundField DataField="Email"
+            HeaderText="Email" />
+
+        <asp:BoundField DataField="MobileNo"
+            HeaderText="Mobile No" />
+
+        <asp:BoundField DataField="City"
+            HeaderText="City" />
+    </Columns>
+
+</asp:GridView>
+            
+
         </div>
-        <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:AssignmetConnectionString %>" ProviderName="<%$ ConnectionStrings:AssignmetConnectionString.ProviderName %>" SelectCommand="SELECT [UserId], [UserName], [Password], [Email], [MobileNo], [City] FROM [UserDetails]"></asp:SqlDataSource>
     </form>
 </body>
 </html>
