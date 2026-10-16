@@ -10,6 +10,55 @@ namespace AddSearch
         {
 
         }
+        protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DropDownList ddl =
+                (DropDownList)sender;
+
+            GridViewRow row =
+                (GridViewRow)ddl.NamingContainer;
+
+            Label lblSalary =
+                (Label)row.FindControl("lblSalary");
+
+            int salary = Convert.ToInt32(lblSalary.Text);
+
+            if (ddl.SelectedValue == "US")
+            {
+                lblSalary.Text =
+                    string.Format(
+                        new System.Globalization.CultureInfo("en-US"),
+                        "{0:c}", salary);
+            }
+            else if (ddl.SelectedValue == "India")
+            {
+                lblSalary.Text =
+                    string.Format(
+                        new System.Globalization.CultureInfo("en-IN"),
+                        "{0:c}", salary);
+            }
+            else if (ddl.SelectedValue == "UK")
+            {
+                lblSalary.Text =
+                    string.Format(
+                        new System.Globalization.CultureInfo("en-GB"),
+                        "{0:c}", salary);
+            }
+            else if (ddl.SelectedValue == "South Africa")
+            {
+                lblSalary.Text =
+                    string.Format(
+                        new System.Globalization.CultureInfo("en-ZA"),
+                        "{0:c}", salary);
+            }
+            else if (ddl.SelectedValue == "Malaysia")
+            {
+                lblSalary.Text =
+                    string.Format(
+                        new System.Globalization.CultureInfo("ms-MY"),
+                        "{0:c}", salary);
+            }
+        }
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
