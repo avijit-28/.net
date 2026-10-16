@@ -203,6 +203,15 @@
             animation: menuFlyIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
+        .menu-dropdown-panel::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            right: 0;
+            height: 10px;
+        }
+
         @keyframes menuFlyIn {
             from {
                 opacity: 0;
