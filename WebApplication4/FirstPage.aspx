@@ -256,6 +256,71 @@
             color: #1d4ed8;
             text-decoration: underline;
         }
+
+        /* Dynamic Feedback Banners */
+        .auth-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-banner .banner-icon {
+            font-size: 18px;
+            line-height: 1;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .auth-banner .banner-text strong {
+            display: block;
+            font-size: 13.5px;
+            margin-bottom: 2px;
+        }
+
+        .auth-banner .banner-text p {
+            margin: 0;
+        }
+
+        .banner-timeout {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            color: #92400e;
+        }
+
+        .banner-logout {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .banner-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .banner-restricted {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #9a3412;
+        }
+
+        .banner-active {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+        }
     </style>
 </head>
 <body>
@@ -270,6 +335,52 @@
 
             <!-- Body -->
             <div class="card-body">
+                <% if (Request.QueryString["timeout"] == "1") { %>
+                    <div class="auth-banner banner-timeout">
+                        <span class="banner-icon">&#9201;</span>
+                        <div class="banner-text">
+                            <strong>Session Expired</strong>
+                            <p>Your session has ended due to inactivity. Please sign in again to continue.</p>
+                        </div>
+                    </div>
+                <% } else if (Request.QueryString["logout"] == "1") { %>
+                    <div class="auth-banner banner-logout">
+                        <span class="banner-icon">&#128075;</span>
+                        <div class="banner-text">
+                            <strong>Successfully Signed Out</strong>
+                            <p>You have signed out of your account. Enter your credentials to log in.</p>
+                        </div>
+                    </div>
+                <% } else if (Request.QueryString["error"] == "1") { %>
+                    <div class="auth-banner banner-error">
+                        <span class="banner-icon">&#9888;</span>
+                        <div class="banner-text">
+                            <strong>Authentication Failed</strong>
+                            <p>Invalid email or password. Use demo account <code>avijit@gmail.com</code> / <code>1234</code>.</p>
+                        </div>
+                    </div>
+                <% } else if (Request.QueryString["restricted"] == "1") { %>
+                    <div class="auth-banner banner-restricted">
+                        <span class="banner-icon">&#128272;</span>
+                        <div class="banner-text">
+                            <strong>Sign In Required</strong>
+                            <p>You must sign in to navigate to internal pages and modules.</p>
+                        </div>
+                    </div>
+                <% } else if (Session["UserName"] != null && !string.IsNullOrWhiteSpace(Session["UserName"].ToString())) { %>
+                    <div class="auth-banner banner-active">
+                        <span class="banner-icon">&#9989;</span>
+                        <div class="banner-text">
+                            <strong>Already Signed In</strong>
+                            <p>You are signed in as <strong><%= Session["UserName"] %></strong>.</p>
+                            <div style="margin-top: 6px; display: flex; gap: 12px; font-size: 12px;">
+                                <a href="<%= ResolveUrl("~/Home") %>" style="color: #2563eb; font-weight: 700; text-decoration: underline;">Return to Home &rarr;</a>
+                                <a href="<%= ResolveUrl("~/FirstPage?action=logout") %>" style="color: #ef4444; font-weight: 700; text-decoration: underline;">Sign Out</a>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+
                 <!-- Online Users Counter Badge -->
                 <div class="online-badge">
                     <span class="status-dot"></span>
