@@ -140,13 +140,42 @@
         <div class="col-lg-7">
             <div class="card shadow-sm">
                 <div class="card-header bg-dark text-white fw-semibold">
+                    <asp:Label ID="lblFormTitle" runat="server" Text="➕ Add New Expense" />
                     📋 Submitted Expenses
                 </div>
+                <!-- SEARCH & FILTER BAR -->
+                <div class="card-body bg-light border-bottom py-2">
+                    <asp:HiddenField ID="hfExpenseId" runat="server" Value="0" />
+                    <div class="row g-2 align-items-center">
+                        <div class="col-md-5">
+                            <asp:TextBox ID="txtSearchName" runat="server" CssClass="form-control form-control-sm"
+                                placeholder="🔍 Search employee name..." />
+                        </div>
+                        <div class="col-md-4">
+                            <asp:DropDownList ID="ddlFilterCategory" runat="server" CssClass="form-select form-select-sm">
+                                <asp:ListItem Value="" Text="All Categories" />
+                                <asp:ListItem Value="Travel" Text="Travel" />
+                                <asp:ListItem Value="Meals" Text="Meals" />
+                                <asp:ListItem Value="Software" Text="Software" />
+                                <asp:ListItem Value="Office Supplies" Text="Office Supplies" />
+                            </asp:DropDownList>
+                        </div>
+                        <div class="col-md-3 d-flex gap-1">
+                            <asp:Button ID="btnSearch" runat="server" Text="Filter"
+                                CssClass="btn btn-sm btn-dark flex-grow-1"
+                                CausesValidation="false" OnClick="btnSearch_Click" />
+                            <asp:Button ID="btnResetFilter" runat="server" Text="Reset"
+                                CssClass="btn btn-sm btn-outline-secondary"
+                                CausesValidation="false" OnClick="btnResetFilter_Click" />
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body p-0">
-                    <asp:GridView ID="gvExpenses" runat="server" AutoGenerateColumns="False" 
-                        DataKeyNames="Id" 
-                        CssClass="table table-hover table-striped align-middle mb-0" 
-                        OnRowDeleting="gvExpenses_RowDeleting" >
+                    <asp:GridView ID="gvExpenses" runat="server" AutoGenerateColumns="False"
+                        DataKeyNames="Id"
+                        CssClass="table table-hover table-striped align-middle mb-0"
+                        OnRowDeleting="gvExpenses_RowDeleting"
+                        OnRowCommand="gvExpenses_RowCommand">
                         <Columns>
                             <asp:BoundField DataField="Id" HeaderText="#" />
                             <asp:BoundField DataField="EmployeeName" HeaderText="Employee" />
@@ -167,6 +196,14 @@
                             <%-- Actions (Delete Button) --%>
                             <asp:TemplateField HeaderText="Actions">
                                 <ItemTemplate>
+                                    <asp:LinkButton ID="btnEdit" runat="server"
+                                        CommandName="EditRow"
+                                        CommandArgument='<%# Eval("Id") %>'
+                                        CssClass="btn btn-sm btn-outline-primary me-1"
+                                        CausesValidation="false">
+                                        Edit
+                                    </asp:LinkButton>
+
                                     <asp:LinkButton ID="btnDelete" runat="server" 
                                         CommandName="Delete" 
                                         CssClass="btn btn-sm btn-outline-danger" 
