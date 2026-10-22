@@ -1275,6 +1275,53 @@
                     }
                 });
             });
+
+            // Universal Pre-Action Confirmation Dialog for Delete and Update actions all over the project
+            document.addEventListener('click', function (e) {
+                var target = e.target.closest('a, button, input[type="submit"], input[type="button"]');
+                if (!target) return;
+
+                var text = (target.textContent || target.value || '').trim();
+                var href = (target.getAttribute('href') || '');
+                var cmd = (target.getAttribute('data-command') || '').toLowerCase();
+                var textLower = text.toLowerCase();
+
+                // Check for Delete action
+                var isDelete = textLower === 'delete' ||
+                               textLower.startsWith('delete') ||
+                               cmd === 'delete' ||
+                               href.indexOf('Delete$') > -1 ||
+                               target.classList.contains('btn-action-delete') ||
+                               target.classList.contains('btn-delete');
+
+                // Check for Update action
+                var isUpdate = textLower === 'update' ||
+                               textLower.startsWith('update') ||
+                               cmd === 'update' ||
+                               href.indexOf('Update$') > -1 ||
+                               target.classList.contains('btn-action-update') ||
+                               target.classList.contains('btn-update');
+
+                // If element already has an inline confirm() handler, let that run natively
+                var existingOnClick = target.getAttribute('onclick');
+                if (existingOnClick && existingOnClick.indexOf('confirm(') > -1) {
+                    return;
+                }
+
+                if (isDelete) {
+                    if (!confirm('Are you sure you want to DELETE this record? This action cannot be undone.')) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        return false;
+                    }
+                } else if (isUpdate) {
+                    if (!confirm('Are you sure you want to SAVE changes / UPDATE this record?')) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+                        return false;
+                    }
+                }
+            }, true);
         </script>
     </form>
 </body>
