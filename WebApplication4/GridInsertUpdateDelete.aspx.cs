@@ -179,5 +179,38 @@ namespace WebApplication4
                 lblStatus.Visible = true;
             }
         }
+
+        protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                // In CommandField columns, buttons/links are created in Cells[0]
+                foreach (Control c in e.Row.Cells[0].Controls)
+                {
+                    if (c is LinkButton lb)
+                    {
+                        if (lb.CommandName == "Delete")
+                        {
+                            lb.OnClientClick = "return confirm('Are you sure you want to DELETE this employee record?');";
+                        }
+                        else if (lb.CommandName == "Update")
+                        {
+                            lb.OnClientClick = "return confirm('Are you sure you want to SAVE changes to this employee record?');";
+                        }
+                    }
+                    else if (c is Button btn)
+                    {
+                        if (btn.CommandName == "Delete")
+                        {
+                            btn.OnClientClick = "return confirm('Are you sure you want to DELETE this employee record?');";
+                        }
+                        else if (btn.CommandName == "Update")
+                        {
+                            btn.OnClientClick = "return confirm('Are you sure you want to SAVE changes to this employee record?');";
+                        }
+                    }
+                }
+            }
+        }
     }
 }
