@@ -71,6 +71,7 @@
     <Content Include="currency.aspx" />
     <Content Include="GridViewTemplateField.aspx" />
     <Content Include="UserDetails.aspx" />
+    <Content Include="UserDetailsWithoutObjectSource.aspx" />
     <Content Include="Web.config" />
     <Content Include="WebForm1.aspx" />
   </ItemGroup>
@@ -106,6 +107,13 @@
     </Compile>
     <Compile Include="UserDetails.cs" />
     <Compile Include="UserDetailsAccessLayer.cs" />
+    <Compile Include="UserDetailsWithoutObjectSource.aspx.cs">
+      <DependentUpon>UserDetailsWithoutObjectSource.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserDetailsWithoutObjectSource.aspx.designer.cs">
+      <DependentUpon>UserDetailsWithoutObjectSource.aspx</DependentUpon>
+    </Compile>
     <Compile Include="WebForm1.aspx.cs">
       <DependentUpon>WebForm1.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
