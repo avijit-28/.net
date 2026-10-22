@@ -16,7 +16,7 @@
             AutoGenerateColumns="False"
             DataKeyNames="UserId"
             ShowFooter="True"
-            OnRowCommand="GridView1_RowCommand" OnSelectedIndexChanged="GridView1_SelectedIndexChanged">
+            OnRowCommand="GridView1_RowCommand" >
 
             <Columns>
 
