@@ -323,6 +323,13 @@
     <Compile Include="UserDetails.aspx.designer.cs">
       <DependentUpon>UserDetails.aspx</DependentUpon>
     </Compile>
+    <Compile Include="UserDetailsWithoutObjectSource.aspx.cs">
+      <DependentUpon>UserDetailsWithoutObjectSource.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserDetailsWithoutObjectSource.aspx.designer.cs">
+      <DependentUpon>UserDetailsWithoutObjectSource.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Connected Services\localhost\WebService1.wsdl" />
