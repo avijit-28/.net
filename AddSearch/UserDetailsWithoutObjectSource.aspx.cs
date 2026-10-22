@@ -11,12 +11,85 @@ namespace AddSearch
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (!IsPostBack)
+            {
+                BindGridViewData();
+            }
         }
-
-        protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
+        private void BindGridViewData()
         {
+            GridView1.DataSource = UserDetailsAccessLayer.GetAllUsers();
+            GridView1.DataBind();
+        }
+        protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "EditRow")
+            {
+                int rowIndex = ((GridViewRow)((LinkButton)e.CommandSource).NamingContainer).RowIndex;
+                GridView1.EditIndex = rowIndex;
+                BindGridViewData();
+            }
+            else if (e.CommandName == "DeleteRow")
+            {
+                UserDetailsAccessLayer.DeleteUser(Convert.ToInt32(e.CommandArgument));
+                BindGridViewData();
+            }
+            else if (e.CommandName == "CancelUpdate")
+            {
+                GridView1.EditIndex = -1;
+                BindGridViewData();
+            }
+            else if (e.CommandName == "UpdateRow")
+            {
+                int rowIndex = ((GridViewRow)((LinkButton)e.CommandSource)
+                                .NamingContainer).RowIndex;
+
+                int userId = Convert.ToInt32(e.CommandArgument);
+
+                string userName =
+                    ((TextBox)GridView1.Rows[rowIndex]
+                    .FindControl("txtUserName")).Text;
+
+                string password =((TextBox)GridView1.Rows[rowIndex].FindControl("txtPassword")).Text;
+                string email =((TextBox)GridView1.Rows[rowIndex].FindControl("txtEmail")).Text;
+                string mobileNo =((TextBox)GridView1.Rows[rowIndex].FindControl("txtMobileNo")).Text;
+                string city =((TextBox)GridView1.Rows[rowIndex].FindControl("txtCity")).Text;
+
+                UserDetailsAccessLayer.UpdateUser(
+                    userId,
+                    userName,
+                    password,
+                    email,
+                    mobileNo,
+                    city);
+
+                GridView1.EditIndex = -1;
+
+                BindGridViewData();
+            }
+            else if (e.CommandName == "InsertRow")
+            {
+                int userId = Convert.ToInt32(((TextBox)GridView1.FooterRow.FindControl("txtUserId")).Text);
+                string userName =((TextBox)GridView1.FooterRow.FindControl("txtUserNameFooter")).Text;
+                string password =((TextBox)GridView1.FooterRow.FindControl("txtPasswordFooter")).Text;
+                string email =((TextBox)GridView1.FooterRow.FindControl("txtEmailFooter")).Text;
+                string mobileNo =((TextBox)GridView1.FooterRow.FindControl("txtMobileNoFooter")).Text;
+                string city =((TextBox)GridView1.FooterRow.FindControl("txtCityFooter")).Text;
+                UserDetailsAccessLayer.InsertUser(
+                    userId,
+                    userName,
+                    password,
+                    email,
+                    mobileNo,
+                    city);
+
+                BindGridViewData();
+            }
+
 
         }
+
+
+
     }
-}
+    }
