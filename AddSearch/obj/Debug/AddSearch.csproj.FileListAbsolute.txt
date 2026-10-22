@@ -57,3 +57,4 @@ D:\avi\C#\AddSearch\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
 D:\avi\C#\AddSearch\obj\Debug\AddSearch.csproj.Up2Date
 D:\avi\C#\AddSearch\obj\Debug\AddSearch.dll
 D:\avi\C#\AddSearch\obj\Debug\AddSearch.pdb
+D:\avi\C#\AddSearch\bin\roslyn\.gitkeep
