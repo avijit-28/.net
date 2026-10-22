@@ -289,6 +289,40 @@
                 <a href="<%= ResolveUrl("~/GridInsertUpdateDelete") %>" class="btn-launch">Open Module &rarr;</a>
             </div>
 
+            <!-- 7. User Accounts CRUD (ObjectDataSource) -->
+            <div class="module-card">
+                <div>
+                    <div class="card-top">
+                        <div class="card-icon icon-indigo">&#128101;</div>
+                        <div>
+                            <span class="card-tag">Declarative Architecture</span>
+                            <h3 class="card-title">User CRUD (ObjectDataSource)</h3>
+                        </div>
+                    </div>
+                    <p class="card-body-text">
+                        Enterprise multi-tier user administration using <code>ObjectDataSource</code> wired to stored procedures in SQL Server with automatic binding, paging, and centered confirmation dialogs.
+                    </p>
+                </div>
+                <a href="<%= ResolveUrl("~/UserDetails") %>" class="btn-launch">Open Module &rarr;</a>
+            </div>
+
+            <!-- 8. User Accounts CRUD (Direct DAL / No ObjectDataSource) -->
+            <div class="module-card">
+                <div>
+                    <div class="card-top">
+                        <div class="card-icon icon-amber">&#128736;</div>
+                        <div>
+                            <span class="card-tag">Programmatic Code-Behind</span>
+                            <h3 class="card-title">User CRUD (Direct DAL)</h3>
+                        </div>
+                    </div>
+                    <p class="card-body-text">
+                        Manual code-behind data manipulation calling <code>UserDetailsAccessLayer</code> directly with <code>RowCommand</code> (Edit, Delete, Update, Insert) and centered confirmation modal dialogs.
+                    </p>
+                </div>
+                <a href="<%= ResolveUrl("~/UserDetailsWithoutObjectSource") %>" class="btn-launch">Open Module &rarr;</a>
+            </div>
+
         </div>
     </div>
 </asp:Content>
