@@ -1431,6 +1431,51 @@
                 panel.style.right = 'auto';
             }
 
+            document.addEventListener('DOMContentLoaded', function () {
+                var menuBtn = document.getElementById('megaMenuBtn');
+                var menuWrapper = document.querySelector('.menu-dropdown-wrapper');
+
+                if (menuBtn && menuWrapper) {
+                    menuBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var willBeActive = !menuWrapper.classList.contains('active');
+                        menuWrapper.classList.toggle('active');
+                        if (willBeActive) {
+                            alignMenuDropdown();
+                        }
+                    });
+
+                    menuWrapper.addEventListener('mouseenter', function () {
+                        alignMenuDropdown();
+                    });
+
+                    menuBtn.addEventListener('focus', function () {
+                        alignMenuDropdown();
+                    });
+                }
+
+                document.addEventListener('click', function (e) {
+                    if (menuWrapper && !menuWrapper.contains(e.target)) {
+                        menuWrapper.classList.remove('active');
+                    }
+                });
+
+                // Close dropdown on Escape key
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') {
+                        if (menuWrapper) {
+                            menuWrapper.classList.remove('active');
+                        }
+                    }
+                });
+
+                window.addEventListener('resize', function () {
+                    if (menuWrapper && (menuWrapper.classList.contains('active') || menuWrapper.matches(':hover'))) {
+                        alignMenuDropdown();
+                    }
+                });
+            });
         </script>
 
         <!-- Project-Wide Centered Modal Dialog (Confirmations, Alerts & Session Expiry) -->
