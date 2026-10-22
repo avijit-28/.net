@@ -174,6 +174,7 @@
                             runat="server"
                             CommandName="UpdateRow"
                             CommandArgument='<%# Eval("UserId") %>'
+                            OnClientClick="return confirm('Are you sure you want to update this row')"
                             ForeColor="#8C4510">
                             Update
                         </asp:LinkButton>
