@@ -1,10 +1,11 @@
-﻿< !DOCTYPE html >
-< html >
-< head >
-    < meta charset = "utf-8" />
-    < title ></ title >
-</ head >
-< body >
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 
-</ body >
-</ html >
+namespace AddSearch
+{
+	public class UserDetailsAccessLayer
+	{
+	}
+}
