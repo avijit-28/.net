@@ -18,25 +18,6 @@
             InsertMethod="InsertUser"
             UpdateMethod="UpdateUser"
             DeleteMethod="DeleteUser">
-            <InsertParameters>
-                <asp:Parameter Name="UserId" Type="Int32" />
-                <asp:Parameter Name="UserName" Type="String" />
-                <asp:Parameter Name="Password" Type="String" />
-                <asp:Parameter Name="Email" Type="String" />
-                <asp:Parameter Name="MobileNo" Type="String" />
-                <asp:Parameter Name="City" Type="String" />
-            </InsertParameters>
-            <UpdateParameters>
-                
-                <asp:Parameter Name="UserName" Type="String" />
-                <asp:Parameter Name="Password" Type="String" />
-                <asp:Parameter Name="Email" Type="String" />
-                <asp:Parameter Name="MobileNo" Type="String" />
-                <asp:Parameter Name="City" Type="String" />
-            </UpdateParameters>
-            <DeleteParameters>
-                <asp:Parameter Name="UserId" Type="Int32" />
-            </DeleteParameters>
         </asp:ObjectDataSource>
 
         <asp:GridView ID="GridView1"
@@ -56,9 +37,9 @@
                           <%# Eval("UserId") %>
                     </ItemTemplate>
                <EditItemTemplate>
-                   <asp:Label ID="lblUserIdEdit"
-                       runat="server"
-                       Text='<%# Eval("UserId") %>' />
+               <asp:TextBox ID="txtUserIdEdit"
+                        runat="server"
+                        Text='<%# Bind("UserId") %>' />
                </EditItemTemplate>
 
                <FooterTemplate>
@@ -122,13 +103,13 @@
 
                 <asp:TemplateField HeaderText="Mobile No">
                     <ItemTemplate>
-                        <%# Eval("MobileNo") %>
+                        <%# Eval("Mobile") %>
                     </ItemTemplate>
 
                     <EditItemTemplate>
                         <asp:TextBox ID="txtMobileNoEdit"
                             runat="server"
-                            Text='<%# Bind("MobileNo") %>' />
+                            Text='<%# Bind("Mobile") %>' />
                     </EditItemTemplate>
 
                     <FooterTemplate>
