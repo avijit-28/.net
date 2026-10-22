@@ -14,10 +14,10 @@ namespace AddSearch
         public string MobileNo { get; set; }
         public string City { get; set; }
 
-        public string Mobile
-        {
-            get => MobileNo;
-            set => MobileNo = value;
-        }
+        //public string Mobile
+        //{
+        //    get => MobileNo;
+        //    set => MobileNo = value;
+        //}
     }
 }
