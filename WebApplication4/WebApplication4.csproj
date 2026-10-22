@@ -313,6 +313,15 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="UserDetails.cs" />
+    <Compile Include="UserDetailsAccessLayer.cs" />
+    <Compile Include="UserDetails.aspx.cs">
+      <DependentUpon>UserDetails.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UserDetails.aspx.designer.cs">
+      <DependentUpon>UserDetails.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Connected Services\localhost\WebService1.wsdl" />
