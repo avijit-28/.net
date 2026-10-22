@@ -392,9 +392,9 @@
         <!-- 1. Hero Welcome Section -->
         <div class="hero">
             <div class="hero-badge">&#127760; ASP.NET WebForms Master Portal</div>
-            <h1 class="hero-title">WebApplication4 Central Portal</h1>
+            <h1 class="hero-title">OMG-YAHOO Central Portal</h1>
             <p class="hero-desc">
-                Welcome to the unified WebApplication4 hub. Explore modern ASP.NET WebForms features including unified master layout, session security, database inventory management, real-time AJAX validation, client-side cookies, and SEO URL routing.
+                Welcome to the unified OMG-YAHOO hub. Explore modern ASP.NET WebForms features including unified master layout, session security, database inventory management, real-time AJAX validation, client-side cookies, and SEO URL routing.
             </p>
             <div class="hero-actions">
                 <a href="<%= ResolveUrl("~/SignUp") %>" class="btn-hero-primary">&#128100; View User Dashboard</a>
