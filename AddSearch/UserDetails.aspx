@@ -18,6 +18,25 @@
             InsertMethod="InsertUser"
             UpdateMethod="UpdateUser"
             DeleteMethod="DeleteUser">
+            <InsertParameters>
+                <asp:Parameter Name="UserId" Type="Int32" />
+                <asp:Parameter Name="UserName" Type="String" />
+                <asp:Parameter Name="Password" Type="String" />
+                <asp:Parameter Name="Email" Type="String" />
+                <asp:Parameter Name="MobileNo" Type="String" />
+                <asp:Parameter Name="City" Type="String" />
+            </InsertParameters>
+            <UpdateParameters>
+                <asp:Parameter Name="UserId" Type="Int32" />
+                <asp:Parameter Name="UserName" Type="String" />
+                <asp:Parameter Name="Password" Type="String" />
+                <asp:Parameter Name="Email" Type="String" />
+                <asp:Parameter Name="MobileNo" Type="String" />
+                <asp:Parameter Name="City" Type="String" />
+            </UpdateParameters>
+            <DeleteParameters>
+                <asp:Parameter Name="UserId" Type="Int32" />
+            </DeleteParameters>
         </asp:ObjectDataSource>
 
         <asp:GridView ID="GridView1"
@@ -34,50 +53,43 @@
 
                 <asp:TemplateField HeaderText="User ID">
                     <ItemTemplate>
-                          <%# Eval("UserId") %>
+                        <%# Eval("UserId") %>
                     </ItemTemplate>
-               <EditItemTemplate>
-               <asp:TextBox ID="txtUserIdEdit"
-                        runat="server"
-                        Text='<%# Bind("UserId") %>' />
-               </EditItemTemplate>
-
-               <FooterTemplate>
-               <asp:TextBox ID="txtUserId"
-                        runat="server" />
-                </FooterTemplate>
+                    <EditItemTemplate>
+                        <asp:Label ID="lblUserIdEdit"
+                            runat="server"
+                            Text='<%# Eval("UserId") %>' />
+                    </EditItemTemplate>
+                    <FooterTemplate>
+                        <asp:TextBox ID="txtUserId"
+                            runat="server" />
+                    </FooterTemplate>
                 </asp:TemplateField>
-
 
                 <asp:TemplateField HeaderText="User Name">
                     <ItemTemplate>
                         <%# Eval("UserName") %>
                     </ItemTemplate>
-
                     <EditItemTemplate>
                         <asp:TextBox ID="txtUserNameEdit"
                             runat="server"
                             Text='<%# Bind("UserName") %>' />
                     </EditItemTemplate>
-
                     <FooterTemplate>
                         <asp:TextBox ID="txtUserName"
                             runat="server" />
                     </FooterTemplate>
                 </asp:TemplateField>
 
-
                 <asp:TemplateField HeaderText="Password">
                     <ItemTemplate>
                         <%# Eval("Password") %>
                     </ItemTemplate>
-
                     <EditItemTemplate>
                         <asp:TextBox ID="txtPasswordEdit"
                             runat="server"
                             Text='<%# Bind("Password") %>' />
                     </EditItemTemplate>
-
                     <FooterTemplate>
                         <asp:TextBox ID="txtPassword"
                             runat="server" />
@@ -88,13 +100,11 @@
                     <ItemTemplate>
                         <%# Eval("Email") %>
                     </ItemTemplate>
-
                     <EditItemTemplate>
                         <asp:TextBox ID="txtEmailEdit"
                             runat="server"
                             Text='<%# Bind("Email") %>' />
                     </EditItemTemplate>
-
                     <FooterTemplate>
                         <asp:TextBox ID="txtEmail"
                             runat="server" />
@@ -103,15 +113,13 @@
 
                 <asp:TemplateField HeaderText="Mobile No">
                     <ItemTemplate>
-                        <%# Eval("Mobile") %>
+                        <%# Eval("MobileNo") %>
                     </ItemTemplate>
-
                     <EditItemTemplate>
                         <asp:TextBox ID="txtMobileNoEdit"
                             runat="server"
-                            Text='<%# Bind("Mobile") %>' />
+                            Text='<%# Bind("MobileNo") %>' />
                     </EditItemTemplate>
-
                     <FooterTemplate>
                         <asp:TextBox ID="txtMobileNo"
                             runat="server" />
@@ -122,13 +130,11 @@
                     <ItemTemplate>
                         <%# Eval("City") %>
                     </ItemTemplate>
-
                     <EditItemTemplate>
                         <asp:TextBox ID="txtCityEdit"
                             runat="server"
                             Text='<%# Bind("City") %>' />
                     </EditItemTemplate>
-
                     <FooterTemplate>
                         <asp:TextBox ID="txtCity"
                             runat="server" />
