@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -28,11 +28,11 @@ namespace AddSearch
                 {
                     UserDetails user = new UserDetails();
                     user.UserId = Convert.ToInt32(rdr["UserId"]);
-                    user.UserName = rdr["UserName"].ToString();
-                    user.Password = rdr["Password"].ToString();
-                    user.Email = rdr["Email"].ToString();
-                    user.Mobile = rdr["MobileNo"].ToString();
-                    user.City = rdr["City"].ToString();
+                    user.UserName = rdr["UserName"]?.ToString();
+                    user.Password = rdr["Password"]?.ToString();
+                    user.Email = rdr["Email"]?.ToString();
+                    user.MobileNo = rdr["MobileNo"]?.ToString();
+                    user.City = rdr["City"]?.ToString();
                     listUsers.Add(user);
                 }
             }
@@ -53,31 +53,30 @@ namespace AddSearch
             using (SqlConnection con = new SqlConnection(_conStr))
             {
                 SqlCommand cmd = new SqlCommand("sp_InsertUserDetails", con);
-                 cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@UserId", UserId);
-                cmd.Parameters.AddWithValue("@UserName", UserName);
-                cmd.Parameters.AddWithValue("@Password", Password);
-                cmd.Parameters.AddWithValue("@Email", Email);
-                cmd.Parameters.AddWithValue("@MobileNo", MobileNo);
-                cmd.Parameters.AddWithValue("@City", City);
+                cmd.Parameters.AddWithValue("@UserName", (object)UserName ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Password", (object)Password ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Email", (object)Email ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@MobileNo", (object)MobileNo ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@City", (object)City ?? DBNull.Value);
                 con.Open();
                 cmd.ExecuteNonQuery();
             }
         }
 
-        public static void UpdateUser( int UserId,string UserName,string Password, string Email,string MobileNo,string City
-            )
+        public static void UpdateUser(int UserId, string UserName, string Password, string Email, string MobileNo, string City)
         {
             using (SqlConnection con = new SqlConnection(_conStr))
             {
                 SqlCommand cmd = new SqlCommand("sp_UpdateUserDetails", con);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@UserId", UserId);
-                cmd.Parameters.AddWithValue("@UserName", UserName);
-                cmd.Parameters.AddWithValue("@Password", Password);
-                cmd.Parameters.AddWithValue("@Email", Email);
-                cmd.Parameters.AddWithValue("@MobileNo", MobileNo);
-                cmd.Parameters.AddWithValue("@City", City);
+                cmd.Parameters.AddWithValue("@UserName", (object)UserName ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Password", (object)Password ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Email", (object)Email ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@MobileNo", (object)MobileNo ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@City", (object)City ?? DBNull.Value);
                 con.Open();
                 cmd.ExecuteNonQuery();
             }
