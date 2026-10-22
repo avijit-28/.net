@@ -122,13 +122,13 @@
 
                 <asp:TemplateField HeaderText="Mobile No">
                     <ItemTemplate>
-                        <%# Eval("Mobile") %>
+                        <%# Eval("MobileNo") %>
                     </ItemTemplate>
 
                     <EditItemTemplate>
                         <asp:TextBox ID="txtMobileNoEdit"
                             runat="server"
-                            Text='<%# Bind("Mobile") %>' />
+                            Text='<%# Bind("MobileNo") %>' />
                     </EditItemTemplate>
 
                     <FooterTemplate>
