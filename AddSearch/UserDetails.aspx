@@ -56,9 +56,9 @@
                           <%# Eval("UserId") %>
                     </ItemTemplate>
                <EditItemTemplate>
-               <asp:TextBox ID="txtUserIdEdit"
-                        runat="server"
-                        Text='<%# Bind("UserId") %>' />
+                   <asp:Label ID="lblUserIdEdit"
+                       runat="server"
+                       Text='<%# Eval("UserId") %>' />
                </EditItemTemplate>
 
                <FooterTemplate>
