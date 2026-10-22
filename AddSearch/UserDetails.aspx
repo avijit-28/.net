@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true"
+<%@ Page Language="C#" AutoEventWireup="true"
     CodeBehind="UserDetails.aspx.cs"
     Inherits="AddSearch.UserDetails1" %>
 
@@ -18,6 +18,25 @@
             InsertMethod="InsertUser"
             UpdateMethod="UpdateUser"
             DeleteMethod="DeleteUser">
+            <InsertParameters>
+                <asp:Parameter Name="UserId" Type="Int32" />
+                <asp:Parameter Name="UserName" Type="String" />
+                <asp:Parameter Name="Password" Type="String" />
+                <asp:Parameter Name="Email" Type="String" />
+                <asp:Parameter Name="MobileNo" Type="String" />
+                <asp:Parameter Name="City" Type="String" />
+            </InsertParameters>
+            <UpdateParameters>
+                <asp:Parameter Name="UserId" Type="Int32" />
+                <asp:Parameter Name="UserName" Type="String" />
+                <asp:Parameter Name="Password" Type="String" />
+                <asp:Parameter Name="Email" Type="String" />
+                <asp:Parameter Name="MobileNo" Type="String" />
+                <asp:Parameter Name="City" Type="String" />
+            </UpdateParameters>
+            <DeleteParameters>
+                <asp:Parameter Name="UserId" Type="Int32" />
+            </DeleteParameters>
         </asp:ObjectDataSource>
 
         <asp:GridView ID="GridView1"
