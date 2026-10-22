@@ -106,5 +106,29 @@ namespace WebApplication4
                 lblStatus.Visible = true;
             }
         }
+
+        protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                foreach (Control c in e.Row.Cells[0].Controls)
+                {
+                    if (c is LinkButton lb)
+                    {
+                        if (lb.CommandName == "Update")
+                        {
+                            lb.OnClientClick = "return confirm('Are you sure you want to SAVE changes to this employee record?');";
+                        }
+                    }
+                    else if (c is Button btn)
+                    {
+                        if (btn.CommandName == "Update")
+                        {
+                            btn.OnClientClick = "return confirm('Are you sure you want to SAVE changes to this employee record?');";
+                        }
+                    }
+                }
+            }
+        }
     }
 }
