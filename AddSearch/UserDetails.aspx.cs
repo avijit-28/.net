@@ -9,6 +9,8 @@ namespace AddSearch
         {
             if (e.CommandName == "AddNew")
             {
+                ObjectDataSource1.InsertParameters["UserId"].DefaultValue =
+                    ((TextBox)GridView1.FooterRow.FindControl("txtUserId")).Text;
                 ObjectDataSource1.InsertParameters["UserName"].DefaultValue =
                     ((TextBox)GridView1.FooterRow.FindControl("txtUserName")).Text;
 
