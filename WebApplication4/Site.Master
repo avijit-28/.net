@@ -960,6 +960,14 @@
                                             <div class="menu-item-desc">ObjectDataSource user management</div>
                                         </div>
                                     </a>
+
+                                    <a href="<%= ResolveUrl("~/UserDetailsWithoutObjectSource") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-amber">&#128736;</div>
+                                        <div>
+                                            <div class="menu-item-title">User CRUD (Direct DAL)</div>
+                                            <div class="menu-item-desc">Code-behind RowCommand manual binding</div>
+                                        </div>
+                                    </a>
                                 </div>
 
                                 <!-- Column 2: State & Developer Tools -->
