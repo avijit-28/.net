@@ -197,7 +197,8 @@
                     OnPageIndexChanging="GridView1_PageIndexChanging"
                     OnRowEditing="GridView1_RowEditing"
                     OnRowCancelingEdit="GridView1_RowCancelingEdit"
-                    OnRowUpdating="GridView1_RowUpdating">
+                    OnRowUpdating="GridView1_RowUpdating"
+                    OnRowDataBound="GridView1_RowDataBound">
                     <PagerStyle CssClass="gridview-pager" HorizontalAlign="Center" />
                     <Columns>
                         <asp:CommandField ShowEditButton="True" />
