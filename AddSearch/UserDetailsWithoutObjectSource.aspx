@@ -161,7 +161,7 @@
                             CommandName="DeleteRow"
                             CommandArgument='<%# Eval("UserId") %>'
                             ForeColor="#8C4510"
-                            OnClientClick="return confirm('Are you sure you want to delete this row');
+                            OnClientClick="return confirm('Are you sure you want to delete this row')"
                             CausesValidation="false">
                             Delete
                         </asp:LinkButton>
