@@ -537,6 +537,32 @@
                     </div>
                     <a href="<%= ResolveUrl("~/Counting") %>" class="module-link">View Counter &rarr;</a>
                 </div>
+
+                <!-- 7. User CRUD (ObjectDataSource) -->
+                <div class="module-card">
+                    <div>
+                        <div class="module-header">
+                            <div class="module-icon icon-indigo">&#128101;</div>
+                            <span class="tech-pill">ObjectDataSource</span>
+                        </div>
+                        <div class="module-name">User Accounts (ObjectDataSource)</div>
+                        <p class="module-desc">Multi-tier user data management bound declaratively to SQL stored procedures with inline editing, search filtering, and confirmation modals.</p>
+                    </div>
+                    <a href="<%= ResolveUrl("~/UserDetails") %>" class="module-link">Manage Users &rarr;</a>
+                </div>
+
+                <!-- 8. User CRUD (Direct DAL / No ObjectDataSource) -->
+                <div class="module-card">
+                    <div>
+                        <div class="module-header">
+                            <div class="module-icon icon-amber">&#128736;</div>
+                            <span class="tech-pill">Direct DAL</span>
+                        </div>
+                        <div class="module-name">User Accounts (Direct DAL)</div>
+                        <p class="module-desc">Programmatic code-behind CRUD using UserDetailsAccessLayer, manual RowCommand event handling, and centered confirmation dialogs.</p>
+                    </div>
+                    <a href="<%= ResolveUrl("~/UserDetailsWithoutObjectSource") %>" class="module-link">Manage Users &rarr;</a>
+                </div>
             </div>
         </div>
 
