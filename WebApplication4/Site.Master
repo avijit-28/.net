@@ -952,6 +952,14 @@
                                             <div class="menu-item-desc">WebService GridView with paging</div>
                                         </div>
                                     </a>
+
+                                    <a href="<%= ResolveUrl("~/UserDetails") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-indigo">&#128101;</div>
+                                        <div>
+                                            <div class="menu-item-title">User Accounts CRUD</div>
+                                            <div class="menu-item-desc">ObjectDataSource user management</div>
+                                        </div>
+                                    </a>
                                 </div>
 
                                 <!-- Column 2: State & Developer Tools -->
