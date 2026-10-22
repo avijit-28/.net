@@ -127,6 +127,7 @@
     <Content Include="URLRouting.aspx" />
     <Content Include="GetUserDetails.aspx" />
     <Content Include="UserDetails.aspx" />
+    <Content Include="UserDetailsWithoutObjectSource.aspx" />
     <Content Include="WebService1.asmx" />
     <Content Include="Web.config" />
   </ItemGroup>
