@@ -109,7 +109,7 @@
                     <EditItemTemplate>
                         <asp:TextBox ID="txtMobileNoEdit"
                             runat="server"
-                            Text='<%# Bind("MobileNo") %>' />
+                            Text='<%# Bind("Mobile") %>' />
                     </EditItemTemplate>
 
                     <FooterTemplate>
