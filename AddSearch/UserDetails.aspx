@@ -27,7 +27,7 @@
                 <asp:Parameter Name="City" Type="String" />
             </InsertParameters>
             <UpdateParameters>
-                <asp:Parameter Name="UserId" Type="Int32" />
+                
                 <asp:Parameter Name="UserName" Type="String" />
                 <asp:Parameter Name="Password" Type="String" />
                 <asp:Parameter Name="Email" Type="String" />
