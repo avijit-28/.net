@@ -11,7 +11,7 @@ namespace AddSearch
 {
 
 
-    public partial class UserDetails1
+    public partial class UserDetailsWithoutObjectSource
     {
 
         /// <summary>
