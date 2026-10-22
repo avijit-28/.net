@@ -261,7 +261,8 @@
                     OnRowEditing="GridView1_RowEditing"
                     OnRowCancelingEdit="GridView1_RowCancelingEdit"
                     OnRowUpdating="GridView1_RowUpdating"
-                    OnRowDeleting="GridView1_RowDeleting">
+                    OnRowDeleting="GridView1_RowDeleting"
+                    OnRowDataBound="GridView1_RowDataBound">
                     <PagerStyle CssClass="gridview-pager" HorizontalAlign="Center" />
                     <Columns>
                         <asp:CommandField ShowDeleteButton="True" ShowEditButton="True" ValidationGroup="Edit" ControlStyle-CssClass="btn-action-link" />
