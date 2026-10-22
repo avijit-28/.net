@@ -89,7 +89,7 @@
 
                 <asp:TemplateField HeaderText="Mobile No">
                     <ItemTemplate>
-                        <%# Eval("MobileNo") %>
+                        <%# Eval("Mobile") %>
                     </ItemTemplate>
 
                     <EditItemTemplate>
