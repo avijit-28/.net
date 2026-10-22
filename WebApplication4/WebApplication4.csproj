@@ -123,9 +123,7 @@
     <Content Include="images\Cancel.png" />
     <Content Include="images\loading.gif" />
     <Content Include="Site.Master" />
-    <Content Include="Default.aspx" />
-    <Content Include="URLRouting.aspx" />
-    <Content Include="GetUserDetails.aspx" />
+    <Content Include="WebService1.asmx" />
     <Content Include="UserDetails.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
