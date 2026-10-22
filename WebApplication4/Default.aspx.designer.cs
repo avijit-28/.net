@@ -13,19 +13,5 @@ namespace WebApplication4
 
     public partial class Default
     {
-
-        /// <summary>
-        /// Master property.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated property.
-        /// </remarks>
-        public new WebApplication4.SiteMaster Master
-        {
-            get
-            {
-                return ((WebApplication4.SiteMaster)(base.Master));
-            }
-        }
     }
 }
