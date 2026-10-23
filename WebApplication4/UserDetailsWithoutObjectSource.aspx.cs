@@ -7,11 +7,23 @@ namespace WebApplication4
 {
     public partial class UserDetailsWithoutObjectSource : System.Web.UI.Page
     {
+        private const int PageSize = 5;
+
+        /// <summary>
+        /// Preserves the active page index across all postback cycles (insert, update, delete).
+        /// </summary>
+        private int CurrentPageIndex
+        {
+            get => ViewState["CurrentPageIndex"] != null ? (int)ViewState["CurrentPageIndex"] : 0;
+            set => ViewState["CurrentPageIndex"] = value;
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
                 lblStatus.Visible = false;
+                CurrentPageIndex = 0;
                 BindPagedData(0);
             }
         }
@@ -23,16 +35,26 @@ namespace WebApplication4
         {
             try
             {
-                int pageSize = GridView1.PageSize;
                 int totalRows = 0;
+                List<UserDetails> users = UserDetailsAccessLayer.GetAllUsers(pageIndex, PageSize, out totalRows);
 
-                GridView1.PageIndex = pageIndex;
-                List<UserDetails> users = UserDetailsAccessLayer.GetAllUsers(pageIndex, pageSize, out totalRows);
+                // Auto-adjust page index if deleting last item left the page empty
+                int totalPages = totalRows / PageSize;
+                if ((totalRows % PageSize) != 0) totalPages += 1;
+                if (totalPages == 0) totalPages = 1;
+
+                if (pageIndex >= totalPages && totalPages > 0)
+                {
+                    pageIndex = totalPages - 1;
+                    CurrentPageIndex = pageIndex;
+                    users = UserDetailsAccessLayer.GetAllUsers(pageIndex, PageSize, out totalRows);
+                }
+
                 GridView1.DataSource = users;
                 GridView1.DataBind();
 
-                DatabindRepeater(pageIndex, pageSize, totalRows);
-                UpdatePagingSummary(pageIndex, pageSize, totalRows);
+                DatabindRepeater(pageIndex, PageSize, totalRows);
+                UpdatePagingSummary(pageIndex, PageSize, totalRows);
             }
             catch (Exception ex)
             {
@@ -97,6 +119,7 @@ namespace WebApplication4
             if (btn != null && int.TryParse(btn.CommandArgument, out int targetPage))
             {
                 int targetPageIndex = targetPage - 1;
+                CurrentPageIndex = targetPageIndex;
                 GridView1.EditIndex = -1;
                 BindPagedData(targetPageIndex);
             }
@@ -131,13 +154,11 @@ namespace WebApplication4
 
         protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            int currentPageIndex = GridView1.PageIndex;
-
             if (e.CommandName == "EditRow")
             {
                 int rowIndex = ((GridViewRow)((LinkButton)e.CommandSource).NamingContainer).RowIndex;
                 GridView1.EditIndex = rowIndex;
-                BindPagedData(currentPageIndex);
+                BindPagedData(CurrentPageIndex);
                 ShowStatus("Editing row " + (rowIndex + 1) + ". Modify fields and click Update to save.", isError: false);
             }
             else if (e.CommandName == "DeleteRow")
@@ -146,7 +167,7 @@ namespace WebApplication4
                 {
                     int userId = Convert.ToInt32(e.CommandArgument);
                     UserDetailsAccessLayer.DeleteUser(userId);
-                    BindPagedData(currentPageIndex);
+                    BindPagedData(CurrentPageIndex);
                     ShowStatus(string.Format("User ID #{0} deleted successfully from SQL Server database!", userId), isError: false);
                 }
                 catch (Exception ex)
@@ -157,7 +178,7 @@ namespace WebApplication4
             else if (e.CommandName == "CancelUpdate")
             {
                 GridView1.EditIndex = -1;
-                BindPagedData(currentPageIndex);
+                BindPagedData(CurrentPageIndex);
                 ShowStatus("Edit canceled.", isError: false);
             }
             else if (e.CommandName == "UpdateRow")
@@ -188,7 +209,7 @@ namespace WebApplication4
                     UserDetailsAccessLayer.UpdateUser(userId, userName, password, email, mobileNo, city);
 
                     GridView1.EditIndex = -1;
-                    BindPagedData(currentPageIndex);
+                    BindPagedData(CurrentPageIndex);
                     ShowStatus(string.Format("User '{0}' (ID #{1}) updated successfully in SQL Server database!", userName, userId), isError: false);
                 }
                 catch (Exception ex)
@@ -232,7 +253,7 @@ namespace WebApplication4
                 try
                 {
                     UserDetailsAccessLayer.InsertUser(userId, userName, password, email, mobileNo, city);
-                    BindPagedData(currentPageIndex);
+                    BindPagedData(CurrentPageIndex);
                     ShowStatus(string.Format("New user '{0}' added successfully to SQL Server database!", userName), isError: false);
                 }
                 catch (Exception ex)
