@@ -29,7 +29,11 @@ namespace WebApplication4
             routeCollection.MapPageRoute("SignUpRoute", "SignUp", "~/SignUp.aspx");
             routeCollection.MapPageRoute("DashboardSlug", "dashboard", "~/SignUp.aspx");
             routeCollection.MapPageRoute("ProductFormRoute", "ProductForm", "~/ProductForm.aspx");
-            routeCollection.MapPageRoute("ProductsSlug", "products", "~/ProductForm.aspx");
+            routeCollection.MapPageRoute("ProductAddSlug", "add-product", "~/ProductForm.aspx");
+            routeCollection.MapPageRoute("ProductsCatalogRoute", "products", "~/products.aspx");
+            routeCollection.MapPageRoute("ProductsCatalogSlug", "catalog", "~/products.aspx");
+            routeCollection.MapPageRoute("ProductDetailsRoute", "ProductDetails", "~/ProductDetails.aspx");
+            routeCollection.MapPageRoute("ProductDetailsSlug", "product-details", "~/ProductDetails.aspx");
             routeCollection.MapPageRoute("SearchUserRoute", "SearchUser", "~/SearchUser.aspx");
             routeCollection.MapPageRoute("SearchSlug", "search", "~/SearchUser.aspx");
             routeCollection.MapPageRoute("GetUserDetailsRoute", "GetUserDetails", "~/GetUserDetails.aspx");
