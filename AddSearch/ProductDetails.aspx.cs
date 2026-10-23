@@ -40,7 +40,7 @@ namespace AddSearch
                             lblColor.Text = rdr["Color"].ToString();
                             lblSize.Text = rdr["Size"].ToString();
                             lblWeight.Text = rdr["Weight"].ToString();
-                            lblQuantityInStock.Text = rdr["QuantityInStock"].ToString();
+                            lblQuantityInStock.Text = rdr["stock"].ToString();
                             lblDiscontinued.Text = rdr["Discontinued"].ToString();
                             lblSupplier.Text = rdr["Supplier"].ToString();
                         }
