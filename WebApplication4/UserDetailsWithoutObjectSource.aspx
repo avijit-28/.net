@@ -467,6 +467,7 @@
                 <p>Direct code-behind data manipulation utilizing <code>UserDetailsAccessLayer</code> and manual <code>RowCommand</code> event handling (<code>EditRow</code>, <code>DeleteRow</code>, <code>UpdateRow</code>, <code>InsertRow</code>) without declarative ObjectDataSource controls.</p>
             </div>
             <div class="hero-nav-actions">
+                <a href="<%= ResolveUrl("~/UserDetailsCustomPaging") %>" class="btn-hero-link">&#128209; Custom Paging Page</a>
                 <a href="<%= ResolveUrl("~/UserDetails") %>" class="btn-hero-link">&#128260; View ObjectDataSource Version</a>
                 <a href="<%= ResolveUrl("~/AllGridProp") %>" class="btn-hero-link">&larr; GridView Hub</a>
             </div>
@@ -479,6 +480,7 @@
             <div class="action-toolbar">
                 <div class="sql-badge-group">
                     <span class="sql-pill">&#128451; Table: <code>[Assignmet].[dbo].[UserDetails]</code></span>
+                    <span class="sql-pill-sp">&#10003; spGetUsers_by_PageIndex_and_PageSize</span>
                     <span class="sql-pill-sp">&#10003; sp_GetAllUserDetails</span>
                     <span class="sql-pill-sp">&#10003; sp_InsertUserDetails</span>
                     <span class="sql-pill-sp">&#10003; sp_UpdateUserDetails</span>
