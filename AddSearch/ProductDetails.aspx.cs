@@ -34,7 +34,7 @@ namespace AddSearch
                     {
                         while (rdr.Read())
                         {
-                            lblID.Text = rdr["ID"].ToString();
+                            lblID.Text = rdr["ProductID"].ToString();
                             lblName.Text = rdr["Name"].ToString();
                             lblPrice.Text = rdr["Price"].ToString();
                             lblColor.Text = rdr["Color"].ToString();
