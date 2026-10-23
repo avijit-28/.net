@@ -435,13 +435,16 @@
                                     <div class="User-avatar">
                                         <%# Eval("UserName") != null && Eval("UserName").ToString().Length > 0 ? Eval("UserName").ToString().Substring(0, 1).ToUpper() : "U" %>
                                     </div>
-                                    <span><%# Eval("UserName") %></span>
+                                    <a href='<%# ResolveUrl("~/GetUser?user=" + HttpUtility.UrlEncode(Eval("UserName").ToString()) + "&email=" + HttpUtility.UrlEncode(Eval("Email").ToString()) + "&id=" + Eval("UserId")) %>' 
+                                       title="View details via QueryString" style="color:#1d4ed8;text-decoration:none;font-weight:700;">
+                                        <%# Eval("UserName") %>
+                                    </a>
                                 </div>
                             </ItemTemplate>
                         </asp:TemplateField>
 
                         <%-- Email Column --%>
-                        <asp:TemplateField HeaderText="Email Address" HeaderStyle-Width="260px">
+                        <asp:TemplateField HeaderText="Email Address" HeaderStyle-Width="240px">
                             <ItemTemplate>
                                 <a href='<%# "mailto:" + Eval("Email") %>' class="email-link">
                                     <span>&#9993;</span>
@@ -451,7 +454,7 @@
                         </asp:TemplateField>
 
                         <%-- Mobile Number Column --%>
-                        <asp:TemplateField HeaderText="Mobile No" HeaderStyle-Width="160px">
+                        <asp:TemplateField HeaderText="Mobile No" HeaderStyle-Width="150px">
                             <ItemTemplate>
                                 <span class="phone-display">
                                     <span>&#128222;</span>
@@ -461,11 +464,21 @@
                         </asp:TemplateField>
 
                         <%-- City Column --%>
-                        <asp:TemplateField HeaderText="City" HeaderStyle-Width="150px">
+                        <asp:TemplateField HeaderText="City" HeaderStyle-Width="130px">
                             <ItemTemplate>
                                 <span class="badge-city">
                                     &#128205; <%# Eval("City") %>
                                 </span>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+
+                        <%-- QueryString Action Column --%>
+                        <asp:TemplateField HeaderText="Profile via QueryString" HeaderStyle-Width="160px" ItemStyle-HorizontalAlign="Center">
+                            <ItemTemplate>
+                                <a href='<%# ResolveUrl("~/GetUser?user=" + HttpUtility.UrlEncode(Eval("UserName").ToString()) + "&email=" + HttpUtility.UrlEncode(Eval("Email").ToString()) + "&id=" + Eval("UserId")) %>' 
+                                   class="btn-view-profile" title="Pass user details via QueryString to GetUser.aspx">
+                                    &#128100; View Profile &rarr;
+                                </a>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>
