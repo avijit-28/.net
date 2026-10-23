@@ -70,12 +70,26 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AllGridProp.aspx" />
+    <Content Include="Connected Services\localhost2\AddSearch.localhost2.GetUserDetailsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\localhost2\AddSearch.localhost2.HelloWorldResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <None Include="Connected Services\localhost2\WebService1.disco" />
+    <None Include="Connected Services\localhost2\configuration91.svcinfo" />
+    <None Include="Connected Services\localhost2\configuration.svcinfo" />
+    <None Include="Connected Services\localhost2\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Connected Services\localhost\AddSearch.localhost.GetUserDetailsResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
     <Content Include="Connected Services\localhost\AddSearch.localhost.HelloWorldResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Content>
+    <None Include="Connected Services\localhost2\WebService1.wsdl" />
     <None Include="Connected Services\localhost\WebService1.disco" />
     <None Include="Connected Services\localhost\configuration91.svcinfo" />
     <None Include="Connected Services\localhost\configuration.svcinfo" />
@@ -85,6 +99,7 @@
     </None>
     <Content Include="currency.aspx" />
     <Content Include="GridViewTemplateField.aspx" />
+    <Content Include="LINQDemo.aspx" />
     <Content Include="ProductDetails.aspx" />
     <Content Include="products.aspx" />
     <Content Include="service.aspx" />
@@ -101,6 +116,11 @@
     </Compile>
     <Compile Include="AllGridProp.aspx.designer.cs">
       <DependentUpon>AllGridProp.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\localhost2\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="Connected Services\localhost\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -120,6 +140,13 @@
     </Compile>
     <Compile Include="GridViewTemplateField.aspx.designer.cs">
       <DependentUpon>GridViewTemplateField.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="LINQDemo.aspx.cs">
+      <DependentUpon>LINQDemo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LINQDemo.aspx.designer.cs">
+      <DependentUpon>LINQDemo.aspx</DependentUpon>
     </Compile>
     <Compile Include="ProductDetails.aspx.cs">
       <DependentUpon>ProductDetails.aspx</DependentUpon>
@@ -187,6 +214,7 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\localhost2\" />
     <WCFMetadataStorage Include="Connected Services\localhost\" />
   </ItemGroup>
   <PropertyGroup>
