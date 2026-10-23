@@ -20,7 +20,7 @@ namespace AddSearch
 
             
             SqlCommand cmd = new SqlCommand
-            ("Select ID, FirstName, LastName, Gender from Students where Gender='Male'", con);
+            ("Select ID, FirstName, LastName, Gender from StudentsTbl where Gender='Male'", con);
             List<Students> listStudents = new List<Students>();
             con.Open();
             SqlDataReader rdr = cmd.ExecuteReader();
