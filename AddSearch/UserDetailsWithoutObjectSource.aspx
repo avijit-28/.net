@@ -18,7 +18,7 @@
             ShowFooter="True"
             OnRowCommand="GridView1_RowCommand" 
             AllowPaging="true"
-            PageSize="5"
+            PageSize="5">
             
 
             <Columns>
