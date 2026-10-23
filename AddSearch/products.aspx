@@ -321,9 +321,9 @@
                             </asp:TemplateField>
 
                             <%-- Price --%>
-                            <asp:TemplateField HeaderText="Price (INR)" HeaderStyle-Width="160px">
+                            <asp:TemplateField HeaderText="Price ($)" HeaderStyle-Width="160px">
                                 <ItemTemplate>
-                                    <span class="price-badge">₹ <%# Convert.ToDecimal(Eval("Price")).ToString("N2") %></span>
+                                    <span class="price-badge">$ <%# Convert.ToDecimal(Eval("Price")).ToString("N2") %></span>
                                 </ItemTemplate>
                             </asp:TemplateField>
 
