@@ -387,34 +387,67 @@
             border: 1px solid #e0f2fe;
         }
 
-        /* Pager Styling */
-        .gridview-pager {
+        /* Custom Repeater Pager Styling */
+        .custom-pager-container {
+            padding: 16px 24px;
             background: #f8fafc;
-            padding: 12px 16px;
-            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
         }
-        .gridview-pager td {
-            padding: 4px 8px;
+
+        .pager-info-text {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
         }
-        .gridview-pager a, .gridview-pager span {
-            padding: 6px 12px;
-            border-radius: 6px;
-            margin: 0 2px;
-            text-decoration: none;
+
+        .pager-pills-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .pager-page-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 38px;
+            height: 38px;
+            padding: 0 10px;
+            border-radius: 8px;
+            font-size: 13px;
             font-weight: 700;
-        }
-        .gridview-pager span {
-            background: #2563eb;
-            color: #ffffff;
-        }
-        .gridview-pager a {
-            background: #ffffff;
-            color: #1e293b;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            box-sizing: border-box;
             border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #334155 !important;
+            cursor: pointer;
         }
-        .gridview-pager a:hover {
+
+        .pager-page-btn:hover {
             background: #eff6ff;
-            border-color: #2563eb;
+            border-color: #93c5fd;
+            color: #1d4ed8 !important;
+            transform: translateY(-1px);
+        }
+
+        .pager-page-btn.active,
+        .pager-pills-wrap a[disabled="disabled"],
+        .pager-pills-wrap a:disabled,
+        .pager-pills-wrap span.pager-page-btn {
+            background: #2563eb !important;
+            border-color: #1d4ed8 !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+            cursor: default;
+            pointer-events: none;
         }
     </style>
 </asp:Content>
