@@ -54,6 +54,13 @@
         </tr>
 
         <tr>
+            <td><b>Quantity In Stock</b></td>
+            <td>
+                <asp:Label ID="lblQuantityInStock" runat="server"></asp:Label>
+            </td>
+        </tr>
+
+        <tr>
             <td><b>Discontinued</b></td>
             <td>
                 <asp:Label ID="lblDiscontinued" runat="server"></asp:Label>
