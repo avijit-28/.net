@@ -57,18 +57,43 @@ namespace WebApplication4
                 return;
             }
 
+            // Validate numeric constraints for ID, Price, and Stock
+            if (!int.TryParse(prdId, out int idVal))
+            {
+                LblMsg.CssClass = "alert-box alert-warning";
+                LblMsg.Text = "Product ID must be a valid integer number (e.g. 6).";
+                LblMsg.Visible = true;
+                return;
+            }
+
+            if (!decimal.TryParse(prdPrc, out decimal priceVal) || priceVal < 0)
+            {
+                LblMsg.CssClass = "alert-box alert-warning";
+                LblMsg.Text = "Price must be a valid non-negative number.";
+                LblMsg.Visible = true;
+                return;
+            }
+
+            if (!int.TryParse(prdStk, out int stockVal) || stockVal < 0)
+            {
+                LblMsg.CssClass = "alert-box alert-warning";
+                LblMsg.Text = "Stock must be a valid non-negative integer.";
+                LblMsg.Visible = true;
+                return;
+            }
+
             try
             {
                 using (SqlConnection con = new SqlConnection(ConStr))
                 {
-                    string query = "insert into Products values(@PrdId,@PrdName,@PrdPrc,@PrdStk)";
+                    string query = "INSERT INTO Products ([ID], [Name], [Price], [Stock]) VALUES (@PrdId, @PrdName, @PrdPrc, @PrdStk)";
 
                     using (SqlCommand cmd = new SqlCommand(query, con))
                     {
-                        cmd.Parameters.AddWithValue("@PrdId", prdId);
-                        cmd.Parameters.AddWithValue("@PrdName", prdName);
-                        cmd.Parameters.AddWithValue("@PrdPrc", prdPrc);
-                        cmd.Parameters.AddWithValue("@PrdStk", prdStk);
+                        cmd.Parameters.Add("@PrdId", SqlDbType.Int).Value = idVal;
+                        cmd.Parameters.Add("@PrdName", SqlDbType.NVarChar, 50).Value = prdName;
+                        cmd.Parameters.Add("@PrdPrc", SqlDbType.Decimal).Value = priceVal;
+                        cmd.Parameters.Add("@PrdStk", SqlDbType.Int).Value = stockVal;
 
                         con.Open();
                         int rowsAffected = cmd.ExecuteNonQuery();
@@ -76,11 +101,11 @@ namespace WebApplication4
                         if (rowsAffected > 0)
                         {
                             LblMsg.CssClass = "alert-box alert-success";
-                            LblMsg.Text = "Product added successfully!\n\n" +
-                                          "• Product ID: " + prdId + "\n" +
+                            LblMsg.Text = "Product added successfully to catalog!\n\n" +
+                                          "• Product ID: #" + idVal + "\n" +
                                           "• Product Name: " + prdName + "\n" +
-                                          "• Price: " + prdPrc + "\n" +
-                                          "• Stock: " + prdStk;
+                                          "• Price: $ " + priceVal.ToString("N2") + "\n" +
+                                          "• Stock: " + stockVal + " units";
                             LblMsg.Visible = true;
 
                             // Reset input fields
