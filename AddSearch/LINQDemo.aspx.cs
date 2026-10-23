@@ -4,23 +4,37 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Data;
+using System.Configuration;
+using System.Data.SqlClient;
 
 namespace AddSearch
 {
     public partial class LINQDemo : System.Web.UI.Page
+
     {
+        private readonly SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DBConn"].ToString());
+
         protected void Page_Load(object sender, EventArgs e)
         {
 
-            SampleDataContext dataContext = new SampleDataContext();
-            GridView1.DataSource = from student in dataContext.CS1061: 'SampleDataContext' does not contain a definition for 'Students' and no accessible extension method 'Students' accepting a first argument of type 'SampleDataContext' could be found (are you missing a using directive or an assembly reference?)
-SampleDataContext dataContext = new SampleDataContext();
-GridView1.DataSource = from student in dataContext.StudentsTbls
-                       where student.Gender == "Male"
-                       select student;
-GridView1.DataBind();
-                                   where student.Gender == "Male"
-                                   select student;
+            
+            SqlCommand cmd = new SqlCommand
+            ("Select ID, FirstName, LastName, Gender from Students where Gender='Male'", con);
+            List<Students> listStudents = new List<Students>();
+            con.Open();
+            SqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                Students student = new Student();
+                student.ID = Convert.ToInt32(rdr["ID"]);
+                student.FirstName = rdr["FirstName"].ToString();
+                student.LastName = rdr["LastName"].ToString();
+                student.Gender = rdr["Gender"].ToString();
+                listStudents.Add(student);
+            }
+            con.Close();
+            GridView1.DataSource = listStudents;
             GridView1.DataBind();
         }
     }
