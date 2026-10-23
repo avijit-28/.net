@@ -7,5 +7,6 @@ namespace AddSearch
 {
     public class Service
     {
+
     }
 }
