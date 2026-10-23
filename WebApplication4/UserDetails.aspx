@@ -445,6 +445,7 @@
                     PageSize="10"
                     CssClass="gridview-table"
                     GridLines="None"
+                    OnPageIndexChanging="GridView1_PageIndexChanging"
                     OnRowCommand="GridView1_RowCommand"
                     OnRowDataBound="GridView1_RowDataBound">
                     
