@@ -460,17 +460,17 @@
             </div>
 
             <div class="module-grid">
-                <!-- 1. Product Form -->
+                <!-- 1. Products Catalog & Details -->
                 <div class="module-card">
                     <div>
                         <div class="module-header">
                             <div class="module-icon icon-blue">&#128230;</div>
-                            <span class="tech-pill">SQL Database</span>
+                            <span class="tech-pill">QueryString &amp; SP</span>
                         </div>
-                        <div class="module-name">Product Management</div>
-                        <p class="module-desc">Add, validate, and persist catalog inventory products with formatted prices and category selection in a GridView.</p>
+                        <div class="module-name">Products Catalog &amp; Details</div>
+                        <p class="module-desc">Browse inventory via <code>sp_GetBasicProductDetails</code> and view full specifications passed via QueryString to <code>ProductDetails.aspx</code>.</p>
                     </div>
-                    <a href="<%= ResolveUrl("~/ProductForm") %>" class="module-link">Open Product Form &rarr;</a>
+                    <a href="<%= ResolveUrl("~/products.aspx") %>" class="module-link">Open Products Catalog &rarr;</a>
                 </div>
 
                 <!-- 2. Employee Directory (GridViewAll) -->
