@@ -542,7 +542,7 @@
                         <asp:TemplateField HeaderText="Price (INR)" HeaderStyle-Width="180px">
                             <ItemTemplate>
                                 <span class="price-tag">
-                                    ₹ <%# Convert.ToDecimal(Eval("Price")).ToString("N2") %>
+                                     <%# Convert.ToDecimal(Eval("Price")).ToString("N2") %>
                                 </span>
                             </ItemTemplate>
                         </asp:TemplateField>
