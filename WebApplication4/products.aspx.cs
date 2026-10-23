@@ -77,7 +77,7 @@ namespace WebApplication4
                 lblTotalProducts.Text = "0";
                 lblInStock.Text = "0";
                 lblLowStock.Text = "0";
-                lblAvgPrice.Text = "₹ 0.00";
+                lblAvgPrice.Text = "$ 0.00";
                 return;
             }
 
@@ -113,7 +113,7 @@ namespace WebApplication4
             lblTotalProducts.Text = total.ToString("N0");
             lblInStock.Text = inStockCount.ToString("N0");
             lblLowStock.Text = lowStockCount.ToString("N0");
-            lblAvgPrice.Text = string.Format("₹ {0:N2}", total > 0 ? (priceSum / total) : 0);
+            lblAvgPrice.Text = string.Format("$ {0:N2}", total > 0 ? (priceSum / total) : 0);
         }
 
         protected string GetStockBadgeHtml(object stockObj)
