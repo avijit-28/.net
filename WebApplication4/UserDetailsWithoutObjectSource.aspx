@@ -505,12 +505,11 @@
                     CssClass="gridview-table"
                     GridLines="None"
                     AllowPaging="True"
-                    PageSize="10"
-                    OnPageIndexChanging="GridView1_PageIndexChanging"
+                    PageSize="5"
                     OnRowCommand="GridView1_RowCommand"
                     OnRowDataBound="GridView1_RowDataBound">
                     
-                    <PagerStyle CssClass="gridview-pager" HorizontalAlign="Center" />
+                    <PagerSettings Visible="false" />
 
                     <Columns>
                         
