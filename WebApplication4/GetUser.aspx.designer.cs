@@ -9,46 +9,20 @@
 
 namespace MiniProject
 {
-
-
     public partial class GetUser
     {
-
-
-        /// <summary>
-        /// LblName control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlQuerySuccess;
+        protected global::System.Web.UI.WebControls.Literal litQueryUser;
+        protected global::System.Web.UI.WebControls.Literal litQueryEmail;
+        protected global::System.Web.UI.WebControls.Panel pnlQueryNotice;
+        protected global::System.Web.UI.WebControls.DropDownList ddlUsers;
+        protected global::System.Web.UI.WebControls.Literal litAvatarInitial;
+        protected global::System.Web.UI.WebControls.Label LblUserId;
+        protected global::System.Web.UI.WebControls.Label LblCity;
         protected global::System.Web.UI.WebControls.Label LblName;
-
-        /// <summary>
-        /// LblEmail control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
         protected global::System.Web.UI.WebControls.Label LblEmail;
-
-        /// <summary>
-        /// BtnBackToSearch control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LblMobile;
         protected global::System.Web.UI.WebControls.Button BtnBackToSearch;
-
-        /// <summary>
-        /// BtnGoToDashboard control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
         protected global::System.Web.UI.WebControls.Button BtnGoToDashboard;
     }
 }
