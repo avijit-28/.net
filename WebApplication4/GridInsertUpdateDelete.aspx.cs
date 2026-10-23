@@ -34,6 +34,16 @@ namespace WebApplication4
                     {
                         DataTable dt = new DataTable();
                         da.Fill(dt);
+
+                        if (GridView1.AllowPaging && GridView1.PageSize > 0 && dt.Rows.Count > 0)
+                        {
+                            int maxPageIndex = (dt.Rows.Count - 1) / GridView1.PageSize;
+                            if (GridView1.PageIndex > maxPageIndex)
+                            {
+                                GridView1.PageIndex = maxPageIndex;
+                            }
+                        }
+
                         GridView1.DataSource = dt;
                         GridView1.DataBind();
                     }
