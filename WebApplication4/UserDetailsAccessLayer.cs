@@ -23,6 +23,53 @@ namespace WebApplication4
         }
 
         /// <summary>
+        /// Retrieves a specific page of users using stored procedure spGetUsers_by_PageIndex_and_PageSize.
+        /// Returns total count of user records in database via output parameter totalRows.
+        /// </summary>
+        public static List<UserDetails> GetAllUsers(int pageIndex, int pageSize, out int totalRows)
+        {
+            List<UserDetails> listUsers = new List<UserDetails>();
+            using (SqlConnection con = new SqlConnection(GetConnectionString()))
+            {
+                using (SqlCommand cmd = new SqlCommand("spGetUsers_by_PageIndex_and_PageSize", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@PageIndex", pageIndex);
+                    cmd.Parameters.AddWithValue("@PageSize", pageSize);
+
+                    SqlParameter paramOut = new SqlParameter
+                    {
+                        ParameterName = "@TotalRows",
+                        Direction = ParameterDirection.Output,
+                        SqlDbType = SqlDbType.Int
+                    };
+                    cmd.Parameters.Add(paramOut);
+
+                    con.Open();
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            UserDetails user = new UserDetails
+                            {
+                                UserId = Convert.ToInt32(rdr["UserId"]),
+                                UserName = rdr["UserName"] != DBNull.Value ? rdr["UserName"].ToString() : string.Empty,
+                                Password = rdr["Password"] != DBNull.Value ? rdr["Password"].ToString() : string.Empty,
+                                Email = rdr["Email"] != DBNull.Value ? rdr["Email"].ToString() : string.Empty,
+                                MobileNo = rdr["MobileNo"] != DBNull.Value ? rdr["MobileNo"].ToString() : string.Empty,
+                                City = rdr["City"] != DBNull.Value ? rdr["City"].ToString() : string.Empty
+                            };
+                            listUsers.Add(user);
+                        }
+                    }
+
+                    totalRows = paramOut.Value != null && paramOut.Value != DBNull.Value ? Convert.ToInt32(paramOut.Value) : 0;
+                }
+            }
+            return listUsers;
+        }
+
+        /// <summary>
         /// Retrieves all user records using stored procedure sp_GetAllUserDetails.
         /// </summary>
         public static List<UserDetails> GetAllUsers()
