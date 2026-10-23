@@ -1,17 +1,17 @@
-<%@ Page Title="User Details" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="GetUser.aspx.cs" Inherits="MiniProject.GetUser" %>
+<%@ Page Title="User Details via QueryString" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="GetUser.aspx.cs" Inherits="MiniProject.GetUser" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style type="text/css">
         .getuser-container {
             width: 100%;
-            max-width: 520px;
+            max-width: 580px;
             margin: 0 auto;
         }
 
         /* Card Container */
         .card {
             background: #ffffff;
-            border-radius: 16px;
+            border-radius: 18px;
             box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
             border: 1px solid #e2e8f0;
             overflow: hidden;
@@ -25,7 +25,7 @@
         /* Card Header */
         .card-header {
             background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            padding: 28px 32px;
+            padding: 26px 30px;
             color: #ffffff;
             text-align: center;
         }
@@ -38,37 +38,88 @@
             backdrop-filter: blur(8px);
             padding: 4px 14px;
             border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 11.5px;
+            font-weight: 700;
             letter-spacing: 0.05em;
             text-transform: uppercase;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .header-title {
             font-size: 24px;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: -0.02em;
             margin-bottom: 6px;
         }
 
         .header-subtitle {
-            font-size: 14px;
+            font-size: 13.5px;
             color: #a7f3d0;
             line-height: 1.4;
         }
 
         /* Card Body */
         .card-body {
-            padding: 32px;
+            padding: 28px 30px;
+        }
+
+        /* Status Banners */
+        .status-pill-success {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 12.5px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .status-pill-notice {
+            background: #fffbeb;
+            color: #92400e;
+            border: 1px solid #fde68a;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 12.5px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .user-selector-wrap {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-select-dropdown {
+            width: 100%;
+            padding: 9px 12px;
+            font-size: 13px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #1e293b;
+            font-family: inherit;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .user-select-dropdown:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
         }
 
         /* Avatar */
         .avatar-section {
             display: flex;
             justify-content: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .avatar-circle {
@@ -80,26 +131,39 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 28px;
+            font-weight: 800;
             color: #059669;
             box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
         }
 
-        /* Detail Cards */
+        /* Detail Boxes Grid */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
         .detail-box {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 16px;
+            padding: 14px 16px;
             display: flex;
             flex-direction: column;
             gap: 4px;
-            transition: border-color 0.2s ease;
+            transition: all 0.2s ease;
+        }
+
+        .detail-box.full-width {
+            grid-column: 1 / -1;
         }
 
         .detail-box:hover {
             border-color: #cbd5e1;
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
 
         .detail-label {
@@ -111,8 +175,8 @@
         }
 
         .profile-value {
-            font-size: 17px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
             color: #0f172a;
             word-break: break-all;
         }
@@ -122,32 +186,32 @@
             background: #f0fdf4;
             border: 1px solid #bbf7d0;
             border-radius: 10px;
-            padding: 14px 16px;
-            font-size: 13px;
+            padding: 12px 16px;
+            font-size: 12.5px;
             color: #166534;
             line-height: 1.5;
-            margin: 20px 0 24px;
+            margin: 16px 0 22px;
         }
 
         /* Actions */
         .actions-group {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
         .btn-search-again {
             flex: 1;
-            min-width: 180px;
-            height: 46px;
+            min-width: 170px;
+            height: 44px;
             background: linear-gradient(135deg, #059669 0%, #047857 100%);
             color: #ffffff;
             border: none;
             border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13.5px;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
@@ -157,20 +221,20 @@
 
         .btn-search-again:hover {
             background: linear-gradient(135deg, #047857 0%, #065f46 100%);
-            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
             transform: translateY(-1px);
         }
 
         .btn-dashboard {
             flex: 1;
-            min-width: 180px;
-            height: 46px;
+            min-width: 170px;
+            height: 44px;
             background: #f1f5f9;
             color: #334155;
             border: 1.5px solid #cbd5e1;
             border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13.5px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
             display: inline-flex;
@@ -188,7 +252,7 @@
         .card-footer {
             background: #f8fafc;
             border-top: 1px solid #e2e8f0;
-            padding: 14px 32px;
+            padding: 14px 28px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -198,7 +262,7 @@
         .nav-link {
             color: #059669;
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
             gap: 4px;
@@ -224,34 +288,75 @@
 
             <!-- Body -->
             <div class="card-body">
+                
+                <!-- QueryString Status Readout -->
+                <asp:Panel ID="pnlQuerySuccess" runat="server" Visible="false" CssClass="status-pill-success">
+                    <span>&#9989;</span>
+                    <div>
+                        <strong>QueryString Received:</strong> 
+                        <code>user="<asp:Literal ID="litQueryUser" runat="server" />"</code> &bull; 
+                        <code>email="<asp:Literal ID="litQueryEmail" runat="server" />"</code>
+                    </div>
+                </asp:Panel>
+
+                <asp:Panel ID="pnlQueryNotice" runat="server" Visible="false" CssClass="status-pill-notice">
+                    <span>&#128161;</span> <strong>Notice:</strong> No query string parameter was provided in the URL.
+                    Showing default user profile from database. <strong>Select a student below to test QueryString:</strong>
+                    <div class="user-selector-wrap">
+                        <asp:DropDownList ID="ddlUsers" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlUsers_SelectedIndexChanged" CssClass="user-select-dropdown">
+                        </asp:DropDownList>
+                    </div>
+                </asp:Panel>
+
                 <!-- Avatar -->
                 <div class="avatar-section">
                     <div class="avatar-circle">
-                        &#128100;
+                        <asp:Literal ID="litAvatarInitial" runat="server" Text="&#128100;" />
                     </div>
                 </div>
 
-                <!-- Username Box -->
-                <div class="detail-box">
-                    <span class="detail-label">User Name</span>
-                    <asp:Label ID="LblName" runat="server" CssClass="profile-value" Text="Not specified"></asp:Label>
-                </div>
+                <!-- Profile Details Grid -->
+                <div class="details-grid">
+                    <!-- User ID -->
+                    <div class="detail-box">
+                        <span class="detail-label">User ID</span>
+                        <asp:Label ID="LblUserId" runat="server" CssClass="profile-value" Text="#1"></asp:Label>
+                    </div>
 
-                <!-- Email Box -->
-                <div class="detail-box">
-                    <span class="detail-label">Email Address</span>
-                    <asp:Label ID="LblEmail" runat="server" CssClass="profile-value" Text="Not specified"></asp:Label>
+                    <!-- City -->
+                    <div class="detail-box">
+                        <span class="detail-label">Location / City</span>
+                        <asp:Label ID="LblCity" runat="server" CssClass="profile-value" Text="General"></asp:Label>
+                    </div>
+
+                    <!-- Username Box -->
+                    <div class="detail-box full-width">
+                        <span class="detail-label">User Name</span>
+                        <asp:Label ID="LblName" runat="server" CssClass="profile-value" Text="Not specified"></asp:Label>
+                    </div>
+
+                    <!-- Email Box -->
+                    <div class="detail-box full-width">
+                        <span class="detail-label">Email Address</span>
+                        <asp:Label ID="LblEmail" runat="server" CssClass="profile-value" Text="Not specified"></asp:Label>
+                    </div>
+
+                    <!-- Mobile Box -->
+                    <div class="detail-box full-width">
+                        <span class="detail-label">Mobile Number</span>
+                        <asp:Label ID="LblMobile" runat="server" CssClass="profile-value" Text="Not specified"></asp:Label>
+                    </div>
                 </div>
 
                 <!-- Info note -->
                 <div class="info-card">
-                    &#128161; <strong>QueryString Data:</strong> Values were passed from <code>SearchUser.aspx</code> using <code>Request.QueryString["user"]</code> and <code>Request.QueryString["email"]</code>.
+                    &#128161; <strong>QueryString Data Transmission:</strong> Values are passed from <code>SearchUser.aspx</code> using <code>Request.QueryString["user"]</code> and <code>Request.QueryString["email"]</code>.
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="actions-group">
-                    <asp:Button ID="BtnBackToSearch" runat="server" OnClick="BtnBackToSearch_Click" Text="&#128269; Search Another User" CssClass="btn-search-again" />
-                    <asp:Button ID="BtnGoToDashboard" runat="server" OnClick="BtnGoToDashboard_Click" Text="&#127968; Go to SignUp / Dashboard" CssClass="btn-dashboard" />
+                    <asp:Button ID="BtnBackToSearch" runat="server" OnClick="BtnBackToSearch_Click" Text="&#128269; Search Another User" CssClass="btn-search-again" CausesValidation="false" />
+                    <asp:Button ID="BtnGoToDashboard" runat="server" OnClick="BtnGoToDashboard_Click" Text="&#127968; Go to SignUp / Dashboard" CssClass="btn-dashboard" CausesValidation="false" />
                 </div>
             </div>
 
