@@ -59,7 +59,7 @@ namespace AddSearch
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<StudentsTbl> StudentsTbls
+		public System.Data.Linq.Table<StudentsTbl> StudentsTbl
 		{
 			get
 			{
