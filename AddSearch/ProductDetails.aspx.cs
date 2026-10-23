@@ -29,6 +29,7 @@ namespace AddSearch
                     cmd.CommandType = CommandType.StoredProcedure;
                     SqlParameter parameter = new SqlParameter("@ID", productId);
                     cmd.Parameters.Add(parameter);
+                    con.Open();
                     using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
                         while (rdr.Read())
