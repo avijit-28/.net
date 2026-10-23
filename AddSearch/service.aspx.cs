@@ -21,7 +21,7 @@ namespace AddSearch
         }
         protected void BindUserDetails(string userName)
         {
-            localhost.WebService1SoapClient objUserDetails = new localhost.WebService1SoapClient();
+            localhost2.WebService1SoapClient objUserDetails = new localhost2.WebService1SoapClient();
             DataSet dsresult = new DataSet();
             XElement exelement =objUserDetails.GetUserDetails(userName);
             if (exelement != null)
