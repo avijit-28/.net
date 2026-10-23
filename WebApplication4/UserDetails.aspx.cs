@@ -41,8 +41,22 @@ namespace WebApplication4
             }
         }
 
+        private int SavedPageIndex
+        {
+            get => ViewState["SavedPageIndex"] != null ? (int)ViewState["SavedPageIndex"] : 0;
+            set => ViewState["SavedPageIndex"] = value;
+        }
+
+        protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            GridView1.PageIndex = e.NewPageIndex;
+            SavedPageIndex = e.NewPageIndex;
+        }
+
         protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
         {
+            SavedPageIndex = GridView1.PageIndex;
+
             if (e.CommandName == "AddNew")
             {
                 TextBox txtUserId = GridView1.FooterRow?.FindControl("txtUserId") as TextBox;
@@ -84,6 +98,7 @@ namespace WebApplication4
                     ObjectDataSource1.InsertParameters["City"].DefaultValue = city;
 
                     ObjectDataSource1.Insert();
+                    GridView1.PageIndex = SavedPageIndex;
 
                     ShowStatus(string.Format("New user '{0}' inserted successfully into SQL Server database!", userName), isError: false);
                 }
@@ -96,6 +111,7 @@ namespace WebApplication4
 
         protected void ObjectDataSource1_Inserted(object sender, ObjectDataSourceStatusEventArgs e)
         {
+            GridView1.PageIndex = SavedPageIndex;
             if (e.Exception != null)
             {
                 ShowStatus("Insert failed: " + e.Exception.InnerException?.Message ?? e.Exception.Message, isError: true);
@@ -105,6 +121,7 @@ namespace WebApplication4
 
         protected void ObjectDataSource1_Updated(object sender, ObjectDataSourceStatusEventArgs e)
         {
+            GridView1.PageIndex = SavedPageIndex;
             if (e.Exception != null)
             {
                 ShowStatus("Update failed: " + e.Exception.InnerException?.Message ?? e.Exception.Message, isError: true);
@@ -118,6 +135,7 @@ namespace WebApplication4
 
         protected void ObjectDataSource1_Deleted(object sender, ObjectDataSourceStatusEventArgs e)
         {
+            GridView1.PageIndex = SavedPageIndex;
             if (e.Exception != null)
             {
                 ShowStatus("Delete failed: " + e.Exception.InnerException?.Message ?? e.Exception.Message, isError: true);
