@@ -29,7 +29,7 @@ namespace AddSearch
         }
 
         [WebMethod]
-        
+
         public XmlElement GetUserDetails(string name)
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DBConn"].ToString());
@@ -49,4 +49,5 @@ namespace AddSearch
 
 
         }
+    }
 }
