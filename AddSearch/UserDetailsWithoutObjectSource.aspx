@@ -17,7 +17,7 @@
             DataKeyNames="UserId"
             ShowFooter="True"
             OnRowCommand="GridView1_RowCommand" 
-            AllowPaging="true"
+            AllowPaging="false"
             PageSize="5">
             
 
