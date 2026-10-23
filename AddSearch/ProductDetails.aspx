@@ -231,23 +231,30 @@
 
                 <table class="details-table">
                     <tr>
-                        <td class="label-cell">Product ID</td>
+                        <td class="label-cell">Product ID [id]</td>
                         <td class="value-cell">
                             <strong>#<asp:Label ID="lblID" runat="server"></asp:Label></strong>
                         </td>
                     </tr>
 
                     <tr>
-                        <td class="label-cell">Product Name</td>
+                        <td class="label-cell">Product Name [name]</td>
                         <td class="value-cell">
                             <asp:Label ID="lblName" runat="server"></asp:Label>
                         </td>
                     </tr>
 
                     <tr>
-                        <td class="label-cell">Retail Price</td>
+                        <td class="label-cell">Retail Price ($) [price]</td>
                         <td class="value-cell">
-                            <span class="price-text">₹ <asp:Label ID="lblPrice" runat="server"></asp:Label></span>
+                            <span class="price-text">$ <asp:Label ID="lblPrice" runat="server"></asp:Label></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="label-cell">Quantity In Stock [stock]</td>
+                        <td class="value-cell">
+                            <strong><asp:Label ID="lblQuantityInStock" runat="server"></asp:Label> units</strong>
                         </td>
                     </tr>
 
@@ -269,13 +276,6 @@
                         <td class="label-cell">Item Weight</td>
                         <td class="value-cell">
                             <asp:Label ID="lblWeight" runat="server"></asp:Label> kg
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="label-cell">Quantity In Stock</td>
-                        <td class="value-cell">
-                            <asp:Label ID="lblQuantityInStock" runat="server"></asp:Label> units
                         </td>
                     </tr>
 
