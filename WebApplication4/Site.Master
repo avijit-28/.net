@@ -1048,6 +1048,18 @@
             transform: translateY(-1px);
         }
 
+        .global-modal-btn-confirm.btn-insert {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+        }
+
+        .global-modal-btn-confirm.btn-insert:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.45);
+            transform: translateY(-1px);
+        }
+
         .global-modal-icon-wrap.type-success {
             background: #f0fdf4;
             border: 2px solid #bbf7d0;
