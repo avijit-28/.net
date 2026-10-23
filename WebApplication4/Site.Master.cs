@@ -65,22 +65,26 @@ namespace WebApplication4
             if (!isAuthenticated)
             {
                 string appRelative = Request.AppRelativeCurrentExecutionFilePath ?? string.Empty;
-                bool isHomePage = string.Equals(appRelative, "~/Default.aspx", StringComparison.OrdinalIgnoreCase)
-                               || string.Equals(appRelative, "~/AllGridProp.aspx", StringComparison.OrdinalIgnoreCase)
-                               || string.Equals(appRelative, "~/", StringComparison.OrdinalIgnoreCase);
+                bool isPublicPage = string.Equals(appRelative, "~/Default.aspx", StringComparison.OrdinalIgnoreCase)
+                                 || string.Equals(appRelative, "~/AllGridProp.aspx", StringComparison.OrdinalIgnoreCase)
+                                 || string.Equals(appRelative, "~/UserDetailsCustomPaging.aspx", StringComparison.OrdinalIgnoreCase)
+                                 || string.Equals(appRelative, "~/UserDetailsWithoutObjectSource.aspx", StringComparison.OrdinalIgnoreCase)
+                                 || string.Equals(appRelative, "~/UserDetails.aspx", StringComparison.OrdinalIgnoreCase)
+                                 || string.Equals(appRelative, "~/", StringComparison.OrdinalIgnoreCase)
+                                 || appRelative.StartsWith("~/Grid", StringComparison.OrdinalIgnoreCase);
 
                 string rawPath = Request.Path ?? string.Empty;
                 if (rawPath.TrimEnd('/').EndsWith("/Home", StringComparison.OrdinalIgnoreCase) ||
                     rawPath.TrimEnd('/').EndsWith("/Default", StringComparison.OrdinalIgnoreCase) ||
+                    rawPath.IndexOf("UserDetails", StringComparison.OrdinalIgnoreCase) >= 0 ||
                     string.IsNullOrEmpty(rawPath.Trim('/')) ||
                     rawPath.Equals(Request.ApplicationPath, StringComparison.OrdinalIgnoreCase))
                 {
-                    isHomePage = true;
+                    isPublicPage = true;
                 }
 
-                // Default.aspx is open to everyone (signed in or not).
-                // But navigating to any other internal page requires signing in first!
-                if (!isHomePage)
+                // If not a public page, navigating requires signing in first
+                if (!isPublicPage)
                 {
                     string target = Request.RawUrl;
                     Response.Redirect("~/FirstPage?returnUrl=" + Server.UrlEncode(target) + "&auth=1", true);
