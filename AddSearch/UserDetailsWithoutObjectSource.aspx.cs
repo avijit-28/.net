@@ -13,9 +13,35 @@ namespace AddSearch
         {
             if (!IsPostBack)
             {
-                BindGridViewData();
+                if (!IsPostBack)
+                {
+                    int totalRows = 0;
+                    GridView1.DataSource = UserDetailsAccessLayer.GetAllUsers(0, GridView1.PageSize, out totalRows);
+                    GridView1.DataBind();
+                    DatabindRepeater(0, GridView1.PageSize, totalRows);
+                }
+                //BindGridViewData();
             }
         }
+        private void DatabindRepeater(int pageIndex, int pageSize, int totalRows)
+        {
+            int totalPages = totalRows / pageSize;
+            if ((totalRows % pageSize) != 0)
+            {
+                totalPages += 1;
+            }
+            List<ListItem> pages = new List<ListItem>();
+            if (totalPages > 1)
+            {
+                for (int i = 1; i <= totalPages; i++)
+                {
+                    pages.Add(new ListItem(i.ToString(), i.ToString(), i != (pageIndex + 1)));
+                }
+            }
+            repeaterPaging.DataSource = pages;
+            repeaterPaging.DataBind();
+        }
+
         private void BindGridViewData()
         {
             GridView1.DataSource = UserDetailsAccessLayer.GetAllUsers();
