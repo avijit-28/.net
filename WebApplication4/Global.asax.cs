@@ -38,6 +38,8 @@ namespace WebApplication4
             routeCollection.MapPageRoute("UserManagementSlug", "user-management", "~/UserDetails.aspx");
             routeCollection.MapPageRoute("UserDetailsDirectRoute", "UserDetailsWithoutObjectSource", "~/UserDetailsWithoutObjectSource.aspx");
             routeCollection.MapPageRoute("UserDetailsDirectSlug", "user-details-direct", "~/UserDetailsWithoutObjectSource.aspx");
+            routeCollection.MapPageRoute("UserDetailsCustomPagingRoute", "UserDetailsCustomPaging", "~/UserDetailsCustomPaging.aspx");
+            routeCollection.MapPageRoute("UserDetailsCustomPagingSlug", "user-details-paging", "~/UserDetailsCustomPaging.aspx");
             routeCollection.MapPageRoute("GetUserRoute", "GetUser", "~/GetUser.aspx");
             routeCollection.MapPageRoute("CookiesSendRoute", "CookiesSend", "~/CookiesSend.aspx");
             routeCollection.MapPageRoute("CookiesGetRoute", "CookiesGet", "~/CookiesGet.aspx");
