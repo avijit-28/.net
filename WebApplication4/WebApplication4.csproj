@@ -117,6 +117,8 @@
     <Content Include="Global.asax" />
     <Content Include="GridViewAll.aspx" />
     <Content Include="ProductForm.aspx" />
+    <Content Include="products.aspx" />
+    <Content Include="ProductDetails.aspx" />
     <Content Include="SearchUser.aspx" />
     <Content Include="SignUp.aspx" />
     <Content Include="images\Accepted.png" />
