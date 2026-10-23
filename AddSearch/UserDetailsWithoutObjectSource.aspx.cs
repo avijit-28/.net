@@ -23,6 +23,7 @@ namespace AddSearch
                 //BindGridViewData();
             }
         }
+
         private void DatabindRepeater(int pageIndex, int pageSize, int totalRows)
         {
             int totalPages = totalRows / pageSize;
@@ -40,6 +41,21 @@ namespace AddSearch
             }
             repeaterPaging.DataSource = pages;
             repeaterPaging.DataBind();
+        }
+
+        protected void linkButton_Click(object sender, EventArgs e)
+        {
+            int totalRows = 0;
+            int pageIndex = int.Parse((sender as LinkButton).CommandArgument);
+            pageIndex -= 1;
+            GridView1.PageIndex = pageIndex;
+            GridView1.DataSource =
+                UserDetailsAccessLayer.GetAllUsers(
+                    pageIndex,
+                    GridView1.PageSize,
+                    out totalRows);
+            GridView1.DataBind();
+            DatabindRepeater( pageIndex,GridView1.PageSize,totalRows);
         }
 
         private void BindGridViewData()
