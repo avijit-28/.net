@@ -26,7 +26,7 @@ namespace AddSearch
             SqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read())
             {
-                Students student = new Student();
+                Students student = new Students();
                 student.ID = Convert.ToInt32(rdr["ID"]);
                 student.FirstName = rdr["FirstName"].ToString();
                 student.LastName = rdr["LastName"].ToString();
