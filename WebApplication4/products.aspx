@@ -474,7 +474,7 @@
             <div class="metric-card">
                 <div class="metric-icon-wrap icon-purple">&#128176;</div>
                 <div class="metric-data">
-                    <asp:Label ID="lblAvgPrice" runat="server" CssClass="metric-val" Text="₹ 0.00"></asp:Label>
+                    <asp:Label ID="lblAvgPrice" runat="server" CssClass="metric-val" Text="$ 0.00"></asp:Label>
                     <span class="metric-label">Avg Product Price</span>
                 </div>
             </div>
@@ -539,10 +539,10 @@
                         </asp:TemplateField>
 
                         <%-- Price Column --%>
-                        <asp:TemplateField HeaderText="Price (INR)" HeaderStyle-Width="180px">
+                        <asp:TemplateField HeaderText="Price ($)" HeaderStyle-Width="180px">
                             <ItemTemplate>
                                 <span class="price-tag">
-                                     <%# Convert.ToDecimal(Eval("Price")).ToString("N2") %>
+                                    $ <%# Convert.ToDecimal(Eval("Price")).ToString("N2") %>
                                 </span>
                             </ItemTemplate>
                         </asp:TemplateField>
