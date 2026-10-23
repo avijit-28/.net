@@ -16,7 +16,10 @@
             AutoGenerateColumns="False"
             DataKeyNames="UserId"
             ShowFooter="True"
-            OnRowCommand="GridView1_RowCommand" >
+            OnRowCommand="GridView1_RowCommand" 
+            AllowPaging="true"
+            PageSize="10"
+            PageSize="5">
 
             <Columns>
 
@@ -208,6 +211,22 @@
             </Columns>
 
         </asp:GridView>
+        <asp:Repeater ID="repeaterPaging" runat="server">
+            <ItemTemplate>
+
+            <asp:LinkButton ID="pagingLinkButton"
+            runat="server"
+            Text='<%# Eval("Text") %>'
+            CommandArgument='<%# Eval("Value") %>'
+            Enabled='<%# Eval("Enabled") %>'
+            OnClick="linkButton_Click">
+            </asp:LinkButton>
+
+            &nbsp;
+
+            </ItemTemplate>
+    </asp:Repeater>
+
 
     </form>
 </body>
