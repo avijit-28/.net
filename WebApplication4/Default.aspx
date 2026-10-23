@@ -563,6 +563,19 @@
                     </div>
                     <a href="<%= ResolveUrl("~/UserDetailsWithoutObjectSource") %>" class="module-link">Manage Users &rarr;</a>
                 </div>
+
+                <!-- 9. User Paging (Repeater & Stored Procedure) -->
+                <div class="module-card">
+                    <div>
+                        <div class="module-header">
+                            <div class="module-icon icon-purple">&#128209;</div>
+                            <span class="tech-pill">Stored Procedure Paging</span>
+                        </div>
+                        <div class="module-name">Custom Repeater Paging</div>
+                        <p class="module-desc">High-performance server-side paging utilizing <code>spGetUsers_by_PageIndex_and_PageSize</code> and dynamic <code>asp:Repeater</code> pager.</p>
+                    </div>
+                    <a href="<%= ResolveUrl("~/UserDetailsCustomPaging") %>" class="module-link">Open Pager &rarr;</a>
+                </div>
             </div>
         </div>
 
