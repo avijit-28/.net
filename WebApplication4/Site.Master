@@ -1875,13 +1875,6 @@
                         }
                     });
                 }, true); // Capture phase listener
-                                message: text,
-                                type: isErr ? 'warning' : 'success'
-                            });
-                            break;
-                        }
-                    }
-                });
             })();
 
             <% if (Session["UserName"] != null && !string.IsNullOrWhiteSpace(Session["UserName"].ToString())) { %>
