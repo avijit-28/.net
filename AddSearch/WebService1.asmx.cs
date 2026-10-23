@@ -34,7 +34,7 @@ namespace AddSearch
         {
             SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["DBConn"].ToString());
             con.Open();
-            SqlCommand cmd = new SqlCommand("select * from Products where UserName like @name+'%'", con);
+            SqlCommand cmd = new SqlCommand("select * from Products where name like @name+'%'", con);
             cmd.Parameters.AddWithValue("@name", name);
             cmd.ExecuteNonQuery();
             SqlDataAdapter da = new SqlDataAdapter(cmd);
