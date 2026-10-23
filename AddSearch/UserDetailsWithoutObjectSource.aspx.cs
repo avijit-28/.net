@@ -9,6 +9,19 @@ namespace AddSearch
 {
     public partial class UserDetailsWithoutObjectSource : System.Web.UI.Page
     {
+        private int CurrentPageIndex
+        {
+            get
+            {
+                return ViewState["CurrentPageIndex"] == null
+                    ? 0
+                    : (int)ViewState["CurrentPageIndex"];
+            }
+            set
+            {
+                ViewState["CurrentPageIndex"] = value;
+            }
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -47,6 +60,7 @@ namespace AddSearch
             int totalRows = 0;
             int pageIndex = int.Parse((sender as LinkButton).CommandArgument);
             pageIndex -= 1;
+            CurrentPageIndex = pageIndex;
             GridView1.PageIndex = pageIndex;
             GridView1.DataSource =
                 UserDetailsAccessLayer.GetAllUsers(
@@ -80,17 +94,17 @@ namespace AddSearch
             {
                 int rowIndex = ((GridViewRow)((LinkButton)e.CommandSource).NamingContainer).RowIndex;
                 GridView1.EditIndex = rowIndex;
-                BindGridViewData(GridView1.PageIndex);
+                BindGridViewData(CurrentPageIndex);
             }
             else if (e.CommandName == "DeleteRow")
             {
                 UserDetailsAccessLayer.DeleteUser(Convert.ToInt32(e.CommandArgument));
-                BindGridViewData(GridView1.PageIndex);
+                BindGridViewData(CurrentPageIndex);
             }
             else if (e.CommandName == "CancelUpdate")
             {
                 GridView1.EditIndex = -1;
-                BindGridViewData(GridView1.PageIndex);
+                BindGridViewData(CurrentPageIndex);
             }
             else if (e.CommandName == "UpdateRow")
             {
@@ -118,7 +132,7 @@ namespace AddSearch
 
                 GridView1.EditIndex = -1;
 
-                BindGridViewData(GridView1.PageIndex);
+                BindGridViewData(CurrentPageIndex);
             }
             else if (e.CommandName == "InsertRow")
             {
@@ -136,7 +150,7 @@ namespace AddSearch
                     mobileNo,
                     city);
 
-                BindGridViewData(GridView1.PageIndex);
+                BindGridViewData(CurrentPageIndex);
             }
 
 
