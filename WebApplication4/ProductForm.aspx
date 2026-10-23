@@ -274,7 +274,7 @@
                         </label>
                         <div class="input-wrapper">
                             <span class="input-icon">#</span>
-                            <asp:TextBox ID="TxtPdrId" runat="server" CssClass="form-input" placeholder="e.g. PRD-101" autocomplete="off"></asp:TextBox>
+                            <asp:TextBox ID="TxtPdrId" runat="server" CssClass="form-input" placeholder="e.g. 101" autocomplete="off"></asp:TextBox>
                         </div>
                         <asp:RequiredFieldValidator ID="RequiredFieldValidatorPdrId" runat="server" 
                             ErrorMessage="Product Id required" 
@@ -303,43 +303,25 @@
                         </asp:RequiredFieldValidator>
                     </div>
 
-                    <!-- Product Category -->
-                    <div class="form-group">
-                        <label class="form-label" for="TxtPrdCat">
-                            Category <span class="req-star">*</span>
-                        </label>
-                        <div class="input-wrapper">
-                            <span class="input-icon">&#128194;</span>
-                            <asp:TextBox ID="TxtPrdCat" runat="server" CssClass="form-input" placeholder="e.g. Electronics" autocomplete="off"></asp:TextBox>
-                        </div>
-                        <asp:RequiredFieldValidator ID="RequiredFieldValidatorPrdCat" runat="server" 
-                            ErrorMessage="Product Category is required" 
-                            ForeColor="Red" 
-                            ControlToValidate="TxtPrdCat" 
-                            Display="Dynamic" 
-                            CssClass="val-error">
-                        </asp:RequiredFieldValidator>
-                    </div>
-
                     <!-- Product Price -->
                     <div class="form-group">
-                        <label class="form-label" for="TxtPrdPrice">
-                            Price (USD) <span class="req-star">*</span>
+                        <label class="form-label" for="TxtPrdPrc">
+                            Price ($) <span class="req-star">*</span>
                         </label>
                         <div class="input-wrapper">
                             <span class="input-icon">&#36;</span>
-                            <asp:TextBox ID="TxtPrdPrice" runat="server" CssClass="form-input" placeholder="e.g. 29.99" autocomplete="off"></asp:TextBox>
+                            <asp:TextBox ID="TxtPrdPrc" runat="server" CssClass="form-input" placeholder="e.g. 29.99" autocomplete="off"></asp:TextBox>
                         </div>
-                        <asp:RequiredFieldValidator ID="RequiredFieldValidatorPrdPrice" runat="server" 
+                        <asp:RequiredFieldValidator ID="RequiredFieldValidatorPrdPrc" runat="server" 
                             ErrorMessage="Product Price is required" 
                             ForeColor="Red" 
-                            ControlToValidate="TxtPrdPrice" 
+                            ControlToValidate="TxtPrdPrc" 
                             Display="Dynamic" 
                             CssClass="val-error">
                         </asp:RequiredFieldValidator>
                     </div>
 
-                    <!-- Product Stock (Full Width) -->
+                    <!-- Product Stock -->
                     <div class="form-group">
                         <label class="form-label" for="TxtPrdStk">
                             Available Stock <span class="req-star">*</span>
@@ -359,7 +341,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <asp:Button ID="BtnAddPrd" runat="server" OnClick="BtnAddPrd_Click" Text="+ Add Product to Catalog" CssClass="btn-submit" />
+                <asp:Button ID="BtnAddPrd" runat="server" OnClick="BtnAddPrd_Click" OnClientClick="return confirm('Are you sure you want to add this product to the catalog?');" Text="+ Add Product to Catalog" CssClass="btn-submit btn-insert-confirm" />
 
                 <!-- Message / Feedback Alert -->
                 <asp:Label ID="LblMsg" runat="server" CssClass="alert-box" Visible="false"></asp:Label>
