@@ -14,12 +14,12 @@ namespace AddSearch
             if (!IsPostBack)
             {
                 
-                    int totalRows = 0;
-                    GridView1.DataSource = UserDetailsAccessLayer.GetAllUsers(0, GridView1.PageSize, out totalRows);
-                    GridView1.DataBind();
-                    DatabindRepeater(0, GridView1.PageSize, totalRows);
+                    //int totalRows = 0;
+                    //GridView1.DataSource = UserDetailsAccessLayer.GetAllUsers(0, GridView1.PageSize, out totalRows);
+                    //GridView1.DataBind();
+                    //DatabindRepeater(0, GridView1.PageSize, totalRows);
                 
-                //BindGridViewData();
+                BindGridViewData(0);
             }
         }
 
@@ -57,12 +57,22 @@ namespace AddSearch
             DatabindRepeater( pageIndex,GridView1.PageSize,totalRows);
         }
 
-        private void BindGridViewData()
+        private void BindGridViewData(int pageIndex)
         {
-            GridView1.DataSource = UserDetailsAccessLayer.GetAllUsers();
-            //repeaterPaging.DataSource = pages;
-            //repeaterPaging.DataBind();
+            int totalRows = 0;
+
+            GridView1.DataSource =
+                UserDetailsAccessLayer.GetAllUsers(
+                    pageIndex,
+                    GridView1.PageSize,
+                    out totalRows);
+
             GridView1.DataBind();
+
+            DatabindRepeater(
+                pageIndex,
+                GridView1.PageSize,
+                totalRows);
         }
         protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -70,17 +80,17 @@ namespace AddSearch
             {
                 int rowIndex = ((GridViewRow)((LinkButton)e.CommandSource).NamingContainer).RowIndex;
                 GridView1.EditIndex = rowIndex;
-                BindGridViewData();
+                BindGridViewData(GridView1.PageIndex);
             }
             else if (e.CommandName == "DeleteRow")
             {
                 UserDetailsAccessLayer.DeleteUser(Convert.ToInt32(e.CommandArgument));
-                BindGridViewData();
+                BindGridViewData(GridView1.PageIndex);
             }
             else if (e.CommandName == "CancelUpdate")
             {
                 GridView1.EditIndex = -1;
-                BindGridViewData();
+                BindGridViewData(GridView1.PageIndex);
             }
             else if (e.CommandName == "UpdateRow")
             {
@@ -108,7 +118,7 @@ namespace AddSearch
 
                 GridView1.EditIndex = -1;
 
-                BindGridViewData();
+                BindGridViewData(GridView1.PageIndex);
             }
             else if (e.CommandName == "InsertRow")
             {
@@ -126,7 +136,7 @@ namespace AddSearch
                     mobileNo,
                     city);
 
-                BindGridViewData();
+                BindGridViewData(GridView1.PageIndex);
             }
 
 
