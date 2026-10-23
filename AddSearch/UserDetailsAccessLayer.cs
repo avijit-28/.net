@@ -14,6 +14,40 @@ namespace AddSearch
     public class UserDetailsAccessLayer
 	{
         private readonly static string _conStr = ConfigurationManager.ConnectionStrings["DBConn"].ConnectionString;
+
+        public static List<UserDetails> GetAllUsers(int pageIndex, int pageSize, out int totalRows)
+        {
+            List<UserDetails> listUsers = new List<UserDetails>();
+            using (SqlConnection con = new SqlConnection(_conStr))
+            {
+                SqlCommand cmd = new SqlCommand("spGetUsers_by_PageIndex_and_PageSize", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@PageIndex", pageIndex);
+                cmd.Parameters.AddWithValue("@PageSize", pageSize);
+                SqlParameter paramOut = new SqlParameter();
+                paramOut.ParameterName = "@TotalRows";
+                paramOut.Direction = ParameterDirection.Output;
+                paramOut.SqlDbType = SqlDbType.Int;
+                cmd.Parameters.Add(paramOut);
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+                while (rdr.Read())
+                {
+                    UserDetails user = new UserDetails();
+                    user.UserId = Convert.ToInt32(rdr["UserId"]);
+                    user.UserName = rdr["UserName"].ToString();
+                    user.Password = rdr["Password"].ToString();
+                    user.Email = rdr["Email"].ToString();
+                    user.Mobile = rdr["MobileNo"].ToString();
+                    user.City = rdr["City"].ToString();
+                    listUsers.Add(user);
+                }
+                rdr.Close();
+                totalRows = (int)cmd.Parameters["@TotalRows"].Value;
+            }
+            return listUsers;
+        }
+
         public static List<UserDetails> GetAllUsers()
 		{
 
