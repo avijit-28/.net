@@ -1692,7 +1692,7 @@
                     }
                 });
 
-                // Universal Capture-Phase Click Interceptor for Delete & Update Operations
+                // Universal Capture-Phase Click Interceptor - STRICTLY for Insert, Update, and Delete Operations
                 document.addEventListener('click', function (e) {
                     var target = e.target.closest('a, button, input[type="submit"], input[type="button"]');
                     if (!target) return;
@@ -1707,35 +1707,109 @@
                     if (target.closest('#globalConfirmModal')) return;
 
                     var text = (target.textContent || target.value || '').trim();
-                    var href = (target.getAttribute('href') || '');
+                    var textLower = text.toLowerCase().replace(/\s+/g, ' ');
+                    var href = target.getAttribute('href') || '';
                     var cmd = (target.getAttribute('data-command') || '').toLowerCase();
-                    var textLower = text.toLowerCase();
+                    var idAttr = (target.getAttribute('id') || '').toLowerCase();
                     var onclickAttr = target.getAttribute('onclick') || '';
 
-                    // Detect Delete action
-                    var isDelete = textLower === 'delete' ||
-                                   textLower.startsWith('delete') ||
-                                   cmd === 'delete' ||
+                    // =========================================================================
+                    // 1. STRICT EXCLUSIONS: Never show popup on non-CRUD buttons/links
+                    // =========================================================================
+
+                    // A) Pagination numbers, Prev, Next buttons
+                    if (target.classList.contains('pager-page-btn') ||
+                        target.closest('.custom-pager-container, .gridview-pager') ||
+                        idAttr.indexOf('paginglinkbutton') > -1 ||
+                        href.indexOf('$Page$') > -1 ||
+                        /^\d+$/.test(text) || text === '...' || text === 'Next' || text === 'Prev' || text === 'First' || text === 'Last') {
+                        return;
+                    }
+
+                    // B) Edit buttons (opening the row for edit, NOT saving)
+                    if (cmd === 'edit' || cmd === 'editrow' ||
+                        target.classList.contains('btn-action-edit') ||
+                        href.indexOf('$Edit$') > -1 || href.indexOf('$EditRow$') > -1 ||
+                        textLower === 'edit' || textLower.endsWith(' edit') || textLower.startsWith('edit ')) {
+                        return;
+                    }
+
+                    // C) Cancel buttons
+                    if (cmd === 'cancel' || cmd === 'cancelupdate' ||
+                        target.classList.contains('btn-action-cancel') ||
+                        href.indexOf('$Cancel$') > -1 || href.indexOf('$CancelUpdate$') > -1 ||
+                        textLower === 'cancel' || textLower.endsWith(' cancel') || textLower.startsWith('cancel ')) {
+                        return;
+                    }
+
+                    // D) Search inputs and search buttons
+                    if (idAttr.indexOf('search') > -1 || cmd === 'search' ||
+                        textLower === 'search' || textLower.startsWith('search ')) {
+                        return;
+                    }
+
+                    // E) Navigation links, hero buttons, auth buttons, footer links
+                    if (target.classList.contains('btn-auth') ||
+                        target.classList.contains('btn-hero-link') ||
+                        target.classList.contains('btn-hub-return') ||
+                        target.classList.contains('module-link') ||
+                        target.classList.contains('menu-item-link') ||
+                        target.closest('.site-header, .site-footer, .mega-menu-container') ||
+                        textLower.indexOf('sign in') > -1 || textLower.indexOf('sign out') > -1 || textLower.indexOf('logout') > -1) {
+                        return;
+                    }
+
+                    // F) Column sort links
+                    if (href.indexOf('$Sort$') > -1) {
+                        return;
+                    }
+
+                    // =========================================================================
+                    // 2. INCLUSIONS: ONLY Delete, Update, and Insert
+                    // =========================================================================
+
+                    // Detect Delete operation
+                    var isDelete = cmd === 'delete' ||
                                    cmd === 'deleterow' ||
-                                   href.indexOf('Delete$') > -1 ||
-                                   href.indexOf('DeleteRow$') > -1 ||
+                                   href.indexOf('$Delete$') > -1 ||
+                                   href.indexOf('$DeleteRow$') > -1 ||
                                    target.classList.contains('btn-action-delete') ||
-                                   target.classList.contains('btn-delete');
+                                   target.classList.contains('btn-delete') ||
+                                   textLower === 'delete' ||
+                                   textLower.indexOf('delete') > -1 ||
+                                   textLower.indexOf('remove') > -1;
 
-                    // Detect Update action
-                    var isUpdate = textLower === 'update' ||
-                                   textLower.startsWith('update') ||
-                                   cmd === 'update' ||
+                    // Detect Update operation
+                    var isUpdate = cmd === 'update' ||
                                    cmd === 'updaterow' ||
-                                   href.indexOf('Update$') > -1 ||
-                                   href.indexOf('UpdateRow$') > -1 ||
+                                   href.indexOf('$Update$') > -1 ||
+                                   href.indexOf('$UpdateRow$') > -1 ||
                                    target.classList.contains('btn-action-update') ||
-                                   target.classList.contains('btn-update');
+                                   target.classList.contains('btn-update') ||
+                                   textLower === 'update' ||
+                                   textLower.indexOf('update') > -1 ||
+                                   textLower.indexOf('save changes') > -1;
 
-                    var hasInlineConfirm = onclickAttr.indexOf('confirm(') > -1;
+                    // Detect Insert operation
+                    var isInsert = cmd === 'insert' ||
+                                   cmd === 'insertrow' ||
+                                   cmd === 'addnew' ||
+                                   href.indexOf('$Insert$') > -1 ||
+                                   href.indexOf('$InsertRow$') > -1 ||
+                                   href.indexOf('$AddNew$') > -1 ||
+                                   target.classList.contains('btn-insert-user') ||
+                                   target.classList.contains('btn-insert-confirm') ||
+                                   target.classList.contains('btn-insert') ||
+                                   idAttr.indexOf('btnadd') > -1 ||
+                                   idAttr.indexOf('lbinsert') > -1 ||
+                                   textLower.indexOf('insert') > -1 ||
+                                   textLower.indexOf('add user') > -1 ||
+                                   textLower.indexOf('add employee') > -1 ||
+                                   textLower.indexOf('add product') > -1;
 
-                    if (!isDelete && !isUpdate && !hasInlineConfirm) {
-                        return; // Not a delete or update operation
+                    // If NOT Insert, NOT Update, and NOT Delete -> NEVER SHOW POPUP!
+                    if (!isDelete && !isUpdate && !isInsert) {
+                        return;
                     }
 
                     // If client-side validation is active and fails, let validation messages appear instead of modal
@@ -1749,13 +1823,14 @@
                         }
                     }
 
-                    // Intercept and prevent the default synchronous action/confirm
+                    // Intercept click and stop immediate postback
                     e.preventDefault();
                     e.stopPropagation();
                     e.stopImmediatePropagation();
 
-                    var type = isDelete ? 'delete' : (isUpdate ? 'update' : 'warning');
-                    var title = isDelete ? 'Confirm Deletion' : (isUpdate ? 'Confirm Update' : 'Confirm Action');
+                    var type = isDelete ? 'delete' : (isUpdate ? 'update' : 'insert');
+                    var title = isDelete ? 'Confirm Deletion' : (isUpdate ? 'Confirm Update' : 'Confirm Insert');
+                    var confirmBtnText = isDelete ? 'Yes, Delete' : (isUpdate ? 'Yes, Save Changes' : 'Yes, Insert Record');
                     var message = '';
 
                     // Extract custom message from inline confirm() if present
@@ -1771,7 +1846,7 @@
                         } else if (isUpdate) {
                             message = 'Are you sure you want to <strong>SAVE changes</strong> and update this record in the database?';
                         } else {
-                            message = 'Are you sure you want to proceed with this action?';
+                            message = 'Are you sure you want to <strong>INSERT</strong> this new record into the database?';
                         }
                     }
 
@@ -1779,12 +1854,11 @@
                         title: title,
                         message: message,
                         type: type,
-                        confirmText: isDelete ? 'Yes, Delete' : (isUpdate ? 'Yes, Save Changes' : 'Confirm'),
+                        confirmText: confirmBtnText,
                         cancelText: 'Cancel',
                         onConfirm: function () {
                             target._modalConfirmed = true;
 
-                            // Temporarily override window.confirm to return true without native prompt
                             var originalConfirm = window.confirm;
                             window.confirm = function () { return true; };
 
@@ -1801,23 +1875,6 @@
                         }
                     });
                 }, true); // Capture phase listener
-
-                // Automatically Pop Up Any Page Status / Feedback Message in Center of Screen
-                document.addEventListener('DOMContentLoaded', function () {
-                    var statusLabels = document.querySelectorAll('.status-msg, .alert-box, [id*="lblStatus"], [id*="LblMsg"]');
-                    for (var i = 0; i < statusLabels.length; i++) {
-                        var el = statusLabels[i];
-                        var text = (el.textContent || el.innerText || '').trim();
-                        var style = window.getComputedStyle(el);
-                        if (text.length > 0 && style.display !== 'none' && style.visibility !== 'hidden') {
-                            var isErr = el.classList.contains('status-msg-error') || 
-                                        el.classList.contains('alert-danger') || 
-                                        el.classList.contains('alert-warning') ||
-                                        text.toLowerCase().indexOf('error') > -1 ||
-                                        text.toLowerCase().indexOf('failed') > -1;
-                            
-                            window.showNotificationModal({
-                                title: isErr ? 'Notice / Alert' : 'Operation Successful',
                                 message: text,
                                 type: isErr ? 'warning' : 'success'
                             });
