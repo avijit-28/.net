@@ -495,7 +495,7 @@
                     <!-- Price Card -->
                     <div class="price-highlight-card">
                         <div class="price-label">Retail Price</div>
-                        <div class="price-huge">₹ <asp:Label ID="lblPriceHighlight" runat="server" Text="0.00"></asp:Label></div>
+                        <div class="price-huge">$ <asp:Label ID="lblPriceHighlight" runat="server" Text="0.00"></asp:Label></div>
                     </div>
 
                     <!-- Stock Status Tile -->
@@ -529,28 +529,46 @@
                 <!-- Right Column: Full Specifications Table -->
                 <div class="specs-col">
                     <div class="specs-title">
-                        <span>&#128221;</span> Detailed Technical Specifications
+                        <span>&#128221;</span> Product Details &amp; Specifications
                     </div>
 
                     <table class="specs-table">
+                        <tr style="background:#eff6ff;">
+                            <td colspan="2" style="font-weight:800;color:#1e40af;font-size:12.5px;text-transform:uppercase;letter-spacing:0.04em;padding:10px 18px;">
+                                &#128230; Core Product Details (Table: Products)
+                            </td>
+                        </tr>
                         <tr>
-                            <td class="specs-label-col">Product ID</td>
+                            <td class="specs-label-col">Product ID [id]</td>
                             <td class="specs-val-col">
                                 <strong>#<asp:Label ID="lblID" runat="server"></asp:Label></strong>
                             </td>
                         </tr>
 
                         <tr>
-                            <td class="specs-label-col">Product Name</td>
+                            <td class="specs-label-col">Product Name [name]</td>
                             <td class="specs-val-col">
                                 <asp:Label ID="lblName" runat="server"></asp:Label>
                             </td>
                         </tr>
 
                         <tr>
-                            <td class="specs-label-col">Price (INR)</td>
+                            <td class="specs-label-col">Price ($) [price]</td>
                             <td class="specs-val-col">
-                                <asp:Label ID="lblPrice" runat="server"></asp:Label>
+                                <strong style="color:#1e40af;">$ <asp:Label ID="lblPrice" runat="server"></asp:Label></strong>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="specs-label-col">Available Stock [stock]</td>
+                            <td class="specs-val-col">
+                                <strong><asp:Label ID="lblQuantityInStock" runat="server"></asp:Label> Units</strong>
+                            </td>
+                        </tr>
+
+                        <tr style="background:#f8fafc;">
+                            <td colspan="2" style="font-weight:800;color:#475569;font-size:12.5px;text-transform:uppercase;letter-spacing:0.04em;padding:10px 18px;border-top:2px solid #e2e8f0;">
+                                &#128196; Extended Specifications (Table: ProductDetails)
                             </td>
                         </tr>
 
@@ -575,13 +593,6 @@
                             <td class="specs-label-col">Item Weight</td>
                             <td class="specs-val-col">
                                 <asp:Label ID="lblWeight" runat="server"></asp:Label> kg
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td class="specs-label-col">Warehouse Stock</td>
-                            <td class="specs-val-col">
-                                <asp:Label ID="lblQuantityInStock" runat="server"></asp:Label> Units
                             </td>
                         </tr>
 
