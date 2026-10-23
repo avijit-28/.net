@@ -550,7 +550,7 @@
                         <tr>
                             <td class="specs-label-col">Price (INR)</td>
                             <td class="specs-val-col">
-                                ₹ <asp:Label ID="lblPrice" runat="server"></asp:Label>
+                                <asp:Label ID="lblPrice" runat="server"></asp:Label>
                             </td>
                         </tr>
 
