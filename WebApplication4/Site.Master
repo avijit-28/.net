@@ -1207,6 +1207,14 @@
                                             <div class="menu-item-desc">Code-behind RowCommand manual binding</div>
                                         </div>
                                     </a>
+
+                                    <a href="<%= ResolveUrl("~/UserDetailsCustomPaging") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-purple">&#128209;</div>
+                                        <div>
+                                            <div class="menu-item-title">Custom Repeater Paging</div>
+                                            <div class="menu-item-desc">spGetUsers Stored Proc &amp; Repeater Pager</div>
+                                        </div>
+                                    </a>
                                 </div>
 
                                 <!-- Column 2: State & Developer Tools -->
