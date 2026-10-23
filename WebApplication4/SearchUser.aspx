@@ -279,6 +279,27 @@
             font-size: 13px;
         }
 
+        .btn-view-profile {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-view-profile:hover {
+            background: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+        }
+
         /* Empty Data Template */
         .empty-state {
             padding: 60px 24px;
