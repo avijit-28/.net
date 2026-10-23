@@ -587,13 +587,9 @@
                     ShowFooter="True" 
                     CssClass="gridview-table"
                     GridLines="None"
-                    AllowPaging="True"
-                    PageSize="5"
+                    AllowPaging="False"
                     OnRowCommand="GridView1_RowCommand"
                     OnRowDataBound="GridView1_RowDataBound">
-                    
-                    <%-- Note: GridView default pager is hidden because we use the custom Repeater below --%>
-                    <PagerSettings Visible="false" />
 
                     <Columns>
                         
