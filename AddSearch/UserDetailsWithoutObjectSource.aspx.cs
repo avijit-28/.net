@@ -13,13 +13,12 @@ namespace AddSearch
         {
             if (!IsPostBack)
             {
-                if (!IsPostBack)
-                {
+                
                     int totalRows = 0;
                     GridView1.DataSource = UserDetailsAccessLayer.GetAllUsers(0, GridView1.PageSize, out totalRows);
                     GridView1.DataBind();
                     DatabindRepeater(0, GridView1.PageSize, totalRows);
-                }
+                
                 //BindGridViewData();
             }
         }
@@ -62,8 +61,8 @@ namespace AddSearch
         {
             GridView1.DataSource = UserDetailsAccessLayer.GetAllUsers();
             //repeaterPaging.DataSource = pages;
-            repeaterPaging.DataBind();
-            //GridView1.DataBind();
+            //repeaterPaging.DataBind();
+            GridView1.DataBind();
         }
         protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
         {
