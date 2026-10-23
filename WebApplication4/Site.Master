@@ -953,6 +953,13 @@
             box-shadow: 0 0 0 8px rgba(219, 234, 254, 0.55);
         }
 
+        .global-modal-icon-wrap.type-insert {
+            background: #ecfdf5;
+            border: 2px solid #a7f3d0;
+            color: #059669;
+            box-shadow: 0 0 0 8px rgba(167, 243, 208, 0.55);
+        }
+
         .global-modal-icon-wrap.type-warning {
             background: #fffbeb;
             border: 2px solid #fef3c7;
