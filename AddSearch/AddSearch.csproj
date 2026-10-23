@@ -76,6 +76,7 @@
     <Content Include="UserDetailsWithoutObjectSource.aspx" />
     <Content Include="Web.config" />
     <Content Include="WebForm1.aspx" />
+    <Content Include="WebService1.asmx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllGridProp.aspx.cs">
@@ -136,6 +137,10 @@
     </Compile>
     <Compile Include="WebForm1.aspx.designer.cs">
       <DependentUpon>WebForm1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebService1.asmx.cs">
+      <DependentUpon>WebService1.asmx</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
