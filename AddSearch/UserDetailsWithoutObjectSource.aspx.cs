@@ -61,7 +61,9 @@ namespace AddSearch
         private void BindGridViewData()
         {
             GridView1.DataSource = UserDetailsAccessLayer.GetAllUsers();
-            GridView1.DataBind();
+            //repeaterPaging.DataSource = pages;
+            repeaterPaging.DataBind();
+            //GridView1.DataBind();
         }
         protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
         {
