@@ -618,6 +618,30 @@
                     </Columns>
                 </asp:GridView>
             </div>
+
+            <!-- Custom Repeater Pager Bar -->
+            <div class="custom-pager-container">
+                <div class="pager-info-text">
+                    <asp:Label ID="lblPagingSummary" runat="server" Text="Showing records..."></asp:Label>
+                </div>
+                
+                <div class="pager-pills-wrap">
+                    <span style="font-size: 12px; font-weight: 700; color: #64748b; margin-right: 4px; text-transform: uppercase;">Page:</span>
+                    <asp:Repeater ID="repeaterPaging" runat="server">
+                        <ItemTemplate>
+                            <asp:LinkButton ID="pagingLinkButton"
+                                runat="server"
+                                Text='<%# Eval("Text") %>'
+                                CommandArgument='<%# Eval("Value") %>'
+                                Enabled='<%# Eval("Enabled") %>'
+                                OnClick="linkButton_Click"
+                                CssClass='<%# Convert.ToBoolean(Eval("Enabled")) ? "pager-page-btn" : "pager-page-btn active" %>'>
+                            </asp:LinkButton>
+                        </ItemTemplate>
+                    </asp:Repeater>
+                </div>
+            </div>
+
         </div>
     </div>
 
