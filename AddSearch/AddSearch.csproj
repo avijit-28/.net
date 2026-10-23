@@ -44,6 +44,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -68,10 +70,24 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AllGridProp.aspx" />
+    <Content Include="Connected Services\localhost\AddSearch.localhost.GetUserDetailsResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <Content Include="Connected Services\localhost\AddSearch.localhost.HelloWorldResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <None Include="Connected Services\localhost\WebService1.disco" />
+    <None Include="Connected Services\localhost\configuration91.svcinfo" />
+    <None Include="Connected Services\localhost\configuration.svcinfo" />
+    <None Include="Connected Services\localhost\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="currency.aspx" />
     <Content Include="GridViewTemplateField.aspx" />
     <Content Include="ProductDetails.aspx" />
     <Content Include="products.aspx" />
+    <Content Include="service.aspx" />
     <Content Include="UserDetails.aspx" />
     <Content Include="UserDetailsWithoutObjectSource.aspx" />
     <Content Include="Web.config" />
@@ -85,6 +101,11 @@
     </Compile>
     <Compile Include="AllGridProp.aspx.designer.cs">
       <DependentUpon>AllGridProp.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\localhost\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="currency.aspx.cs">
       <DependentUpon>currency.aspx</DependentUpon>
@@ -115,6 +136,13 @@
       <DependentUpon>products.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="service.aspx.cs">
+      <DependentUpon>service.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="service.aspx.designer.cs">
+      <DependentUpon>service.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Service.cs" />
     <Compile Include="UserDetails.aspx.cs">
       <DependentUpon>UserDetails.aspx</DependentUpon>
@@ -145,7 +173,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Connected Services\localhost\WebService1.wsdl" />
     <None Include="packages.config" />
+    <Content Include="Properties\DataSources\System.Xml.Linq.XElement.datasource" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -155,6 +185,9 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\localhost\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
