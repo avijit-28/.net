@@ -49,7 +49,6 @@ namespace EmployeeExpenseTracker
                 }
             }
 
-            // Successfully inserted -> Redirect back to Employee Directory
             Response.Redirect("Employees.aspx");
         }
 

@@ -16,15 +16,12 @@ namespace EmployeeExpenseTracker
         {
             if (!IsPostBack)
             {
-                // 1. Employees table se dropdown load karein
                 PopulateEmployeesDropdown();
 
-                // 2. Expenses Grid load karein
                 BindExpensesGrid();
             }
         }
 
-        // Database se Employees fetch karke DropDown me bharna
         private void PopulateEmployeesDropdown()
         {
             using (SqlConnection con = new SqlConnection(_conStr))
@@ -43,7 +40,6 @@ namespace EmployeeExpenseTracker
                             int empId = Convert.ToInt32(reader["Id"]);
                             string empName = reader["Name"].ToString();
 
-                            // Display Text: E001 - Suresh Das | Value: 1 (Primary Key of Employees)
                             string text = $"E{empId:D3} - {empName}";
                             string value = empId.ToString();
 
@@ -107,7 +103,6 @@ namespace EmployeeExpenseTracker
             int expenseId = Convert.ToInt32(hfExpenseId.Value);
             int employeeId = Convert.ToInt32(ddlEmployee.SelectedValue);
 
-            // Extract Name from dropdown text (e.g. "E001 - Suresh Das" -> "Suresh Das")
             string fullText = ddlEmployee.SelectedItem.Text;
             string employeeName = fullText.Contains("-")
                 ? fullText.Substring(fullText.IndexOf('-') + 1).Trim()

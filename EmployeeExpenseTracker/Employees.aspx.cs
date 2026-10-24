@@ -125,10 +125,8 @@ namespace EmployeeExpenseTracker
             BindEmployeesGrid();
         }
 
-        // Add Employee Button Click (Optional prompt or navigation)
         protected void btnAdd_Click(object sender, EventArgs e)
         {
-            // Abhi ke liye quick JavaScript notification ya future entry form par redirect
             Response.Redirect("AddEmployee.aspx");
         }
 
