@@ -120,6 +120,15 @@
     <Content Include="ProductForm.aspx" />
     <Content Include="products.aspx" />
     <Content Include="ProductDetails.aspx" />
+    <Content Include="ProductLinqCurd.aspx" />
+    <Content Include="Products.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>Products.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="Products.dbml.layout">
+      <DependentUpon>Products.dbml</DependentUpon>
+    </None>
     <Content Include="SearchUser.aspx" />
     <Content Include="SignUp.aspx" />
     <Content Include="images\Accepted.png" />
