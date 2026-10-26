@@ -97,8 +97,41 @@
                     </FooterTemplate>
                 </asp:TemplateField>
 
-               <asp:CommandField ShowEditButton="True"
-                  ShowDeleteButton="True" />
+               <asp:TemplateField HeaderText="Actions">
+    <ItemTemplate>
+        <asp:LinkButton ID="lnkEdit"
+            runat="server"
+            CommandName="Edit"
+            Text="Edit">
+        </asp:LinkButton>
+
+        &nbsp;|&nbsp;
+
+        <asp:LinkButton ID="lnkDelete"
+            runat="server"
+            CommandName="Delete"
+            Text="Delete"
+            OnClientClick="return confirm('Are you sure you want to delete this record?');">
+        </asp:LinkButton>
+    </ItemTemplate>
+
+    <EditItemTemplate>
+        <asp:LinkButton ID="lnkUpdate"
+            runat="server"
+            CommandName="Update"
+            Text="Update"
+             OnClientClick="return confirm('Are you sure you want to Update this record?');">
+        </asp:LinkButton>
+
+        &nbsp;|&nbsp;
+
+        <asp:LinkButton ID="lnkCancel"
+            runat="server"
+            CommandName="Cancel"
+            Text="Cancel">
+        </asp:LinkButton>
+    </EditItemTemplate>
+</asp:TemplateField>
     
             </Columns>
 
