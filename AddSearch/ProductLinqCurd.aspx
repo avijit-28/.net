@@ -11,7 +11,7 @@
 
         <asp:GridView ID="GridView1" runat="server"
             AutoGenerateColumns="False"
-            DataKeyNames="ID"
+            DataKeyNames="ID,Name"
             ShowFooter="True"
             AllowPaging="True"
             PageSize="10"
