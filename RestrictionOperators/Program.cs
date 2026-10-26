@@ -106,6 +106,7 @@ namespace RestrictionOperators
 
             var result = edges.SelectMany(e => new[] { e.Item1, e.Item2 }).GroupBy(v => v).Where(g => g.Count() > 3).Select(g => g.Key);
 
+            Console.WriteLine("Degrees higher than 3");
             foreach (var vertex in result)
             {
                 Console.WriteLine(vertex);
