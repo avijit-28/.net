@@ -98,9 +98,7 @@
                 </asp:TemplateField>
 
                
-                <asp:CommandField ShowEditButton="True"
-                    ShowDeleteButton="True" 
-                    />
+                
 
                 <asp:TemplateField>
     <ItemTemplate>
