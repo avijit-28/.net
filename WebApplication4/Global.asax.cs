@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -34,6 +34,8 @@ namespace WebApplication4
             routeCollection.MapPageRoute("ProductsCatalogSlug", "catalog", "~/products.aspx");
             routeCollection.MapPageRoute("ProductDetailsRoute", "ProductDetails", "~/ProductDetails.aspx");
             routeCollection.MapPageRoute("ProductDetailsSlug", "product-details", "~/ProductDetails.aspx");
+            routeCollection.MapPageRoute("ProductLinqCurdRoute", "ProductLinqCurd", "~/ProductLinqCurd.aspx");
+            routeCollection.MapPageRoute("ProductLinqCurdSlug", "product-linq-crud", "~/ProductLinqCurd.aspx");
             routeCollection.MapPageRoute("SearchUserRoute", "SearchUser", "~/SearchUser.aspx");
             routeCollection.MapPageRoute("SearchSlug", "search", "~/SearchUser.aspx");
             routeCollection.MapPageRoute("GetUserDetailsRoute", "GetUserDetails", "~/GetUserDetails.aspx");
