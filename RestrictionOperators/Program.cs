@@ -46,7 +46,6 @@ namespace RestrictionOperators
             {
                 Console.WriteLine("{0} - {1}", group.Key, group.Count());
             }
-            Console.WriteLine("\n");
             Console.WriteLine("***************************************");
             Console.WriteLine("\n");
 
