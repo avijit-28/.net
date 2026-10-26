@@ -41,6 +41,10 @@ namespace RestrictionOperators
             //Example 1: Get Employee Count By Department
             var employeeGroup = from employee in Employee.GetAllEmployees()
                     group employee by employee.Department;
+            foreach (var group in employeeGroup)
+            {
+                Console.WriteLine("{0} - {1}", group.Key, group.Count());
+            }
         }
     }
 }
