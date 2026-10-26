@@ -1654,7 +1654,7 @@
                     var prevVisibility = panel.style.visibility;
                     panel.style.visibility = 'hidden';
                     panel.style.display = 'block';
-                    panelWidth = panel.offsetWidth || 820;
+                    panelWidth = panel.offsetWidth || 660;
                     panel.style.display = prevDisplay;
                     panel.style.visibility = prevVisibility;
                 }
@@ -1701,6 +1701,36 @@
                         alignMenuDropdown();
                     });
                 }
+
+                // Nested Category Mega Menu Tab Switching
+                var catButtons = document.querySelectorAll('.category-tab-btn');
+                var catPanels = document.querySelectorAll('.category-content-panel');
+
+                catButtons.forEach(function (btn) {
+                    function activateTab() {
+                        var targetId = btn.getAttribute('data-target');
+                        catButtons.forEach(function (b) {
+                            b.classList.remove('active');
+                            b.setAttribute('aria-selected', 'false');
+                        });
+                        catPanels.forEach(function (p) {
+                            p.classList.remove('active');
+                        });
+
+                        btn.classList.add('active');
+                        btn.setAttribute('aria-selected', 'true');
+                        var targetPanel = document.getElementById(targetId);
+                        if (targetPanel) {
+                            targetPanel.classList.add('active');
+                        }
+                    }
+
+                    btn.addEventListener('mouseenter', activateTab);
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        activateTab();
+                    });
+                });
 
                 document.addEventListener('click', function (e) {
                     if (menuWrapper && !menuWrapper.contains(e.target)) {
@@ -1913,6 +1943,36 @@
                 });
 
                 // Universal Capture-Phase Click Interceptor - STRICTLY for Insert, Update, and Delete Operations
+                // Nested Category Mega Menu Tab Switching
+                var catButtons = document.querySelectorAll('.category-tab-btn');
+                var catPanels = document.querySelectorAll('.category-content-panel');
+
+                catButtons.forEach(function (btn) {
+                    function activateTab() {
+                        var targetId = btn.getAttribute('data-target');
+                        catButtons.forEach(function (b) {
+                            b.classList.remove('active');
+                            b.setAttribute('aria-selected', 'false');
+                        });
+                        catPanels.forEach(function (p) {
+                            p.classList.remove('active');
+                        });
+
+                        btn.classList.add('active');
+                        btn.setAttribute('aria-selected', 'true');
+                        var targetPanel = document.getElementById(targetId);
+                        if (targetPanel) {
+                            targetPanel.classList.add('active');
+                        }
+                    }
+
+                    btn.addEventListener('mouseenter', activateTab);
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        activateTab();
+                    });
+                });
+
                 document.addEventListener('click', function (e) {
                     var target = e.target.closest('a, button, input[type="submit"], input[type="button"]');
                     if (!target) return;
@@ -1974,6 +2034,7 @@
                         target.classList.contains('btn-hub-return') ||
                         target.classList.contains('module-link') ||
                         target.classList.contains('menu-item-link') ||
+                        target.classList.contains('compact-menu-link') ||
                         target.closest('.site-header, .site-footer, .mega-menu-container') ||
                         textLower.indexOf('sign in') > -1 || textLower.indexOf('sign out') > -1 || textLower.indexOf('logout') > -1) {
                         return;
