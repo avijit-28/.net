@@ -305,7 +305,9 @@
     <Compile Include="ProductDetails.aspx.designer.cs">
       <DependentUpon>ProductDetails.aspx</DependentUpon>
     </Compile>
-    <Compile Include="ProductLinqCurd.cs" />
+    <Compile Include="ProductLinqCurd.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="ProductLinqCurd.aspx.cs">
       <DependentUpon>ProductLinqCurd.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -427,7 +429,6 @@
           <CustomServerUrl>
           </CustomServerUrl>
           <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
-          <StartPageUrl>Default.aspx</StartPageUrl>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>
