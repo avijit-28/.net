@@ -185,6 +185,7 @@
       <DependentUpon>Products.dbml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RestrictionOperators.cs" />
     <Compile Include="Sample.cs">
       <DependentUpon>Sample.dbml</DependentUpon>
     </Compile>
