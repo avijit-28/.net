@@ -29,60 +29,60 @@ namespace RestrictionOperators
 
 
             // example 2
-            Console.WriteLine("Example 2: Rewrite Example 1 using SQL like syntax");
-            IEnumerable<Student> result2 = from student in Student.GetAllStudents()
-                                           orderby student.Name 
-                                           select student;
-            foreach (Student student in result2)
-            {
-                Console.WriteLine(student.Name);
-            }
-            Console.WriteLine("\n");
+            //Console.WriteLine("Example 2: Rewrite Example 1 using SQL like syntax");
+            //IEnumerable<Student> result2 = from student in Student.GetAllStudents()
+            //                               orderby student.Name 
+            //                               select student;
+            //foreach (Student student in result2)
+            //{
+            //    Console.WriteLine(student.Name);
+            //}
+            //Console.WriteLine("\n");
 
-            //Example 1: Get Employee Count By Department
-            var employeeGroup = from employee in Employee.GetAllEmployees()
-                                group employee by employee.Department;
-            foreach (var group in employeeGroup)
-            {
-                Console.WriteLine("{0} -> {1}", group.Key, group.Count());
-            }
-            Console.WriteLine("***************************************");
-            Console.WriteLine("\n");
+            ////Example 1: Get Employee Count By Department
+            //var employeeGroup = from employee in Employee.GetAllEmployees()
+            //                    group employee by employee.Department;
+            //foreach (var group in employeeGroup)
+            //{
+            //    Console.WriteLine("{0} -> {1}", group.Key, group.Count());
+            //}
+            //Console.WriteLine("***************************************");
+            //Console.WriteLine("\n");
 
-            //Example 2: Get Employee Count By Department and also each employee and department name
-            var employeeGroup2 = from employee in Employee.GetAllEmployees()
-                    group employee by employee.Department;
-            foreach (var group in employeeGroup2)
-            {
-                Console.WriteLine("{0} => {1}", group.Key, group.Count());
-                Console.WriteLine("----------");
-                foreach (var employee in group)
-                {
-                    Console.WriteLine(employee.Name + "\t" + employee.Department);
-                }
-                Console.WriteLine(); Console.WriteLine();
-            }
-            Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++");
-            //Example 3
+            ////Example 2: Get Employee Count By Department and also each employee and department name
+            //var employeeGroup2 = from employee in Employee.GetAllEmployees()
+            //        group employee by employee.Department;
+            //foreach (var group in employeeGroup2)
+            //{
+            //    Console.WriteLine("{0} => {1}", group.Key, group.Count());
+            //    Console.WriteLine("----------");
+            //    foreach (var employee in group)
+            //    {
+            //        Console.WriteLine(employee.Name + "\t" + employee.Department);
+            //    }
+            //    Console.WriteLine(); Console.WriteLine();
+            //}
+            //Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++");
+            ////Example 3
 
-            var employeeGroup3 = from employee in Employee.GetAllEmployees()
-                                 group employee by employee.Department into eGroup
-                                 orderby eGroup.Key
-                                 select new
-                                 {
-                                     Key = eGroup.Key,
-                                     Employees = eGroup.OrderBy(x => x.Name)
-                                 };
-            foreach (var group in employeeGroup3)
-            {
-                Console.WriteLine("{0} - {1}", group.Key, group.Employees.Count());
-                Console.WriteLine("----------");
-                foreach (var employee in group.Employees)
-                {
-                    Console.WriteLine(employee.Name + "\t" + employee.Department);
-                }
-                Console.WriteLine(); Console.WriteLine();
-            }
+            //var employeeGroup3 = from employee in Employee.GetAllEmployees()
+            //                     group employee by employee.Department into eGroup
+            //                     orderby eGroup.Key
+            //                     select new
+            //                     {
+            //                         Key = eGroup.Key,
+            //                         Employees = eGroup.OrderBy(x => x.Name)
+            //                     };
+            //foreach (var group in employeeGroup3)
+            //{
+            //    Console.WriteLine("{0} - {1}", group.Key, group.Employees.Count());
+            //    Console.WriteLine("----------");
+            //    foreach (var employee in group.Employees)
+            //    {
+            //        Console.WriteLine(employee.Name + "\t" + employee.Department);
+            //    }
+            //    Console.WriteLine(); Console.WriteLine();
+            //}
             Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++");
 
 
