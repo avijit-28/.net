@@ -99,10 +99,7 @@
 
                <asp:CommandField ShowEditButton="True"
                   ShowDeleteButton="True" />
-                
-
-              
-
+    
             </Columns>
 
         </asp:GridView>
