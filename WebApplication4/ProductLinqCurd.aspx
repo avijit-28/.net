@@ -1,4 +1,4 @@
-<%@ Page Title="Product LINQ CRUD Operations" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ProductLinqCurd.aspx.cs" Inherits="WebApplication4.ProductLinqCurdPage" %>
+<%@ Page Title="Product LINQ CRUD Operations" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="ProductLinqCurd.aspx.cs" Inherits="WebApplication4.ProductLinqCurd" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style type="text/css">
