@@ -121,24 +121,24 @@ namespace AddSearch.Connected_Services
             BindGridview();
         }
 
-        //protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
-        //{
-        //    if (e.Row.RowType == DataControlRowType.DataRow)
-        //    {
-        //        foreach (Control c in e.Row.Cells[e.Row.Cells.Count - 1].Controls)
-        //        {
-        //            if (c is LinkButton)
-        //            {
-        //                LinkButton btn = (LinkButton)c;
+        protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                foreach (Control c in e.Row.Cells[e.Row.Cells.Count - 1].Controls)
+                {
+                    if (c is LinkButton)
+                    {
+                        LinkButton btn = (LinkButton)c;
 
-        //                if (btn.CommandName == "Delete")
-        //                {
-        //                    btn.OnClientClick =
-        //                        "return confirm('Are you sure you want to delete this record?');";
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+                        if (btn.CommandName == "Delete")
+                        {
+                            btn.OnClientClick =
+                                "return confirm('Are you sure you want to delete this record?');";
+                        }
+                    }
+                }
+            }
+        }
     }
 }
