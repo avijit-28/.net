@@ -37,6 +37,7 @@ namespace RestrictionOperators
             {
                 Console.WriteLine(student.Name);
             }
+            Console.WriteLine("\n");
 
             //Example 1: Get Employee Count By Department
             var employeeGroup = from employee in Employee.GetAllEmployees()
