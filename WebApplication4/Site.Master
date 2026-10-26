@@ -1,4 +1,4 @@
-<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="WebApplication4.SiteMaster" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="WebApplication4.SiteMaster" %>
 
 <!DOCTYPE html>
 
@@ -1336,6 +1336,14 @@
                                         <div>
                                             <div class="menu-item-title">Inline CRUD Operations</div>
                                             <div class="menu-item-desc">Full Insert, Update, and Delete</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="<%= ResolveUrl("~/ProductLinqCurd") %>" class="menu-item-link">
+                                        <div class="menu-item-icon icon-blue">&#9881;</div>
+                                        <div>
+                                            <div class="menu-item-title">Product LINQ CRUD</div>
+                                            <div class="menu-item-desc">LINQ to SQL table editing</div>
                                         </div>
                                     </a>
                                 </div>
