@@ -100,10 +100,18 @@
                
                 <asp:CommandField ShowEditButton="True"
                     ShowDeleteButton="True" 
-                    OnClientClick="return confirm('Are you sure you want to delete this record?')
                     />
 
-                
+                <asp:TemplateField>
+    <ItemTemplate>
+        <asp:LinkButton ID="lnkDelete"
+            runat="server"
+            CommandName="Delete"
+            Text="Delete"
+            OnClientClick="return confirm('Are you sure you want to delete this record?');">
+        </asp:LinkButton>
+    </ItemTemplate>
+</asp:TemplateField>
 
             </Columns>
 
