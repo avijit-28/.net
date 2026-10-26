@@ -125,17 +125,20 @@ namespace AddSearch.Connected_Services
         {
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
-                foreach (Control ctrl in e.Row.Cells[e.Row.Cells.Count - 1].Controls)
+                foreach (Control c in e.Row.Cells[e.Row.Cells.Count - 1].Controls)
                 {
-                    LinkButton btn = ctrl as LinkButton;
-
-                    if (btn != null && btn.CommandName == "Delete")
+                    if (c is LinkButton)
                     {
-                        btn.OnClientClick =
-                            "return confirm('Do you want to delete this row?');";
+                        LinkButton btn = (LinkButton)c;
+
+                        if (btn.CommandName == "Delete")
+                        {
+                            btn.OnClientClick =
+                                "return confirm('Are you sure you want to delete this record?');";
+                        }
                     }
                 }
             }
-        }       
+        }
     }
 }
