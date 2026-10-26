@@ -5,11 +5,11 @@ using System.Web;
 
 namespace WebApplication4
 {
-    public class ProductLinqCurd
+    public partial class ProductLinqCurd
     {
         public int ProductId { get; set; }
-        public string Name { get; set; }
-        public int Price { get; set; }
-        public int Stock { get; set; }
+        public string ProductName { get; set; }
+        public int ProductPrice { get; set; }
+        public int ProductStock { get; set; }
     }
 }
