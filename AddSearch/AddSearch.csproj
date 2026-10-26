@@ -105,7 +105,7 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <Content Include="Connected Services\ProductLinqCurd.aspx" />
+    <Content Include="ProductLinqCurd.aspx" />
     <Content Include="currency.aspx" />
     <Content Include="GridViewTemplateField.aspx" />
     <Content Include="LINQDemo.aspx" />
@@ -136,11 +136,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <Compile Include="Connected Services\ProductLinqCurd.aspx.cs">
+    <Compile Include="ProductLinqCurd.aspx.cs">
       <DependentUpon>ProductLinqCurd.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Connected Services\ProductLinqCurd.aspx.designer.cs">
+    <Compile Include="ProductLinqCurd.aspx.designer.cs">
       <DependentUpon>ProductLinqCurd.aspx</DependentUpon>
     </Compile>
     <Compile Include="currency.aspx.cs">
