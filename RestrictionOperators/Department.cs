@@ -8,5 +8,6 @@ namespace RestrictionOperators
 {
     internal class Department
     {
+
     }
 }
