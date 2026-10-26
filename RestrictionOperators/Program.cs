@@ -38,19 +38,9 @@ namespace RestrictionOperators
                 Console.WriteLine(student.Name);
             }
 
-            //IEnumerable<Department> departments = context.Departments
-            //.Where(dept => dept.Name == "IT" || dept.Name == "HR");
-            //foreach (Department department in departments)
-            //{
-            //    Console.WriteLine("Department Name = " + department.Name);
-            //    foreach (Employee employee in department
-            //    .Employees.Where(emp => emp.Gender == "Male"))
-            //    {
-            //        Console.WriteLine("\tEmployee Name = " + employee.FirstName
-            //        + " " + employee.LastName);
-            //    }
-            //    Console.WriteLine();
-            //}
+            //Example 1: Get Employee Count By Department
+            var employeeGroup = from employee in Employee.GetAllEmployees()
+                    group employee by employee.Department;
         }
     }
 }
