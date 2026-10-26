@@ -1,13 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace AddSearch
+﻿namespace AddSearch
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    /// <summary>
+    /// Defines the <see cref="RestrictionOperators" />
+    /// </summary>
     public class RestrictionOperators
     {
-        static void Main()
+        /// <summary>
+        /// The Main
+        /// </summary>
+        internal static void Main()
         {
             List<int> numbers = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
             // Func<int, bool> predicate = i => i % 2 == 0;
