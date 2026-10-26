@@ -18,6 +18,27 @@ namespace RestrictionOperators
             {
                 Console.WriteLine(evenNumber);
             }
+
+
+            IEnumerable<Student> result = Student.GetAllStudents().OrderBy(s => s.Name);
+            foreach (Student student in result)
+            {
+                Console.WriteLine(student.Name);
+            }
+
+            //IEnumerable<Department> departments = context.Departments
+            //.Where(dept => dept.Name == "IT" || dept.Name == "HR");
+            //foreach (Department department in departments)
+            //{
+            //    Console.WriteLine("Department Name = " + department.Name);
+            //    foreach (Employee employee in department
+            //    .Employees.Where(emp => emp.Gender == "Male"))
+            //    {
+            //        Console.WriteLine("\tEmployee Name = " + employee.FirstName
+            //        + " " + employee.LastName);
+            //    }
+            //    Console.WriteLine();
+            //}
         }
     }
 }
