@@ -92,10 +92,17 @@ namespace RestrictionOperators
                     ("A","C"),
                     ("A","D"),
                     ("A","E"),
-                    ("A","C"),
+                    ("B","C"),
                     ("C","D"),
                     ("D","E")
                 };
+
+            var result3 = edges.SelectMany(e => new[] { e.Item1, e.Item2 }).GroupBy(v => v).Select(g => new { vertex = g.Key, Degrees = g.Count() });
+
+            foreach (var item in result3)
+            {
+                Console.WriteLine(item.vertex + " -> " + item.Degrees);
+            }
 
             var result = edges.SelectMany(e => new[] { e.Item1, e.Item2 }).GroupBy(v => v).Where(g => g.Count() > 3).Select(g => g.Key);
 
@@ -103,6 +110,8 @@ namespace RestrictionOperators
             {
                 Console.WriteLine(vertex);
             }
+            
+
 
         }
     }
