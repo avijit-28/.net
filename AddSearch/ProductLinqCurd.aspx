@@ -93,7 +93,8 @@
                         <asp:Button ID="btnAdd"
                             runat="server"
                             Text="Add"
-                            CommandName="AddNew" />
+                            CommandName="AddNew"
+                            OnClientClick="return confirm('Are you sure you want to insert this record?');"/>
                     </FooterTemplate>
                 </asp:TemplateField>
 
