@@ -1,0 +1,7 @@
+D:\avi\C#\RestrictionOperators\bin\Debug\RestrictionOperators.exe.config
+D:\avi\C#\RestrictionOperators\bin\Debug\RestrictionOperators.exe
+D:\avi\C#\RestrictionOperators\bin\Debug\RestrictionOperators.pdb
+D:\avi\C#\RestrictionOperators\obj\Debug\RestrictionOperators.csproj.AssemblyReference.cache
+D:\avi\C#\RestrictionOperators\obj\Debug\RestrictionOperators.csproj.CoreCompileInputs.cache
+D:\avi\C#\RestrictionOperators\obj\Debug\RestrictionOperators.exe
+D:\avi\C#\RestrictionOperators\obj\Debug\RestrictionOperators.pdb
