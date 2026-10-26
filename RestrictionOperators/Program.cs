@@ -44,7 +44,7 @@ namespace RestrictionOperators
                                 group employee by employee.Department;
             foreach (var group in employeeGroup)
             {
-                Console.WriteLine("{0} - {1}", group.Key, group.Count());
+                Console.WriteLine("{0} -> {1}", group.Key, group.Count());
             }
             Console.WriteLine("***************************************");
             Console.WriteLine("\n");
@@ -54,7 +54,7 @@ namespace RestrictionOperators
                     group employee by employee.Department;
             foreach (var group in employeeGroup2)
             {
-                Console.WriteLine("{0} - {1}", group.Key, group.Count());
+                Console.WriteLine("{0} => {1}", group.Key, group.Count());
                 Console.WriteLine("----------");
                 foreach (var employee in group)
                 {
