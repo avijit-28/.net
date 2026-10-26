@@ -1,4 +1,4 @@
-<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="WebApplication4.SiteMaster" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="WebApplication4.SiteMaster" %>
 
 <!DOCTYPE html>
 
@@ -1300,192 +1300,264 @@
                         <div class="menu-dropdown-panel" id="megaMenuPanel">
                             <div class="menu-panel-header">
                                 <span class="menu-panel-badge">&#9776; Application Modules</span>
-                                <span class="menu-panel-sub">Shifted navigation items &amp; services</span>
+                                <span class="menu-panel-sub">Select a category to view modules</span>
                             </div>
 
-                            <div class="menu-columns">
-                                <!-- Column 1: User Services & Discovery -->
-                                <div class="menu-col">
-                                    <div class="menu-col-header">
-                                        <span>&#128101;</span>
-                                        <span>User Services &amp; Discovery</span>
-                                    </div>
-
-                                    <a href="<%= ResolveUrl("~/SearchUser") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-blue">&#128269;</div>
-                                        <div>
-                                            <div class="menu-item-title">Search User</div>
-                                            <div class="menu-item-desc">SQL database student search</div>
-                                        </div>
-                                    </a>
-
-                                    <a href="<%= ResolveUrl("~/GetUserDetails") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-purple">&#9881;</div>
-                                        <div>
-                                            <div class="menu-item-title">WS Search</div>
-                                            <div class="menu-item-desc">ASMX XML Web Service lookup</div>
-                                        </div>
-                                    </a>
-
-                                    <a href="<%= ResolveUrl("~/CheckAvailability") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-green">&#128737;</div>
-                                        <div>
-                                            <div class="menu-item-title">Check Availability</div>
-                                            <div class="menu-item-desc">Real-time AJAX validation</div>
-                                        </div>
-                                    </a>
-
-                                    <a href="<%= ResolveUrl("~/GetUser") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-sky">&#128100;</div>
-                                        <div>
-                                            <div class="menu-item-title">User Profile</div>
-                                            <div class="menu-item-desc">QueryString user details view</div>
-                                        </div>
-                                    </a>
-
-                                    <a href="<%= ResolveUrl("~/GridViewAll") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-teal">&#128203;</div>
-                                        <div>
-                                            <div class="menu-item-title">Employee Directory</div>
-                                            <div class="menu-item-desc">WebService GridView with paging</div>
-                                        </div>
-                                    </a>
-
-                                    <a href="<%= ResolveUrl("~/UserDetails") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-indigo">&#128101;</div>
-                                        <div>
-                                            <div class="menu-item-title">User Accounts CRUD</div>
-                                            <div class="menu-item-desc">ObjectDataSource user management</div>
-                                        </div>
-                                    </a>
-
-                                    <a href="<%= ResolveUrl("~/UserDetailsWithoutObjectSource") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-amber">&#128736;</div>
-                                        <div>
-                                            <div class="menu-item-title">User CRUD (Direct DAL)</div>
-                                            <div class="menu-item-desc">Code-behind RowCommand manual binding</div>
-                                        </div>
-                                    </a>
-
-                                    <a href="<%= ResolveUrl("~/UserDetailsCustomPaging") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-purple">&#128209;</div>
-                                        <div>
-                                            <div class="menu-item-title">Custom Repeater Paging</div>
-                                            <div class="menu-item-desc">spGetUsers Stored Proc &amp; Repeater Pager</div>
-                                        </div>
-                                    </a>
+                            <div class="nested-menu-layout">
+                                <!-- Left Sidebar: Category Tabs -->
+                                <div class="nested-category-sidebar" role="tablist">
+                                    <button type="button" class="category-tab-btn active" data-target="catPanel-users" role="tab" aria-selected="true">
+                                        <span class="cat-btn-left">
+                                            <span class="cat-icon-badge">&#128101;</span>
+                                            <span>User Services</span>
+                                        </span>
+                                        <span class="cat-count-pill">8</span>
+                                    </button>
+                                    <button type="button" class="category-tab-btn" data-target="catPanel-gridview" role="tab" aria-selected="false">
+                                        <span class="cat-btn-left">
+                                            <span class="cat-icon-badge">&#128202;</span>
+                                            <span>GridView Modules</span>
+                                        </span>
+                                        <span class="cat-count-pill">7</span>
+                                    </button>
+                                    <button type="button" class="category-tab-btn" data-target="catPanel-products" role="tab" aria-selected="false">
+                                        <span class="cat-btn-left">
+                                            <span class="cat-icon-badge">&#128230;</span>
+                                            <span>Products &amp; Items</span>
+                                        </span>
+                                        <span class="cat-count-pill">4</span>
+                                    </button>
+                                    <button type="button" class="category-tab-btn" data-target="catPanel-tools" role="tab" aria-selected="false">
+                                        <span class="cat-btn-left">
+                                            <span class="cat-icon-badge">&#9881;</span>
+                                            <span>State &amp; Tools</span>
+                                        </span>
+                                        <span class="cat-count-pill">4</span>
+                                    </button>
                                 </div>
 
-                                <!-- Column 2: State & Developer Tools -->
-                                <div class="menu-col">
-                                    <div class="menu-col-header">
-                                        <span>&#9881;</span>
-                                        <span>State &amp; Developer Tools</span>
+                                <!-- Right Content: Panes -->
+                                <div class="nested-content-pane">
+                                    <!-- Pane 1: User Services -->
+                                    <div class="category-content-panel active" id="catPanel-users" role="tabpanel">
+                                        <div class="sub-group-block">
+                                            <div class="sub-group-title">&#128269; Search &amp; Discovery</div>
+                                            <div class="sub-group-grid">
+                                                <a href="<%= ResolveUrl("~/SearchUser") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-blue">&#128269;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Search User</span>
+                                                        <span class="compact-hint">SQL database search</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/GetUserDetails") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-purple">&#9881;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">WS Search</span>
+                                                        <span class="compact-hint">XML Web Service</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/CheckAvailability") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-green">&#128737;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Availability</span>
+                                                        <span class="compact-hint">AJAX user verification</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/GetUser") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-sky">&#128100;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">User Profile</span>
+                                                        <span class="compact-hint">QueryString detail view</span>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="sub-group-block">
+                                            <div class="sub-group-title">&#128101; Accounts &amp; CRUD</div>
+                                            <div class="sub-group-grid">
+                                                <a href="<%= ResolveUrl("~/UserDetails") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-indigo">&#128101;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">User Accounts ODS</span>
+                                                        <span class="compact-hint">ObjectDataSource CRUD</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/UserDetailsWithoutObjectSource") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-amber">&#128736;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">User CRUD (DAL)</span>
+                                                        <span class="compact-hint">Direct DAL RowCommand</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/UserDetailsCustomPaging") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-purple">&#128209;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Repeater Paging</span>
+                                                        <span class="compact-hint">Stored Proc &amp; Pager</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/GridViewAll") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-teal">&#128203;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Employee Directory</span>
+                                                        <span class="compact-hint">WebService GridView</span>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <a href="<%= ResolveUrl("~/CookiesSend") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-amber">&#127850;</div>
-                                        <div>
-                                            <div class="menu-item-title">Cookies Management</div>
-                                            <div class="menu-item-desc">State persistence &amp; retrieval</div>
+                                    <!-- Pane 2: GridView Modules -->
+                                    <div class="category-content-panel" id="catPanel-gridview" role="tabpanel">
+                                        <div class="sub-group-block">
+                                            <div class="sub-group-title">&#127912; Formatting &amp; Display</div>
+                                            <div class="sub-group-grid">
+                                                <a href="<%= ResolveUrl("~/AllGridProp") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-blue">&#128203;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">GridView Hub</span>
+                                                        <span class="compact-hint">Properties overview</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/GridMultiCulture") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-green">&#128181;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Multi-Culture</span>
+                                                        <span class="compact-hint">Dynamic currencies</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/GridHiddenCulture") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-purple">&#128065;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Hidden Column</span>
+                                                        <span class="compact-hint">Bound hidden culture</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/GridConditionalFormatting") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-rose">&#127912;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Conditional Format</span>
+                                                        <span class="compact-hint">High-salary highlights</span>
+                                                    </div>
+                                                </a>
+                                            </div>
                                         </div>
-                                    </a>
 
-                                    <a href="<%= ResolveUrl("~/URLRouting") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-indigo">&#128279;</div>
-                                        <div>
-                                            <div class="menu-item-title">URL Routing</div>
-                                            <div class="menu-item-desc">Friendly URLs &amp; routing handler</div>
+                                        <div class="sub-group-block">
+                                            <div class="sub-group-title">&#9997; Editing &amp; Validation</div>
+                                            <div class="sub-group-grid">
+                                                <a href="<%= ResolveUrl("~/GridTemplateField") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-sky">&#9997;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">TemplateField</span>
+                                                        <span class="compact-hint">DropDownList editing</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/GridValidation") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-amber">&#9888;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Field Validation</span>
+                                                        <span class="compact-hint">Required validators</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/GridInsertUpdateDelete") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-teal">&#10010;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Inline CRUD</span>
+                                                        <span class="compact-hint">Insert, update &amp; delete</span>
+                                                    </div>
+                                                </a>
+                                            </div>
                                         </div>
-                                    </a>
-
-                                    <a href="<%= ResolveUrl("~/Counting") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-rose">&#128290;</div>
-                                        <div>
-                                            <div class="menu-item-title">Visitor Counter</div>
-                                            <div class="menu-item-desc">Application &amp; session counters</div>
-                                        </div>
-                                    </a>
-
-                                    <a href="<%= ResolveUrl("~/Articles/1/Introduction-to-ASP.NET") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-teal">&#128196;</div>
-                                        <div>
-                                            <div class="menu-item-title">Knowledge Articles</div>
-                                            <div class="menu-item-desc">Routed article repository sample</div>
-                                        </div>
-                                    </a>
-                                </div>
-
-                                <!-- Column 3: GridView Feature Modules -->
-                                <div class="menu-col">
-                                    <div class="menu-col-header">
-                                        <span>&#128202;</span>
-                                        <span>GridView Modules</span>
                                     </div>
 
-                                    <a href="<%= ResolveUrl("~/AllGridProp") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-blue">&#128203;</div>
-                                        <div>
-                                            <div class="menu-item-title">GridView Hub</div>
-                                            <div class="menu-item-desc">All capabilities overview</div>
+                                    <!-- Pane 3: Products & Inventory -->
+                                    <div class="category-content-panel" id="catPanel-products" role="tabpanel">
+                                        <div class="sub-group-block">
+                                            <div class="sub-group-title">&#128230; Catalog &amp; Details</div>
+                                            <div class="sub-group-grid">
+                                                <a href="<%= ResolveUrl("~/products.aspx") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-blue">&#128230;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Products Catalog</span>
+                                                        <span class="compact-hint">Interactive product grid</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/ProductDetails") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-green">&#128203;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Product Details</span>
+                                                        <span class="compact-hint">Master-detail view</span>
+                                                    </div>
+                                                </a>
+                                            </div>
                                         </div>
-                                    </a>
 
-                                    <a href="<%= ResolveUrl("~/GridMultiCulture") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-green">&#128181;</div>
-                                        <div>
-                                            <div class="menu-item-title">Multi-Culture Currency</div>
-                                            <div class="menu-item-desc">RowDataBound multi-currency</div>
+                                        <div class="sub-group-block">
+                                            <div class="sub-group-title">&#9881; Operations &amp; LINQ</div>
+                                            <div class="sub-group-grid">
+                                                <a href="<%= ResolveUrl("~/ProductForm") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-indigo">&#10010;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Add Product Form</span>
+                                                        <span class="compact-hint">New item entry form</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/ProductLinqCurd") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-purple">&#9881;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Product LINQ CRUD</span>
+                                                        <span class="compact-hint">LINQ to SQL table CRUD</span>
+                                                    </div>
+                                                </a>
+                                            </div>
                                         </div>
-                                    </a>
+                                    </div>
 
-                                    <a href="<%= ResolveUrl("~/GridHiddenCulture") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-purple">&#128065;</div>
-                                        <div>
-                                            <div class="menu-item-title">Hidden Column Binding</div>
-                                            <div class="menu-item-desc">Hidden culture column format</div>
+                                    <!-- Pane 4: State & Tools -->
+                                    <div class="category-content-panel" id="catPanel-tools" role="tabpanel">
+                                        <div class="sub-group-block">
+                                            <div class="sub-group-title">&#127850; State &amp; Counters</div>
+                                            <div class="sub-group-grid">
+                                                <a href="<%= ResolveUrl("~/CookiesSend") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-amber">&#127850;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Cookies</span>
+                                                        <span class="compact-hint">State persistence &amp; read</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/Counting") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-rose">&#128290;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Visitor Counter</span>
+                                                        <span class="compact-hint">Session &amp; app count</span>
+                                                    </div>
+                                                </a>
+                                            </div>
                                         </div>
-                                    </a>
 
-                                    <a href="<%= ResolveUrl("~/GridConditionalFormatting") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-rose">&#127912;</div>
-                                        <div>
-                                            <div class="menu-item-title">Conditional Formatting</div>
-                                            <div class="menu-item-desc">Dynamic high-salary row highlight</div>
+                                        <div class="sub-group-block">
+                                            <div class="sub-group-title">&#128279; Routing &amp; Articles</div>
+                                            <div class="sub-group-grid">
+                                                <a href="<%= ResolveUrl("~/URLRouting") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-indigo">&#128279;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">URL Routing</span>
+                                                        <span class="compact-hint">SEO friendly handler</span>
+                                                    </div>
+                                                </a>
+                                                <a href="<%= ResolveUrl("~/Articles/1/Introduction-to-ASP.NET") %>" class="compact-menu-link menu-item-link">
+                                                    <div class="compact-icon icon-teal">&#128196;</div>
+                                                    <div class="compact-info">
+                                                        <span class="compact-title">Articles</span>
+                                                        <span class="compact-hint">Routed repository</span>
+                                                    </div>
+                                                </a>
+                                            </div>
                                         </div>
-                                    </a>
-
-                                    <a href="<%= ResolveUrl("~/GridTemplateField") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-sky">&#9997;</div>
-                                        <div>
-                                            <div class="menu-item-title">TemplateField Editing</div>
-                                            <div class="menu-item-desc">DropDownList for Gender</div>
-                                        </div>
-                                    </a>
-
-                                    <a href="<%= ResolveUrl("~/GridValidation") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-amber">&#9888;</div>
-                                        <div>
-                                            <div class="menu-item-title">Field Validation</div>
-                                            <div class="menu-item-desc">RequiredFieldValidator &amp; summary</div>
-                                        </div>
-                                    </a>
-
-                                    <a href="<%= ResolveUrl("~/GridInsertUpdateDelete") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-teal">&#10010;</div>
-                                        <div>
-                                            <div class="menu-item-title">Inline CRUD Operations</div>
-                                            <div class="menu-item-desc">Full Insert, Update, and Delete</div>
-                                        </div>
-                                    </a>
-
-                                    <a href="<%= ResolveUrl("~/ProductLinqCurd") %>" class="menu-item-link">
-                                        <div class="menu-item-icon icon-blue">&#9881;</div>
-                                        <div>
-                                            <div class="menu-item-title">Product LINQ CRUD</div>
-                                            <div class="menu-item-desc">LINQ to SQL table editing</div>
-                                        </div>
-                                    </a>
+                                    </div>
                                 </div>
                             </div>
 
