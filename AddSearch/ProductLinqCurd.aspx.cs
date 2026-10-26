@@ -1,153 +1,354 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Drawing;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Drawing;
 
 namespace AddSearch.Connected_Services
 {
     public partial class ProductLinqCurd : System.Web.UI.Page
     {
-        private readonly string conStr = ConfigurationManager.ConnectionStrings["DBConn"].ConnectionString;
-        ProductsDataContext db =new ProductsDataContext(ConfigurationManager.ConnectionStrings["DBConn"].ConnectionString);
+        private ProductsDataContext GetDataContext()
+        {
+            string connStr = ConfigurationManager.ConnectionStrings["DBConn"]?.ConnectionString
+                ?? ConfigurationManager.ConnectionStrings["AssignmetConnectionString"]?.ConnectionString;
 
-        //ProductsDataContext db;
+            return !string.IsNullOrEmpty(connStr)
+                ? new ProductsDataContext(connStr)
+                : new ProductsDataContext("Server=.;Database=Assignmet;User Id=sa;Password=mcc#1234;TrustServerCertificate=True;");
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            //db = new ProductsDataContext(conStr);
-            if (!Page.IsPostBack)
+            if (!IsPostBack)
             {
+                pnlResult.Visible = false;
                 BindGridview();
             }
         }
+
         protected void BindGridview()
         {
-            var result = (
-                            from p in db.Products
-                            select new
-                            {
-                                ID = p.ID,
-                                Name = p.Name,
-                                Price = p.Price,
-                                stock = p.stock
-                            }
-                         ).ToList();
+            try
+            {
+                using (var db = GetDataContext())
+                {
+                    var productList = (from p in db.Products
+                                       orderby p.ID ascending
+                                       select new
+                                       {
+                                           ID = p.ID,
+                                           Name = p.Name,
+                                           Price = p.Price,
+                                           stock = p.stock
+                                       }).ToList();
 
-            GridView1.DataSource = result;
-            GridView1.DataBind();
+                    GridView1.DataSource = productList;
+                    GridView1.DataBind();
+
+                    ComputeMetrics(productList);
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowAlert("Failed to load products: " + ex.Message, "danger");
+            }
+        }
+
+        private void ComputeMetrics<T>(List<T> list)
+        {
+            if (list == null || list.Count == 0)
+            {
+                lblTotalProducts.Text = "0";
+                lblInStock.Text = "0";
+                lblLowStock.Text = "0";
+                lblAvgPrice.Text = "$ 0.00";
+                return;
+            }
+
+            int total = list.Count;
+            int inStockCount = 0;
+            int lowStockCount = 0;
+            decimal priceSum = 0;
+
+            foreach (dynamic item in list)
+            {
+                int stock = 0;
+                if (item.stock != null)
+                {
+                    int.TryParse(item.stock.ToString(), out stock);
+                }
+
+                if (stock > 30)
+                {
+                    inStockCount++;
+                }
+                else
+                {
+                    lowStockCount++;
+                }
+
+                if (item.Price != null)
+                {
+                    decimal.TryParse(item.Price.ToString(), out decimal price);
+                    priceSum += price;
+                }
+            }
+
+            lblTotalProducts.Text = total.ToString("N0");
+            lblInStock.Text = inStockCount.ToString("N0");
+            lblLowStock.Text = lowStockCount.ToString("N0");
+            lblAvgPrice.Text = string.Format("$ {0:N2}", total > 0 ? (priceSum / total) : 0);
+        }
+
+        protected string GetStockBadgeHtml(object stockObj)
+        {
+            if (stockObj == null || stockObj == DBNull.Value)
+            {
+                return "<span class=\"stock-pill stock-out\"><span class=\"stock-dot\"></span> Out of Stock (0)</span>";
+            }
+
+            int.TryParse(stockObj.ToString(), out int stock);
+
+            if (stock > 30)
+            {
+                return string.Format("<span class=\"stock-pill stock-in\"><span class=\"stock-dot\"></span> In Stock ({0} units)</span>", stock);
+            }
+            else if (stock > 0)
+            {
+                return string.Format("<span class=\"stock-pill stock-low\"><span class=\"stock-dot\"></span> Low Stock ({0} units)</span>", stock);
+            }
+            else
+            {
+                return "<span class=\"stock-pill stock-out\"><span class=\"stock-dot\"></span> Out of Stock (0)</span>";
+            }
+        }
+
+        protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            GridView1.PageIndex = e.NewPageIndex;
+            GridView1.EditIndex = -1;
+            BindGridview();
         }
 
         protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             if (e.CommandName == "AddNew")
             {
+                if (GridView1.FooterRow == null) return;
+
                 TextBox txtID = (TextBox)GridView1.FooterRow.FindControl("txtfID");
                 TextBox txtName = (TextBox)GridView1.FooterRow.FindControl("txtfName");
                 TextBox txtPrice = (TextBox)GridView1.FooterRow.FindControl("txtfPrice");
                 TextBox txtStock = (TextBox)GridView1.FooterRow.FindControl("txtfStock");
 
-                Product p = new Product();
+                string rawId = txtID?.Text.Trim();
+                string rawName = txtName?.Text.Trim();
+                string rawPrice = txtPrice?.Text.Trim();
+                string rawStock = txtStock?.Text.Trim();
 
-                p.ID = Convert.ToInt32(txtID.Text);
-                p.Name = txtName.Text;
-                p.Price = Convert.ToInt32(txtPrice.Text);
-                p.stock = Convert.ToInt32(txtStock.Text);
+                if (string.IsNullOrEmpty(rawId) || string.IsNullOrEmpty(rawName) ||
+                    string.IsNullOrEmpty(rawPrice) || string.IsNullOrEmpty(rawStock))
+                {
+                    ShowAlert("All fields are required to insert a product.", "warning");
+                    return;
+                }
 
-                db.Products.InsertOnSubmit(p);
-                db.SubmitChanges();
+                if (!int.TryParse(rawId, out int newId))
+                {
+                    ShowAlert("Product ID must be an integer (e.g. 6).", "warning");
+                    return;
+                }
 
-                lblResult.ForeColor = Color.Green;
-                lblResult.Text = "Record inserted successfully";
+                if (!int.TryParse(rawPrice, out int newPrice) || newPrice < 0)
+                {
+                    ShowAlert("Price must be a valid non-negative number.", "warning");
+                    return;
+                }
 
-                BindGridview();
+                if (!int.TryParse(rawStock, out int newStock) || newStock < 0)
+                {
+                    ShowAlert("Stock must be a valid non-negative integer.", "warning");
+                    return;
+                }
+
+                try
+                {
+                    using (var db = GetDataContext())
+                    {
+                        bool exists = db.Products.Any(x => x.ID == newId);
+                        if (exists)
+                        {
+                            ShowAlert(string.Format("Product ID #{0} already exists in the catalog.", newId), "warning");
+                            return;
+                        }
+
+                        Product p = new Product
+                        {
+                            ID = newId,
+                            Name = rawName,
+                            Price = newPrice,
+                            stock = newStock
+                        };
+
+                        db.Products.InsertOnSubmit(p);
+                        db.SubmitChanges();
+
+                        ShowAlert(string.Format("Product #{0} ('{1}') inserted successfully!", newId, rawName), "success");
+
+                        // Maintain current PageIndex
+                        BindGridview();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ShowAlert("Error inserting product: " + ex.Message, "danger");
+                }
             }
         }
-
 
         protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
         {
             GridView1.EditIndex = e.NewEditIndex;
-
             BindGridview();
         }
 
         protected void GridView1_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
         {
             GridView1.EditIndex = -1;
-
             BindGridview();
         }
 
         protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
         {
-            int id = Convert.ToInt32(
-                GridView1.DataKeys[e.RowIndex].Values["ID"]);
+            if (e.RowIndex < 0 || e.RowIndex >= GridView1.Rows.Count) return;
 
-            TextBox txtName =
-                (TextBox)GridView1.Rows[e.RowIndex].FindControl("txtName");
+            int id = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Values["ID"]);
 
-            TextBox txtPrice =
-                (TextBox)GridView1.Rows[e.RowIndex].FindControl("txtPrice");
+            TextBox txtName = (TextBox)GridView1.Rows[e.RowIndex].FindControl("txtName");
+            TextBox txtPrice = (TextBox)GridView1.Rows[e.RowIndex].FindControl("txtPrice");
+            TextBox txtStock = (TextBox)GridView1.Rows[e.RowIndex].FindControl("txtStock");
 
-            TextBox txtStock =
-                (TextBox)GridView1.Rows[e.RowIndex].FindControl("txtStock");
+            string rawName = txtName?.Text.Trim();
+            string rawPrice = txtPrice?.Text.Trim();
+            string rawStock = txtStock?.Text.Trim();
 
-            Product p = db.Products
-                          .FirstOrDefault(x => x.ID == id);
+            if (string.IsNullOrEmpty(rawName) || string.IsNullOrEmpty(rawPrice) || string.IsNullOrEmpty(rawStock))
+            {
+                ShowAlert("Product Name, Price, and Stock cannot be empty.", "warning");
+                return;
+            }
 
-            p.Name = txtName.Text;
-            p.Price = Convert.ToInt32(txtPrice.Text);
-            p.stock = Convert.ToInt32(txtStock.Text);
+            if (!int.TryParse(rawPrice, out int priceVal) || priceVal < 0)
+            {
+                ShowAlert("Price must be a valid non-negative number.", "warning");
+                return;
+            }
 
-            db.SubmitChanges();
+            if (!int.TryParse(rawStock, out int stockVal) || stockVal < 0)
+            {
+                ShowAlert("Stock must be a valid non-negative integer.", "warning");
+                return;
+            }
 
-            GridView1.EditIndex = -1;
-            lblResult.ForeColor = Color.Blue;
-            lblResult.Text = "Record Updated successfully";
+            try
+            {
+                using (var db = GetDataContext())
+                {
+                    Product p = db.Products.FirstOrDefault(x => x.ID == id);
+                    if (p != null)
+                    {
+                        p.Name = rawName;
+                        p.Price = priceVal;
+                        p.stock = stockVal;
 
-            BindGridview();
+                        db.SubmitChanges();
+
+                        GridView1.EditIndex = -1;
+                        ShowAlert(string.Format("Product #{0} ('{1}') updated successfully!", id, rawName), "success");
+
+                        // Maintain current PageIndex
+                        BindGridview();
+                    }
+                    else
+                    {
+                        ShowAlert(string.Format("Product #{0} not found.", id), "danger");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowAlert("Error updating product: " + ex.Message, "danger");
+            }
         }
 
         protected void GridView1_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {
-            int id = Convert.ToInt32(
-                GridView1.DataKeys[e.RowIndex].Values["ID"]);
+            if (e.RowIndex < 0 || e.RowIndex >= GridView1.Rows.Count) return;
 
-            Product p = db.Products
-                          .FirstOrDefault(x => x.ID == id);
+            int id = Convert.ToInt32(GridView1.DataKeys[e.RowIndex].Values["ID"]);
 
-            db.Products.DeleteOnSubmit(p);
+            try
+            {
+                using (var db = GetDataContext())
+                {
+                    Product p = db.Products.FirstOrDefault(x => x.ID == id);
+                    if (p != null)
+                    {
+                        string deletedName = p.Name;
+                        db.Products.DeleteOnSubmit(p);
+                        db.SubmitChanges();
 
-            db.SubmitChanges();
-            lblResult.ForeColor = Color.Red;
-            lblResult.Text = "Product deleted successfully";
+                        ShowAlert(string.Format("Product #{0} ('{1}') deleted successfully!", id, deletedName), "success");
 
+                        int totalRows = db.Products.Count();
+                        int maxPageIndex = totalRows > 0 ? (int)Math.Ceiling((double)totalRows / GridView1.PageSize) - 1 : 0;
+                        if (GridView1.PageIndex > maxPageIndex)
+                        {
+                            GridView1.PageIndex = Math.Max(0, maxPageIndex);
+                        }
 
-            BindGridview();
+                        GridView1.EditIndex = -1;
+                        BindGridview();
+                    }
+                    else
+                    {
+                        ShowAlert(string.Format("Product #{0} not found for deletion.", id), "warning");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowAlert("Error deleting product: " + ex.Message, "danger");
+            }
         }
 
-        //protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
-        //{
-        //    if (e.Row.RowType == DataControlRowType.DataRow)
-        //    {
-        //        foreach (Control c in e.Row.Cells[e.Row.Cells.Count - 1].Controls)
-        //        {
-        //            if (c is LinkButton)
-        //            {
-        //                LinkButton btn = (LinkButton)c;
+        private void ShowAlert(string message, string alertType)
+        {
+            pnlResult.Visible = true;
+            lblResult.Text = Server.HtmlEncode(message);
 
-        //                if (btn.CommandName == "Delete")
-        //                {
-        //                    btn.OnClientClick =
-        //                        "return confirm('Are you sure you want to delete this record?');";
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+            switch (alertType.ToLower())
+            {
+                case "success":
+                    divAlert.Attributes["class"] = "alert-banner alert-banner-success";
+                    spAlertIcon.InnerHtml = "&#10004;";
+                    break;
+                case "danger":
+                    divAlert.Attributes["class"] = "alert-banner alert-banner-danger";
+                    spAlertIcon.InnerHtml = "&#10006;";
+                    break;
+                case "warning":
+                    divAlert.Attributes["class"] = "alert-banner alert-banner-warning";
+                    spAlertIcon.InnerHtml = "&#9888;";
+                    break;
+                default:
+                    divAlert.Attributes["class"] = "alert-banner alert-banner-info";
+                    spAlertIcon.InnerHtml = "&#9432;";
+                    break;
+            }
+        }
     }
 }
