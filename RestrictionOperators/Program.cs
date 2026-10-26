@@ -112,7 +112,21 @@ namespace RestrictionOperators
             {
                 Console.WriteLine(vertex);
             }
-            
+
+
+            Console.WriteLine("Question 3: Given a student's enrolled courses for the year, extract a flat, " +
+                "duplicated list of every unique prerequisite course code they need to clear.");
+
+            var prerequisites =(from course in Course.enrolledCourses
+                                 from prerequisite in course.Prerequisites
+                                 select prerequisite)
+                                .Distinct();
+
+           foreach (var item in prerequisites)
+           {
+                 Console.WriteLine(item);
+           }
+
 
 
         }
