@@ -92,7 +92,7 @@ namespace RestrictionOperators
                     ("A","C"),
                     ("A","D"),
                     ("A","E"),
-                    ("B","C"),
+                    ("A","C"),
                     ("C","D"),
                     ("D","E")
                 };
