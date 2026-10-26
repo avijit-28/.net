@@ -21,7 +21,7 @@ namespace RestrictionOperators
 
             // example 1
             Console.WriteLine("Example 1: Sort Students by Name in ascending order");
-            IEnumerable<Student> result1 = Student.GetAllStudents().OrderBy(s => s.Name);
+            IEnumerable<Student> result1 = Student.GetAllStudents().OrderByDescending(s => s.Name);
             foreach (Student student in result1)
             {
                 Console.WriteLine(student.Name);
@@ -31,8 +31,8 @@ namespace RestrictionOperators
             // example 2
             Console.WriteLine("Example 2: Rewrite Example 1 using SQL like syntax");
             IEnumerable<Student> result2 = from student in Student.GetAllStudents()
-                                          orderby student.Name
-                                          select student;
+                                           orderby student.Name 
+                                           select student;
             foreach (Student student in result2)
             {
                 Console.WriteLine(student.Name);
