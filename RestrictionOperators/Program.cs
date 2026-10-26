@@ -47,7 +47,7 @@ namespace RestrictionOperators
                 Console.WriteLine("{0} -> {1}", group.Key, group.Count());
             }
             //Console.WriteLine("***************************************");
-            //Console.WriteLine("\n");
+            Console.WriteLine("\n");
 
             //Example 2: Get Employee Count By Department and also each employee and department name
             //var employeeGroup2 = from employee in Employee.GetAllEmployees()
@@ -83,8 +83,9 @@ namespace RestrictionOperators
             //    }
             //    Console.WriteLine(); Console.WriteLine();
             //}
-            Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++");
+            //Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++");
 
+            Console.WriteLine("Question 2: Find all graph nodes (vertices) that have a degree (number of connections) greater than 3");
 
             var edges = new List<(string, string)>
                 {
