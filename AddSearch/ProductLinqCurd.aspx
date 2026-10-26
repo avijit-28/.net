@@ -99,10 +99,6 @@
 
 
 
-    
-                        </Columns>
-
-                    </asp:GridView>
                <asp:TemplateField HeaderText="Actions">
                 <ItemTemplate>
                     <asp:LinkButton ID="lnkEdit"
@@ -138,7 +134,10 @@
                     </asp:LinkButton>
                 </EditItemTemplate>
             </asp:TemplateField>
+    
+                        </Columns>
 
+                    </asp:GridView>
 
         <br />
 
