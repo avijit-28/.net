@@ -100,11 +100,10 @@
                
                 <asp:CommandField ShowEditButton="True"
                     ShowDeleteButton="True" 
-                    OnClientClick="return confirm('Are you sure you want to delete this record?');/>
+                    OnClientClick="return confirm('Are you sure you want to delete this record?')
+                    />
 
-                <asp:TemplateField>
-    
-</asp:TemplateField>
+                
 
             </Columns>
 
