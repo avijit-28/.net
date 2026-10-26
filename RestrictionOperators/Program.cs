@@ -62,7 +62,7 @@ namespace RestrictionOperators
                 }
                 Console.WriteLine(); Console.WriteLine();
             }
-
+            Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++");
             //Example 3
 
             var employeeGroup3 = from employee in Employee.GetAllEmployees()
@@ -73,6 +73,16 @@ namespace RestrictionOperators
                                      Key = eGroup.Key,
                                      Employees = eGroup.OrderBy(x => x.Name)
                                  };
+            foreach (var group in employeeGroup3)
+            {
+                Console.WriteLine("{0} - {1}", group.Key, group.Employees.Count());
+                Console.WriteLine("----------");
+                foreach (var employee in group.Employees)
+                {
+                    Console.WriteLine(employee.Name + "\t" + employee.Department);
+                }
+                Console.WriteLine(); Console.WriteLine();
+            }
 
         }
     }
