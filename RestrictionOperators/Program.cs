@@ -83,6 +83,26 @@ namespace RestrictionOperators
                 }
                 Console.WriteLine(); Console.WriteLine();
             }
+            Console.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++");
+
+
+            var edges = new List<(string, string)>
+                {
+                    ("A","B"),
+                    ("A","C"),
+                    ("A","D"),
+                    ("A","E"),
+                    ("B","C"),
+                    ("C","D"),
+                    ("D","E")
+                };
+
+            var result = edges.SelectMany(e => new[] { e.Item1, e.Item2 }).GroupBy(v => v).Where(g => g.Count() > 3).Select(g => g.Key);
+
+            foreach (var vertex in result)
+            {
+                Console.WriteLine(vertex);
+            }
 
         }
     }
