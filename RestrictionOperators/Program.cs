@@ -47,7 +47,7 @@ namespace RestrictionOperators
                 Console.WriteLine("{0} -> {1}", group.Key, group.Count());
             }
             //Console.WriteLine("***************************************");
-            Console.WriteLine("\n");
+            //Console.WriteLine("\n");
 
             //Example 2: Get Employee Count By Department and also each employee and department name
             //var employeeGroup2 = from employee in Employee.GetAllEmployees()
