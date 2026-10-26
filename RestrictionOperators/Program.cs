@@ -62,6 +62,18 @@ namespace RestrictionOperators
                 }
                 Console.WriteLine(); Console.WriteLine();
             }
+
+            //Example 3
+
+            var employeeGroup3 = from employee in Employee.GetAllEmployees()
+                                 group employee by employee.Department into eGroup
+                                 orderby eGroup.Key
+                                 select new
+                                 {
+                                     Key = eGroup.Key,
+                                     Employees = eGroup.OrderBy(x => x.Name)
+                                 };
+
         }
     }
 }
