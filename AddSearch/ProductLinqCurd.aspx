@@ -15,7 +15,7 @@
             ShowFooter="True"
             AllowPaging="True"
             PageSize="10"
-            OnPageIndexChanging="GridView1_PageIndexChanging"
+            
             OnRowEditing="GridView1_RowEditing"
             OnRowUpdating="GridView1_RowUpdating"
             OnRowCancelingEdit="GridView1_RowCancelingEdit"
