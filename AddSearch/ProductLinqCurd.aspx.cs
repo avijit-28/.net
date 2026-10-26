@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Drawing;
 
 namespace AddSearch.Connected_Services
 {
@@ -59,6 +60,9 @@ namespace AddSearch.Connected_Services
                 db.Products.InsertOnSubmit(p);
                 db.SubmitChanges();
 
+                lblResult.ForeColor = Color.Green;
+                lblResult.Text = "Record inserted successfully";
+
                 BindGridview();
             }
         }
@@ -102,6 +106,8 @@ namespace AddSearch.Connected_Services
             db.SubmitChanges();
 
             GridView1.EditIndex = -1;
+            lblResult.ForeColor = Color.Blue;
+            lblResult.Text = "Record Updated successfully";
 
             BindGridview();
         }
@@ -117,6 +123,9 @@ namespace AddSearch.Connected_Services
             db.Products.DeleteOnSubmit(p);
 
             db.SubmitChanges();
+            lblResult.ForeColor = Color.Red;
+            lblResult.Text = "Product deleted successfully";
+
 
             BindGridview();
         }
