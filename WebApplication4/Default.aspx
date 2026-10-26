@@ -1,4 +1,4 @@
-<%@ Page Title="Home Portal" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="WebApplication4.Default" %>
+﻿<%@ Page Title="Home Portal" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="WebApplication4.Default" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style type="text/css">
@@ -575,6 +575,18 @@
                         <p class="module-desc">High-performance server-side paging utilizing <code>spGetUsers_by_PageIndex_and_PageSize</code> and dynamic <code>asp:Repeater</code> pager.</p>
                     </div>
                     <a href="<%= ResolveUrl("~/UserDetailsCustomPaging") %>" class="module-link">Open Pager &rarr;</a>
+                </div>
+                <!-- 10. Product LINQ to SQL CRUD -->
+                <div class="module-card">
+                    <div>
+                        <div class="module-header">
+                            <div class="module-icon icon-teal">&#9881;</div>
+                            <span class="tech-pill">LINQ to SQL CRUD</span>
+                        </div>
+                        <div class="module-name">Product LINQ Operations</div>
+                        <p class="module-desc">Type-safe Create, Read, Update, and Delete on <code>dbo.Products</code> with in-line editing, footer insertion, and confirmation dialogs.</p>
+                    </div>
+                    <a href="<%= ResolveUrl("~/ProductLinqCurd") %>" class="module-link">Open LINQ CRUD &rarr;</a>
                 </div>
             </div>
         </div>
