@@ -49,7 +49,7 @@ public partial class CrystalReportPractice : System.Web.UI.Page
         da.SelectCommand.Parameters.AddWithValue("@country", ddlCountry.SelectedValue);
         da.Fill(ds);
 
-        rd.Load(Server.MapPath("~/CrystalReport.rpt"));
+        rd.Load(Server.MapPath("~/CrystalReport2.rpt"));
         rd.SetDataSource(ds.Tables[0]);
         CrystalReportViewer1.ReportSource = rd;
     }
