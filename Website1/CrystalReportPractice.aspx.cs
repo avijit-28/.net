@@ -22,7 +22,7 @@ public partial class CrystalReportPractice : System.Web.UI.Page
         {
 
             BindCountry();
-            
+            LoadReport();
         }
     }
     
@@ -41,22 +41,27 @@ public partial class CrystalReportPractice : System.Web.UI.Page
         ddlCountry.Items.Insert(0, new ListItem("--Select Country--", " "));
 
     }
-    protected void btnSearch_Click(object sender, EventArgs e)
+    public void LoadReport()
     {
         con = new SqlConnection("Data Source=.;Initial Catalog=Assignmet;User ID=sa;Password=mcc#1234");
         da = new SqlDataAdapter("SELECT * FROM [dbo].[AllEmployee] where FirstName like'%'+@fname+'%' AND (@country='' OR Country=@country) ", con);
         da.SelectCommand.Parameters.AddWithValue("@fname", txtFirstName.Text);
         da.SelectCommand.Parameters.AddWithValue("@country", ddlCountry.SelectedValue);
         da.Fill(ds);
-       
+
         rd.Load(Server.MapPath("~/CrystalReport.rpt"));
         rd.SetDataSource(ds.Tables[0]);
         CrystalReportViewer1.ReportSource = rd;
     }
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        
+        LoadReport();
+    }
 
     protected void btnPdf_Download(object sender, EventArgs e)
     {
-        rd.Load(Server.MapPath("~/CrystalReport.rpt"));
+        LoadReport();
         convertToPDF();
     }
     public void convertToPDF()
