@@ -24,7 +24,6 @@
                         <asp:DropDownList ID="ddlCountry" runat="server">
                            
                         </asp:DropDownList>
-                        <asp:Button ID="Button1" runat="server" Text="Button" />
                     </td>
                     <td><asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" /></td>
                 </tr>
