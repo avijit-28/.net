@@ -34,7 +34,7 @@ public partial class CrystalReportPractice : System.Web.UI.Page
         ddlCountry.DataValueField = "Country";
         ddlCountry.DataBind();
 
-        ddlCountry.Items.Insert(0, new ListItem("--Select Country", " "));
+        ddlCountry.Items.Insert(0, new ListItem("--Select Country--", " "));
 
     }
     protected void btnSearch_Click(object sender, EventArgs e)
