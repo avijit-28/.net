@@ -22,7 +22,7 @@ public partial class CrystalReportPractice : System.Web.UI.Page
     protected void btnSearch_Click(object sender, EventArgs e)
     {
         con = new SqlConnection("Data Source=.;Initial Catalog=Assignmet;User ID=sa;Password=mcc#1234");
-        da = new SqlDataAdapter("SELECT * FROM [dbo].[AllEmployee] where FirstName like  '%'+@fname+'%' ", con);
+        da = new SqlDataAdapter("SELECT * FROM [dbo].[AllEmployee] where FirstName like'%'+@fname+'%' ", con);
         da.SelectCommand.Parameters.AddWithValue("@fname", txtFirstName);
         da.Fill(ds);
         ReportDocument rd = new ReportDocument();
