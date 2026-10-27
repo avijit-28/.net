@@ -16,9 +16,27 @@ public partial class CrystalReportPractice : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
+        if (!IsPostBack)
+        {
+
+            BindCountry();
+        }
+    }
+    private void BindCountry()
+    {
+        con = new SqlConnection("Data Source=.;Initial Catalog=Assignmet;User ID=sa;Password=mcc#1234");
+        da = new SqlDataAdapter("SELECT distinct Country FROM [dbo].[AllEmployee] order by Country ", con);
+        DataTable dt = new DataTable();
+        da.Fill(dt);
+
+        ddlCountry.DataSource = dt;
+        ddlCountry.DataTextField = "Country";
+        ddlCountry.DataValueField = "Country";
+        ddlCountry.DataBind();
+
+        ddlCountry.Items.Insert(0, new ListItem("--Select Country", " "));
 
     }
-
     protected void btnSearch_Click(object sender, EventArgs e)
     {
         con = new SqlConnection("Data Source=.;Initial Catalog=Assignmet;User ID=sa;Password=mcc#1234");
