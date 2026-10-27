@@ -18,6 +18,14 @@
                 <tr>
                     <td><asp:Label ID="lblName" runat="server" Text="Enter First"></asp:Label></td>
                     <td><asp:TextBox ID="txtFirstName" runat="server"></asp:TextBox></td>
+                    <td>
+                        <asp:DropDownList ID="ddlCountry" runat="server">
+                            <asp:ListItem Text="All" Value=""></asp:ListItem>
+                            <asp:ListItem Text="India" Value="India"></asp:ListItem>
+                            <asp:ListItem Text="USA" Value="USA"></asp:ListItem>
+                            <asp:ListItem Text="UK" Value="UK"></asp:ListItem>
+                        </asp:DropDownList>
+                    </td>
                     <td><asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" /></td>
                 </tr>
             </table>
