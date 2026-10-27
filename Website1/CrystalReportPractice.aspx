@@ -15,13 +15,16 @@
     <div>
         <asp:Panel ID="Panel1" runat="server">
             <table>
+                <tr> <td><asp:Button ID="Button2" runat="server" Text="Convert to PDF" OnClick="btnPdf_Download" /></td></tr>
                 <tr>
+                   
                     <td><asp:Label ID="lblName" runat="server" Text="Enter First"></asp:Label></td>
                     <td><asp:TextBox ID="txtFirstName" runat="server"></asp:TextBox></td>
                     <td>
                         <asp:DropDownList ID="ddlCountry" runat="server">
                            
                         </asp:DropDownList>
+                        <asp:Button ID="Button1" runat="server" Text="Button" />
                     </td>
                     <td><asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" /></td>
                 </tr>
