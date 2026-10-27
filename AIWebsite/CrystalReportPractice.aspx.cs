@@ -93,7 +93,7 @@ public partial class CrystalReportPractice : System.Web.UI.Page
                         int rowCount = ds.Tables.Count > 0 ? ds.Tables[0].Rows.Count : 0;
                         lblRecordCount.Text = string.Format("<i class='fa-solid fa-users me-1'></i> {0} Record{1} Found", rowCount, rowCount == 1 ? "" : "s");
 
-                        // Auto-standardize employee photos to ensure uniform dimensions and DPI in Crystal Reports
+                        // Auto-standardize employee photos to uniform Passport Size (420x540 @ 96 DPI, 3.5:4.5 ratio)
                         if (ds.Tables.Count > 0 && ds.Tables[0].Columns.Contains("Photo"))
                         {
                             foreach (DataRow row in ds.Tables[0].Rows)
@@ -146,9 +146,8 @@ public partial class CrystalReportPractice : System.Web.UI.Page
     }
 
     /// <summary>
-    /// Ensures that dynamic images passed to Crystal Reports are standardized to uniform dimensions
-    /// (600x404 pixels @ 96 DPI, matching the exact 2510x1688 twips aspect ratio of the Picture box).
-    /// Prevents huge images from blowing up the row height and tiny high-DPI images from shrinking.
+    /// Ensures that dynamic employee photos are formatted in standard Passport Size
+    /// (420x540 pixels @ 96 DPI, 35mm x 45mm standard portrait aspect ratio 7:9).
     /// </summary>
     private string EnsureStandardizedPhoto(string photoPath)
     {
@@ -159,13 +158,13 @@ public partial class CrystalReportPractice : System.Web.UI.Page
 
         try
         {
-            const int targetWidth = 600;
-            const int targetHeight = 404;
+            const int targetWidth = 420;
+            const int targetHeight = 540;
             const float targetDpi = 96.0f;
 
             string dir = Path.GetDirectoryName(photoPath);
             string filename = Path.GetFileName(photoPath);
-            string cacheDir = Path.Combine(dir, "Normalized");
+            string cacheDir = Path.Combine(dir, "Normalized_Passport");
 
             if (!Directory.Exists(cacheDir))
             {
@@ -181,7 +180,7 @@ public partial class CrystalReportPractice : System.Web.UI.Page
 
             using (System.Drawing.Image src = System.Drawing.Image.FromFile(photoPath))
             {
-                // If the source image already has the exact target dimensions and DPI, use it directly
+                // If the source image already has exact passport dimensions and DPI, return it
                 if (src.Width == targetWidth && src.Height == targetHeight &&
                     Math.Abs(src.HorizontalResolution - targetDpi) < 1.0f &&
                     Math.Abs(src.VerticalResolution - targetDpi) < 1.0f)
@@ -206,17 +205,17 @@ public partial class CrystalReportPractice : System.Web.UI.Page
                         int drawX = 0, drawY = 0, drawW = targetWidth, drawH = targetHeight;
                         if (srcRatio > targetRatio)
                         {
-                            // Landscape: fit height, center horizontally
+                            // Landscape source: scale by height, center horizontally
                             double scale = (double)targetHeight / src.Height;
                             drawW = (int)(src.Width * scale);
                             drawX = (targetWidth - drawW) / 2;
                         }
                         else
                         {
-                            // Portrait: fit width, center vertically with slight top bias for faces
+                            // Portrait source: scale by width, align towards upper portion for face
                             double scale = (double)targetWidth / src.Width;
                             drawH = (int)(src.Height * scale);
-                            drawY = (int)((targetHeight - drawH) * 0.25);
+                            drawY = (int)((targetHeight - drawH) * 0.15);
                         }
 
                         g.DrawImage(src, new System.Drawing.Rectangle(drawX, drawY, drawW, drawH));
@@ -251,7 +250,7 @@ public partial class CrystalReportPractice : System.Web.UI.Page
         }
         catch
         {
-            // Fallback gracefully to original path if any unexpected error occurs
+            // Fallback gracefully
             return photoPath;
         }
     }
