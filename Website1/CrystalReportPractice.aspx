@@ -24,6 +24,7 @@
                         <asp:DropDownList ID="ddlCountry" runat="server">
                            
                         </asp:DropDownList>
+                        <asp:Button ID="Button1" runat="server" Text="Button" />
                     </td>
                     <td><asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" /></td>
                 </tr>
@@ -35,7 +36,7 @@
          <CR:CrystalReportViewer ID="CrystalReportViewer1" runat="server" AutoDataBind="true"
              Height="1039px" ReportSourceID="CrystalReportSource1" Width="901px" ToolPanelView="ParameterPanel"  />
          <CR:CrystalReportSource ID="CrystalReportSource1" runat="server">
-             <Report FileName="CrystalReport.rpt"></Report>
+             <Report FileName="CrystalReport2.rpt"></Report>
          </CR:CrystalReportSource>
     </div>
     </form>
