@@ -23,7 +23,7 @@ public partial class CrystalReportPractice : System.Web.UI.Page
     {
         con = new SqlConnection("Data Source=.;Initial Catalog=Assignmet;User ID=sa;Password=mcc#1234");
         da = new SqlDataAdapter("SELECT * FROM [dbo].[AllEmployee] where FirstName like'%'+@fname+'%' ", con);
-        da.SelectCommand.Parameters.AddWithValue("@fname", txtFirstName);
+        da.SelectCommand.Parameters.AddWithValue("@fname", txtFirstName.Text);
         da.Fill(ds);
         ReportDocument rd = new ReportDocument();
         rd.Load(Server.MapPath("CrystalReport.rpt"));
