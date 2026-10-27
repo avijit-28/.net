@@ -7,12 +7,14 @@ using System.Web.UI.WebControls;
 using System.Data;
 using System.Data.SqlClient;
 using CrystalDecisions.CrystalReports.Engine;
+using CrystalDecisions.Shared;
 
 public partial class CrystalReportPractice : System.Web.UI.Page
 {
     SqlConnection con;
     SqlDataAdapter da = new SqlDataAdapter();
     DataSet ds = new DataSet();
+    ReportDocument rd = new ReportDocument();
 
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -20,8 +22,10 @@ public partial class CrystalReportPractice : System.Web.UI.Page
         {
 
             BindCountry();
+            
         }
     }
+    
     private void BindCountry()
     {
         con = new SqlConnection("Data Source=.;Initial Catalog=Assignmet;User ID=sa;Password=mcc#1234");
@@ -44,9 +48,20 @@ public partial class CrystalReportPractice : System.Web.UI.Page
         da.SelectCommand.Parameters.AddWithValue("@fname", txtFirstName.Text);
         da.SelectCommand.Parameters.AddWithValue("@country", ddlCountry.SelectedValue);
         da.Fill(ds);
-        ReportDocument rd = new ReportDocument();
+       
         rd.Load(Server.MapPath("CrystalReport.rpt"));
         rd.SetDataSource(ds.Tables[0]);
         CrystalReportViewer1.ReportSource = rd;
+    }
+
+    protected void btnPdf_Download(object sender, EventArgs e)
+    {
+        convertToPDF();
+    }
+    public void convertToPDF()
+    {
+        ExportFormatType formatType = ExportFormatType.PortableDocFormat;
+        rd.ExportToHttpResponse(formatType, Response, true, "demo");
+        Response.End();
     }
 }
