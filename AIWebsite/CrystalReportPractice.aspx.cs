@@ -93,6 +93,23 @@ public partial class CrystalReportPractice : System.Web.UI.Page
                         int rowCount = ds.Tables.Count > 0 ? ds.Tables[0].Rows.Count : 0;
                         lblRecordCount.Text = string.Format("<i class='fa-solid fa-users me-1'></i> {0} Record{1} Found", rowCount, rowCount == 1 ? "" : "s");
 
+                        // Auto-standardize employee photos to ensure uniform dimensions and DPI in Crystal Reports
+                        if (ds.Tables.Count > 0 && ds.Tables[0].Columns.Contains("Photo"))
+                        {
+                            foreach (DataRow row in ds.Tables[0].Rows)
+                            {
+                                if (row["Photo"] != DBNull.Value)
+                                {
+                                    string originalPhoto = row["Photo"].ToString();
+                                    string standardizedPhoto = EnsureStandardizedPhoto(originalPhoto);
+                                    if (!string.IsNullOrEmpty(standardizedPhoto))
+                                    {
+                                        row["Photo"] = standardizedPhoto;
+                                    }
+                                }
+                            }
+                        }
+
                         string reportPath = Server.MapPath("~/CrystalReport2.rpt");
                         if (!File.Exists(reportPath))
                         {
@@ -125,6 +142,117 @@ public partial class CrystalReportPractice : System.Web.UI.Page
         catch (Exception ex)
         {
             ShowAlert("Error loading report: " + ex.Message, "danger");
+        }
+    }
+
+    /// <summary>
+    /// Ensures that dynamic images passed to Crystal Reports are standardized to uniform dimensions
+    /// (600x404 pixels @ 96 DPI, matching the exact 2510x1688 twips aspect ratio of the Picture box).
+    /// Prevents huge images from blowing up the row height and tiny high-DPI images from shrinking.
+    /// </summary>
+    private string EnsureStandardizedPhoto(string photoPath)
+    {
+        if (string.IsNullOrWhiteSpace(photoPath) || !File.Exists(photoPath))
+        {
+            return photoPath;
+        }
+
+        try
+        {
+            const int targetWidth = 600;
+            const int targetHeight = 404;
+            const float targetDpi = 96.0f;
+
+            string dir = Path.GetDirectoryName(photoPath);
+            string filename = Path.GetFileName(photoPath);
+            string cacheDir = Path.Combine(dir, "Normalized");
+
+            if (!Directory.Exists(cacheDir))
+            {
+                Directory.CreateDirectory(cacheDir);
+            }
+
+            string cachedPath = Path.Combine(cacheDir, filename);
+
+            if (File.Exists(cachedPath) && File.GetLastWriteTimeUtc(cachedPath) >= File.GetLastWriteTimeUtc(photoPath))
+            {
+                return cachedPath;
+            }
+
+            using (System.Drawing.Image src = System.Drawing.Image.FromFile(photoPath))
+            {
+                // If the source image already has the exact target dimensions and DPI, use it directly
+                if (src.Width == targetWidth && src.Height == targetHeight &&
+                    Math.Abs(src.HorizontalResolution - targetDpi) < 1.0f &&
+                    Math.Abs(src.VerticalResolution - targetDpi) < 1.0f)
+                {
+                    return photoPath;
+                }
+
+                using (System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(targetWidth, targetHeight, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
+                {
+                    bmp.SetResolution(targetDpi, targetDpi);
+                    using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bmp))
+                    {
+                        g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                        g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                        g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                        g.Clear(System.Drawing.Color.White);
+
+                        double srcRatio = (double)src.Width / src.Height;
+                        double targetRatio = (double)targetWidth / targetHeight;
+
+                        int drawX = 0, drawY = 0, drawW = targetWidth, drawH = targetHeight;
+                        if (srcRatio > targetRatio)
+                        {
+                            // Landscape: fit height, center horizontally
+                            double scale = (double)targetHeight / src.Height;
+                            drawW = (int)(src.Width * scale);
+                            drawX = (targetWidth - drawW) / 2;
+                        }
+                        else
+                        {
+                            // Portrait: fit width, center vertically with slight top bias for faces
+                            double scale = (double)targetWidth / src.Width;
+                            drawH = (int)(src.Height * scale);
+                            drawY = (int)((targetHeight - drawH) * 0.25);
+                        }
+
+                        g.DrawImage(src, new System.Drawing.Rectangle(drawX, drawY, drawW, drawH));
+                    }
+
+                    System.Drawing.Imaging.ImageCodecInfo jpegCodec = null;
+                    foreach (var codec in System.Drawing.Imaging.ImageCodecInfo.GetImageEncoders())
+                    {
+                        if (codec.MimeType == "image/jpeg")
+                        {
+                            jpegCodec = codec;
+                            break;
+                        }
+                    }
+
+                    if (jpegCodec != null)
+                    {
+                        using (var encParams = new System.Drawing.Imaging.EncoderParameters(1))
+                        {
+                            encParams.Param[0] = new System.Drawing.Imaging.EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 95L);
+                            bmp.Save(cachedPath, jpegCodec, encParams);
+                        }
+                    }
+                    else
+                    {
+                        bmp.Save(cachedPath, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    }
+                }
+            }
+
+            return cachedPath;
+        }
+        catch
+        {
+            // Fallback gracefully to original path if any unexpected error occurs
+            return photoPath;
         }
     }
 
