@@ -22,8 +22,9 @@ public partial class CrystalReportPractice : System.Web.UI.Page
     protected void btnSearch_Click(object sender, EventArgs e)
     {
         con = new SqlConnection("Data Source=.;Initial Catalog=Assignmet;User ID=sa;Password=mcc#1234");
-        da = new SqlDataAdapter("SELECT * FROM [dbo].[AllEmployee] where FirstName like'%'+@fname+'%' ", con);
+        da = new SqlDataAdapter("SELECT * FROM [dbo].[AllEmployee] where FirstName like'%'+@fname+'%' AND (@country='' OR Country=@country) ", con);
         da.SelectCommand.Parameters.AddWithValue("@fname", txtFirstName.Text);
+        da.SelectCommand.Parameters.AddWithValue("@country", ddlCountry.SelectedValue);
         da.Fill(ds);
         ReportDocument rd = new ReportDocument();
         rd.Load(Server.MapPath("CrystalReport.rpt"));
