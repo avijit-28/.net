@@ -20,12 +20,7 @@
                     <td><asp:TextBox ID="txtFirstName" runat="server"></asp:TextBox></td>
                     <td>
                         <asp:DropDownList ID="ddlCountry" runat="server">
-                            <asp:ListItem Text="All" Value=""></asp:ListItem>
-                            <asp:ListItem Text="India" Value="India"></asp:ListItem>
-                            <asp:ListItem Text="US" Value="US"></asp:ListItem>
-                            <asp:ListItem Text="UK" Value="UK"></asp:ListItem>
-                            <asp:ListItem Text="Malaysia" Value="Malaysia"></asp:ListItem>
-                            <asp:ListItem Text="South Africa" Value="South Africa"></asp:ListItem>
+                           
                         </asp:DropDownList>
                     </td>
                     <td><asp:Button ID="btnSearch" runat="server" Text="Search" OnClick="btnSearch_Click" /></td>
