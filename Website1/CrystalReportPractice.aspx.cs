@@ -67,7 +67,7 @@ public partial class CrystalReportPractice : System.Web.UI.Page
     public void convertToPDF()
     {
         ExportFormatType formatType = ExportFormatType.PortableDocFormat;
-        rd.ExportToHttpResponse(formatType, Response, true, "demo");
+        rd.ExportToHttpResponse(formatType, Response, true, "EmployeeReport");
         Response.End();
     }
 }
