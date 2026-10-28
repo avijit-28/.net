@@ -22,39 +22,34 @@ namespace FirstMVCProject.Controllers
         public ActionResult Details(int id)
         {
             var employees = _repo.GetEmployeeById(id);
-            return View(employees);
+            return View();
         }
 
         // GET: Employee/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Employee/Create
         [HttpPost]
         public ActionResult Create(Employee employee)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _repo.InsertEmployee(employee);
+                //if (ModelState.IsValid)
+                //{
+                    _repo.InsertEmployee(employee);
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                //}
+            }
+            catch
+            {
+                return View();
             }
 
-            return View(employee);
-            
         }
-
-        //// POST: Employee/Create
-        //[HttpPost]
-        //public ActionResult Create(FormCollection collection)
-        //{
-        //    try
-        //    {
-        //        // TODO: Add insert logic here
-
-        //        return RedirectToAction("Index");
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
 
         // GET: Employee/Edit/5
         public ActionResult Edit(int id)
@@ -91,6 +86,7 @@ namespace FirstMVCProject.Controllers
             try
             {
                 // TODO: Add delete logic here
+                _repo.DeleteEmployee(id);
 
                 return RedirectToAction("Index");
             }
