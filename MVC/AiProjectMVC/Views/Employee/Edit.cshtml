@@ -1,0 +1,139 @@
+@model AiProjectMVC.Models.Employee
+
+@{
+    ViewBag.Title = "Edit Employee";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <!-- Back Breadcrumb Link -->
+        <div class="mb-3">
+            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small fw-semibold">
+                <i class="bi bi-arrow-left me-1"></i> Back to Employee Directory
+            </a>
+        </div>
+
+        <div class="custom-card">
+            <div class="custom-card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-1 fw-bold text-dark"><i class="bi bi-pencil-square text-primary me-2"></i> Edit Employee Profile</h4>
+                    <p class="text-muted small mb-0">Update the details for <strong>@Model.Name</strong>.</p>
+                </div>
+                <span class="badge bg-light text-dark border px-3 py-2 fs-6">
+                    <i class="bi bi-hash text-muted"></i> ID: <strong>@Model.ID</strong>
+                </span>
+            </div>
+
+            <div class="custom-card-body">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.ID)
+
+                    if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty] != null)
+                    {
+                        <div class="custom-alert custom-alert-danger" role="alert">
+                            <i class="bi bi-exclamation-circle-fill fs-5 text-danger"></i>
+                            <div>@Html.ValidationSummary(true, "", new { @class = "mb-0" })</div>
+                        </div>
+                    }
+
+                    <div class="row g-3">
+                        <!-- Employee ID (Readonly Display) -->
+                        <div class="col-md-6">
+                            <label class="form-label">Employee ID (Fixed)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-lock text-muted"></i></span>
+                                <input type="text" class="form-control bg-light" value="@Model.ID" disabled readonly />
+                            </div>
+                            <span class="text-muted small">Employee ID is a unique key and cannot be altered.</span>
+                        </div>
+
+                        <!-- Full Name -->
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.Name, new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-person text-muted"></i></span>
+                                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", placeholder = "Enter full name", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger small mt-1 d-block" })
+                        </div>
+
+                        <!-- Department -->
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.Dept, new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-building text-muted"></i></span>
+                                <select name="Dept" id="Dept" class="form-select" required>
+                                    <option value="">-- Select Department --</option>
+                                    <option value="IT" @(Model.Dept == "IT" ? "selected" : "")>IT</option>
+                                    <option value="HR" @(Model.Dept == "HR" ? "selected" : "")>HR</option>
+                                    <option value="Finance" @(Model.Dept == "Finance" ? "selected" : "")>Finance</option>
+                                    <option value="Marketing" @(Model.Dept == "Marketing" ? "selected" : "")>Marketing</option>
+                                    <option value="Sales" @(Model.Dept == "Sales" ? "selected" : "")>Sales</option>
+                                    <option value="Operations" @(Model.Dept == "Operations" ? "selected" : "")>Operations</option>
+                                    @if (!new[] { "IT", "HR", "Finance", "Marketing", "Sales", "Operations" }.Contains(Model.Dept) && !string.IsNullOrWhiteSpace(Model.Dept))
+                                    {
+                                        <option value="@Model.Dept" selected>@Model.Dept</option>
+                                    }
+                                </select>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Dept, "", new { @class = "text-danger small mt-1 d-block" })
+                        </div>
+
+                        <!-- Salary -->
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.Salary, new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text bg-light fw-bold text-muted">₹</span>
+                                @Html.EditorFor(model => model.Salary, new { htmlAttributes = new { @class = "form-control", type = "number", step = "1000", placeholder = "e.g. 50000", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Salary, "", new { @class = "text-danger small mt-1 d-block" })
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.Gender, new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-gender-ambiguous text-muted"></i></span>
+                                <select name="Gender" id="Gender" class="form-select" required>
+                                    <option value="">-- Select Gender --</option>
+                                    <option value="Male" @(Model.Gender == "Male" ? "selected" : "")>Male</option>
+                                    <option value="Female" @(Model.Gender == "Female" ? "selected" : "")>Female</option>
+                                    <option value="Other" @(Model.Gender == "Other" ? "selected" : "")>Other</option>
+                                </select>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger small mt-1 d-block" })
+                        </div>
+
+                        <!-- City -->
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.City, new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-geo-alt text-muted"></i></span>
+                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g. Mumbai, Delhi, Bangalore", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger small mt-1 d-block" })
+                        </div>
+                    </div>
+
+                    <hr class="my-4 text-muted" />
+
+                    <!-- Form Buttons -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary-gradient px-4">
+                            <i class="bi bi-check2-circle"></i> Save Changes
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
