@@ -1,36 +1,108 @@
-﻿<!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - AiProject MVC</title>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+    <!-- Modern Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
         <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
+            <a class="navbar-brand" href="@Url.Action("Index", "Employee")">
+                <span class="brand-icon">
+                    <i class="bi bi-cpu-fill"></i>
+                </span>
+                <span>AiProject <span class="badge bg-primary fs-6 fw-normal px-2 py-1 ms-1">MVC</span></span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Employee" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active text-white" : "")" 
+                           href="@Url.Action("Index", "Employee")">
+                            <i class="bi bi-people-fill me-1"></i> Employees
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Employee" && ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active text-white" : "")" 
+                           href="@Url.Action("Create", "Employee")">
+                            <i class="bi bi-person-plus-fill me-1"></i> Add Employee
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("About", "Home")">
+                            <i class="bi bi-info-circle me-1"></i> About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Contact", "Home")">
+                            <i class="bi bi-envelope me-1"></i> Contact
+                        </a>
+                    </li>
                 </ul>
+
+                <div class="d-flex align-items-center gap-2">
+                    <a href="@Url.Action("Create", "Employee")" class="btn btn-primary-gradient btn-sm">
+                        <i class="bi bi-plus-lg"></i> New Employee
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
-    <div class="container body-content">
+
+    <!-- Main Container Content -->
+    <main class="container body-content">
+        <!-- Toast / Alert Notifications -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="custom-alert custom-alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill fs-5 text-success"></i>
+                <div class="flex-grow-1">@TempData["SuccessMessage"]</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="custom-alert custom-alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill fs-5 text-danger"></i>
+                <div class="flex-grow-1">@TempData["ErrorMessage"]</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="custom-alert custom-alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-database-fill-x fs-5 text-danger"></i>
+                <div class="flex-grow-1">@ViewBag.ErrorMessage</div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
-    </div>
+    </main>
+
+    <!-- Modern Footer -->
+    <footer>
+        <div class="container d-flex flex-wrap justify-content-between align-items-center">
+            <div class="col-md-6 d-flex align-items-center">
+                <span class="text-muted">&copy; @DateTime.Now.Year AiProjectMVC — Redesigned Employee Management System</span>
+            </div>
+            <ul class="nav col-md-6 justify-content-end list-unstyled d-flex gap-3">
+                <li class="text-muted"><i class="bi bi-shield-check text-success me-1"></i> SQL Server Connected</li>
+                <li class="text-muted"><i class="bi bi-bootstrap text-primary me-1"></i> Bootstrap 5.2</li>
+            </ul>
+        </div>
+    </footer>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
