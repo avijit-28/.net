@@ -1,0 +1,244 @@
+@model IEnumerable<AiProjectMVC.Models.Employee>
+
+@{
+    ViewBag.Title = "Employee Directory";
+    var employeeList = Model ?? Enumerable.Empty<AiProjectMVC.Models.Employee>();
+    int totalEmployees = employeeList.Count();
+    int totalDepts = employeeList.Select(e => e.Dept).Where(d => !string.IsNullOrWhiteSpace(d)).Distinct().Count();
+    double avgSalary = totalEmployees > 0 ? employeeList.Average(e => e.Salary) : 0;
+    string topCity = totalEmployees > 0 ? employeeList.GroupBy(e => e.City).OrderByDescending(g => g.Count()).FirstOrDefault()?.Key ?? "N/A" : "N/A";
+    
+    var colors = new[] { "#4f46e5", "#0ea5e9", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6", "#14b8a6" };
+}
+
+<!-- Page Header Box -->
+<div class="page-header-box d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+        <h1 class="page-title"><i class="bi bi-people-fill text-primary me-2"></i> Employee Directory</h1>
+        <p class="page-subtitle">View, search, and manage all organization staff records in real time.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="@Url.Action("Create")" class="btn btn-primary-gradient">
+            <i class="bi bi-person-plus-fill"></i> Add New Employee
+        </a>
+    </div>
+</div>
+
+<!-- Quick Statistics Row -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-primary">
+                <i class="bi bi-people"></i>
+            </div>
+            <div>
+                <div class="stat-label">Total Employees</div>
+                <div class="stat-value">@totalEmployees</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-success">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div>
+                <div class="stat-label">Average Salary</div>
+                <div class="stat-value">₹@avgSalary.ToString("N0")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-warning">
+                <i class="bi bi-building"></i>
+            </div>
+            <div>
+                <div class="stat-label">Departments</div>
+                <div class="stat-value">@totalDepts</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-info">
+                <i class="bi bi-geo-alt"></i>
+            </div>
+            <div>
+                <div class="stat-label">Top Location</div>
+                <div class="stat-value text-truncate" style="max-width: 140px;">@topCity</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Data Card -->
+<div class="custom-card">
+    <div class="custom-card-header flex-wrap gap-3">
+        <!-- Live Search Input -->
+        <div class="d-flex align-items-center gap-2 flex-grow-1" style="max-width: 420px;">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" id="searchInput" class="form-control border-start-0 ps-0" placeholder="Search by name, ID, city, or dept..." />
+            </div>
+        </div>
+
+        <!-- Filter Dropdown & Refresh -->
+        <div class="d-flex align-items-center gap-2">
+            <select id="deptFilter" class="form-select form-select-sm" style="min-width: 150px;">
+                <option value="">All Departments</option>
+                @foreach (var dept in employeeList.Select(e => e.Dept).Where(d => !string.IsNullOrWhiteSpace(d)).Distinct().OrderBy(d => d))
+                {
+                    <option value="@dept">@dept</option>
+                }
+            </select>
+            <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-sm" title="Refresh List">
+                <i class="bi bi-arrow-clockwise"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-responsive">
+        <table class="table custom-table" id="employeeTable">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">ID</th>
+                    <th>Employee Name</th>
+                    <th>Department</th>
+                    <th>Gender</th>
+                    <th>City</th>
+                    <th>Salary</th>
+                    <th class="text-end" style="width: 140px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!employeeList.Any())
+                {
+                    <tr id="emptyRow">
+                        <td colspan="7" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="bi bi-folder-x fs-1 d-block mb-2 text-secondary"></i>
+                                <h5>No employee records found</h5>
+                                <p class="small text-muted mb-3">Get started by creating your first employee profile.</p>
+                                <a href="@Url.Action("Create")" class="btn btn-primary-gradient btn-sm">
+                                    <i class="bi bi-plus-lg"></i> Add First Employee
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    int index = 0;
+                    foreach (var item in employeeList)
+                    {
+                        var initials = !string.IsNullOrWhiteSpace(item.Name) ? item.Name.Substring(0, 1).ToUpper() : "?";
+                        var avatarBg = colors[index % colors.Length];
+                        var deptLower = (item.Dept ?? "").ToLower();
+                        var deptClass = deptLower.Contains("it") ? "badge-dept-it" :
+                                        deptLower.Contains("hr") ? "badge-dept-hr" :
+                                        deptLower.Contains("sale") ? "badge-dept-sales" :
+                                        deptLower.Contains("fin") ? "badge-dept-finance" :
+                                        deptLower.Contains("market") ? "badge-dept-marketing" : "badge-dept-default";
+
+                        var genderLower = (item.Gender ?? "").ToLower();
+                        var genderClass = genderLower.StartsWith("m") ? "badge-gender-male" :
+                                          genderLower.StartsWith("f") ? "badge-gender-female" : "badge-gender-other";
+                        var genderIcon = genderLower.StartsWith("m") ? "bi-gender-male" :
+                                         genderLower.StartsWith("f") ? "bi-gender-female" : "bi-gender-ambiguous";
+
+                        <tr class="employee-row" data-name="@item.Name" data-dept="@item.Dept" data-city="@item.City" data-id="@item.ID">
+                            <td>
+                                <span class="fw-bold text-secondary">#@item.ID</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="user-avatar" style="background-color: @avatarBg;">@initials</span>
+                                    <div>
+                                        <a href="@Url.Action("Details", new { id = item.ID })" class="fw-bold text-dark text-decoration-none">
+                                            @item.Name
+                                        </a>
+                                        <div class="small text-muted">ID: @item.ID</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge-pill @deptClass">
+                                    <i class="bi bi-briefcase"></i> @item.Dept
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge-pill @genderClass">
+                                    <i class="bi @genderIcon"></i> @item.Gender
+                                </span>
+                            </td>
+                            <td>
+                                <span class="text-secondary"><i class="bi bi-geo-alt text-muted me-1"></i>@item.City</span>
+                            </td>
+                            <td>
+                                <span class="salary-tag">₹@item.Salary.ToString("N0")</span>
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="@Url.Action("Details", new { id = item.ID })" class="btn btn-action btn-outline-info" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Edit", new { id = item.ID })" class="btn btn-action btn-outline-primary" title="Edit Profile">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", new { id = item.ID })" class="btn btn-action btn-outline-danger" title="Delete Employee">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        index++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            function filterTable() {
+                var query = $('#searchInput').val().toLowerCase().trim();
+                var selectedDept = $('#deptFilter').val().toLowerCase().trim();
+                var visibleCount = 0;
+
+                $('.employee-row').each(function () {
+                    var name = ($(this).data('name') || '').toString().toLowerCase();
+                    var dept = ($(this).data('dept') || '').toString().toLowerCase();
+                    var city = ($(this).data('city') || '').toString().toLowerCase();
+                    var id = ($(this).data('id') || '').toString().toLowerCase();
+
+                    var matchesSearch = (query === '') || (name.indexOf(query) !== -1 || dept.indexOf(query) !== -1 || city.indexOf(query) !== -1 || id.indexOf(query) !== -1);
+                    var matchesDept = (selectedDept === '') || (dept === selectedDept);
+
+                    if (matchesSearch && matchesDept) {
+                        $(this).show();
+                        visibleCount++;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                if (visibleCount === 0 && $('.employee-row').length > 0) {
+                    if ($('#noMatchRow').length === 0) {
+                        $('#employeeTable tbody').append('<tr id="noMatchRow"><td colspan="7" class="text-center py-4 text-muted"><i class="bi bi-search me-1"></i> No matching employees found.</td></tr>');
+                    }
+                } else {
+                    $('#noMatchRow').remove();
+                }
+            }
+
+            $('#searchInput').on('keyup input', filterTable);
+            $('#deptFilter').on('change', filterTable);
+        });
+    </script>
+}
