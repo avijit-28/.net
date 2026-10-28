@@ -33,20 +33,23 @@ namespace FirstMVCProject.Controllers
 
         // POST: Employee/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(Employee employee)
         {
             try
-            {
-                //if (ModelState.IsValid)
-                //{
+    {
+                if (ModelState.IsValid)
+                {
                     _repo.InsertEmployee(employee);
 
                     return RedirectToAction("Index");
-                //}
+                }
+
+                return View(employee);
             }
-            catch
-            {
-                return View();
+    catch
+    {
+                return View(employee);
             }
 
         }
