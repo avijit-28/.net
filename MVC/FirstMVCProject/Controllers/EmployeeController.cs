@@ -94,14 +94,14 @@ namespace FirstMVCProject.Controllers
         }
 
         // GET: Employee/Delete/5
-        //public ActionResult Delete(int id)
-        //{
-        //    return View();
-        //}
+        public ActionResult Delete(int id)
+        {
+            return View();
+        }
 
         // POST: Employee/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int id, Employee employee)
         {
             try
             {
