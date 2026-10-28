@@ -96,7 +96,14 @@ namespace FirstMVCProject.Controllers
         // GET: Employee/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            Employee employee = _repo.GetEmployeeById(id);
+
+            if (employee == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(employee);
         }
 
         // POST: Employee/Delete/5
