@@ -21,7 +21,8 @@ namespace FirstMVCProject.Controllers
         // GET: Employee/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var employees = _repo.GetEmployeeById(id);
+            return View(employees);
         }
 
         // GET: Employee/Create
