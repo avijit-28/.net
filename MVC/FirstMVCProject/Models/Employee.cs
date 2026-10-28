@@ -11,7 +11,7 @@ namespace FirstMVCProject.Models
 
         public string Name { get; set; }
 
-        public decimal Salary { get; set; }
+        public int Salary { get; set; }
 
         public string Gender { get; set; }
 
