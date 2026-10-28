@@ -88,7 +88,7 @@ namespace FirstMVCProject.Models
                 using (SqlCommand cmd = new SqlCommand("InsertEmployee", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-
+                    cmd.Parameters.AddWithValue("@ID", employee.ID);
                     cmd.Parameters.AddWithValue("@Name", employee.Name);
                     cmd.Parameters.AddWithValue("@Salary", employee.Salary);
                     cmd.Parameters.AddWithValue("@Gender", employee.Gender);
