@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using FirstMVCProject.Models;
 
 namespace FirstMVCProject.Controllers
 {
     public class EmployeeController : Controller
     {
+        private readonly EmployeeRepo _repo = new EmployeeRepo();
+
         // GET: Employee
         public ActionResult Index()
         {
-            return View();
+            var employees = _repo.GetAllEmployee();
+            return View(employees);
         }
 
         // GET: Employee/Details/5
