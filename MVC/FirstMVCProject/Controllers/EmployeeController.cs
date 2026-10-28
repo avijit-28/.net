@@ -27,26 +27,34 @@ namespace FirstMVCProject.Controllers
 
         // GET: Employee/Create
         [HttpPost]
-        public ActionResult Create()
+        public ActionResult Create(Employee employee)
         {
-            return View();
-        }
-
-        // POST: Employee/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add insert logic here
+                _repo.InsertEmployee(employee);
 
                 return RedirectToAction("Index");
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(employee);
+            
         }
+
+        //// POST: Employee/Create
+        //[HttpPost]
+        //public ActionResult Create(FormCollection collection)
+        //{
+        //    try
+        //    {
+        //        // TODO: Add insert logic here
+
+        //        return RedirectToAction("Index");
+        //    }
+        //    catch
+        //    {
+        //        return View();
+        //    }
+        //}
 
         // GET: Employee/Edit/5
         public ActionResult Edit(int id)
