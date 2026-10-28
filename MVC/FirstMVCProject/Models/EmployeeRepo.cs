@@ -101,9 +101,40 @@ namespace FirstMVCProject.Models
             }
         }
 
-       
-        
-        
+
+        public void UpdateEmployee(
+       int id,
+       string name = null,
+       decimal? salary = null,
+       string gender = null,
+       string city = null,
+       string dept = null)
+        {
+            using (SqlConnection con = new SqlConnection(_conStr))
+            {
+                using (SqlCommand cmd = new SqlCommand("UpdateEmployee", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@ID", id);
+                    cmd.Parameters.AddWithValue("@Name",
+                        (object)name ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Salary",
+                        (object)salary ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Gender",
+                        (object)gender ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@City",
+                        (object)city ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Dept",
+                        (object)dept ?? DBNull.Value);
+
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+
         public void DeleteEmployee(int id)
         {
             using (SqlConnection con = new SqlConnection(_conStr))
