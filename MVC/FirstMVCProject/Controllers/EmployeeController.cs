@@ -28,7 +28,7 @@ namespace FirstMVCProject.Controllers
         // GET: Employee/Create
         public ActionResult Create()
         {
-            return View();
+            return View(employees);
         }
 
         // POST: Employee/Create
