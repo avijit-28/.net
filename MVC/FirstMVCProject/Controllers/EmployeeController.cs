@@ -22,7 +22,7 @@ namespace FirstMVCProject.Controllers
         public ActionResult Details(int id)
         {
             var employees = _repo.GetEmployeeById(id);
-            return View();
+            return View(employees);
         }
 
         // GET: Employee/Create
@@ -54,34 +54,54 @@ namespace FirstMVCProject.Controllers
         // GET: Employee/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Employee employee = _repo.GetEmployeeById(id);
+
+            if (employee == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(employee);
         }
 
         // POST: Employee/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, Employee employee)
         {
             try
             {
-                // TODO: Add update logic here
+                if (ModelState.IsValid)
+                {
+                    _repo.UpdateEmployee(
+                        id,
+                        employee.Name,
+                        employee.Salary,
+                        employee.Gender,
+                        employee.City,
+                        employee.Dept
+                    );
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
+
+                return View(employee);
             }
-            catch
+            catch (Exception)
             {
-                return View();
+                return View(employee);
             }
+        
         }
 
         // GET: Employee/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+        //public ActionResult Delete(int id)
+        //{
+        //    return View();
+        //}
 
         // POST: Employee/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id)
         {
             try
             {
