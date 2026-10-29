@@ -26,15 +26,15 @@
             <div class="collapse navbar-collapse" id="navbarMain">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
                     <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Employee" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active text-white" : "")" 
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Employee" ? "active text-white" : "")" 
                            href="@Url.Action("Index", "Employee")">
                             <i class="bi bi-people-fill me-1"></i> Employees
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Employee" && ViewContext.RouteData.Values["action"]?.ToString() == "Create" ? "active text-white" : "")" 
-                           href="@Url.Action("Create", "Employee")">
-                            <i class="bi bi-person-plus-fill me-1"></i> Add Employee
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Address" ? "active text-white" : "")" 
+                           href="@Url.Action("Index", "Address")">
+                            <i class="bi bi-geo-alt-fill me-1"></i> Addresses
                         </a>
                     </li>
                     <li class="nav-item">
@@ -50,8 +50,11 @@
                 </ul>
 
                 <div class="d-flex align-items-center gap-2">
+                    <a href="@Url.Action("Create", "Address")" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-geo-alt"></i> New Address
+                    </a>
                     <a href="@Url.Action("Create", "Employee")" class="btn btn-primary-gradient btn-sm">
-                        <i class="bi bi-plus-lg"></i> New Employee
+                        <i class="bi bi-person-plus"></i> New Employee
                     </a>
                 </div>
             </div>
@@ -95,7 +98,7 @@
     <footer>
         <div class="container d-flex flex-wrap justify-content-between align-items-center">
             <div class="col-md-6 d-flex align-items-center">
-                <span class="text-muted">&copy; @DateTime.Now.Year AiProjectMVC — Redesigned Employee Management System</span>
+                <span class="text-muted">&copy; @DateTime.Now.Year AiProjectMVC — Redesigned Employee & Address Management System</span>
             </div>
             <ul class="nav col-md-6 justify-content-end list-unstyled d-flex gap-3">
                 <li class="text-muted"><i class="bi bi-shield-check text-success me-1"></i> SQL Server Connected</li>
