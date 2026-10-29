@@ -10,6 +10,7 @@
 
     var initials = user != null && !string.IsNullOrWhiteSpace(user.Name) ? user.Name.Substring(0, 1).ToUpper() : "U";
     var role = user?.Role ?? "Employee";
+    var canManage = AiProjectMVC.Models.RoleAuthHelper.CanManageRecords(role);
     var roleBadge = role.ToLower().Contains("admin") ? "bg-danger" :
                     role.ToLower().Contains("manager") ? "bg-warning text-dark" :
                     role.ToLower().Contains("hr") ? "bg-info text-dark" :
@@ -29,8 +30,8 @@
                         <span class="badge @roleBadge px-2 py-1 fs-6">
                             <i class="bi bi-shield-check me-1"></i> @role
                         </span>
-                        <span class="badge bg-white bg-opacity-20 text-white px-2 py-1">
-                            <i class="bi bi-at"></i> @(user?.UserName ?? "user")
+                        <span class="badge px-3 py-1 fs-6" style="background: rgba(15, 23, 42, 0.7); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); font-weight: 500;">
+                            <i class="bi bi-person-badge text-info me-1"></i>@@@(user?.UserName ?? "user")
                         </span>
                     </div>
                     <h2 class="fw-bold mb-1">Welcome, @(user?.Name ?? "Employee")!</h2>
@@ -62,7 +63,7 @@
             </div>
             <div>
                 <div class="stat-label">Employee ID</div>
-                <div class="stat-value">#(emp != null ? emp.ID.ToString() : user?.ID.ToString() ?? "N/A")</div>
+                <div class="stat-value">#@(emp != null ? emp.ID.ToString() : (user != null ? user.ID.ToString() : "N/A"))</div>
             </div>
         </div>
     </div>
