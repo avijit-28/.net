@@ -12,6 +12,80 @@ namespace AiProjectMVC.Controllers
     {
         private readonly EmployeeRepo _repo = new EmployeeRepo();
         private readonly AddressRepo _addressRepo = new AddressRepo();
+        private readonly EmployeeUserRepo _userRepo = new EmployeeUserRepo();
+
+        // GET: Employee/Dashboard
+        public ActionResult Dashboard()
+        {
+            var currentUser = Session["CurrentUser"] as EmployeeUser;
+            if (currentUser == null)
+            {
+                // Auto-pick the first admin/user if user accesses directly for convenience or prompt login
+                var firstUser = _userRepo.GetAllUsers().FirstOrDefault();
+                if (firstUser != null)
+                {
+                    currentUser = firstUser;
+                    Session["CurrentUser"] = currentUser;
+                    Session["UserId"] = currentUser.ID;
+                    Session["UserName"] = currentUser.UserName;
+                    Session["FullName"] = currentUser.Name;
+                    Session["UserRole"] = currentUser.Role;
+                    Session["Email"] = currentUser.Email;
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Please log in to access your employee dashboard.";
+                    return RedirectToAction("Login", "Account");
+                }
+            }
+
+            var dashboard = new EmployeeDashboardViewModel
+            {
+                CurrentUser = currentUser
+            };
+
+            try
+            {
+                var allEmployees = _repo.GetAllEmployee() ?? new List<Employee>();
+                var allAddresses = _addressRepo.GetAllAddress() ?? new List<Address>();
+                var allUsers = _userRepo.GetAllUsers() ?? new List<EmployeeUser>();
+
+                dashboard.TotalEmployees = allEmployees.Count;
+                dashboard.TotalAddresses = allAddresses.Count;
+                dashboard.TotalUsers = allUsers.Count;
+                dashboard.AverageSalary = allEmployees.Any() ? allEmployees.Average(e => e.Salary) : 0;
+                dashboard.SystemUsers = allUsers.Take(8).ToList();
+
+                // Find matching employee profile by ID or Name
+                var empProfile = allEmployees.FirstOrDefault(e => e.ID == currentUser.ID)
+                              ?? allEmployees.FirstOrDefault(e => string.Equals(e.Name, currentUser.Name, StringComparison.OrdinalIgnoreCase));
+
+                dashboard.EmployeeProfile = empProfile;
+
+                if (empProfile != null)
+                {
+                    // Find address
+                    if (empProfile.AddressId.HasValue)
+                    {
+                        dashboard.AddressDetails = allAddresses.FirstOrDefault(a => a.AddressId == empProfile.AddressId.Value);
+                    }
+
+                    // Find department colleagues
+                    if (!string.IsNullOrEmpty(empProfile.Dept))
+                    {
+                        dashboard.DepartmentColleagues = allEmployees
+                            .Where(e => string.Equals(e.Dept, empProfile.Dept, StringComparison.OrdinalIgnoreCase) && e.ID != empProfile.ID)
+                            .ToList();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Notice while compiling dashboard data: " + ex.Message;
+            }
+
+            return View(dashboard);
+        }
 
         // GET: Employee
         public ActionResult Index()
