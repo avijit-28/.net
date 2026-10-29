@@ -76,17 +76,22 @@ namespace FirstMVCProject.Controllers
 
         // POST: Address/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, Address address)
+        public ActionResult Edit(Address address)
         {
             try
             {
-                // TODO: Add update logic here
+                if (ModelState.IsValid)
+                {
+                    _repo.UpdateAddress(address);
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
+
+                return View(address);
             }
             catch
             {
-                return View();
+                return View(address);
             }
         }
 
