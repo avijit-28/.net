@@ -1,3 +1,8 @@
+@{
+    var loggedInUser = Session["CurrentUser"] as AiProjectMVC.Models.EmployeeUser;
+    var currentCtrl = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAct = ViewContext.RouteData.Values["action"]?.ToString();
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +18,7 @@
     <!-- Modern Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="@Url.Action("Index", "Employee")">
+            <a class="navbar-brand" href="@Url.Action("Dashboard", "Employee")">
                 <span class="brand-icon">
                     <i class="bi bi-cpu-fill"></i>
                 </span>
@@ -26,13 +31,19 @@
             <div class="collapse navbar-collapse" id="navbarMain">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
                     <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Employee" ? "active text-white" : "")" 
+                        <a class="nav-link @(currentCtrl == "Employee" && currentAct == "Dashboard" ? "active text-white" : "")" 
+                           href="@Url.Action("Dashboard", "Employee")">
+                            <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(currentCtrl == "Employee" && currentAct == "Index" ? "active text-white" : "")" 
                            href="@Url.Action("Index", "Employee")">
                             <i class="bi bi-people-fill me-1"></i> Employees
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Address" ? "active text-white" : "")" 
+                        <a class="nav-link @(currentCtrl == "Address" ? "active text-white" : "")" 
                            href="@Url.Action("Index", "Address")">
                             <i class="bi bi-geo-alt-fill me-1"></i> Addresses
                         </a>
@@ -42,20 +53,34 @@
                             <i class="bi bi-info-circle me-1"></i> About
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Contact", "Home")">
-                            <i class="bi bi-envelope me-1"></i> Contact
-                        </a>
-                    </li>
                 </ul>
 
                 <div class="d-flex align-items-center gap-2">
-                    <a href="@Url.Action("Create", "Address")" class="btn btn-outline-light btn-sm">
-                        <i class="bi bi-geo-alt"></i> New Address
-                    </a>
-                    <a href="@Url.Action("Create", "Employee")" class="btn btn-primary-gradient btn-sm">
-                        <i class="bi bi-person-plus"></i> New Employee
-                    </a>
+                    @if (loggedInUser != null)
+                    {
+                        <div class="d-flex align-items-center gap-2 me-2">
+                            <div class="text-end d-none d-md-block">
+                                <div class="text-white small fw-bold">@loggedInUser.Name</div>
+                                <span class="badge bg-primary bg-opacity-25 text-white smaller py-0 px-1">@loggedInUser.Role</span>
+                            </div>
+                            <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                @(loggedInUser.Name.Length > 0 ? loggedInUser.Name.Substring(0, 1) : "U")
+                            </div>
+                        </div>
+
+                        <a href="@Url.Action("Logout", "Account")" class="btn btn-outline-danger btn-sm" title="Sign Out">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+                        </a>
+                        <a href="@Url.Action("Register", "Account")" class="btn btn-primary-gradient btn-sm">
+                            <i class="bi bi-person-plus me-1"></i> Register
+                        </a>
+                    }
                 </div>
             </div>
         </div>
@@ -98,7 +123,7 @@
     <footer>
         <div class="container d-flex flex-wrap justify-content-between align-items-center">
             <div class="col-md-6 d-flex align-items-center">
-                <span class="text-muted">&copy; @DateTime.Now.Year AiProjectMVC — Redesigned Employee & Address Management System</span>
+                <span class="text-muted">&copy; @DateTime.Now.Year AiProjectMVC — Redesigned Employee Management System</span>
             </div>
             <ul class="nav col-md-6 justify-content-end list-unstyled d-flex gap-3">
                 <li class="text-muted"><i class="bi bi-shield-check text-success me-1"></i> SQL Server Connected</li>
