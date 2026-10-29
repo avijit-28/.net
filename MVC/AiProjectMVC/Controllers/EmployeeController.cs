@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using AiProjectMVC.Models;
 using AiProjectMVC.ViewModels;
 
@@ -14,29 +15,31 @@ namespace AiProjectMVC.Controllers
         private readonly AddressRepo _addressRepo = new AddressRepo();
         private readonly EmployeeUserRepo _userRepo = new EmployeeUserRepo();
 
+        // Enforce login for all actions: Even admin must sign in first
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            base.OnActionExecuting(filterContext);
+
+            if (Session["CurrentUser"] == null)
+            {
+                TempData["ErrorMessage"] = "Please sign in to continue. Even administrators must sign in.";
+                var returnUrl = filterContext.HttpContext.Request.RawUrl;
+                filterContext.Result = new RedirectToRouteResult(
+                    new RouteValueDictionary(
+                        new { controller = "Account", action = "Login", returnUrl = returnUrl }
+                    )
+                );
+            }
+        }
+
         // GET: Employee/Dashboard
         public ActionResult Dashboard()
         {
             var currentUser = Session["CurrentUser"] as EmployeeUser;
             if (currentUser == null)
             {
-                // Auto-pick the first admin/user if user accesses directly for convenience or prompt login
-                var firstUser = _userRepo.GetAllUsers().FirstOrDefault();
-                if (firstUser != null)
-                {
-                    currentUser = firstUser;
-                    Session["CurrentUser"] = currentUser;
-                    Session["UserId"] = currentUser.ID;
-                    Session["UserName"] = currentUser.UserName;
-                    Session["FullName"] = currentUser.Name;
-                    Session["UserRole"] = currentUser.Role;
-                    Session["Email"] = currentUser.Email;
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Please log in to access your employee dashboard.";
-                    return RedirectToAction("Login", "Account");
-                }
+                TempData["ErrorMessage"] = "Please sign in to access your employee dashboard. Even administrators must sign in.";
+                return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("Dashboard", "Employee") });
             }
 
             var dashboard = new EmployeeDashboardViewModel
