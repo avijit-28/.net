@@ -4,26 +4,48 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using AiProjectMVC.Models;
+using AiProjectMVC.ViewModels;
 
 namespace AiProjectMVC.Controllers
 {
     public class EmployeeController : Controller
     {
         private readonly EmployeeRepo _repo = new EmployeeRepo();
+        private readonly AddressRepo _addressRepo = new AddressRepo();
 
         // GET: Employee
         public ActionResult Index()
         {
+            var viewModel = new EmployeeDetailsViewModel
+            {
+                PageTitle = "Organization Directory",
+                PageHeader = "Employee & Address Management"
+            };
+
             try
             {
-                var employees = _repo.GetAllEmployee();
-                return View(employees);
+                viewModel.Employees = _repo.GetAllEmployee() ?? new List<Employee>();
             }
             catch (Exception ex)
             {
-                ViewBag.ErrorMessage = "Unable to connect to the database. Error: " + ex.Message;
-                return View(new List<Employee>());
+                ViewBag.ErrorMessage = "Unable to load employees from database: " + ex.Message;
+                viewModel.Employees = new List<Employee>();
             }
+
+            try
+            {
+                viewModel.Addresses = _addressRepo.GetAllAddress() ?? new List<Address>();
+            }
+            catch (Exception ex)
+            {
+                if (ViewBag.ErrorMessage == null)
+                {
+                    ViewBag.ErrorMessage = "Unable to load addresses from database: " + ex.Message;
+                }
+                viewModel.Addresses = new List<Address>();
+            }
+
+            return View(viewModel);
         }
 
         // GET: Employee/Details/5
@@ -37,7 +59,29 @@ namespace AiProjectMVC.Controllers
                     TempData["ErrorMessage"] = $"Employee with ID #{id} was not found.";
                     return RedirectToAction("Index");
                 }
-                return View(employee);
+
+                Address address = null;
+                if (employee.AddressId.HasValue)
+                {
+                    try
+                    {
+                        address = _addressRepo.GetAddressById(employee.AddressId.Value);
+                    }
+                    catch
+                    {
+                        // Address lookup failed gracefully
+                    }
+                }
+
+                var viewModel = new EmployeeDetailsViewModel
+                {
+                    Employee = employee,
+                    Address = address,
+                    PageTitle = $"Employee Profile - {employee.Name}",
+                    PageHeader = "Employee & Address Overview"
+                };
+
+                return View(viewModel);
             }
             catch (Exception ex)
             {
@@ -49,6 +93,14 @@ namespace AiProjectMVC.Controllers
         // GET: Employee/Create
         public ActionResult Create()
         {
+            try
+            {
+                ViewBag.Addresses = _addressRepo.GetAllAddress() ?? new List<Address>();
+            }
+            catch
+            {
+                ViewBag.Addresses = new List<Address>();
+            }
             return View();
         }
 
@@ -66,11 +118,13 @@ namespace AiProjectMVC.Controllers
                     return RedirectToAction("Index");
                 }
 
+                ViewBag.Addresses = _addressRepo.GetAllAddress() ?? new List<Address>();
                 return View(employee);
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Failed to create employee: " + ex.Message);
+                try { ViewBag.Addresses = _addressRepo.GetAllAddress() ?? new List<Address>(); } catch { }
                 return View(employee);
             }
         }
@@ -86,6 +140,8 @@ namespace AiProjectMVC.Controllers
                     TempData["ErrorMessage"] = $"Employee with ID #{id} was not found.";
                     return RedirectToAction("Index");
                 }
+
+                ViewBag.Addresses = _addressRepo.GetAllAddress() ?? new List<Address>();
                 return View(employee);
             }
             catch (Exception ex)
@@ -110,18 +166,21 @@ namespace AiProjectMVC.Controllers
                         employee.Salary,
                         employee.Gender,
                         employee.City,
-                        employee.Dept
+                        employee.Dept,
+                        employee.AddressId
                     );
 
                     TempData["SuccessMessage"] = $"Employee '{employee.Name}' (ID: {id}) updated successfully!";
                     return RedirectToAction("Index");
                 }
 
+                ViewBag.Addresses = _addressRepo.GetAllAddress() ?? new List<Address>();
                 return View(employee);
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Failed to update employee: " + ex.Message);
+                try { ViewBag.Addresses = _addressRepo.GetAllAddress() ?? new List<Address>(); } catch { }
                 return View(employee);
             }
         }
