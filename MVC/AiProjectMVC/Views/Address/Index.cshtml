@@ -88,9 +88,12 @@
             <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-sm" title="Refresh">
                 <i class="bi bi-arrow-clockwise"></i>
             </a>
-            <a href="@Url.Action("Create")" class="btn btn-primary-gradient btn-sm">
-                <i class="bi bi-plus-lg"></i> New Address
-            </a>
+            @if (canManage)
+            {
+                <a href="@Url.Action("Create")" class="btn btn-primary-gradient btn-sm">
+                    <i class="bi bi-plus-lg"></i> New Address
+                </a>
+            }
         </div>
     </div>
 
@@ -115,9 +118,12 @@
                             <i class="bi bi-geo-alt-fill fs-1 d-block mb-2 text-secondary"></i>
                             <h5>No address records found</h5>
                             <p class="small text-muted mb-3">Add regional addresses to associate with employees.</p>
-                            <a href="@Url.Action("Create")" class="btn btn-primary-gradient btn-sm">
-                                <i class="bi bi-plus-lg"></i> Add First Address
-                            </a>
+                            @if (canManage)
+                            {
+                                <a href="@Url.Action("Create")" class="btn btn-primary-gradient btn-sm">
+                                    <i class="bi bi-plus-lg"></i> Add First Address
+                                </a>
+                            }
                         </td>
                     </tr>
                 }
