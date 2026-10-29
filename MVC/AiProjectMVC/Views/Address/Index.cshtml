@@ -6,6 +6,7 @@
     int totalCount = addressList.Count();
     int uniqueCities = addressList.Select(a => a.City).Where(c => !string.IsNullOrWhiteSpace(c)).Distinct().Count();
     int uniqueStates = addressList.Select(a => a.State).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().Count();
+    bool canManage = AiProjectMVC.Models.RoleAuthHelper.CanManageRecords(Session);
 }
 
 <!-- Page Header Box -->
@@ -18,9 +19,18 @@
         <a href="@Url.Action("Index", "Employee")" class="btn btn-outline-secondary">
             <i class="bi bi-people-fill"></i> View Employees
         </a>
-        <a href="@Url.Action("Create")" class="btn btn-primary-gradient">
-            <i class="bi bi-plus-lg"></i> Add New Address
-        </a>
+        @if (canManage)
+        {
+            <a href="@Url.Action("Create")" class="btn btn-primary-gradient">
+                <i class="bi bi-plus-lg"></i> Add New Address
+            </a>
+        }
+        else
+        {
+            <span class="badge bg-light text-muted border px-3 py-2 d-inline-flex align-items-center">
+                <i class="bi bi-shield-lock me-1 text-primary"></i> Add restricted to Admin / HR / Manager
+            </span>
+        }
     </div>
 </div>
 
