@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FirstMVCProject.Models.Employee>
+﻿@model IEnumerable<FirstMVCProject.ViewModels.EmployeeDetailsViewModel>
 
 @{
     ViewBag.Title = "Index";
@@ -12,22 +12,10 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.PageTitle)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Salary)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Gender)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.City)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Dept)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AddressId)
+            @Html.DisplayNameFor(model => model.PageHeader)
         </th>
         <th></th>
     </tr>
@@ -35,27 +23,15 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Name)
+            @Html.DisplayFor(modelItem => item.PageTitle)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Salary)
+            @Html.DisplayFor(modelItem => item.PageHeader)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Gender)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.City)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Dept)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AddressId)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
         </td>
     </tr>
 }
