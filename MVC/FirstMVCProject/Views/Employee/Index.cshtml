@@ -1,39 +1,92 @@
-﻿@model IEnumerable<FirstMVCProject.ViewModels.EmployeeDetailsViewModel>
+﻿```cshtml
+@model FirstMVCProject.ViewModels.EmployeeAddressViewModel
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = Model.PageTitle;
 }
 
-<h2>Index</h2>
+<h2>@Model.PageHeader</h2>
+
+<hr />
+
+<!-- ================= EMPLOYEE SECTION ================= -->
+
+<h3>Employee Details</h3>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New Employee", "Create", null, new { @class = "btn btn-primary" })
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.PageTitle)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PageHeader)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.PageTitle)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PageHeader)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>
-    </tr>
-}
+<table class="table table-bordered table-striped">
+
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Salary</th>
+            <th>Gender</th>
+            <th>City</th>
+            <th>Department</th>
+            <th>Address ID</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var employee in Model.Employees)
+        {
+            <tr>
+                <td>@employee.ID</td>
+                <td>@employee.Name</td>
+                <td>@employee.Salary</td>
+                <td>@employee.Gender</td>
+                <td>@employee.City</td>
+                <td>@employee.Dept</td>
+                <td>@employee.AddressId</td>
+
+                <td>
+                    @Html.ActionLink(
+                        "Details",
+                        "Details",
+                        new { id = employee.ID }
+                    )
+                </td>
+            </tr>
+        }
+    </tbody>
 
 </table>
+
+<hr />
+
+<!-- ================= ADDRESS SECTION ================= -->
+
+<h3>Address Details</h3>
+
+<table class="table table-bordered table-striped">
+
+    <thead>
+        <tr>
+            <th>Address ID</th>
+            <th>Country</th>
+            <th>State</th>
+            <th>City</th>
+            <th>PIN</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var address in Model.Addresses)
+        {
+            <tr>
+                <td>@address.AddressId</td>
+                <td>@address.Country</td>
+                <td>@address.State</td>
+                <td>@address.City</td>
+                <td>@address.Pin</td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+```
