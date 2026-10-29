@@ -12,6 +12,7 @@
 
     var colors = new[] { "#4f46e5", "#0ea5e9", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6", "#14b8a6" };
     var addressMap = addresses.ToDictionary(a => a.AddressId, a => $"{a.City}, {a.State} ({a.Pin})");
+    bool canManage = AiProjectMVC.Models.RoleAuthHelper.CanManageRecords(Session);
 }
 
 <!-- Page Header Box -->
@@ -20,14 +21,25 @@
         <h1 class="page-title"><i class="bi bi-diagram-3-fill text-primary me-2"></i> @Model.PageHeader</h1>
         <p class="page-subtitle">Manage organization employees, track regional addresses, and monitor staff metrics in real time.</p>
     </div>
-    <div class="d-flex gap-2">
-        <a href="@Url.Action("Create", "Address")" class="btn btn-outline-secondary">
-            <i class="bi bi-geo-alt-fill text-primary"></i> Add Address
-        </a>
-        <a href="@Url.Action("Create", "Employee")" class="btn btn-primary-gradient">
-            <i class="bi bi-person-plus-fill"></i> Add Employee
-        </a>
-    </div>
+    @if (canManage)
+    {
+        <div class="d-flex gap-2">
+            <a href="@Url.Action("Create", "Address")" class="btn btn-outline-secondary">
+                <i class="bi bi-geo-alt-fill text-primary"></i> Add Address
+            </a>
+            <a href="@Url.Action("Create", "Employee")" class="btn btn-primary-gradient">
+                <i class="bi bi-person-plus-fill"></i> Add Employee
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex align-items-center">
+            <span class="badge bg-light text-muted border px-3 py-2">
+                <i class="bi bi-shield-lock me-1 text-primary"></i> Add records restricted to Admin / HR / Manager
+            </span>
+        </div>
+    }
 </div>
 
 <!-- Quick Statistics Row -->
