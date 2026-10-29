@@ -59,6 +59,15 @@ namespace AiProjectMVC.Models
         }
 
         /// <summary>
+        /// Checks whether a user is currently logged into the session.
+        /// Even administrators must have an active session to be authenticated.
+        /// </summary>
+        public static bool IsLoggedIn(HttpSessionStateBase session)
+        {
+            return session != null && session["CurrentUser"] != null;
+        }
+
+        /// <summary>
         /// Retrieves the current user's role from Session, or "Guest".
         /// </summary>
         public static string GetCurrentRole(HttpSessionStateBase session)
