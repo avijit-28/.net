@@ -12,5 +12,8 @@ namespace FirstMVCProject.ViewModels
         public Address Address { get; set; }
         public string PageTitle { get; set; }
         public string PageHeader { get; set; }
+        public List<Employee> Employees { get; set; }
+
+        public List<Address> Addresses { get; set; }
     }
 }
