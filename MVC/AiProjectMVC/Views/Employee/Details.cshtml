@@ -1,16 +1,19 @@
-@model AiProjectMVC.Models.Employee
+@model AiProjectMVC.ViewModels.EmployeeDetailsViewModel
 
 @{
-    ViewBag.Title = "Employee Details";
-    var initials = !string.IsNullOrWhiteSpace(Model.Name) ? Model.Name.Substring(0, 1).ToUpper() : "?";
-    var deptLower = (Model.Dept ?? "").ToLower();
+    ViewBag.Title = Model.PageTitle ?? "Employee Details";
+    var emp = Model.Employee;
+    var addr = Model.Address;
+
+    var initials = emp != null && !string.IsNullOrWhiteSpace(emp.Name) ? emp.Name.Substring(0, 1).ToUpper() : "?";
+    var deptLower = (emp?.Dept ?? "").ToLower();
     var deptClass = deptLower.Contains("it") ? "badge-dept-it" :
                     deptLower.Contains("hr") ? "badge-dept-hr" :
                     deptLower.Contains("sale") ? "badge-dept-sales" :
                     deptLower.Contains("fin") ? "badge-dept-finance" :
                     deptLower.Contains("market") ? "badge-dept-marketing" : "badge-dept-default";
 
-    var genderLower = (Model.Gender ?? "").ToLower();
+    var genderLower = (emp?.Gender ?? "").ToLower();
     var genderClass = genderLower.StartsWith("m") ? "badge-gender-male" :
                       genderLower.StartsWith("f") ? "badge-gender-female" : "badge-gender-other";
     var genderIcon = genderLower.StartsWith("m") ? "bi-gender-male" :
@@ -18,111 +21,180 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-lg-8">
+    <div class="col-lg-9">
         <!-- Back Breadcrumb Link -->
         <div class="mb-3">
-            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small fw-semibold">
-                <i class="bi bi-arrow-left me-1"></i> Back to Employee Directory
+            <a href="@Url.Action("Index", "Employee")" class="text-decoration-none text-muted small fw-semibold">
+                <i class="bi bi-arrow-left me-1"></i> Back to Directory
             </a>
         </div>
 
-        <div class="custom-card">
+        <div class="custom-card mb-4">
             <!-- Profile Banner Header -->
             <div class="p-4" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); color: white; border-top-left-radius: var(--radius-lg); border-top-right-radius: var(--radius-lg);">
-                <div class="d-flex flex-wrap align-items-center gap-3">
-                    <div style="width: 68px; height: 68px; border-radius: 18px; background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; border: 2px solid rgba(255,255,255,0.3);">
-                        @initials
-                    </div>
-                    <div>
-                        <h3 class="fw-bold mb-1">@Model.Name</h3>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-white bg-opacity-25 text-white px-2 py-1">
-                                <i class="bi bi-hash"></i> ID: @Model.ID
-                            </span>
-                            <span class="badge-pill @deptClass">
-                                <i class="bi bi-briefcase"></i> @Model.Dept
-                            </span>
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width: 70px; height: 70px; border-radius: 18px; background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 800; border: 2px solid rgba(255,255,255,0.3);">
+                            @initials
                         </div>
+                        <div>
+                            <h3 class="fw-bold mb-1">@(emp?.Name ?? "Employee")</h3>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <span class="badge bg-white bg-opacity-25 text-white px-2 py-1">
+                                    <i class="bi bi-hash"></i> ID: @emp.ID
+                                </span>
+                                <span class="badge-pill @deptClass">
+                                    <i class="bi bi-briefcase"></i> @emp.Dept
+                                </span>
+                                @if (emp.AddressId.HasValue)
+                                {
+                                    <span class="badge bg-info bg-opacity-25 text-white px-2 py-1">
+                                        <i class="bi bi-geo-alt"></i> Address #@emp.AddressId
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a href="@Url.Action("Edit", "Employee", new { id = emp.ID })" class="btn btn-primary-gradient btn-sm">
+                            <i class="bi bi-pencil-square"></i> Edit Profile
+                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- Details Body -->
             <div class="custom-card-body">
-                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-person-lines-fill text-primary me-2"></i> Information Overview</h5>
+                <!-- Section 1: Employee Information -->
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-person-lines-fill text-primary me-2"></i> Employee Details</h5>
                 
-                <div class="row g-3">
-                    <div class="col-sm-6">
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6 col-md-4">
                         <div class="p-3 bg-light rounded-3 border">
                             <div class="text-muted small text-uppercase fw-semibold mb-1">
                                 <i class="bi bi-hash text-primary me-1"></i> Employee ID
                             </div>
-                            <div class="fs-5 fw-bold text-dark">#@Model.ID</div>
+                            <div class="fs-5 fw-bold text-dark">#@emp.ID</div>
                         </div>
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 col-md-4">
                         <div class="p-3 bg-light rounded-3 border">
                             <div class="text-muted small text-uppercase fw-semibold mb-1">
                                 <i class="bi bi-person text-primary me-1"></i> Full Name
                             </div>
-                            <div class="fs-5 fw-bold text-dark">@Model.Name</div>
+                            <div class="fs-5 fw-bold text-dark">@emp.Name</div>
                         </div>
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 col-md-4">
                         <div class="p-3 bg-light rounded-3 border">
                             <div class="text-muted small text-uppercase fw-semibold mb-1">
                                 <i class="bi bi-building text-primary me-1"></i> Department
                             </div>
                             <div class="fs-5 fw-bold text-dark">
-                                <span class="badge-pill @deptClass">@Model.Dept</span>
+                                <span class="badge-pill @deptClass">@emp.Dept</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 col-md-4">
                         <div class="p-3 bg-light rounded-3 border">
                             <div class="text-muted small text-uppercase fw-semibold mb-1">
                                 <i class="bi bi-cash text-primary me-1"></i> Salary
                             </div>
-                            <div class="fs-5 fw-bold text-success">@Model.Salary.ToString("N0")</div>
+                            <div class="fs-5 fw-bold text-success">₹@emp.Salary.ToString("N0")</div>
                         </div>
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 col-md-4">
                         <div class="p-3 bg-light rounded-3 border">
                             <div class="text-muted small text-uppercase fw-semibold mb-1">
                                 <i class="bi @genderIcon text-primary me-1"></i> Gender
                             </div>
                             <div class="fs-5 fw-bold text-dark">
-                                <span class="badge-pill @genderClass">@Model.Gender</span>
+                                <span class="badge-pill @genderClass">@emp.Gender</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 col-md-4">
                         <div class="p-3 bg-light rounded-3 border">
                             <div class="text-muted small text-uppercase fw-semibold mb-1">
-                                <i class="bi bi-geo-alt text-primary me-1"></i> Location / City
+                                <i class="bi bi-geo-alt text-primary me-1"></i> Base City
                             </div>
-                            <div class="fs-5 fw-bold text-dark">@Model.City</div>
+                            <div class="fs-5 fw-bold text-dark">@emp.City</div>
                         </div>
                     </div>
                 </div>
 
-                <hr class="my-4 text-muted" />
+                <!-- Section 2: Linked Address Information -->
+                <div class="d-flex align-items-center justify-content-between mb-3 pt-2">
+                    <h5 class="fw-bold text-dark mb-0"><i class="bi bi-geo-alt-fill text-danger me-2"></i> Linked Address Details</h5>
+                    @if (addr != null)
+                    {
+                        <a href="@Url.Action("Edit", "Address", new { id = addr.AddressId })" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-pencil"></i> Edit Address
+                        </a>
+                    }
+                </div>
 
-                <!-- Action Buttons -->
+                @if (addr != null)
+                {
+                    <div class="p-4 rounded-3 border bg-white shadow-sm mb-4">
+                        <div class="row g-3">
+                            <div class="col-sm-6 col-md-3">
+                                <div class="text-muted small text-uppercase fw-semibold mb-1">Address ID</div>
+                                <div class="fs-6 fw-bold text-primary">#@addr.AddressId</div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="text-muted small text-uppercase fw-semibold mb-1">City</div>
+                                <div class="fs-6 fw-bold text-dark"><i class="bi bi-building me-1 text-muted"></i>@addr.City</div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="text-muted small text-uppercase fw-semibold mb-1">State</div>
+                                <div class="fs-6 fw-bold text-dark">@addr.State</div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="text-muted small text-uppercase fw-semibold mb-1">Country</div>
+                                <div class="fs-6 fw-bold text-dark"><i class="bi bi-globe2 me-1 text-primary"></i>@addr.Country</div>
+                            </div>
+                            <div class="col-sm-6 col-md-3">
+                                <div class="text-muted small text-uppercase fw-semibold mb-1">PIN / Postal Code</div>
+                                <div class="badge bg-light text-dark border px-2 py-1 font-monospace fs-6">@addr.Pin</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-light border rounded-3 p-3 mb-4 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-info-circle text-warning fs-5"></i>
+                            <div>
+                                <span class="fw-semibold">No address currently linked to this employee.</span>
+                                <div class="small text-muted">Assign an address in edit mode to connect regional postal information.</div>
+                            </div>
+                        </div>
+                        <a href="@Url.Action("Edit", "Employee", new { id = emp.ID })" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-link-45deg"></i> Link Address
+                        </a>
+                    </div>
+                }
+
+                <hr class="my-3 text-muted" />
+
+                <!-- Bottom Navigation Buttons -->
                 <div class="d-flex justify-content-between align-items-center">
-                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                    <a href="@Url.Action("Index", "Employee")" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left"></i> Back to Directory
                     </a>
                     <div class="d-flex gap-2">
-                        <a href="@Url.Action("Delete", new { id = Model.ID })" class="btn btn-outline-danger">
+                        <a href="@Url.Action("Delete", "Employee", new { id = emp.ID })" class="btn btn-outline-danger">
                             <i class="bi bi-trash"></i> Delete
                         </a>
-                        <a href="@Url.Action("Edit", new { id = Model.ID })" class="btn btn-primary-gradient px-4">
+                        <a href="@Url.Action("Edit", "Employee", new { id = emp.ID })" class="btn btn-primary-gradient px-4">
                             <i class="bi bi-pencil-square"></i> Edit Profile
                         </a>
                     </div>
