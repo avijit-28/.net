@@ -133,6 +133,7 @@
     <Compile Include="Models\EmployeeRepo.cs" />
     <Compile Include="Models\EmployeeUser.cs" />
     <Compile Include="Models\EmployeeUserRepo.cs" />
+    <Compile Include="Models\RoleAuthHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\EmployeeDashboardViewModel.cs" />
     <Compile Include="ViewModels\EmployeeDetailsViewModel.cs" />
