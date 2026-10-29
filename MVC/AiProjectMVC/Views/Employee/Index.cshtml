@@ -274,9 +274,12 @@
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
-                    <a href="@Url.Action("Create", "Address")" class="btn btn-primary-gradient btn-sm">
-                        <i class="bi bi-plus-lg"></i> New Address
-                    </a>
+                    @if (canManage)
+                    {
+                        <a href="@Url.Action("Create", "Address")" class="btn btn-primary-gradient btn-sm">
+                            <i class="bi bi-plus-lg"></i> New Address
+                        </a>
+                    }
                 </div>
             </div>
 
@@ -300,9 +303,12 @@
                                     <i class="bi bi-geo-alt fs-1 d-block mb-2 text-secondary"></i>
                                     <h5>No address records found</h5>
                                     <p class="small text-muted mb-3">Add regional addresses for your staff members.</p>
-                                    <a href="@Url.Action("Create", "Address")" class="btn btn-primary-gradient btn-sm">
-                                        <i class="bi bi-plus-lg"></i> Add First Address
-                                    </a>
+                                    @if (canManage)
+                                    {
+                                        <a href="@Url.Action("Create", "Address")" class="btn btn-primary-gradient btn-sm">
+                                            <i class="bi bi-plus-lg"></i> Add First Address
+                                        </a>
+                                    }
                                 </td>
                             </tr>
                         }
