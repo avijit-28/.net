@@ -7,6 +7,14 @@ using FirstMVCProject.Models;
 
 namespace FirstMVCProject.Controllers
 {
+    //public class EmployeeController : Controller
+    //{
+    //    //private readonly EmployeeRepo _repo = new EmployeeRepo();
+    //    //private readonly AddressRepo _addressRepo = new AddressRepo();
+    //}
+
+
+
     public class EmployeeController : Controller
     {
         private readonly EmployeeRepo _repo = new EmployeeRepo();
@@ -37,7 +45,7 @@ namespace FirstMVCProject.Controllers
         public ActionResult Create(Employee employee)
         {
             try
-    {
+            {
                 if (ModelState.IsValid)
                 {
                     _repo.InsertEmployee(employee);
@@ -47,8 +55,8 @@ namespace FirstMVCProject.Controllers
 
                 return View(employee);
             }
-    catch
-    {
+            catch
+            {
                 return View(employee);
             }
 
@@ -81,7 +89,8 @@ namespace FirstMVCProject.Controllers
                         employee.Salary,
                         employee.Gender,
                         employee.City,
-                        employee.Dept
+                        employee.Dept,
+                         employee.AddressId
                     );
 
                     return RedirectToAction("Index");
@@ -93,7 +102,7 @@ namespace FirstMVCProject.Controllers
             {
                 return View(employee);
             }
-        
+
         }
 
         // GET: Employee/Delete/5
