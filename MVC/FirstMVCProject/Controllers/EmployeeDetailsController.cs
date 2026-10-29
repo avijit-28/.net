@@ -15,7 +15,8 @@ namespace FirstMVCProject.Controllers
         // GET: EmployeeDetails
         public ActionResult Index()
         {
-            return View();
+            List<Employee> employees = _employeeRepo.GetAllEmployee();
+            return View(employees);
         }
 
         // GET: EmployeeDetails/Details/5
