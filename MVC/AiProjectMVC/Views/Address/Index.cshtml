@@ -154,12 +154,15 @@
                                     <a href="@Url.Action("Details", new { id = item.AddressId })" class="btn btn-action btn-outline-info" title="View Details">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a href="@Url.Action("Edit", new { id = item.AddressId })" class="btn btn-action btn-outline-primary" title="Edit Address">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a href="@Url.Action("Delete", new { id = item.AddressId })" class="btn btn-action btn-outline-danger" title="Delete Address">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
+                                    @if (canManage)
+                                    {
+                                        <a href="@Url.Action("Edit", new { id = item.AddressId })" class="btn btn-action btn-outline-primary" title="Edit Address">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="@Url.Action("Delete", new { id = item.AddressId })" class="btn btn-action btn-outline-danger" title="Delete Address">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    }
                                 </div>
                             </td>
                         </tr>
