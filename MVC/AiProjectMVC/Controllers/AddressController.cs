@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using AiProjectMVC.Models;
 
 namespace AiProjectMVC.Controllers
@@ -10,6 +11,23 @@ namespace AiProjectMVC.Controllers
     public class AddressController : Controller
     {
         private readonly AddressRepo _repo = new AddressRepo();
+
+        // Enforce login for all actions: Even admin must sign in first
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            base.OnActionExecuting(filterContext);
+
+            if (Session["CurrentUser"] == null)
+            {
+                TempData["ErrorMessage"] = "Please sign in to access address records. Even administrators must sign in.";
+                var returnUrl = filterContext.HttpContext.Request.RawUrl;
+                filterContext.Result = new RedirectToRouteResult(
+                    new RouteValueDictionary(
+                        new { controller = "Account", action = "Login", returnUrl = returnUrl }
+                    )
+                );
+            }
+        }
 
         // GET: Address
         public ActionResult Index()
