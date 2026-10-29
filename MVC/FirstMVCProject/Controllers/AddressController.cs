@@ -98,22 +98,29 @@ namespace FirstMVCProject.Controllers
         // GET: Address/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            Address address = _repo.GetAddressById(id);
+
+            if (address == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(address);
         }
 
         // POST: Address/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id, Address address)
         {
             try
             {
-                // TODO: Add delete logic here
+                _repo.DeleteAddress(id);
 
                 return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return RedirectToAction("Index");
             }
         }
     }
