@@ -21,11 +21,29 @@ namespace FirstMVCProject.Controllers
         private readonly EmployeeRepo _repo = new EmployeeRepo();
         private readonly AddressRepo _addressRepo = new AddressRepo();
 
+
         // GET: Employee
         public ActionResult Index()
         {
-            var employees = _repo.GetAllEmployee();
-            return View(employees);
+
+            //var employees = _repo.GetAllEmployee();
+            //return View(employees);
+            List<Employee> employees = _repo.GetAllEmployee();
+
+            List<Address> addresses = _addressRepo.GetAllAddress();
+
+            EmployeeDetailsViewModel viewModel =
+                new EmployeeDetailsViewModel
+                {
+                    Employees = employees,
+                    Addresses = addresses,
+                    PageTitle = "Employee and Address",
+                    PageHeader = "Employee and Address Details"
+                };
+
+            return View(viewModel);
+
+
         }
 
         // GET: Employee/Details/5
