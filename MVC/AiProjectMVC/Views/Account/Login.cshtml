@@ -1,0 +1,137 @@
+@model AiProjectMVC.ViewModels.LoginViewModel
+
+@{
+    ViewBag.Title = "User Login";
+    var demoUsers = ViewBag.DemoUsers as List<AiProjectMVC.Models.EmployeeUser> ?? new List<AiProjectMVC.Models.EmployeeUser>();
+}
+
+<div class="row justify-content-center py-4">
+    <div class="col-md-8 col-lg-5">
+        <div class="custom-card shadow-lg border-0 overflow-hidden">
+            <!-- Top Branding Header -->
+            <div class="p-4 text-center text-white" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #4338ca 100%);">
+                <div class="d-inline-flex p-3 rounded-circle bg-white bg-opacity-10 text-white mb-2 shadow-sm">
+                    <i class="bi bi-shield-lock-fill fs-2"></i>
+                </div>
+                <h3 class="fw-bold mb-1">Employee Portal Login</h3>
+                <p class="text-white-50 small mb-0">Sign in with your registered username or email</p>
+            </div>
+
+            <!-- Login Form Body -->
+            <div class="custom-card-body p-4">
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty] != null)
+                    {
+                        <div class="custom-alert custom-alert-danger mb-3" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill fs-5 text-danger"></i>
+                            <div class="small">@Html.ValidationSummary(true, "", new { @class = "mb-0" })</div>
+                        </div>
+                    }
+
+                    <!-- Username / Email Field -->
+                    <div class="mb-3">
+                        @Html.LabelFor(m => m.UserNameOrEmail, new { @class = "form-label" })
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-person text-muted"></i></span>
+                            @Html.TextBoxFor(m => m.UserNameOrEmail, new { @class = "form-control", placeholder = "Username or Email (e.g. avijit28)", required = "required", id = "usernameInput" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.UserNameOrEmail, "", new { @class = "text-danger small mt-1 d-block" })
+                    </div>
+
+                    <!-- Password / Phone Field -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            @Html.LabelFor(m => m.PasswordOrPhone, new { @class = "form-label" })
+                            <span class="text-muted small" title="For pre-registered users, enter your registered phone number e.g. 9876543210">
+                                <i class="bi bi-question-circle"></i> Phone / Key
+                            </span>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-key text-muted"></i></span>
+                            @Html.PasswordFor(m => m.PasswordOrPhone, new { @class = "form-control", placeholder = "Phone number or password", required = "required", id = "passwordInput" })
+                            <button class="btn btn-outline-secondary" type="button" id="togglePasswordBtn" title="Toggle visibility">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.PasswordOrPhone, "", new { @class = "text-danger small mt-1 d-block" })
+                        <span class="text-muted small d-block mt-1">Use registered phone number (e.g. <code>9876543210</code>) or password.</span>
+                    </div>
+
+                    <!-- Remember Me -->
+                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                        <div class="form-check">
+                            @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-check-input" })
+                            @Html.LabelFor(m => m.RememberMe, new { @class = "form-check-label small" })
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary-gradient w-100 py-2 fs-6 shadow-sm mb-3">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Dashboard
+                    </button>
+                }
+
+                <!-- Quick Test Logins Section -->
+                @if (demoUsers.Any())
+                {
+                    <div class="mt-4 pt-3 border-top">
+                        <div class="text-muted small fw-semibold mb-2 text-uppercase">
+                            <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick Test Accounts (Click to Fill)
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var user in demoUsers)
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-1 px-2 demo-chip"
+                                        data-user="@user.UserName" data-pass="@user.PhoneNumber">
+                                    <span class="fw-bold">@user.UserName</span>
+                                    <span class="badge bg-light text-dark ms-1">@user.Role</span>
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Register Footer Link -->
+                <div class="text-center mt-4 pt-2">
+                    <p class="text-muted small mb-0">
+                        Don't have an account? 
+                        <a href="@Url.Action("Register", "Account")" class="fw-bold text-primary text-decoration-none ms-1">
+                            Register New Account
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // Password visibility toggle
+            $('#togglePasswordBtn').on('click', function () {
+                var input = $('#passwordInput');
+                var icon = $(this).find('i');
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('bi-eye').addClass('bi-eye-slash');
+                } else {
+                    input.attr('type', 'password');
+                    icon.removeClass('bi-eye-slash').addClass('bi-eye');
+                }
+            });
+
+            // Quick demo login filler
+            $('.demo-chip').on('click', function () {
+                var user = $(this).data('user');
+                var pass = $(this).data('pass');
+                $('#usernameInput').val(user);
+                $('#passwordInput').val(pass);
+            });
+        });
+    </script>
+}
