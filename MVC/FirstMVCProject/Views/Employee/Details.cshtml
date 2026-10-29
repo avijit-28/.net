@@ -1,34 +1,126 @@
-﻿@model FirstMVCProject.ViewModels.EmployeeDetailsViewModel
+﻿```cshtml
+@model FirstMVCProject.ViewModels.EmployeeDetailsViewModel
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = Model.PageTitle;
 }
 
-<h2>Details</h2>
+<h2>@Model.PageHeader</h2>
 
-<div>
-    <h4>EmployeeDetailsViewModel</h4>
-    <hr />
+<hr />
+
+<!-- Employee Details -->
+<h3>Employee Details</h3>
+
+<dl class="dl-horizontal">
+
+    <dt>
+        ID
+    </dt>
+    <dd>
+        @Model.Employee.ID
+    </dd>
+
+    <dt>
+        Name
+    </dt>
+    <dd>
+        @Model.Employee.Name
+    </dd>
+
+    <dt>
+        Salary
+    </dt>
+    <dd>
+        @Model.Employee.Salary
+    </dd>
+
+    <dt>
+        Gender
+    </dt>
+    <dd>
+        @Model.Employee.Gender
+    </dd>
+
+    <dt>
+        City
+    </dt>
+    <dd>
+        @Model.Employee.City
+    </dd>
+
+    <dt>
+        Department
+    </dt>
+    <dd>
+        @Model.Employee.Dept
+    </dd>
+
+    <dt>
+        Address ID
+    </dt>
+    <dd>
+        @Model.Employee.AddressId
+    </dd>
+
+</dl>
+
+<hr />
+
+<!-- Address Details -->
+<h3>Address Details</h3>
+
+@if (Model.Address != null)
+{
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.PageTitle)
-        </dt>
 
+        <dt>
+            Address ID
+        </dt>
         <dd>
-            @Html.DisplayFor(model => model.PageTitle)
+            @Model.Address.AddressId
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.PageHeader)
+            Country
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.PageHeader)
+            @Model.Address.Country
+        </dd>
+
+        <dt>
+            State
+        </dt>
+        <dd>
+            @Model.Address.State
+        </dd>
+
+        <dt>
+            City
+        </dt>
+        <dd>
+            @Model.Address.City
+        </dd>
+
+        <dt>
+            PIN
+        </dt>
+        <dd>
+            @Model.Address.Pin
         </dd>
 
     </dl>
-</div>
+}
+else
+{
+    <p class="text-danger">
+        Address details are not available.
+    </p>
+}
+
+<hr />
+
 <p>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+```
