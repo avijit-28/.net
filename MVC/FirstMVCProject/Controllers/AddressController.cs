@@ -110,6 +110,7 @@ namespace FirstMVCProject.Controllers
 
         // POST: Address/Delete/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, Address address)
         {
             try
