@@ -126,9 +126,12 @@
                             <option value="@dept">@dept</option>
                         }
                     </select>
-                    <a href="@Url.Action("Create", "Employee")" class="btn btn-primary-gradient btn-sm">
-                        <i class="bi bi-plus-lg"></i> New Employee
-                    </a>
+                    @if (canManage)
+                    {
+                        <a href="@Url.Action("Create", "Employee")" class="btn btn-primary-gradient btn-sm">
+                            <i class="bi bi-plus-lg"></i> New Employee
+                        </a>
+                    }
                 </div>
             </div>
 
@@ -154,9 +157,12 @@
                                     <i class="bi bi-folder-x fs-1 d-block mb-2 text-secondary"></i>
                                     <h5>No employee records found</h5>
                                     <p class="small text-muted mb-3">Add your first employee to populate this directory.</p>
-                                    <a href="@Url.Action("Create", "Employee")" class="btn btn-primary-gradient btn-sm">
-                                        <i class="bi bi-plus-lg"></i> Add First Employee
-                                    </a>
+                                    @if (canManage)
+                                    {
+                                        <a href="@Url.Action("Create", "Employee")" class="btn btn-primary-gradient btn-sm">
+                                            <i class="bi bi-plus-lg"></i> Add First Employee
+                                        </a>
+                                    }
                                 </td>
                             </tr>
                         }
