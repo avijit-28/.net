@@ -36,7 +36,10 @@ namespace FirstMVCProject.Models
                                 Salary = Convert.ToInt32(reader["Salary"]),
                                 Gender = reader["Gender"].ToString(),
                                 City = reader["City"].ToString(),
-                                Dept = reader["Dept"].ToString()
+                                Dept = reader["Dept"].ToString(),
+                                AddressId = reader["AddressId"] == DBNull.Value
+                            ? (int?)null
+                            : Convert.ToInt32(reader["AddressId"])
                             });
                         }
                     }
@@ -71,7 +74,10 @@ namespace FirstMVCProject.Models
                                 Salary = Convert.ToInt32(reader["Salary"]),
                                 Gender = reader["Gender"].ToString(),
                                 City = reader["City"].ToString(),
-                                Dept = reader["Dept"].ToString()
+                                Dept = reader["Dept"].ToString(),
+                                AddressId = reader["AddressId"] == DBNull.Value
+                            ? (int?)null
+                            : Convert.ToInt32(reader["AddressId"])
                             };
                         }
                     }
@@ -94,6 +100,8 @@ namespace FirstMVCProject.Models
                     cmd.Parameters.AddWithValue("@Gender", employee.Gender);
                     cmd.Parameters.AddWithValue("@City", employee.City);
                     cmd.Parameters.AddWithValue("@Dept", employee.Dept);
+                    cmd.Parameters.AddWithValue("@AddressId",
+                    (object)employee.AddressId ?? DBNull.Value);
 
                     con.Open();
                     cmd.ExecuteNonQuery();
@@ -108,7 +116,8 @@ namespace FirstMVCProject.Models
        decimal? salary = null,
        string gender = null,
        string city = null,
-       string dept = null)
+       string dept = null,
+        int? addressId = null)
         {
             using (SqlConnection con = new SqlConnection(_conStr))
             {
@@ -127,6 +136,8 @@ namespace FirstMVCProject.Models
                         (object)city ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Dept",
                         (object)dept ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@AddressId",
+                        (object)addressId ?? DBNull.Value);
 
                     con.Open();
                     cmd.ExecuteNonQuery();
