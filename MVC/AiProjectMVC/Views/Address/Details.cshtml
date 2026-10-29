@@ -1,0 +1,103 @@
+@model AiProjectMVC.Models.Address
+
+@{
+    ViewBag.Title = "Address Details";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <!-- Back Breadcrumb Link -->
+        <div class="mb-3">
+            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small fw-semibold">
+                <i class="bi bi-arrow-left me-1"></i> Back to Address Directory
+            </a>
+        </div>
+
+        <div class="custom-card">
+            <!-- Header Banner -->
+            <div class="p-4" style="background: linear-gradient(135deg, #0369a1 0%, #075985 100%); color: white; border-top-left-radius: var(--radius-lg); border-top-right-radius: var(--radius-lg);">
+                <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width: 60px; height: 60px; border-radius: 16px; background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; border: 2px solid rgba(255,255,255,0.3);">
+                            <i class="bi bi-geo-alt-fill text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-1">@Model.City, @Model.State</h3>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-white bg-opacity-25 text-white px-2 py-1">
+                                    <i class="bi bi-hash"></i> Address #@Model.AddressId
+                                </span>
+                                <span class="badge bg-light text-dark px-2 py-1">
+                                    <i class="bi bi-globe2 me-1"></i>@Model.Country
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="@Url.Action("Edit", new { id = Model.AddressId })" class="btn btn-light btn-sm text-dark fw-bold">
+                        <i class="bi bi-pencil-square"></i> Edit
+                    </a>
+                </div>
+            </div>
+
+            <!-- Body Details -->
+            <div class="custom-card-body">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-map-fill text-primary me-2"></i> Location Details</h5>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <div class="text-muted small text-uppercase fw-semibold mb-1">Address ID</div>
+                            <div class="fs-5 fw-bold text-dark">#@Model.AddressId</div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <div class="text-muted small text-uppercase fw-semibold mb-1">City</div>
+                            <div class="fs-5 fw-bold text-dark">@Model.City</div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <div class="text-muted small text-uppercase fw-semibold mb-1">State / Region</div>
+                            <div class="fs-5 fw-bold text-dark">@Model.State</div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <div class="text-muted small text-uppercase fw-semibold mb-1">Country</div>
+                            <div class="fs-5 fw-bold text-primary">@Model.Country</div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <div class="text-muted small text-uppercase fw-semibold mb-1">PIN / Postal Code</div>
+                            <div class="fs-5 fw-bold font-monospace text-dark">@Model.Pin</div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-3 text-muted" />
+
+                <!-- Bottom Navigation Buttons -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                    <div class="d-flex gap-2">
+                        <a href="@Url.Action("Delete", new { id = Model.AddressId })" class="btn btn-outline-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                        <a href="@Url.Action("Edit", new { id = Model.AddressId })" class="btn btn-primary-gradient px-4">
+                            <i class="bi bi-pencil-square"></i> Edit Address
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
