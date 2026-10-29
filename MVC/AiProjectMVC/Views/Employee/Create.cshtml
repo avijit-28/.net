@@ -79,7 +79,7 @@
                         <div class="col-md-6">
                             @Html.LabelFor(model => model.Salary, new { @class = "form-label" })
                             <div class="input-group">
-                                <span class="input-group-text bg-light fw-bold text-muted">₹</span>
+                                <span class="input-group-text bg-light fw-bold text-muted">&#8377;</span>
                                 @Html.EditorFor(model => model.Salary, new { htmlAttributes = new { @class = "form-control", type = "number", step = "1000", placeholder = "e.g. 50000", required = "required" } })
                             </div>
                             @Html.ValidationMessageFor(model => model.Salary, "", new { @class = "text-danger small mt-1 d-block" })
