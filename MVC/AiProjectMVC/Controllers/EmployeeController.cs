@@ -221,6 +221,12 @@ namespace AiProjectMVC.Controllers
         // GET: Employee/Edit/5
         public ActionResult Edit(int id)
         {
+            if (!RoleAuthHelper.CanManageRecords(Session))
+            {
+                TempData["ErrorMessage"] = "Access Denied: Only Admin, HR, or Manager roles are authorized to modify employees.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 var employee = _repo.GetEmployeeById(id);
@@ -245,6 +251,12 @@ namespace AiProjectMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Employee employee)
         {
+            if (!RoleAuthHelper.CanManageRecords(Session))
+            {
+                TempData["ErrorMessage"] = "Access Denied: Only Admin, HR, or Manager roles are authorized to modify employees.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 if (ModelState.IsValid)
@@ -277,6 +289,12 @@ namespace AiProjectMVC.Controllers
         // GET: Employee/Delete/5
         public ActionResult Delete(int id)
         {
+            if (!RoleAuthHelper.CanManageRecords(Session))
+            {
+                TempData["ErrorMessage"] = "Access Denied: Only Admin, HR, or Manager roles are authorized to delete employees.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 var employee = _repo.GetEmployeeById(id);
@@ -299,6 +317,12 @@ namespace AiProjectMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+            if (!RoleAuthHelper.CanManageRecords(Session))
+            {
+                TempData["ErrorMessage"] = "Access Denied: Only Admin, HR, or Manager roles are authorized to delete employees.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 _repo.DeleteEmployee(id);
