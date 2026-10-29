@@ -108,6 +108,12 @@ namespace AiProjectMVC.Controllers
         // GET: Address/Edit/5
         public ActionResult Edit(int id)
         {
+            if (!RoleAuthHelper.CanManageRecords(Session))
+            {
+                TempData["ErrorMessage"] = "Access Denied: Only Admin, HR, or Manager roles are authorized to modify addresses.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 var address = _repo.GetAddressById(id);
@@ -130,6 +136,12 @@ namespace AiProjectMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Address address)
         {
+            if (!RoleAuthHelper.CanManageRecords(Session))
+            {
+                TempData["ErrorMessage"] = "Access Denied: Only Admin, HR, or Manager roles are authorized to modify addresses.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 if (ModelState.IsValid)
@@ -151,6 +163,12 @@ namespace AiProjectMVC.Controllers
         // GET: Address/Delete/5
         public ActionResult Delete(int id)
         {
+            if (!RoleAuthHelper.CanManageRecords(Session))
+            {
+                TempData["ErrorMessage"] = "Access Denied: Only Admin, HR, or Manager roles are authorized to delete addresses.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 var address = _repo.GetAddressById(id);
@@ -173,6 +191,12 @@ namespace AiProjectMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+            if (!RoleAuthHelper.CanManageRecords(Session))
+            {
+                TempData["ErrorMessage"] = "Access Denied: Only Admin, HR, or Manager roles are authorized to delete addresses.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 _repo.DeleteAddress(id);
