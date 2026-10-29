@@ -19,7 +19,7 @@
      
         public ViewResult Details(int id)
         {
-            Employee employee = _employeeRepo.GetEmployeeById(id);
+            Employee employee = _employeeRepo.GetEmployeeById(105);
             if (employee == null)
             {
                 return null;
