@@ -1,0 +1,189 @@
+@model IEnumerable<AiProjectMVC.Models.Address>
+
+@{
+    ViewBag.Title = "Address Directory";
+    var addressList = Model ?? Enumerable.Empty<AiProjectMVC.Models.Address>();
+    int totalCount = addressList.Count();
+    int uniqueCities = addressList.Select(a => a.City).Where(c => !string.IsNullOrWhiteSpace(c)).Distinct().Count();
+    int uniqueStates = addressList.Select(a => a.State).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().Count();
+}
+
+<!-- Page Header Box -->
+<div class="page-header-box d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <div>
+        <h1 class="page-title"><i class="bi bi-geo-alt-fill text-primary me-2"></i> Address Directory</h1>
+        <p class="page-subtitle">Manage organization branches, staff residences, and regional office locations.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="@Url.Action("Index", "Employee")" class="btn btn-outline-secondary">
+            <i class="bi bi-people-fill"></i> View Employees
+        </a>
+        <a href="@Url.Action("Create")" class="btn btn-primary-gradient">
+            <i class="bi bi-plus-lg"></i> Add New Address
+        </a>
+    </div>
+</div>
+
+<!-- Quick Statistics Row -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-4">
+        <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-primary">
+                <i class="bi bi-geo-alt"></i>
+            </div>
+            <div>
+                <div class="stat-label">Total Addresses</div>
+                <div class="stat-value">@totalCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-info">
+                <i class="bi bi-building"></i>
+            </div>
+            <div>
+                <div class="stat-label">Cities Covered</div>
+                <div class="stat-value">@uniqueCities</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-warning">
+                <i class="bi bi-map"></i>
+            </div>
+            <div>
+                <div class="stat-label">States / Regions</div>
+                <div class="stat-value">@uniqueStates</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Table Card -->
+<div class="custom-card">
+    <div class="custom-card-header flex-wrap gap-3">
+        <!-- Live Search Input -->
+        <div class="d-flex align-items-center gap-2 flex-grow-1" style="max-width: 420px;">
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" id="addressSearchInput" class="form-control border-start-0 ps-0" placeholder="Search by city, state, country, or PIN..." />
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-sm" title="Refresh">
+                <i class="bi bi-arrow-clockwise"></i>
+            </a>
+            <a href="@Url.Action("Create")" class="btn btn-primary-gradient btn-sm">
+                <i class="bi bi-plus-lg"></i> New Address
+            </a>
+        </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-responsive">
+        <table class="table custom-table" id="addressTable">
+            <thead>
+                <tr>
+                    <th style="width: 90px;">ID</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Country</th>
+                    <th>PIN / Postal Code</th>
+                    <th class="text-end" style="width: 140px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!addressList.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-geo-alt-fill fs-1 d-block mb-2 text-secondary"></i>
+                            <h5>No address records found</h5>
+                            <p class="small text-muted mb-3">Add regional addresses to associate with employees.</p>
+                            <a href="@Url.Action("Create")" class="btn btn-primary-gradient btn-sm">
+                                <i class="bi bi-plus-lg"></i> Add First Address
+                            </a>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in addressList)
+                    {
+                        <tr class="address-row" data-city="@item.City" data-state="@item.State" data-country="@item.Country" data-pin="@item.Pin" data-id="@item.AddressId">
+                            <td>
+                                <span class="badge bg-light text-dark border px-2 py-1 fw-bold">#@item.AddressId</span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-dark"><i class="bi bi-building me-1 text-muted"></i>@item.City</span>
+                            </td>
+                            <td>
+                                <span class="text-secondary">@item.State</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1">
+                                    <i class="bi bi-globe2 me-1"></i>@item.Country
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-secondary border px-2 py-1 font-monospace fs-6">@item.Pin</span>
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="@Url.Action("Details", new { id = item.AddressId })" class="btn btn-action btn-outline-info" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Edit", new { id = item.AddressId })" class="btn btn-action btn-outline-primary" title="Edit Address">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", new { id = item.AddressId })" class="btn btn-action btn-outline-danger" title="Delete Address">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#addressSearchInput').on('keyup input', function () {
+                var query = $(this).val().toLowerCase().trim();
+                var visible = 0;
+
+                $('.address-row').each(function () {
+                    var city = ($(this).data('city') || '').toString().toLowerCase();
+                    var state = ($(this).data('state') || '').toString().toLowerCase();
+                    var country = ($(this).data('country') || '').toString().toLowerCase();
+                    var pin = ($(this).data('pin') || '').toString().toLowerCase();
+                    var id = ($(this).data('id') || '').toString().toLowerCase();
+
+                    if (query === '' || city.indexOf(query) !== -1 || state.indexOf(query) !== -1 || country.indexOf(query) !== -1 || pin.indexOf(query) !== -1 || id.indexOf(query) !== -1) {
+                        $(this).show();
+                        visible++;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                if (visible === 0 && $('.address-row').length > 0) {
+                    if ($('#noMatchAddress').length === 0) {
+                        $('#addressTable tbody').append('<tr id="noMatchAddress"><td colspan="6" class="text-center py-4 text-muted"><i class="bi bi-search me-1"></i> No matching addresses found.</td></tr>');
+                    }
+                } else {
+                    $('#noMatchAddress').remove();
+                }
+            });
+        });
+    </script>
+}
