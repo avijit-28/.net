@@ -190,10 +190,10 @@
     <Content Include="Views\Employee\Create.cshtml" />
     <Content Include="Views\Employee\Edit.cshtml" />
     <Content Include="Views\Employee\Delete.cshtml" />
+    <Content Include="Views\EmpDet\Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\EmpDet\" />
     <Folder Include="Views\EmployeeDetails\" />
   </ItemGroup>
   <ItemGroup>
