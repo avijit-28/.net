@@ -40,7 +40,8 @@ namespace AiProjectMVC.Models
                                 Salary = reader["Salary"] != DBNull.Value ? Convert.ToInt32(reader["Salary"]) : 0,
                                 Gender = reader["Gender"] != DBNull.Value ? reader["Gender"].ToString() : string.Empty,
                                 City = reader["City"] != DBNull.Value ? reader["City"].ToString() : string.Empty,
-                                Dept = reader["Dept"] != DBNull.Value ? reader["Dept"].ToString() : string.Empty
+                                Dept = reader["Dept"] != DBNull.Value ? reader["Dept"].ToString() : string.Empty,
+                                AddressId = reader["AddressId"] != DBNull.Value ? (int?)Convert.ToInt32(reader["AddressId"]) : null
                             });
                         }
                     }
@@ -73,7 +74,8 @@ namespace AiProjectMVC.Models
                                 Salary = reader["Salary"] != DBNull.Value ? Convert.ToInt32(reader["Salary"]) : 0,
                                 Gender = reader["Gender"] != DBNull.Value ? reader["Gender"].ToString() : string.Empty,
                                 City = reader["City"] != DBNull.Value ? reader["City"].ToString() : string.Empty,
-                                Dept = reader["Dept"] != DBNull.Value ? reader["Dept"].ToString() : string.Empty
+                                Dept = reader["Dept"] != DBNull.Value ? reader["Dept"].ToString() : string.Empty,
+                                AddressId = reader["AddressId"] != DBNull.Value ? (int?)Convert.ToInt32(reader["AddressId"]) : null
                             };
                         }
                     }
@@ -96,6 +98,7 @@ namespace AiProjectMVC.Models
                     cmd.Parameters.AddWithValue("@Gender", (object)employee.Gender ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@City", (object)employee.City ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Dept", (object)employee.Dept ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@AddressId", (object)employee.AddressId ?? DBNull.Value);
 
                     con.Open();
                     cmd.ExecuteNonQuery();
@@ -109,7 +112,8 @@ namespace AiProjectMVC.Models
             decimal? salary = null,
             string gender = null,
             string city = null,
-            string dept = null)
+            string dept = null,
+            int? addressId = null)
         {
             using (SqlConnection con = new SqlConnection(_conStr))
             {
@@ -123,6 +127,7 @@ namespace AiProjectMVC.Models
                     cmd.Parameters.AddWithValue("@Gender", (object)gender ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@City", (object)city ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Dept", (object)dept ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@AddressId", (object)addressId ?? DBNull.Value);
 
                     con.Open();
                     cmd.ExecuteNonQuery();
