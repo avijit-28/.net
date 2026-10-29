@@ -242,12 +242,15 @@
                                             <a href="@Url.Action("Details", "Employee", new { id = item.ID })" class="btn btn-action btn-outline-info" title="View Details">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="@Url.Action("Edit", "Employee", new { id = item.ID })" class="btn btn-action btn-outline-primary" title="Edit Profile">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                            <a href="@Url.Action("Delete", "Employee", new { id = item.ID })" class="btn btn-action btn-outline-danger" title="Delete Employee">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
+                                            @if (canManage)
+                                            {
+                                                <a href="@Url.Action("Edit", "Employee", new { id = item.ID })" class="btn btn-action btn-outline-primary" title="Edit Profile">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a href="@Url.Action("Delete", "Employee", new { id = item.ID })" class="btn btn-action btn-outline-danger" title="Delete Employee">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            }
                                         </div>
                                     </td>
                                 </tr>
