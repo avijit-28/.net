@@ -49,6 +49,12 @@ namespace AiProjectMVC.Controllers
         // GET: Address/Create
         public ActionResult Create()
         {
+            if (!RoleAuthHelper.CanManageRecords(Session))
+            {
+                TempData["ErrorMessage"] = "Access Denied: Only Admin, HR, or Manager roles are authorized to add new addresses.";
+                return RedirectToAction("Index");
+            }
+
             return View();
         }
 
@@ -57,6 +63,12 @@ namespace AiProjectMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Address address)
         {
+            if (!RoleAuthHelper.CanManageRecords(Session))
+            {
+                TempData["ErrorMessage"] = "Access Denied: Only Admin, HR, or Manager roles are authorized to add new addresses.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 if (ModelState.IsValid)
