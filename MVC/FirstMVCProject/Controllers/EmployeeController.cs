@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using FirstMVCProject.Models;
+using FirstMVCProject.ViewModels;
 
 namespace FirstMVCProject.Controllers
 {
@@ -18,6 +19,7 @@ namespace FirstMVCProject.Controllers
     public class EmployeeController : Controller
     {
         private readonly EmployeeRepo _repo = new EmployeeRepo();
+        private readonly AddressRepo _addressRepo = new AddressRepo();
 
         // GET: Employee
         public ActionResult Index()
@@ -29,10 +31,31 @@ namespace FirstMVCProject.Controllers
         // GET: Employee/Details/5
         public ActionResult Details(int id)
         {
-            var employees = _repo.GetEmployeeById(id);
-            return View(employees);
-        }
+            Employee employee = _repo.GetEmployeeById(id);
 
+            if (employee == null)
+            {
+                return HttpNotFound();
+            }
+
+            Address address = null;
+
+            if (employee.AddressId.HasValue)
+            {
+                address = _addressRepo.GetAddressById(employee.AddressId.Value);
+            }
+
+            EmployeeDetailsViewModel employeeDetailsViewModel =
+                new EmployeeDetailsViewModel
+                {
+                    Employee = employee,
+                    Address = address,
+                    PageTitle = "Employee Details Page",
+                    PageHeader = "Employee Details"
+                };
+
+            return View(employeeDetailsViewModel);
+        }
         // GET: Employee/Create
         public ActionResult Create()
         {
