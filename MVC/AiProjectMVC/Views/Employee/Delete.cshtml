@@ -8,7 +8,7 @@
     <div class="col-lg-7">
         <!-- Back Breadcrumb Link -->
         <div class="mb-3">
-            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small fw-semibold">
+            <a href="@Url.Action("Index", "Employee")" class="text-decoration-none text-muted small fw-semibold">
                 <i class="bi bi-arrow-left me-1"></i> Back to Employee Directory
             </a>
         </div>
@@ -49,7 +49,11 @@
                     </div>
                     <div class="list-group-item d-flex justify-content-between align-items-center py-2">
                         <span class="text-muted small">Salary</span>
-                        <span class="fw-bold text-success">@Model.Salary.ToString("N0")</span>
+                        <span class="fw-bold text-success">₹@Model.Salary.ToString("N0")</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+                        <span class="text-muted small">Linked Address ID</span>
+                        <span class="fw-semibold">@(Model.AddressId.HasValue ? "#" + Model.AddressId.Value : "None")</span>
                     </div>
                 </div>
 
@@ -58,7 +62,7 @@
                     @Html.AntiForgeryToken()
 
                     <div class="d-flex justify-content-between align-items-center">
-                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <a href="@Url.Action("Index", "Employee")" class="btn btn-outline-secondary">
                             <i class="bi bi-x-lg"></i> Cancel & Keep
                         </a>
                         <button type="submit" class="btn btn-danger px-4">
