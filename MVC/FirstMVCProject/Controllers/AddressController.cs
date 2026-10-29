@@ -22,7 +22,14 @@ namespace FirstMVCProject.Controllers
         // GET: Address/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            Address address = _repo.GetAddressById(id);
+
+            if (address == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(address);
         }
 
         // GET: Address/Create
