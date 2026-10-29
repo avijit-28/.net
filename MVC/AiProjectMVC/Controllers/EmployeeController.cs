@@ -167,6 +167,12 @@ namespace AiProjectMVC.Controllers
         // GET: Employee/Create
         public ActionResult Create()
         {
+            if (!RoleAuthHelper.CanManageRecords(Session))
+            {
+                TempData["ErrorMessage"] = "Access Denied: Only Admin, HR, or Manager roles are authorized to add new employees.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 ViewBag.Addresses = _addressRepo.GetAllAddress() ?? new List<Address>();
@@ -183,6 +189,12 @@ namespace AiProjectMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Employee employee)
         {
+            if (!RoleAuthHelper.CanManageRecords(Session))
+            {
+                TempData["ErrorMessage"] = "Access Denied: Only Admin, HR, or Manager roles are authorized to add new employees.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 if (ModelState.IsValid)
