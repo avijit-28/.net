@@ -35,9 +35,12 @@
                         </div>
                     </div>
 
-                    <a href="@Url.Action("Edit", new { id = Model.AddressId })" class="btn btn-light btn-sm text-dark fw-bold">
-                        <i class="bi bi-pencil-square"></i> Edit
-                    </a>
+                    @if (canManage)
+                    {
+                        <a href="@Url.Action("Edit", new { id = Model.AddressId })" class="btn btn-light btn-sm text-dark fw-bold">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                    }
                 </div>
             </div>
 
