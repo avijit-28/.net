@@ -1,9 +1,10 @@
-﻿using System;
+﻿using FirstMVCProject.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using FirstMVCProject.Models;
 
 namespace FirstMVCProject.Controllers
 {
@@ -40,29 +41,42 @@ namespace FirstMVCProject.Controllers
 
         // POST: Address/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(Address address)
         {
             try
             {
-                // TODO: Add insert logic here
+                if (ModelState.IsValid)
+                {
+                    _repo.InsertAddress(address);
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
+
+                return View(address);
             }
             catch
             {
-                return View();
+                return View(address);
             }
         }
 
         // GET: Address/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Address address = _repo.GetAddressById(id);
+
+            if (address == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(address);
         }
 
         // POST: Address/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(int id, Address address)
         {
             try
             {
