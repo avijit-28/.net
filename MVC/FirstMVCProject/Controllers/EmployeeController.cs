@@ -46,7 +46,7 @@ namespace FirstMVCProject.Controllers
 
         }
 
-        // GET: Employee/Details/5
+        // GET: Employee/Details/105
         public ActionResult Details(int id)
         {
             Employee employee = _repo.GetEmployeeById(id);
