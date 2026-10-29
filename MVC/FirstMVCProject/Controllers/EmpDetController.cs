@@ -13,6 +13,8 @@
         
         private readonly AddressRepo _addressRepo = new AddressRepo();
 
+        //public ViewResult Index 
+
         // GET: EmpDet
      
         public ViewResult Details(int id)
