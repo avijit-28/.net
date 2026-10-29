@@ -9,8 +9,6 @@
     {
         
         private readonly EmployeeRepo _employeeRepo = new EmployeeRepo();
-
-        
         private readonly AddressRepo _addressRepo = new AddressRepo();
 
         //public ViewResult Index 
@@ -19,7 +17,7 @@
      
         public ViewResult Details(int id)
         {
-            Employee employee = _employeeRepo.GetEmployeeById(105);
+            Employee employee = _employeeRepo.GetEmployeeById(id);
             if (employee == null)
             {
                 return null;
