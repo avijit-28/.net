@@ -2,13 +2,14 @@
 
 @{
     ViewBag.Title = "Create Employee";
+    var addressList = ViewBag.Addresses as List<AiProjectMVC.Models.Address> ?? new List<AiProjectMVC.Models.Address>();
 }
 
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <!-- Back Breadcrumb Link -->
         <div class="mb-3">
-            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small fw-semibold">
+            <a href="@Url.Action("Index", "Employee")" class="text-decoration-none text-muted small fw-semibold">
                 <i class="bi bi-arrow-left me-1"></i> Back to Employee Directory
             </a>
         </div>
@@ -17,7 +18,7 @@
             <div class="custom-card-header">
                 <div>
                     <h4 class="mb-1 fw-bold text-dark"><i class="bi bi-person-plus-fill text-primary me-2"></i> Add New Employee</h4>
-                    <p class="text-muted small mb-0">Fill in the employee details below to register into the system.</p>
+                    <p class="text-muted small mb-0">Fill in employee details and assign an optional regional address.</p>
                 </div>
             </div>
 
@@ -46,7 +47,7 @@
                             <span class="text-muted small">Unique numeric identifier for the database record.</span>
                         </div>
 
-                        <!-- Name -->
+                        <!-- Full Name -->
                         <div class="col-md-6">
                             @Html.LabelFor(model => model.Name, new { @class = "form-label" })
                             <div class="input-group">
@@ -78,7 +79,7 @@
                         <div class="col-md-6">
                             @Html.LabelFor(model => model.Salary, new { @class = "form-label" })
                             <div class="input-group">
-                                <span class="input-group-text bg-light fw-bold text-muted"></span>
+                                <span class="input-group-text bg-light fw-bold text-muted">₹</span>
                                 @Html.EditorFor(model => model.Salary, new { htmlAttributes = new { @class = "form-control", type = "number", step = "1000", placeholder = "e.g. 50000", required = "required" } })
                             </div>
                             @Html.ValidationMessageFor(model => model.Salary, "", new { @class = "text-danger small mt-1 d-block" })
@@ -108,13 +109,39 @@
                             </div>
                             @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger small mt-1 d-block" })
                         </div>
+
+                        <!-- Address ID Link -->
+                        <div class="col-md-12">
+                            @Html.LabelFor(model => model.AddressId, "Linked Address (Optional)", new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-geo-fill text-muted"></i></span>
+                                @if (addressList.Any())
+                                {
+                                    <select name="AddressId" id="AddressId" class="form-select">
+                                        <option value="">-- None (No Address Linked) --</option>
+                                        @foreach (var addr in addressList)
+                                        {
+                                            <option value="@addr.AddressId" @(Model != null && Model.AddressId == addr.AddressId ? "selected" : "")>
+                                                #@addr.AddressId - @addr.City, @addr.State (@addr.Country, @addr.Pin)
+                                            </option>
+                                        }
+                                    </select>
+                                }
+                                else
+                                {
+                                    @Html.EditorFor(model => model.AddressId, new { htmlAttributes = new { @class = "form-control", type = "number", placeholder = "Enter Address ID (e.g. 1)" } })
+                                }
+                            </div>
+                            @Html.ValidationMessageFor(model => model.AddressId, "", new { @class = "text-danger small mt-1 d-block" })
+                            <span class="text-muted small">Select an existing address or leave blank if none.</span>
+                        </div>
                     </div>
 
                     <hr class="my-4 text-muted" />
 
                     <!-- Form Buttons -->
                     <div class="d-flex justify-content-between align-items-center">
-                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <a href="@Url.Action("Index", "Employee")" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left"></i> Cancel
                         </a>
                         <button type="submit" class="btn btn-primary-gradient px-4">
