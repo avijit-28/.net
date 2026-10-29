@@ -36,5 +36,7 @@ namespace FirstMVCProject.Models
         [StringLength(100,
             ErrorMessage = "Department cannot exceed 100 characters")]
         public string Dept { get; set; }
+
+        public int? AddressId { get; set; }
     }
 }
