@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FirstMVCProject.Models;
+using FirstMVCProject.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,6 +10,8 @@ namespace FirstMVCProject.Controllers
 {
     public class EmployeeDetailsController : Controller
     {
+        private readonly EmployeeRepo _employeeRepo = new EmployeeRepo();
+        private readonly AddressRepo _addressRepo = new AddressRepo();
         // GET: EmployeeDetails
         public ActionResult Index()
         {
@@ -17,7 +21,30 @@ namespace FirstMVCProject.Controllers
         // GET: EmployeeDetails/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            Employee employee = _employeeRepo.GetEmployeeById(id);
+
+            if (employee == null)
+            {
+                return HttpNotFound();
+            }
+
+            Address address = null;
+
+            if (employee.AddressId.HasValue)
+            {
+                address = _addressRepo.GetAddressById(employee.AddressId.Value);
+            }
+
+            EmployeeDetailsViewModel employeeDetailsViewModel =
+                new EmployeeDetailsViewModel
+                {
+                    Employee = employee,
+                    Address = address,
+                    PageTitle = "Employee Details Page",
+                    PageHeader = "Employee Details"
+                };
+
+            return View(employeeDetailsViewModel);
         }
 
         // GET: EmployeeDetails/Create
