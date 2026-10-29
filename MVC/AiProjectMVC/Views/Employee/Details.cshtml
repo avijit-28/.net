@@ -18,6 +18,7 @@
                       genderLower.StartsWith("f") ? "badge-gender-female" : "badge-gender-other";
     var genderIcon = genderLower.StartsWith("m") ? "bi-gender-male" :
                      genderLower.StartsWith("f") ? "bi-gender-female" : "bi-gender-ambiguous";
+    bool canManage = AiProjectMVC.Models.RoleAuthHelper.CanManageRecords(Session);
 }
 
 <div class="row justify-content-center">
