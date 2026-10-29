@@ -1,25 +1,31 @@
-@model IEnumerable<AiProjectMVC.Models.Employee>
+@model AiProjectMVC.ViewModels.EmployeeDetailsViewModel
 
 @{
-    ViewBag.Title = "Employee Directory";
-    var employeeList = Model ?? Enumerable.Empty<AiProjectMVC.Models.Employee>();
-    int totalEmployees = employeeList.Count();
-    int totalDepts = employeeList.Select(e => e.Dept).Where(d => !string.IsNullOrWhiteSpace(d)).Distinct().Count();
-    double avgSalary = totalEmployees > 0 ? employeeList.Average(e => e.Salary) : 0;
-    string topCity = totalEmployees > 0 ? employeeList.GroupBy(e => e.City).OrderByDescending(g => g.Count()).FirstOrDefault()?.Key ?? "N/A" : "N/A";
-    
+    ViewBag.Title = Model.PageTitle ?? "Employee & Address Directory";
+    var employees = Model.Employees ?? new List<AiProjectMVC.Models.Employee>();
+    var addresses = Model.Addresses ?? new List<AiProjectMVC.Models.Address>();
+
+    int totalEmployees = employees.Count;
+    int totalAddresses = addresses.Count;
+    double avgSalary = totalEmployees > 0 ? employees.Average(e => e.Salary) : 0;
+    int linkedCount = employees.Count(e => e.AddressId.HasValue);
+
     var colors = new[] { "#4f46e5", "#0ea5e9", "#10b981", "#f59e0b", "#ec4899", "#8b5cf6", "#14b8a6" };
+    var addressMap = addresses.ToDictionary(a => a.AddressId, a => $"{a.City}, {a.State} ({a.Pin})");
 }
 
 <!-- Page Header Box -->
 <div class="page-header-box d-flex flex-wrap align-items-center justify-content-between gap-3">
     <div>
-        <h1 class="page-title"><i class="bi bi-people-fill text-primary me-2"></i> Employee Directory</h1>
-        <p class="page-subtitle">View, search, and manage all organization staff records in real time.</p>
+        <h1 class="page-title"><i class="bi bi-diagram-3-fill text-primary me-2"></i> @Model.PageHeader</h1>
+        <p class="page-subtitle">Manage organization employees, track regional addresses, and monitor staff metrics in real time.</p>
     </div>
     <div class="d-flex gap-2">
-        <a href="@Url.Action("Create")" class="btn btn-primary-gradient">
-            <i class="bi bi-person-plus-fill"></i> Add New Employee
+        <a href="@Url.Action("Create", "Address")" class="btn btn-outline-secondary">
+            <i class="bi bi-geo-alt-fill text-primary"></i> Add Address
+        </a>
+        <a href="@Url.Action("Create", "Employee")" class="btn btn-primary-gradient">
+            <i class="bi bi-person-plus-fill"></i> Add Employee
         </a>
     </div>
 </div>
@@ -39,206 +45,362 @@
     </div>
     <div class="col-sm-6 col-xl-3">
         <div class="stat-card">
+            <div class="stat-icon-wrapper stat-icon-info">
+                <i class="bi bi-geo-alt"></i>
+            </div>
+            <div>
+                <div class="stat-label">Total Addresses</div>
+                <div class="stat-value">@totalAddresses</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
             <div class="stat-icon-wrapper stat-icon-success">
                 <i class="bi bi-cash-stack"></i>
             </div>
             <div>
                 <div class="stat-label">Average Salary</div>
-                <div class="stat-value">@avgSalary.ToString("N0")</div>
+                <div class="stat-value">₹@avgSalary.ToString("N0")</div>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
         <div class="stat-card">
             <div class="stat-icon-wrapper stat-icon-warning">
-                <i class="bi bi-building"></i>
+                <i class="bi bi-link-45deg"></i>
             </div>
             <div>
-                <div class="stat-label">Departments</div>
-                <div class="stat-value">@totalDepts</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
-            <div class="stat-icon-wrapper stat-icon-info">
-                <i class="bi bi-geo-alt"></i>
-            </div>
-            <div>
-                <div class="stat-label">Top Location</div>
-                <div class="stat-value text-truncate" style="max-width: 140px;">@topCity</div>
+                <div class="stat-label">Linked Addresses</div>
+                <div class="stat-value">@linkedCount <span class="fs-6 text-muted fw-normal">/ @totalEmployees</span></div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Main Data Card -->
-<div class="custom-card">
-    <div class="custom-card-header flex-wrap gap-3">
-        <!-- Live Search Input -->
-        <div class="d-flex align-items-center gap-2 flex-grow-1" style="max-width: 420px;">
-            <div class="input-group">
-                <span class="input-group-text bg-light border-end-0">
-                    <i class="bi bi-search text-muted"></i>
-                </span>
-                <input type="text" id="searchInput" class="form-control border-start-0 ps-0" placeholder="Search by name, ID, city, or dept..." />
-            </div>
-        </div>
+<!-- Nav Tabs for Dual Section View -->
+<ul class="nav nav-pills mb-4 gap-2" id="dashboardTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active px-4 py-2 fw-semibold" id="employees-tab" data-bs-toggle="pill" data-bs-target="#employees-content" type="button" role="tab">
+            <i class="bi bi-people-fill me-1"></i> Employees List <span class="badge bg-primary ms-1">@totalEmployees</span>
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link px-4 py-2 fw-semibold" id="addresses-tab" data-bs-toggle="pill" data-bs-target="#addresses-content" type="button" role="tab">
+            <i class="bi bi-geo-alt-fill me-1"></i> Addresses Directory <span class="badge bg-secondary ms-1">@totalAddresses</span>
+        </button>
+    </li>
+</ul>
 
-        <!-- Filter Dropdown & Refresh -->
-        <div class="d-flex align-items-center gap-2">
-            <select id="deptFilter" class="form-select form-select-sm" style="min-width: 150px;">
-                <option value="">All Departments</option>
-                @foreach (var dept in employeeList.Select(e => e.Dept).Where(d => !string.IsNullOrWhiteSpace(d)).Distinct().OrderBy(d => d))
-                {
-                    <option value="@dept">@dept</option>
-                }
-            </select>
-            <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-sm" title="Refresh List">
-                <i class="bi bi-arrow-clockwise"></i>
-            </a>
+<div class="tab-content" id="dashboardTabsContent">
+    <!-- ================= EMPLOYEE TAB ================= -->
+    <div class="tab-pane fade show active" id="employees-content" role="tabpanel">
+        <div class="custom-card">
+            <div class="custom-card-header flex-wrap gap-3">
+                <div class="d-flex align-items-center gap-2 flex-grow-1" style="max-width: 420px;">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" id="employeeSearchInput" class="form-control border-start-0 ps-0" placeholder="Search by name, ID, city, dept, or address..." />
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <select id="deptFilter" class="form-select form-select-sm" style="min-width: 150px;">
+                        <option value="">All Departments</option>
+                        @foreach (var dept in employees.Select(e => e.Dept).Where(d => !string.IsNullOrWhiteSpace(d)).Distinct().OrderBy(d => d))
+                        {
+                            <option value="@dept">@dept</option>
+                        }
+                    </select>
+                    <a href="@Url.Action("Create", "Employee")" class="btn btn-primary-gradient btn-sm">
+                        <i class="bi bi-plus-lg"></i> New Employee
+                    </a>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table custom-table" id="employeeTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 70px;">ID</th>
+                            <th>Employee Name</th>
+                            <th>Department</th>
+                            <th>Gender</th>
+                            <th>City</th>
+                            <th>Salary</th>
+                            <th>Linked Address</th>
+                            <th class="text-end" style="width: 130px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!employees.Any())
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center py-5 text-muted">
+                                    <i class="bi bi-folder-x fs-1 d-block mb-2 text-secondary"></i>
+                                    <h5>No employee records found</h5>
+                                    <p class="small text-muted mb-3">Add your first employee to populate this directory.</p>
+                                    <a href="@Url.Action("Create", "Employee")" class="btn btn-primary-gradient btn-sm">
+                                        <i class="bi bi-plus-lg"></i> Add First Employee
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            int index = 0;
+                            foreach (var item in employees)
+                            {
+                                var initials = !string.IsNullOrWhiteSpace(item.Name) ? item.Name.Substring(0, 1).ToUpper() : "?";
+                                var avatarBg = colors[index % colors.Length];
+                                var deptLower = (item.Dept ?? "").ToLower();
+                                var deptClass = deptLower.Contains("it") ? "badge-dept-it" :
+                                                deptLower.Contains("hr") ? "badge-dept-hr" :
+                                                deptLower.Contains("sale") ? "badge-dept-sales" :
+                                                deptLower.Contains("fin") ? "badge-dept-finance" :
+                                                deptLower.Contains("market") ? "badge-dept-marketing" : "badge-dept-default";
+
+                                var genderLower = (item.Gender ?? "").ToLower();
+                                var genderClass = genderLower.StartsWith("m") ? "badge-gender-male" :
+                                                  genderLower.StartsWith("f") ? "badge-gender-female" : "badge-gender-other";
+                                var genderIcon = genderLower.StartsWith("m") ? "bi-gender-male" :
+                                                 genderLower.StartsWith("f") ? "bi-gender-female" : "bi-gender-ambiguous";
+
+                                string addressSummary = null;
+                                if (item.AddressId.HasValue && addressMap.ContainsKey(item.AddressId.Value))
+                                {
+                                    addressSummary = addressMap[item.AddressId.Value];
+                                }
+
+                                <tr class="employee-row" data-name="@item.Name" data-dept="@item.Dept" data-city="@item.City" data-id="@item.ID" data-address="@(addressSummary ?? "")">
+                                    <td>
+                                        <span class="fw-bold text-secondary">#@item.ID</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="user-avatar" style="background-color: @avatarBg;">@initials</span>
+                                            <div>
+                                                <a href="@Url.Action("Details", "Employee", new { id = item.ID })" class="fw-bold text-dark text-decoration-none">
+                                                    @item.Name
+                                                </a>
+                                                <div class="small text-muted">ID: @item.ID</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge-pill @deptClass">
+                                            <i class="bi bi-briefcase"></i> @item.Dept
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge-pill @genderClass">
+                                            <i class="bi @genderIcon"></i> @item.Gender
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-secondary"><i class="bi bi-geo-alt text-muted me-1"></i>@item.City</span>
+                                    </td>
+                                    <td>
+                                        <span class="salary-tag">₹@item.Salary.ToString("N0")</span>
+                                    </td>
+                                    <td>
+                                        @if (item.AddressId.HasValue)
+                                        {
+                                            <a href="@Url.Action("Details", "Address", new { id = item.AddressId.Value })" class="text-decoration-none" title="@(addressSummary ?? "Address #" + item.AddressId.Value)">
+                                                <span class="badge bg-light text-primary border px-2 py-1">
+                                                    <i class="bi bi-geo-fill me-1"></i> Address #@item.AddressId
+                                                </span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small fst-italic">Not Assigned</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="@Url.Action("Details", "Employee", new { id = item.ID })" class="btn btn-action btn-outline-info" title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="@Url.Action("Edit", "Employee", new { id = item.ID })" class="btn btn-action btn-outline-primary" title="Edit Profile">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="@Url.Action("Delete", "Employee", new { id = item.ID })" class="btn btn-action btn-outline-danger" title="Delete Employee">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- Table Container -->
-    <div class="table-responsive">
-        <table class="table custom-table" id="employeeTable">
-            <thead>
-                <tr>
-                    <th style="width: 80px;">ID</th>
-                    <th>Employee Name</th>
-                    <th>Department</th>
-                    <th>Gender</th>
-                    <th>City</th>
-                    <th>Salary</th>
-                    <th class="text-end" style="width: 140px;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (!employeeList.Any())
-                {
-                    <tr id="emptyRow">
-                        <td colspan="7" class="text-center py-5">
-                            <div class="text-muted">
-                                <i class="bi bi-folder-x fs-1 d-block mb-2 text-secondary"></i>
-                                <h5>No employee records found</h5>
-                                <p class="small text-muted mb-3">Get started by creating your first employee profile.</p>
-                                <a href="@Url.Action("Create")" class="btn btn-primary-gradient btn-sm">
-                                    <i class="bi bi-plus-lg"></i> Add First Employee
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                }
-                else
-                {
-                    int index = 0;
-                    foreach (var item in employeeList)
-                    {
-                        var initials = !string.IsNullOrWhiteSpace(item.Name) ? item.Name.Substring(0, 1).ToUpper() : "?";
-                        var avatarBg = colors[index % colors.Length];
-                        var deptLower = (item.Dept ?? "").ToLower();
-                        var deptClass = deptLower.Contains("it") ? "badge-dept-it" :
-                                        deptLower.Contains("hr") ? "badge-dept-hr" :
-                                        deptLower.Contains("sale") ? "badge-dept-sales" :
-                                        deptLower.Contains("fin") ? "badge-dept-finance" :
-                                        deptLower.Contains("market") ? "badge-dept-marketing" : "badge-dept-default";
+    <!-- ================= ADDRESS TAB ================= -->
+    <div class="tab-pane fade" id="addresses-content" role="tabpanel">
+        <div class="custom-card">
+            <div class="custom-card-header flex-wrap gap-3">
+                <div class="d-flex align-items-center gap-2 flex-grow-1" style="max-width: 420px;">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" id="addressSearchInput" class="form-control border-start-0 ps-0" placeholder="Search by city, state, country, or PIN..." />
+                    </div>
+                </div>
 
-                        var genderLower = (item.Gender ?? "").ToLower();
-                        var genderClass = genderLower.StartsWith("m") ? "badge-gender-male" :
-                                          genderLower.StartsWith("f") ? "badge-gender-female" : "badge-gender-other";
-                        var genderIcon = genderLower.StartsWith("m") ? "bi-gender-male" :
-                                         genderLower.StartsWith("f") ? "bi-gender-female" : "bi-gender-ambiguous";
+                <div class="d-flex align-items-center gap-2">
+                    <a href="@Url.Action("Create", "Address")" class="btn btn-primary-gradient btn-sm">
+                        <i class="bi bi-plus-lg"></i> New Address
+                    </a>
+                </div>
+            </div>
 
-                        <tr class="employee-row" data-name="@item.Name" data-dept="@item.Dept" data-city="@item.City" data-id="@item.ID">
-                            <td>
-                                <span class="fw-bold text-secondary">#@item.ID</span>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <span class="user-avatar" style="background-color: @avatarBg;">@initials</span>
-                                    <div>
-                                        <a href="@Url.Action("Details", new { id = item.ID })" class="fw-bold text-dark text-decoration-none">
-                                            @item.Name
-                                        </a>
-                                        <div class="small text-muted">ID: @item.ID</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge-pill @deptClass">
-                                    <i class="bi bi-briefcase"></i> @item.Dept
-                                </span>
-                            </td>
-                            <td>
-                                <span class="badge-pill @genderClass">
-                                    <i class="bi @genderIcon"></i> @item.Gender
-                                </span>
-                            </td>
-                            <td>
-                                <span class="text-secondary"><i class="bi bi-geo-alt text-muted me-1"></i>@item.City</span>
-                            </td>
-                            <td>
-                                <span class="salary-tag">@item.Salary.ToString("N0")</span>
-                            </td>
-                            <td class="text-end">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <a href="@Url.Action("Details", new { id = item.ID })" class="btn btn-action btn-outline-info" title="View Details">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="@Url.Action("Edit", new { id = item.ID })" class="btn btn-action btn-outline-primary" title="Edit Profile">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a href="@Url.Action("Delete", new { id = item.ID })" class="btn btn-action btn-outline-danger" title="Delete Employee">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
+            <div class="table-responsive">
+                <table class="table custom-table" id="addressTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 90px;">Address ID</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Country</th>
+                            <th>PIN Code</th>
+                            <th class="text-end" style="width: 130px;">Actions</th>
                         </tr>
-                        index++;
-                    }
-                }
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
+                        @if (!addresses.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="bi bi-geo-alt fs-1 d-block mb-2 text-secondary"></i>
+                                    <h5>No address records found</h5>
+                                    <p class="small text-muted mb-3">Add regional addresses for your staff members.</p>
+                                    <a href="@Url.Action("Create", "Address")" class="btn btn-primary-gradient btn-sm">
+                                        <i class="bi bi-plus-lg"></i> Add First Address
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var addr in addresses)
+                            {
+                                <tr class="address-row" data-city="@addr.City" data-state="@addr.State" data-country="@addr.Country" data-pin="@addr.Pin" data-id="@addr.AddressId">
+                                    <td>
+                                        <span class="badge bg-light text-dark border px-2 py-1 fw-bold">#@addr.AddressId</span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-dark"><i class="bi bi-building me-1 text-muted"></i>@addr.City</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-secondary">@addr.State</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1">
+                                            <i class="bi bi-globe2 me-1"></i>@addr.Country
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-secondary border px-2 py-1 font-monospace">@addr.Pin</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="@Url.Action("Details", "Address", new { id = addr.AddressId })" class="btn btn-action btn-outline-info" title="View Address">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="@Url.Action("Edit", "Address", new { id = addr.AddressId })" class="btn btn-action btn-outline-primary" title="Edit Address">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="@Url.Action("Delete", "Address", new { id = addr.AddressId })" class="btn btn-action btn-outline-danger" title="Delete Address">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 @section scripts {
     <script>
         $(document).ready(function () {
-            function filterTable() {
-                var query = $('#searchInput').val().toLowerCase().trim();
+            // Employee Table Live Search & Filter
+            function filterEmployeeTable() {
+                var query = $('#employeeSearchInput').val().toLowerCase().trim();
                 var selectedDept = $('#deptFilter').val().toLowerCase().trim();
-                var visibleCount = 0;
+                var visible = 0;
 
                 $('.employee-row').each(function () {
                     var name = ($(this).data('name') || '').toString().toLowerCase();
                     var dept = ($(this).data('dept') || '').toString().toLowerCase();
                     var city = ($(this).data('city') || '').toString().toLowerCase();
                     var id = ($(this).data('id') || '').toString().toLowerCase();
+                    var addr = ($(this).data('address') || '').toString().toLowerCase();
 
-                    var matchesSearch = (query === '') || (name.indexOf(query) !== -1 || dept.indexOf(query) !== -1 || city.indexOf(query) !== -1 || id.indexOf(query) !== -1);
+                    var matchesSearch = (query === '') || 
+                        (name.indexOf(query) !== -1 || dept.indexOf(query) !== -1 || city.indexOf(query) !== -1 || id.indexOf(query) !== -1 || addr.indexOf(query) !== -1);
                     var matchesDept = (selectedDept === '') || (dept === selectedDept);
 
                     if (matchesSearch && matchesDept) {
                         $(this).show();
-                        visibleCount++;
+                        visible++;
                     } else {
                         $(this).hide();
                     }
                 });
 
-                if (visibleCount === 0 && $('.employee-row').length > 0) {
-                    if ($('#noMatchRow').length === 0) {
-                        $('#employeeTable tbody').append('<tr id="noMatchRow"><td colspan="7" class="text-center py-4 text-muted"><i class="bi bi-search me-1"></i> No matching employees found.</td></tr>');
+                if (visible === 0 && $('.employee-row').length > 0) {
+                    if ($('#noMatchEmployee').length === 0) {
+                        $('#employeeTable tbody').append('<tr id="noMatchEmployee"><td colspan="8" class="text-center py-4 text-muted"><i class="bi bi-search me-1"></i> No matching employees found.</td></tr>');
                     }
                 } else {
-                    $('#noMatchRow').remove();
+                    $('#noMatchEmployee').remove();
                 }
             }
 
-            $('#searchInput').on('keyup input', filterTable);
-            $('#deptFilter').on('change', filterTable);
+            $('#employeeSearchInput').on('keyup input', filterEmployeeTable);
+            $('#deptFilter').on('change', filterEmployeeTable);
+
+            // Address Table Live Search
+            $('#addressSearchInput').on('keyup input', function () {
+                var query = $(this).val().toLowerCase().trim();
+                var visible = 0;
+
+                $('.address-row').each(function () {
+                    var city = ($(this).data('city') || '').toString().toLowerCase();
+                    var state = ($(this).data('state') || '').toString().toLowerCase();
+                    var country = ($(this).data('country') || '').toString().toLowerCase();
+                    var pin = ($(this).data('pin') || '').toString().toLowerCase();
+                    var id = ($(this).data('id') || '').toString().toLowerCase();
+
+                    if (query === '' || city.indexOf(query) !== -1 || state.indexOf(query) !== -1 || country.indexOf(query) !== -1 || pin.indexOf(query) !== -1 || id.indexOf(query) !== -1) {
+                        $(this).show();
+                        visible++;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                if (visible === 0 && $('.address-row').length > 0) {
+                    if ($('#noMatchAddress').length === 0) {
+                        $('#addressTable tbody').append('<tr id="noMatchAddress"><td colspan="6" class="text-center py-4 text-muted"><i class="bi bi-search me-1"></i> No matching addresses found.</td></tr>');
+                    }
+                } else {
+                    $('#noMatchAddress').remove();
+                }
+            });
         });
     </script>
 }
