@@ -102,6 +102,32 @@
                 <td>@address.State</td>
                 <td>@address.City</td>
                 <td>@address.Pin</td>
+
+                <td>
+                    @Html.ActionLink(
+                        "Edit",
+                        "Edit",
+                        "Address",
+                        new { id = address.AddressId },
+                        null
+                    )
+                    |
+                    @Html.ActionLink(
+                        "Details",
+                        "Details",
+                        "Address",
+                        new { id = address.AddressId },
+                        null
+                    )
+                    |
+                    @Html.ActionLink(
+                        "Delete",
+                        "Delete",
+                        "Address",
+                        new { id = address.AddressId },
+                        null
+                    )
+                </td>
             </tr>
         }
     </tbody>
