@@ -1,0 +1,102 @@
+@model AiProjectMVC.Models.Address
+
+@{
+    ViewBag.Title = "Edit Address";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <!-- Back Breadcrumb Link -->
+        <div class="mb-3">
+            <a href="@Url.Action("Index")" class="text-decoration-none text-muted small fw-semibold">
+                <i class="bi bi-arrow-left me-1"></i> Back to Address Directory
+            </a>
+        </div>
+
+        <div class="custom-card">
+            <div class="custom-card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-1 fw-bold text-dark"><i class="bi bi-pencil-square text-primary me-2"></i> Edit Address Record</h4>
+                    <p class="text-muted small mb-0">Modify geographic information for Address <strong>#@Model.AddressId</strong>.</p>
+                </div>
+                <span class="badge bg-light text-dark border px-3 py-2 fs-6">
+                    <i class="bi bi-hash text-muted"></i> ID: <strong>@Model.AddressId</strong>
+                </span>
+            </div>
+
+            <div class="custom-card-body">
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.AddressId)
+
+                    if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty] != null)
+                    {
+                        <div class="custom-alert custom-alert-danger" role="alert">
+                            <i class="bi bi-exclamation-circle-fill fs-5 text-danger"></i>
+                            <div>@Html.ValidationSummary(true, "", new { @class = "mb-0" })</div>
+                        </div>
+                    }
+
+                    <div class="row g-3">
+                        <!-- City -->
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.City, new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-building text-muted"></i></span>
+                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g. Mumbai, Kolkata, Bengaluru", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger small mt-1 d-block" })
+                        </div>
+
+                        <!-- State -->
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.State, new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-map text-muted"></i></span>
+                                @Html.EditorFor(model => model.State, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g. Maharashtra, West Bengal", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger small mt-1 d-block" })
+                        </div>
+
+                        <!-- Country -->
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.Country, new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-globe2 text-muted"></i></span>
+                                @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g. India", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger small mt-1 d-block" })
+                        </div>
+
+                        <!-- PIN Code -->
+                        <div class="col-md-6">
+                            @Html.LabelFor(model => model.Pin, new { @class = "form-label" })
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-mailbox text-muted"></i></span>
+                                @Html.EditorFor(model => model.Pin, new { htmlAttributes = new { @class = "form-control", placeholder = "e.g. 400001", required = "required" } })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Pin, "", new { @class = "text-danger small mt-1 d-block" })
+                        </div>
+                    </div>
+
+                    <hr class="my-4 text-muted" />
+
+                    <!-- Form Buttons -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary-gradient px-4">
+                            <i class="bi bi-check2-circle"></i> Save Changes
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
