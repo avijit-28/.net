@@ -3,15 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using FirstMVCProject.Models;
 
 namespace FirstMVCProject.Controllers
 {
     public class AddressController : Controller
     {
+        private readonly AddressRepo _repo = new AddressRepo();
+
         // GET: Address
         public ActionResult Index()
         {
-            return View();
+            var addresses = _repo.GetAllAddress();
+
+            return View(addresses);
         }
 
         // GET: Address/Details/5
