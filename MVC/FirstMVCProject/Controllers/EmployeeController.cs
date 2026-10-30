@@ -15,6 +15,7 @@ namespace FirstMVCProject.Controllers
 
     [RequireHttps]
     [RoutePrefix("employees")]
+    [LogFilter]
     public class EmployeeController : Controller
     {
         private readonly EmployeeRepo _repo = new EmployeeRepo();
