@@ -13,7 +13,74 @@ namespace FirstMVCProject
             // Enable Attribute Routing
             routes.MapMvcAttributeRoutes();
 
-            // Employee List
+            // Employee List (AllEmployees)
+            routes.MapRoute(
+                name: "AllEmployeeList",
+                url: "AllEmployees",
+                defaults: new
+                {
+                    controller = "Employee",
+                    action = "Index"
+                }
+            );
+
+            // Employee Details (AllEmployees)
+            routes.MapRoute(
+                name: "AllEmployeeDetails",
+                url: "AllEmployees/details/{id}",
+                defaults: new
+                {
+                    controller = "Employee",
+                    action = "Details"
+                },
+                constraints: new
+                {
+                    id = @"\d+"
+                }
+            );
+
+            // Employee Create (AllEmployees)
+            routes.MapRoute(
+                name: "AllEmployeeCreate",
+                url: "AllEmployees/create",
+                defaults: new
+                {
+                    controller = "Employee",
+                    action = "Create"
+                }
+            );
+
+            // Employee Edit (AllEmployees)
+            routes.MapRoute(
+                name: "AllEmployeeEdit",
+                url: "AllEmployees/edit/{id}",
+                defaults: new
+                {
+                    controller = "Employee",
+                    action = "Edit"
+                },
+                constraints: new
+                {
+                    id = @"\d+"
+                }
+            );
+
+            // Employee Delete (AllEmployees)
+            routes.MapRoute(
+                name: "AllEmployeeDelete",
+                url: "AllEmployees/delete/{id}",
+                defaults: new
+                {
+                    controller = "Employee",
+                    action = "Delete"
+                },
+                constraints: new
+                {
+                    id = @"\d+"
+                }
+            );
+
+            // Employee List (employees)
             routes.MapRoute(
                 name: "EmployeeList",
                 url: "employees",
@@ -24,7 +91,7 @@ namespace FirstMVCProject
                 }
             );
 
-            // Employee Details
+            // Employee Details (employees)
             routes.MapRoute(
                 name: "EmployeeDetails",
                 url: "employees/details/{id}",
@@ -39,7 +106,7 @@ namespace FirstMVCProject
                 }
             );
 
-            // Employee Create
+            // Employee Create (employees)
             routes.MapRoute(
                 name: "EmployeeCreate",
                 url: "employees/create",
@@ -50,7 +117,7 @@ namespace FirstMVCProject
                 }
             );
 
-            // Employee Edit
+            // Employee Edit (employees)
             routes.MapRoute(
                 name: "EmployeeEdit",
                 url: "employees/edit/{id}",
@@ -65,7 +132,7 @@ namespace FirstMVCProject
                 }
             );
 
-            // Employee Delete
+            // Employee Delete (employees)
             routes.MapRoute(
                 name: "EmployeeDelete",
                 url: "employees/delete/{id}",
