@@ -16,15 +16,24 @@
                     <p class="text-muted small mb-0">Passing standard: @Model.Quiz.PassingPercentage% • Total Questions: @Model.Questions.Count</p>
                 </div>
                 <div class="text-end">
-                    <span class="badge bg-danger px-3 py-2 rounded-pill fs-6">
-                        <i class="bi bi-stopwatch me-1"></i> @(Model.TimeLimitMinutes ?? 30) Min
+                    <div class="small text-muted fw-semibold">Time Remaining</div>
+                    <span class="badge bg-danger px-3 py-2 rounded-pill fs-6" id="timerBadge">
+                        <i class="bi bi-stopwatch me-1"></i> <span id="timeRemainingDisplay">@(Model.TimeLimitMinutes ?? 30):00</span>
                     </span>
                 </div>
+            </div>
+            <!-- Progress Bar for Timer -->
+            <div class="progress mt-3" style="height: 6px;">
+                <div id="quizTimerBar" class="progress-bar bg-success" role="progressbar" style="width: 100%;"></div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-2 small text-muted">
+                <span><i class="bi bi-clock me-1"></i> Limit: @(Model.TimeLimitMinutes ?? 30) minutes</span>
+                <span id="answeredCounter">0 / @Model.Questions.Count Answered</span>
             </div>
         </div>
 
         <!-- Quiz Questions Form -->
-        @using (Html.BeginForm("Submit", "Quiz", FormMethod.Post))
+        @using (Html.BeginForm("Submit", "Quiz", FormMethod.Post, new { id = "quizForm" }))
         {
             @Html.AntiForgeryToken()
             <input type="hidden" name="AttemptId" value="@Model.AttemptId" />
@@ -32,7 +41,7 @@
             for (int i = 0; i < Model.Questions.Count; i++)
             {
                 var q = Model.Questions[i];
-                <div class="card card-custom p-4 shadow-sm mb-4">
+                <div class="card card-custom p-4 shadow-sm mb-4 question-card" data-qindex="@i">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <span class="badge bg-primary rounded-pill px-3 py-2 fw-bold">
                             Question @(i + 1) of @Model.Questions.Count
@@ -47,12 +56,12 @@
                     <div class="d-flex flex-column gap-3">
                         @foreach (var opt in q.Options)
                         {
-                            <div class="form-check p-3 border rounded-3 bg-light">
-                                <input class="form-check-input ms-0 me-3" type="radio"
+                            <div class="form-check p-3 border rounded-3 bg-light option-container">
+                                <input class="form-check-input ms-0 me-3 quiz-option-radio" type="radio"
                                        name="Answers[@i].SelectedOptionId"
                                        id="opt_@(opt.OptionId)"
                                        value="@opt.OptionId" />
-                                <label class="form-check-label fw-semibold text-dark w-100" for="opt_@(opt.OptionId)">
+                                <label class="form-check-label fw-semibold text-dark w-100" for="opt_@(opt.OptionId)" style="cursor: pointer;">
                                     @opt.OptionText
                                 </label>
                             </div>
@@ -65,7 +74,7 @@
                 <h6 class="fw-bold mb-2">Review & Submit</h6>
                 <p class="text-muted small mb-3">Ensure you have selected an answer for all questions before submitting.</p>
                 <div class="d-flex justify-content-center gap-3">
-                    <button type="submit" class="btn btn-warning px-5 py-2 rounded-pill fw-bold shadow-sm" onclick="return confirm('Are you sure you want to finalize and submit your quiz attempt?');">
+                    <button type="submit" id="submitQuizBtn" class="btn btn-warning px-5 py-2 rounded-pill fw-bold shadow-sm" onclick="return confirm('Are you sure you want to finalize and submit your quiz attempt?');">
                         <i class="bi bi-send-check me-1"></i> Finalize and Submit Quiz
                     </button>
                 </div>
@@ -73,3 +82,63 @@
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            var totalSeconds = (@(Model.TimeLimitMinutes ?? 30)) * 60;
+            var remainingSeconds = totalSeconds;
+            var isSubmitting = false;
+
+            function updateCounter() {
+                var answered = 0;
+                var totalQuestions = @Model.Questions.Count;
+                for (var i = 0; i < totalQuestions; i++) {
+                    if ($('input[name="Answers[' + i + '].SelectedOptionId"]:checked').length > 0) {
+                        answered++;
+                    }
+                }
+                $('#answeredCounter').text(answered + ' / ' + totalQuestions + ' Answered');
+            }
+
+            $('.quiz-option-radio').on('change', function () {
+                updateCounter();
+                $(this).closest('.question-card').find('.option-container').removeClass('border-primary bg-white');
+                $(this).closest('.option-container').addClass('border-primary bg-white');
+            });
+
+            var timerInterval = setInterval(function () {
+                if (remainingSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    if (!isSubmitting) {
+                        isSubmitting = true;
+                        alert('Time is up! Your quiz answers are now being submitted automatically.');
+                        $('#quizForm').submit();
+                    }
+                    return;
+                }
+
+                remainingSeconds--;
+                var minutes = Math.floor(remainingSeconds / 60);
+                var seconds = remainingSeconds % 60;
+                var display = (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+                $('#timeRemainingDisplay').text(display);
+
+                var pct = (remainingSeconds / totalSeconds) * 100;
+                $('#quizTimerBar').css('width', pct + '%');
+
+                if (remainingSeconds <= 60) {
+                    $('#quizTimerBar').removeClass('bg-success bg-warning').addClass('bg-danger');
+                    $('#timerBadge').removeClass('bg-danger').addClass('bg-dark text-danger');
+                } else if (remainingSeconds <= 300) {
+                    $('#quizTimerBar').removeClass('bg-success').addClass('bg-warning');
+                }
+            }, 1000);
+
+            $('#quizForm').on('submit', function () {
+                isSubmitting = true;
+                clearInterval(timerInterval);
+            });
+        });
+    </script>
+}
