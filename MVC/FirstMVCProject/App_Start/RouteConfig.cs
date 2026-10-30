@@ -141,7 +141,7 @@ namespace FirstMVCProject
                 url: "{controller}/{action}/{id}",
                 defaults: new
                 {
-                    controller = "Home",
+                    controller = "Employee",
                     action = "Index",
                     id = UrlParameter.Optional
                 }
