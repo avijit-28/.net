@@ -214,6 +214,30 @@ namespace FirstMVCProject
                 }
             );
 
+            // AllEmployees Generic Action Route
+            routes.MapRoute(
+                name: "AllEmployeesActions",
+                url: "AllEmployees/{action}/{id}",
+                defaults: new
+                {
+                    controller = "Employee",
+                    action = "Index",
+                    id = UrlParameter.Optional
+                }
+            );
+
+            // employees Generic Action Route
+            routes.MapRoute(
+                name: "EmployeesActions",
+                url: "employees/{action}/{id}",
+                defaults: new
+                {
+                    controller = "Employee",
+                    action = "Index",
+                    id = UrlParameter.Optional
+                }
+            );
+
             // Default MVC Route
             routes.MapRoute(
                 name: "Default",
