@@ -245,5 +245,24 @@ namespace AiProjectMVC.Models
                 }
             }
         }
+
+        // Update Name in EmployeeUser when corresponding Employee profile is modified
+        public void UpdateUserName(int id, string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return;
+
+            using (SqlConnection con = new SqlConnection(_conStr))
+            {
+                string sql = "UPDATE EmployeeUser SET Name = @Name WHERE ID = @ID";
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    cmd.Parameters.AddWithValue("@ID", id);
+                    cmd.Parameters.AddWithValue("@Name", name.Trim());
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }
