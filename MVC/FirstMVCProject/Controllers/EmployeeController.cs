@@ -14,7 +14,7 @@ namespace FirstMVCProject.Controllers
     //}
 
     //[RequireHttps]
-    [RoutePrefix("employees")]
+    [RoutePrefix("AllEmployees")]
     [LogFilter]
     public class EmployeeController : Controller
     {
