@@ -1,0 +1,91 @@
+@model LMS.ViewModels.RegisterViewModel
+@{
+    ViewBag.Title = "Create an Account";
+}
+
+<div class="row justify-content-center py-5">
+    <div class="col-md-7 col-lg-6">
+        <div class="card card-custom p-4 p-md-5 shadow-sm">
+            <div class="text-center mb-4">
+                <span class="rounded-circle bg-primary-subtle text-primary p-3 d-inline-flex mb-2">
+                    <i class="bi bi-person-plus fs-3"></i>
+                </span>
+                <h3 class="fw-bold">Get Started</h3>
+                <p class="text-muted small">Join thousands of students and instructors on EduPlatform LMS</p>
+            </div>
+
+            @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger py-2 small" })
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.FullName, new { @class = "form-label fw-semibold small" })
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+                        @Html.TextBoxFor(m => m.FullName, new { @class = "form-control border-start-0", placeholder = "Avijit Pakhira" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.Email, new { @class = "form-label fw-semibold small" })
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control border-start-0", placeholder = "name@example.com" })
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-md-6">
+                        @Html.LabelFor(m => m.Password, new { @class = "form-label fw-semibold small" })
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-key text-muted"></i></span>
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control border-start-0", placeholder = "••••••••" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
+                    </div>
+                    <div class="col-md-6">
+                        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "form-label fw-semibold small" })
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-check text-muted"></i></span>
+                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control border-start-0", placeholder = "••••••••" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger small" })
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold small">I want to join as:</label>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <input type="radio" class="btn-check" name="Role" id="roleStudent" value="Student" checked />
+                            <label class="btn btn-outline-primary w-100 py-2 d-flex flex-column align-items-center rounded-3" for="roleStudent">
+                                <i class="bi bi-backpack2 fs-4 mb-1"></i>
+                                <span class="fw-bold">Student</span>
+                                <small class="text-muted" style="font-size: 11px;">Enroll & Learn</small>
+                            </label>
+                        </div>
+                        <div class="col-6">
+                            <input type="radio" class="btn-check" name="Role" id="roleInstructor" value="Instructor" />
+                            <label class="btn btn-outline-primary w-100 py-2 d-flex flex-column align-items-center rounded-3" for="roleInstructor">
+                                <i class="bi bi-mortarboard fs-4 mb-1"></i>
+                                <span class="fw-bold">Instructor</span>
+                                <small class="text-muted" style="font-size: 11px;">Teach & Publish</small>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill fw-semibold shadow-sm mb-3">
+                    <i class="bi bi-check2-circle me-1"></i> Complete Registration
+                </button>
+            }
+
+            <div class="text-center mt-3 small text-muted">
+                Already registered? <a href="@Url.Action("Login", "Account")" class="text-primary fw-bold text-decoration-none">Sign In</a>
+            </div>
+        </div>
+    </div>
+</div>
