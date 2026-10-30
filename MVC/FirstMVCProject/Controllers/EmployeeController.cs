@@ -13,7 +13,7 @@ namespace FirstMVCProject.Controllers
     //    //private readonly AddressRepo _addressRepo = new AddressRepo();
     //}
 
-    [RequireHttps]
+    //[RequireHttps]
     [RoutePrefix("employees")]
     [LogFilter]
     public class EmployeeController : Controller
