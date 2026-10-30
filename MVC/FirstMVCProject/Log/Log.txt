@@ -13,3 +13,6 @@ Employee action completed: Index Controller:Employee Action:Index Date:30-10-202
 Employee action started: TestException Controller:Employee Action:TestException Date:30-10-2026 18:55:36
 Employee action started: TestException Controller:Employee Action:TestException Date:30-10-2026 18:58:12
 Employee action completed: TestException Controller:Employee Action:TestException Date:30-10-2026 18:58:12
+Employee action started: TestException Controller:Employee Action:TestException Date:30-10-2026 19:00:09
+Employee action completed: TestException Controller:Employee Action:TestException Date:30-10-2026 19:00:09
+Exception Filter: Controller:Employee Action:TestException Exception:Test exception from EmployeeController Date:30-10-2026 19:00:09
