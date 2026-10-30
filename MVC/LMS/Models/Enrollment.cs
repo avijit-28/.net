@@ -26,6 +26,20 @@ namespace LMS.Models
 
         public DateTime? CompletionDate { get; set; }
 
+        [NotMapped]
+        public decimal ProgressPercentage
+        {
+            get => CompletionPercentage;
+            set => CompletionPercentage = value;
+        }
+
+        [NotMapped]
+        public DateTime? CompletedDate
+        {
+            get => CompletionDate;
+            set => CompletionDate = value;
+        }
+
         [ForeignKey("CourseId")]
         public virtual Course Course { get; set; }
     }
