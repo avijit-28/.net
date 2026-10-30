@@ -200,6 +200,7 @@
     <Content Include="Views\Address\Edit.cshtml" />
     <Content Include="Views\Address\Delete.cshtml" />
     <Content Include="Views\Home\NonSecureMethod.cshtml" />
+    <Content Include="Views\Home\SecureMethod.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
