@@ -22,11 +22,30 @@ namespace LMS.Controllers
         public ActionResult Take(int id)
         {
             string studentId = User.Identity.GetUserId();
-            var attempt = _quizService.StartAttempt(id, studentId);
-            if (attempt == null)
+
+            var quiz = _db.Quizzes.Find(id);
+            if (quiz == null || !quiz.IsActive)
             {
                 TempData["ErrorMessage"] = "Quiz not found or is currently inactive.";
                 return RedirectToAction("Index", "Student");
+            }
+
+            bool isEnrolled = _db.Enrollments.Any(e => e.StudentId == studentId && e.CourseId == quiz.CourseId && e.Status != "Cancelled");
+            var course = _db.Courses.Find(quiz.CourseId);
+            bool isInstructor = course != null && course.InstructorId == studentId;
+            bool isAdmin = User.IsInRole("Admin");
+
+            if (!isEnrolled && !isInstructor && !isAdmin)
+            {
+                TempData["ErrorMessage"] = "You must be enrolled in this course to take the assessment test.";
+                return RedirectToAction("Details", "Courses", new { id = quiz.CourseId });
+            }
+
+            var attempt = _quizService.StartAttempt(id, studentId);
+            if (attempt == null)
+            {
+                TempData["ErrorMessage"] = "Unable to start quiz attempt.";
+                return RedirectToAction("Details", "Courses", new { id = quiz.CourseId });
             }
 
             var model = _quizService.GetQuizAttemptViewModel(attempt.AttemptId, studentId);
