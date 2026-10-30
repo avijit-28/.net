@@ -406,7 +406,7 @@ namespace LMS.Controllers
             }
 
             // Update quiz total marks
-            quiz.TotalMarks = _db.Questions.Where(q => q.QuizId == quizId).Sum(q => q.Marks) + question.Marks;
+            quiz.TotalMarks = _db.Questions.Where(q => q.QuizId == quizId).Sum(q => q.Marks);
             _db.SaveChanges();
 
             TempData["SuccessMessage"] = "Question added successfully!";
