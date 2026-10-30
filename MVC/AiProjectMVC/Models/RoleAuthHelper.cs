@@ -81,5 +81,44 @@ namespace AiProjectMVC.Models
             }
             return string.IsNullOrWhiteSpace(role) ? "Guest" : role.Trim();
         }
+
+        /// <summary>
+        /// Validates whether the employee's City matches the linked Address City or State.
+        /// If employee city is Delhi and address is in New Delhi -> Valid.
+        /// If employee city is Kolkata and address is in Delhi -> Invalid.
+        /// </summary>
+        public static bool IsCityMatching(string employeeCity, Address address)
+        {
+            if (string.IsNullOrWhiteSpace(employeeCity) || address == null)
+                return false;
+
+            string empCity = employeeCity.Trim().ToLower();
+            string addrCity = (address.City ?? "").Trim().ToLower();
+            string addrState = (address.State ?? "").Trim().ToLower();
+
+            // Direct equality
+            if (empCity == addrCity) return true;
+
+            // Substring inclusion (e.g. "delhi" in "new delhi", or vice versa)
+            if (addrCity.Contains(empCity) || empCity.Contains(addrCity)) return true;
+
+            // State match (e.g. employee typed "delhi" which is the state for "new delhi")
+            if (addrState.Contains(empCity) || empCity.Contains(addrState)) return true;
+
+            // Common city aliases in India
+            if ((empCity == "bengaluru" && addrCity.Contains("bangalore")) ||
+                (empCity == "bangalore" && addrCity.Contains("bengaluru")) ||
+                (empCity == "calcutta" && addrCity.Contains("kolkata")) ||
+                (empCity == "kolkata" && addrCity.Contains("calcutta")) ||
+                (empCity == "bombay" && addrCity.Contains("mumbai")) ||
+                (empCity == "mumbai" && addrCity.Contains("bombay")) ||
+                (empCity == "madras" && addrCity.Contains("chennai")) ||
+                (empCity == "chennai" && addrCity.Contains("madras")))
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
