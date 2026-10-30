@@ -1,0 +1,150 @@
+@model LMS.ViewModels.InstructorDashboardViewModel
+@{
+    ViewBag.Title = "Instructor Studio Dashboard";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-1 rounded-pill mb-2 fw-semibold">
+                Instructor Studio
+            </span>
+            <h2 class="fw-bold mb-0">Educator Dashboard</h2>
+            <p class="text-muted small">Manage your teaching tracks, content delivery, students, and grading</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="@Url.Action("CreateCourse", "Instructor")" class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i> Create New Course
+            </a>
+        </div>
+    </div>
+
+    <!-- 4 KPI Metrics -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card card-custom p-3 shadow-sm h-100" style="border-left: 4px solid #2563eb;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-muted fw-semibold">My Courses</div>
+                        <div class="fs-3 fw-bold text-primary">@Model.TotalCourses</div>
+                    </div>
+                    <div class="rounded-circle bg-primary-subtle text-primary p-3">
+                        <i class="bi bi-journal-album fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card card-custom p-3 shadow-sm h-100" style="border-left: 4px solid #10b981;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-muted fw-semibold">Total Students</div>
+                        <div class="fs-3 fw-bold text-success">@Model.TotalStudents</div>
+                    </div>
+                    <div class="rounded-circle bg-success-subtle text-success p-3">
+                        <i class="bi bi-people-fill fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card card-custom p-3 shadow-sm h-100" style="border-left: 4px solid #f59e0b;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-muted fw-semibold">Revenue Generated</div>
+                        <div class="fs-3 fw-bold text-warning">$@Model.TotalRevenue.ToString("N2")</div>
+                    </div>
+                    <div class="rounded-circle bg-warning-subtle text-warning p-3">
+                        <i class="bi bi-currency-dollar fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card card-custom p-3 shadow-sm h-100" style="border-left: 4px solid #ec4899;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-muted fw-semibold">Average Rating</div>
+                        <div class="fs-3 fw-bold text-pink" style="color: #ec4899;">@Model.AverageRating.ToString("0.0") <i class="bi bi-star-fill fs-6 text-warning"></i></div>
+                    </div>
+                    <div class="rounded-circle p-3" style="background: #fdf2f8; color: #ec4899;">
+                        <i class="bi bi-stars fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Management Table -->
+    <div class="card card-custom shadow-sm mb-4">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">Course Portfolio</h5>
+            <a href="@Url.Action("Courses", "Instructor")" class="small text-primary text-decoration-none fw-semibold">All Courses &rarr;</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small">
+                    <tr>
+                        <th>Course Title</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Students</th>
+                        <th>Rating</th>
+                        <th>Status</th>
+                        <th class="text-end">Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Courses.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">No courses created yet. Click "Create New Course" above.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var c in Model.Courses)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-dark">@c.Title</div>
+                                    <small class="text-muted">@c.Level • @c.DurationInHours hrs</small>
+                                </td>
+                                <td><span class="badge bg-light text-dark border">@(c.Category?.CategoryName ?? "General")</span></td>
+                                <td class="fw-semibold">@(c.Price == 0 ? "FREE" : "$" + c.Price.ToString("N2"))</td>
+                                <td>@c.TotalStudents</td>
+                                <td>
+                                    <span class="rating-stars small"><i class="bi bi-star-fill"></i> @c.Rating.ToString("0.0")</span>
+                                </td>
+                                <td>
+                                    <span class="badge @(c.Status == "Published" ? "bg-success" : (c.Status == "Draft" ? "bg-secondary" : "bg-dark")) px-2 py-1 rounded-pill">
+                                        @c.Status
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="@Url.Action("Modules", "Instructor", new { courseId = c.CourseId })" class="btn btn-outline-primary" title="Curriculum & Lessons">
+                                            <i class="bi bi-diagram-3"></i> Curriculum
+                                        </a>
+                                        <a href="@Url.Action("Quizzes", "Instructor", new { courseId = c.CourseId })" class="btn btn-outline-warning text-dark" title="Quizzes">
+                                            <i class="bi bi-patch-question"></i>
+                                        </a>
+                                        <a href="@Url.Action("Assignments", "Instructor", new { courseId = c.CourseId })" class="btn btn-outline-info" title="Assignments">
+                                            <i class="bi bi-file-earmark-text"></i>
+                                        </a>
+                                        <a href="@Url.Action("EditCourse", "Instructor", new { id = c.CourseId })" class="btn btn-outline-secondary" title="Edit Metadata">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
