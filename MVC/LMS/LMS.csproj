@@ -271,6 +271,7 @@
     <Content Include="Views\Quiz\Result.cshtml" />
     <Content Include="Views\Assignment\Details.cshtml" />
     <Content Include="Views\Certificate\ViewCertificate.cshtml" />
+    <Content Include="Views\Certificate\VerifyCertificate.cshtml" />
     <Content Include="Views\Student\Index.cshtml" />
     <Content Include="Views\Student\MyCourses.cshtml" />
     <Content Include="Views\Student\Certificates.cshtml" />
