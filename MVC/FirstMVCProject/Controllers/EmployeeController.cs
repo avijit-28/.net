@@ -8,7 +8,7 @@ using FirstMVCProject.ViewModels;
 
 namespace FirstMVCProject.Controllers
 {
-    [RequireHttps]
+    //[RequireHttps]
     [RoutePrefix("AllEmployees")]
     //[EmployeeAuditFilter]
     public class EmployeeController : Controller
