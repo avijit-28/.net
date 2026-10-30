@@ -11,7 +11,7 @@ namespace FirstMVCProject
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             // Enable Attribute Routing
-            routes.MapMvcAttributeRoutes();
+            //routes.MapMvcAttributeRoutes();
 
             // Employee List (AllEmployees)
             routes.MapRoute(
