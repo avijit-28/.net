@@ -130,10 +130,18 @@
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="DAL\USER.cs">
+      <DependentUpon>UserDataModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="DAL\UserDataModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>UserDataModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\UserDataModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="DAL\UserDataModel.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -173,6 +181,12 @@
     <Content Include="DAL\UserDataModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>UserDataModel.Context.cs</LastGenOutput>
+      <DependentUpon>UserDataModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="DAL\UserDataModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>UserDataModel.edmx</DependentUpon>
+      <LastGenOutput>UserDataModel.cs</LastGenOutput>
     </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -188,9 +202,9 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>UserDataModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="DAL\UserDataModel.edmx.diagram">
+    <Content Include="DAL\UserDataModel.edmx.diagram">
       <DependentUpon>UserDataModel.edmx</DependentUpon>
-    </None>
+    </Content>
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
