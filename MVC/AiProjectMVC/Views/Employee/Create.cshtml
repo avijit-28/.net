@@ -80,7 +80,16 @@
                             @Html.LabelFor(model => model.Salary, new { @class = "form-label" })
                             <div class="input-group">
                                 <span class="input-group-text bg-light fw-bold text-muted">&#8377;</span>
-                                @Html.EditorFor(model => model.Salary, new { htmlAttributes = new { @class = "form-control", type = "number", step = "1000", placeholder = "e.g. 50000", required = "required" } })
+                                <input type="number" 
+                                       name="Salary" 
+                                       id="Salary" 
+                                       class="form-control" 
+                                       value="@(Model != null && Model.Salary > 0 ? Model.Salary.ToString() : "")" 
+                                       min="1" 
+                                       max="10000000" 
+                                       step="500" 
+                                       placeholder="e.g. 50000" 
+                                       required />
                             </div>
                             @Html.ValidationMessageFor(model => model.Salary, "", new { @class = "text-danger small mt-1 d-block" })
                         </div>
