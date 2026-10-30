@@ -21,7 +21,7 @@ namespace AiProjectMVC.Models
         [Required(ErrorMessage = "Salary is required.")]
         [Range(1, 10000000, ErrorMessage = "Salary must be greater than 0.")]
         [Display(Name = "Salary (\u20B9)")]
-        [DisplayFormat(DataFormatString = "{0:N0}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:N0}")]
         public int Salary { get; set; }
 
         [Required(ErrorMessage = "Gender is required.")]
