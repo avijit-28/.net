@@ -44,8 +44,14 @@ namespace LMS.Controllers
         public ActionResult Submit(AssignmentSubmissionViewModel model)
         {
             string studentId = User.Identity.GetUserId();
+            int assignmentId = model.AssignmentId > 0 ? model.AssignmentId : (model.Assignment != null ? model.Assignment.AssignmentId : 0);
+            if (assignmentId <= 0)
+            {
+                return HttpNotFound();
+            }
+
             bool success = _assignmentService.SubmitAssignment(
-                model.Assignment.AssignmentId,
+                assignmentId,
                 studentId,
                 model.SubmissionText,
                 model.FileUrl,
@@ -61,7 +67,7 @@ namespace LMS.Controllers
                 TempData["SuccessMessage"] = "Assignment submitted successfully!";
             }
 
-            return RedirectToAction("Details", new { id = model.Assignment.AssignmentId });
+            return RedirectToAction("Details", new { id = assignmentId });
         }
 
         protected override void Dispose(bool disposing)

@@ -74,6 +74,7 @@
             @using (Html.BeginForm("Submit", "Assignment", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
+                <input type="hidden" name="AssignmentId" value="@Model.Assignment.AssignmentId" />
                 <input type="hidden" name="Assignment.AssignmentId" value="@Model.Assignment.AssignmentId" />
 
                 <div class="mb-3">
