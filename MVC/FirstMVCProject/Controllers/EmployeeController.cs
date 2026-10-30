@@ -10,7 +10,7 @@ namespace FirstMVCProject.Controllers
 {
     [RequireHttps]
     [RoutePrefix("AllEmployees")]
-    [EmployeeAuditFilter]
+    //[EmployeeAuditFilter]
     public class EmployeeController : Controller
     {
         private readonly EmployeeRepo _repo = new EmployeeRepo();
