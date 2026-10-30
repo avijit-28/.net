@@ -1,36 +1,27 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using FirstMVCProject.Models;
 using FirstMVCProject.ViewModels;
+
 namespace FirstMVCProject.Controllers
 {
-    //public class EmployeeController : Controller
-    //{
-    //    //private readonly EmployeeRepo _repo = new EmployeeRepo();
-    //    //private readonly AddressRepo _addressRepo = new AddressRepo();
-    //}
-
     //[RequireHttps]
-    [RoutePrefix("AllEmployees")]
+    [RoutePrefix("employees")]
     [LogFilter]
     public class EmployeeController : Controller
     {
         private readonly EmployeeRepo _repo = new EmployeeRepo();
         private readonly AddressRepo _addressRepo = new AddressRepo();
 
-
         // GET: Employee
         [Route("")]
+        [Route("~/")]
         public ActionResult Index()
         {
-
-            //var employees = _repo.GetAllEmployee();
-            //return View(employees);
             List<Employee> employees = _repo.GetAllEmployee();
-
             List<Address> addresses = _addressRepo.GetAllAddress();
 
             EmployeeDetailsViewModel viewModel =
@@ -43,8 +34,6 @@ namespace FirstMVCProject.Controllers
                 };
 
             return View(viewModel);
-
-
         }
 
         // GET: Employee/Details/105
@@ -105,7 +94,6 @@ namespace FirstMVCProject.Controllers
             {
                 return View(employee);
             }
-
         }
 
         // GET: Employee/Edit/5
@@ -124,6 +112,7 @@ namespace FirstMVCProject.Controllers
 
         // POST: Employee/Edit/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Route("edit/{id:int}")]
         public ActionResult Edit(int id, Employee employee)
         {
@@ -138,7 +127,7 @@ namespace FirstMVCProject.Controllers
                         employee.Gender,
                         employee.City,
                         employee.Dept,
-                         employee.AddressId
+                        employee.AddressId
                     );
 
                     return RedirectToAction("Index");
@@ -150,7 +139,6 @@ namespace FirstMVCProject.Controllers
             {
                 return View(employee);
             }
-
         }
 
         // GET: Employee/Delete/5
@@ -169,19 +157,19 @@ namespace FirstMVCProject.Controllers
 
         // POST: Employee/Delete/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Route("delete/{id:int}")]
         public ActionResult Delete(int id, Employee employee)
         {
             try
             {
-                // TODO: Add delete logic here
                 _repo.DeleteEmployee(id);
 
                 return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return RedirectToAction("Index");
             }
         }
     }
