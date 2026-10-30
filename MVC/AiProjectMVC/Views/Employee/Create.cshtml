@@ -37,15 +37,41 @@
                     }
 
                     <div class="row g-3">
-                        <!-- Employee ID -->
+                        <!-- Employee ID (from EmployeeUser) -->
                         <div class="col-md-6">
-                            @Html.LabelFor(model => model.ID, new { @class = "form-label" })
+                            @Html.LabelFor(model => model.ID, "Employee ID (Select Registered User)", new { @class = "form-label fw-semibold" })
                             <div class="input-group">
-                                <span class="input-group-text bg-light"><i class="bi bi-hash text-muted"></i></span>
-                                @Html.EditorFor(model => model.ID, new { htmlAttributes = new { @class = "form-control", type = "number", placeholder = "e.g. 101", required = "required" } })
+                                <span class="input-group-text bg-light"><i class="bi bi-person-badge text-muted"></i></span>
+                                @if (availableUsers.Any())
+                                {
+                                    <select name="ID" id="ID" class="form-select" required>
+                                        <option value="">-- Select Registered User ID --</option>
+                                        @foreach (var u in availableUsers)
+                                        {
+                                            <option value="@u.ID" data-name="@u.Name" data-role="@u.Role" @(Model != null && Model.ID == u.ID ? "selected" : "")>
+                                                #@u.ID - @u.Name (@u.UserName - @u.Role)
+                                            </option>
+                                        }
+                                    </select>
+                                }
+                                else
+                                {
+                                    <select name="ID" id="ID" class="form-select" disabled>
+                                        <option value="">-- All registered users already assigned --</option>
+                                    </select>
+                                }
                             </div>
                             @Html.ValidationMessageFor(model => model.ID, "", new { @class = "text-danger small mt-1 d-block" })
-                            <span class="text-muted small">Unique numeric identifier for the database record.</span>
+                            @if (availableUsers.Any())
+                            {
+                                <span class="text-muted small">Select a user registered in EmployeeUser to add to the employee database.</span>
+                            }
+                            else
+                            {
+                                <span class="text-warning small d-block mt-1">
+                                    <i class="bi bi-info-circle me-1"></i> All registered users currently have employee records. <a href="@Url.Action("Register", "Account")" class="fw-semibold">Register a new user first</a>.
+                                </span>
+                            }
                         </div>
 
                         <!-- Full Name -->
