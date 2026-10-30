@@ -1,0 +1,87 @@
+@model IEnumerable<LMS.Models.Payment>
+@{
+    ViewBag.Title = "Transaction Log";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Admin")">Admin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Payments & Financials</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-credit-card-fill me-2 text-primary"></i>Financial Transactions Log</h2>
+            <p class="text-muted mb-0">Record of all paid course purchases, simulated checkouts, and payment audits</p>
+        </div>
+        <div>
+            <span class="badge bg-success fs-6 p-2">
+                Total Revenue: $@(Model.Where(p => p.Status == "Completed").Sum(p => (decimal?)p.Amount ?? 0).ToString("N2"))
+            </span>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Payment ID</th>
+                        <th>Transaction Ref</th>
+                        <th>Student ID</th>
+                        <th>Course</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Date & Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">No financial transactions recorded yet.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var p in Model)
+                        {
+                            <tr>
+                                <td><span class="fw-bold">#@p.PaymentId</span></td>
+                                <td><code>@p.TransactionReference</code></td>
+                                <td><span class="small font-monospace">@p.StudentId</span></td>
+                                <td>
+                                    <div class="fw-semibold text-truncate" style="max-width: 250px;">
+                                        @(p.Course != null ? p.Course.Title : "Course #" + p.CourseId)
+                                    </div>
+                                </td>
+                                <td class="fw-bold text-success">$@p.Amount.ToString("N2")</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">@p.PaymentMethod</span>
+                                </td>
+                                <td>
+                                    @if (p.Status == "Completed")
+                                    {
+                                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Completed</span>
+                                    }
+                                    else if (p.Status == "Failed")
+                                    {
+                                        <span class="badge bg-danger">Failed</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    }
+                                </td>
+                                <td><small class="text-muted">@p.PaymentDate.ToString("MMM dd, yyyy HH:mm")</small></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
