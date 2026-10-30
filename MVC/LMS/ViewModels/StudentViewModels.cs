@@ -83,6 +83,7 @@ namespace LMS.ViewModels
 
     public class AssignmentSubmissionViewModel
     {
+        public int AssignmentId { get; set; }
         public Assignment Assignment { get; set; }
         public Submission ExistingSubmission { get; set; }
 
