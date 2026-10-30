@@ -1,24 +1,4 @@
-﻿Employee action started: Index Controller:Employee Action:Index Date:30-10-2026 18:28:23
-Employee action completed: Index Controller:Employee Action:Index Date:30-10-2026 18:28:23
-Employee action started: Details Controller:Employee Action:Details Date:30-10-2026 18:28:32
-Employee action completed: Details Controller:Employee Action:Details Date:30-10-2026 18:28:32
-Employee action started: Index Controller:Employee Action:Index Date:30-10-2026 18:48:22
-Employee action completed: Index Controller:Employee Action:Index Date:30-10-2026 18:48:22
-Employee action started: Details Controller:Employee Action:Details Date:30-10-2026 18:48:38
-Employee action completed: Details Controller:Employee Action:Details Date:30-10-2026 18:48:38
-Employee action started: TestException Controller:Employee Action:TestException Date:30-10-2026 18:48:50
-Employee action completed: TestException Controller:Employee Action:TestException Date:30-10-2026 18:50:43
-Employee action started: Index Controller:Employee Action:Index Date:30-10-2026 18:52:35
-Employee action completed: Index Controller:Employee Action:Index Date:30-10-2026 18:52:35
-Employee action started: TestException Controller:Employee Action:TestException Date:30-10-2026 18:55:36
-Employee action started: TestException Controller:Employee Action:TestException Date:30-10-2026 18:58:12
-Employee action completed: TestException Controller:Employee Action:TestException Date:30-10-2026 18:58:12
-Employee action started: TestException Controller:Employee Action:TestException Date:30-10-2026 19:00:09
-Employee action completed: TestException Controller:Employee Action:TestException Date:30-10-2026 19:00:09
-Exception Filter: Controller:Employee Action:TestException Exception:Test exception from EmployeeController Date:30-10-2026 19:00:09
-Employee action started: TestException Controller:Employee Action:TestException Date:30-10-2026 19:00:54
-Employee action completed: TestException Controller:Employee Action:TestException Date:30-10-2026 19:00:54
-Exception Filter: Controller:Employee Action:TestException Exception:Test exception from EmployeeController Date:30-10-2026 19:00:54
-Employee action started: TestException Controller:Employee Action:TestException Date:30-10-2026 19:01:23
-Employee action completed: TestException Controller:Employee Action:TestException Date:30-10-2026 19:01:23
-Exception Filter: Controller:Employee Action:TestException Exception:Test exception from EmployeeController Date:30-10-2026 19:01:23
+﻿Employee action started: Index Controller:Employee Action:Index Date:30-10-2026 19:03:05
+Employee action completed: Index Controller:Employee Action:Index Date:30-10-2026 19:03:05
+Employee result started: Index Controller:Employee Action:Index Date:30-10-2026 19:03:05
+Employee result completed: Index Controller:Employee Action:Index Date:30-10-2026 19:03:06
