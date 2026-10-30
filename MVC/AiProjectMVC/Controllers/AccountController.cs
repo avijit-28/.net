@@ -129,7 +129,21 @@ namespace AiProjectMVC.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Failed to register user: " + ex.Message);
+                string friendlyMessage = "Registration could not be completed. ";
+                if (ex.Message.Contains("IX_") || ex.Message.ToLower().Contains("unique") || ex.Message.ToLower().Contains("duplicate"))
+                {
+                    friendlyMessage += "An account with the same username or email already exists.";
+                }
+                else if (ex.Message.ToLower().Contains("password") || ex.Message.ToLower().Contains("null"))
+                {
+                    friendlyMessage += "Please ensure all required fields, including password, are properly filled.";
+                }
+                else
+                {
+                    friendlyMessage += "Please check your inputs and try again.";
+                }
+
+                ModelState.AddModelError("", friendlyMessage);
                 return View(model);
             }
         }
