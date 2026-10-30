@@ -1,33 +1,181 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+@model IEnumerable<LMS.Models.Course>
+@{
+    ViewBag.Title = "Learn Today, Lead Tomorrow";
+    var categories = ViewBag.Categories as IEnumerable<LMS.Models.Category> ?? Enumerable.Empty<LMS.Models.Category>();
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
+<!-- Hero Section -->
+<div class="row align-items-center py-5 my-3 g-5">
+    <div class="col-lg-7">
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-semibold mb-3">
+            <i class="bi bi-stars me-1"></i> Interactive Learning Reimagined
+        </span>
+        <h1 class="display-4 fw-extrabold text-dark tracking-tight mb-3">
+            Master High-Impact Skills with Guided Curriculum
+        </h1>
+        <p class="lead text-muted mb-4">
+            Accelerate your career with structured, hands-on courses in software engineering, data science, machine learning, and cloud architecture.
+        </p>
 
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+        <!-- Search Form -->
+        @using (Html.BeginForm("Index", "Courses", FormMethod.Get, new { @class = "mb-4" }))
+        {
+            <div class="input-group input-group-lg shadow-sm rounded-pill overflow-hidden border">
+                <span class="input-group-text bg-white border-0 ps-3">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" name="search" class="form-control border-0 ps-2" placeholder="What skill do you want to learn today?" />
+                <button class="btn btn-primary px-4 fw-semibold" type="submit">Search Courses</button>
+            </div>
+        }
+
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="small text-muted fw-semibold me-2">Popular:</span>
+            @foreach (var cat in categories.Take(4))
+            {
+                <a href="@Url.Action("Index", "Courses", new { categoryId = cat.CategoryId })" class="badge bg-light text-dark text-decoration-none border px-2 py-1 rounded-pill">
+                    @cat.CategoryName
+                </a>
+            }
+        </div>
     </div>
-</main>
+    <div class="col-lg-5">
+        <div class="card-custom p-4 shadow-sm bg-white border-0 position-relative">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded">Live Platform Metrics</span>
+                <span class="small text-muted"><i class="bi bi-circle-fill text-success me-1" style="font-size: 8px;"></i> SQL Server Online</span>
+            </div>
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3">
+                        <div class="fs-4 fw-bold text-primary">@ViewBag.TotalCourses</div>
+                        <div class="small text-muted">Published Courses</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3">
+                        <div class="fs-4 fw-bold text-success">@ViewBag.TotalStudents</div>
+                        <div class="small text-muted">Enrolled Students</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3">
+                        <div class="fs-4 fw-bold text-warning">@ViewBag.TotalCertificates</div>
+                        <div class="small text-muted">Certificates Issued</div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3">
+                        <div class="fs-4 fw-bold text-info">100%</div>
+                        <div class="small text-muted">Self-Paced Access</div>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-primary-subtle text-primary p-3">
+                    <i class="bi bi-trophy-fill fs-4"></i>
+                </div>
+                <div>
+                    <h6 class="mb-0 fw-bold">Verified Certificates</h6>
+                    <small class="text-muted">Earn credentials shareable on LinkedIn and resumes upon course completion.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Courses Section -->
+<div class="py-5">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <span class="text-primary fw-semibold small text-uppercase">Curated Tracks</span>
+            <h2 class="fw-bold mb-0">Featured Courses</h2>
+        </div>
+        <a href="@Url.Action("Index", "Courses")" class="btn btn-outline-primary rounded-pill px-3 fw-semibold">
+            Explore All Courses <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card-custom p-5 text-center">
+            <i class="bi bi-journal-x fs-1 text-muted mb-3"></i>
+            <h5>No published courses found.</h5>
+            <p class="text-muted">Instructors are publishing new curriculums right now. Check back soon!</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var course in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card card-custom card-hover h-100 overflow-hidden">
+                        <div class="position-relative bg-light text-center py-4 border-bottom" style="height: 160px; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-code-square display-3 text-secondary opacity-25"></i>
+                            <span class="position-absolute top-0 end-0 m-3 badge bg-dark bg-opacity-75">
+                                @course.Level
+                            </span>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-primary-subtle text-primary small">
+                                    @(course.Category?.CategoryName ?? "General")
+                                </span>
+                                <div class="rating-stars small">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span class="fw-bold text-dark ms-1">@course.Rating.ToString("0.0")</span>
+                                    <span class="text-muted">(@course.TotalStudents)</span>
+                                </div>
+                            </div>
+
+                            <h5 class="card-title fw-bold mb-2">@course.Title</h5>
+                            <p class="card-text text-muted small flex-grow-1">
+                                @(string.IsNullOrEmpty(course.Description) ? "Comprehensive course curriculum designed for practical mastery." : (course.Description.Length > 120 ? course.Description.Substring(0, 117) + "..." : course.Description))
+                            </p>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-2">
+                                <div>
+                                    @if (course.Price == 0)
+                                    {
+                                        <span class="badge bg-success-subtle text-success fs-6 fw-bold">FREE</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fs-5 fw-bold text-dark">$@course.Price.ToString("N2")</span>
+                                    }
+                                </div>
+                                <a href="@Url.Action("Details", "Courses", new { id = course.CourseId })" class="btn btn-sm btn-primary rounded-pill px-3">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- Category Cloud Section -->
+<div class="py-5 border-top">
+    <div class="text-center mb-4">
+        <h3 class="fw-bold">Browse by Core Subject</h3>
+        <p class="text-muted">Select an area of interest to discover specialized curriculums.</p>
+    </div>
+    <div class="row g-3 justify-content-center">
+        @foreach (var cat in categories)
+        {
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="@Url.Action("Index", "Courses", new { categoryId = cat.CategoryId })" class="text-decoration-none">
+                    <div class="card-custom p-3 text-center card-hover h-100">
+                        <i class="bi bi-layers-half fs-3 text-primary mb-2"></i>
+                        <h6 class="fw-bold text-dark mb-1">@cat.CategoryName</h6>
+                        <small class="text-muted">Explore Tracks &rarr;</small>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>
