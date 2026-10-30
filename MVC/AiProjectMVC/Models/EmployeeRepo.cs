@@ -109,7 +109,7 @@ namespace AiProjectMVC.Models
         public void UpdateEmployee(
             int id,
             string name = null,
-            decimal? salary = null,
+            int? salary = null,
             string gender = null,
             string city = null,
             string dept = null,
@@ -123,7 +123,7 @@ namespace AiProjectMVC.Models
 
                     cmd.Parameters.AddWithValue("@ID", id);
                     cmd.Parameters.AddWithValue("@Name", (object)name ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@Salary", (object)salary ?? DBNull.Value);
+                    cmd.Parameters.Add("@Salary", SqlDbType.Int).Value = (object)salary ?? DBNull.Value;
                     cmd.Parameters.AddWithValue("@Gender", (object)gender ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@City", (object)city ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Dept", (object)dept ?? DBNull.Value);
