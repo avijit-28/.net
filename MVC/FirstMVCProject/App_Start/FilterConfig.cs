@@ -9,7 +9,8 @@ namespace FirstMVCProject
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
-            filters.Add(new EmployeeAuditFilter());
+            // To register filters globally for all controllers across the whole application:
+            // filters.Add(new EmployeeAuditFilter());
         }
     }
 }
