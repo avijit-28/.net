@@ -1,0 +1,71 @@
+@model IEnumerable<LMS.Models.Quiz>
+@{
+    var course = ViewBag.Course as LMS.Models.Course;
+    ViewBag.Title = "Quizzes - " + (course?.Title ?? "Course");
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb small mb-1">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Courses", "Instructor")">Course Studio</a></li>
+                    <li class="breadcrumb-item active">Quizzes</li>
+                </ol>
+            </nav>
+            <h3 class="fw-bold mb-0">Quizzes & Tests: @(course?.Title ?? "Course")</h3>
+            <p class="text-muted small">Construct objective assessment evaluations for students</p>
+        </div>
+        <div>
+            <a href="@Url.Action("CreateQuiz", "Instructor", new { courseId = course?.CourseId })" class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i> Create Quiz
+            </a>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card card-custom p-5 text-center shadow-sm">
+            <i class="bi bi-patch-question fs-1 text-muted mb-3"></i>
+            <h5 class="fw-bold">No quizzes created for this course yet.</h5>
+            <p class="text-muted small mb-3">Create automated multiple-choice tests with pass/fail criteria.</p>
+            <div>
+                <a href="@Url.Action("CreateQuiz", "Instructor", new { courseId = course?.CourseId })" class="btn btn-primary rounded-pill px-4">
+                    Create First Quiz
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var q in Model)
+            {
+                <div class="col-md-6">
+                    <div class="card card-custom p-4 shadow-sm h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-warning-subtle text-dark border border-warning-subtle px-3 py-1 rounded-pill small fw-bold">
+                                Passing: @q.PassingPercentage%
+                            </span>
+                            <span class="badge bg-light text-dark border small">@q.Questions.Count Questions</span>
+                        </div>
+
+                        <h5 class="fw-bold text-dark mb-1">@q.Title</h5>
+                        <p class="small text-muted mb-3">@(string.IsNullOrEmpty(q.Description) ? "Evaluation assessment." : q.Description)</p>
+
+                        <div class="d-flex align-items-center gap-3 small text-muted mb-3">
+                            <div><i class="bi bi-stopwatch text-primary me-1"></i> @(q.TimeLimitMinutes ?? 30) min limit</div>
+                            <div><i class="bi bi-award text-success me-1"></i> @q.TotalMarks total marks</div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-auto pt-2 border-top">
+                            <a href="@Url.Action("Questions", "Instructor", new { quizId = q.QuizId })" class="btn btn-sm btn-primary rounded-pill w-100 fw-semibold">
+                                <i class="bi bi-list-task me-1"></i> Manage Questions (@q.Questions.Count)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
