@@ -1,0 +1,112 @@
+@model IEnumerable<LMS.Models.Assignment>
+@{
+    var course = (LMS.Models.Course)ViewBag.Course;
+    ViewBag.Title = "Course Assignments - " + course.Title;
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Instructor")">Studio</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Courses", "Instructor")">My Courses</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Assignments: @course.Title</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-file-earmark-code me-2 text-primary"></i>Course Assignments</h2>
+            <p class="text-muted mb-0">Manage homework, projects, and assess student submissions for <strong>@course.Title</strong></p>
+        </div>
+        <div>
+            <a href="@Url.Action("CreateAssignment", "Instructor", new { courseId = course.CourseId })" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i> Add Assignment
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm text-center py-5">
+            <div class="card-body">
+                <i class="bi bi-journal-code text-muted display-4"></i>
+                <h4 class="mt-3 fw-bold">No assignments posted yet</h4>
+                <p class="text-muted">Create practical assignments with deadlines and scoring rubrics for your students.</p>
+                <a href="@Url.Action("CreateAssignment", "Instructor", new { courseId = course.CourseId })" class="btn btn-primary mt-2">
+                    <i class="bi bi-plus-lg me-1"></i> Create First Assignment
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Assignment Title</th>
+                            <th>Associated Lesson</th>
+                            <th>Due Date</th>
+                            <th>Max Marks</th>
+                            <th>Submissions</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var subsCount = item.Submissions != null ? item.Submissions.Count : 0;
+                            var gradedCount = item.Submissions != null ? item.Submissions.Count(s => s.Status == "Graded") : 0;
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-dark">@item.Title</div>
+                                    <small class="text-muted">Created @item.CreatedDate.ToString("MMM dd, yyyy")</small>
+                                </td>
+                                <td>
+                                    @(item.Lesson != null ? item.Lesson.Title : "Course Level")
+                                </td>
+                                <td>
+                                    @if (item.DueDate.HasValue)
+                                    {
+                                        var isOverdue = item.DueDate.Value < DateTime.UtcNow;
+                                        <span class="badge @(isOverdue ? "bg-secondary" : "bg-warning text-dark")">
+                                            @item.DueDate.Value.ToString("MMM dd, yyyy HH:mm")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No deadline</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">@item.MaxMarks pts</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary rounded-pill">@subsCount total</span>
+                                    @if (subsCount > 0)
+                                    {
+                                        <small class="text-muted ms-1">(@gradedCount graded)</small>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <a href="@Url.Action("Submissions", "Instructor", new { assignmentId = item.AssignmentId })" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye me-1"></i> Review Submissions
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
