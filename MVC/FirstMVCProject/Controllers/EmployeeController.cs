@@ -5,7 +5,6 @@ using System.Web;
 using System.Web.Mvc;
 using FirstMVCProject.Models;
 using FirstMVCProject.ViewModels;
-
 namespace FirstMVCProject.Controllers
 {
     //public class EmployeeController : Controller
@@ -14,8 +13,8 @@ namespace FirstMVCProject.Controllers
     //    //private readonly AddressRepo _addressRepo = new AddressRepo();
     //}
 
-
-
+    [RequireHttps]
+    [RoutePrefix("employees")]
     public class EmployeeController : Controller
     {
         private readonly EmployeeRepo _repo = new EmployeeRepo();
@@ -23,6 +22,7 @@ namespace FirstMVCProject.Controllers
 
 
         // GET: Employee
+        [Route("")]
         public ActionResult Index()
         {
 
@@ -47,6 +47,7 @@ namespace FirstMVCProject.Controllers
         }
 
         // GET: Employee/Details/105
+        [Route("details/{id:int}")]
         public ActionResult Details(int id)
         {
             Employee employee = _repo.GetEmployeeById(id);
@@ -74,7 +75,9 @@ namespace FirstMVCProject.Controllers
 
             return View(employeeDetailsViewModel);
         }
+
         // GET: Employee/Create
+        [Route("create")]
         public ActionResult Create()
         {
             return View();
@@ -83,6 +86,7 @@ namespace FirstMVCProject.Controllers
         // POST: Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("create")]
         public ActionResult Create(Employee employee)
         {
             try
@@ -104,6 +108,7 @@ namespace FirstMVCProject.Controllers
         }
 
         // GET: Employee/Edit/5
+        [Route("edit/{id:int}")]
         public ActionResult Edit(int id)
         {
             Employee employee = _repo.GetEmployeeById(id);
@@ -118,6 +123,7 @@ namespace FirstMVCProject.Controllers
 
         // POST: Employee/Edit/5
         [HttpPost]
+        [Route("edit/{id:int}")]
         public ActionResult Edit(int id, Employee employee)
         {
             try
@@ -147,6 +153,7 @@ namespace FirstMVCProject.Controllers
         }
 
         // GET: Employee/Delete/5
+        [Route("delete/{id:int}")]
         public ActionResult Delete(int id)
         {
             Employee employee = _repo.GetEmployeeById(id);
@@ -161,6 +168,7 @@ namespace FirstMVCProject.Controllers
 
         // POST: Employee/Delete/5
         [HttpPost]
+        [Route("delete/{id:int}")]
         public ActionResult Delete(int id, Employee employee)
         {
             try
