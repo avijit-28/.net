@@ -1,8 +1,1 @@
-﻿OnActionExecuting Controller:Employee Action:Index Date:30-10-2026 17:08:05
-OnActionExecuted Controller:Employee Action:Index Date:30-10-2026 17:08:05
-OnResultExecuting Controller:Employee Action:Index Date:30-10-2026 17:08:05
-OnResultExecuted Controller:Employee Action:Index Date:30-10-2026 17:08:06
-OnActionExecuting Controller:Employee Action:Details Date:30-10-2026 17:08:08
-OnActionExecuted Controller:Employee Action:Details Date:30-10-2026 17:08:08
-OnResultExecuting Controller:Employee Action:Details Date:30-10-2026 17:08:08
-OnResultExecuted Controller:Employee Action:Details Date:30-10-2026 17:08:08
+﻿
