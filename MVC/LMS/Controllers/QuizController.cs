@@ -1,0 +1,83 @@
+using System.Linq;
+using System.Web.Mvc;
+using LMS.Data;
+using LMS.Services;
+using LMS.ViewModels;
+using Microsoft.AspNet.Identity;
+
+namespace LMS.Controllers
+{
+    [Authorize]
+    public class QuizController : Controller
+    {
+        private readonly ApplicationDbContext _db = new ApplicationDbContext();
+        private readonly QuizService _quizService;
+
+        public QuizController()
+        {
+            _quizService = new QuizService(_db);
+        }
+
+        // GET: Quiz/Take/5
+        public ActionResult Take(int id)
+        {
+            string studentId = User.Identity.GetUserId();
+            var attempt = _quizService.StartAttempt(id, studentId);
+            if (attempt == null)
+            {
+                TempData["ErrorMessage"] = "Quiz not found or is currently inactive.";
+                return RedirectToAction("Index", "Student");
+            }
+
+            var model = _quizService.GetQuizAttemptViewModel(attempt.AttemptId, studentId);
+            return View(model);
+        }
+
+        // POST: Quiz/Submit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Submit(QuizSubmitViewModel model)
+        {
+            string studentId = User.Identity.GetUserId();
+            var result = _quizService.SubmitQuiz(model.AttemptId, model.Answers, studentId);
+            if (result == null)
+            {
+                return HttpNotFound();
+            }
+
+            return RedirectToAction("Result", new { attemptId = model.AttemptId });
+        }
+
+        // GET: Quiz/Result/5
+        public ActionResult Result(int attemptId)
+        {
+            string studentId = User.Identity.GetUserId();
+            var attempt = _db.QuizAttempts.FirstOrDefault(a => a.AttemptId == attemptId && a.StudentId == studentId);
+            if (attempt == null) return HttpNotFound();
+
+            var result = new QuizResultViewModel
+            {
+                AttemptId = attempt.AttemptId,
+                QuizTitle = attempt.Quiz.Title,
+                CourseTitle = attempt.Quiz.Course?.Title,
+                CourseId = attempt.Quiz.CourseId,
+                Score = attempt.Score,
+                TotalMarks = attempt.TotalMarks,
+                ObtainedMarks = attempt.ObtainedMarks,
+                IsPassed = attempt.IsPassed,
+                CompletedAt = attempt.CompletedAt
+            };
+
+            return View(result);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+    }
+}
