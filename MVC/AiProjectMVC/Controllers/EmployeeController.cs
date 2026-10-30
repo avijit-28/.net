@@ -178,10 +178,12 @@ namespace AiProjectMVC.Controllers
 
             try
             {
+                ViewBag.AvailableUsers = _userRepo.GetUnassignedUsers() ?? new List<EmployeeUser>();
                 ViewBag.Addresses = _addressRepo.GetAllAddress() ?? new List<Address>();
             }
             catch
             {
+                ViewBag.AvailableUsers = new List<EmployeeUser>();
                 ViewBag.Addresses = new List<Address>();
             }
             return View();
@@ -198,22 +200,48 @@ namespace AiProjectMVC.Controllers
                 return RedirectToAction("Index");
             }
 
+            // Validate that ID is selected from unassigned EmployeeUser records
+            if (employee.ID <= 0)
+            {
+                ModelState.AddModelError("ID", "Please select a registered User ID from the dropdown.");
+            }
+            else
+            {
+                var existingEmp = _repo.GetEmployeeById(employee.ID);
+                if (existingEmp != null)
+                {
+                    ModelState.AddModelError("ID", $"An employee record for ID #{employee.ID} already exists.");
+                }
+
+                var userRecord = _userRepo.GetUserById(employee.ID);
+                if (userRecord == null)
+                {
+                    ModelState.AddModelError("ID", $"User ID #{employee.ID} is not registered in EmployeeUser table.");
+                }
+            }
+
             try
             {
                 if (ModelState.IsValid)
                 {
                     _repo.InsertEmployee(employee);
-                    TempData["SuccessMessage"] = $"Employee '{employee.Name}' (ID: {employee.ID}) added successfully!";
+                    TempData["SuccessMessage"] = $"Employee '{employee.Name}' (ID: #{employee.ID}) added successfully!";
                     return RedirectToAction("Index");
                 }
 
+                ViewBag.AvailableUsers = _userRepo.GetUnassignedUsers() ?? new List<EmployeeUser>();
                 ViewBag.Addresses = _addressRepo.GetAllAddress() ?? new List<Address>();
                 return View(employee);
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Failed to create employee: " + ex.Message);
-                try { ViewBag.Addresses = _addressRepo.GetAllAddress() ?? new List<Address>(); } catch { }
+                try
+                {
+                    ViewBag.AvailableUsers = _userRepo.GetUnassignedUsers() ?? new List<EmployeeUser>();
+                    ViewBag.Addresses = _addressRepo.GetAllAddress() ?? new List<Address>();
+                }
+                catch { }
                 return View(employee);
             }
         }
