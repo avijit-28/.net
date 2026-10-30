@@ -8,6 +8,15 @@ namespace FirstMVCProject.Controllers
 {
     public class HomeController : Controller
     {
+        public ActionResult NonSecureMethod()
+        {
+            return View();
+        }
+        public ActionResult SecureMethod()
+        {
+            return View();
+        }
+        ////////////////
         public ActionResult Index()
         {
             return View();
