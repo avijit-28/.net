@@ -220,6 +220,31 @@ namespace AiProjectMVC.Controllers
                 }
             }
 
+            // Validate mandatory Linked Address & verify city correlation
+            if (!employee.AddressId.HasValue || employee.AddressId.Value <= 0)
+            {
+                ModelState.AddModelError("AddressId", "Linked Address is required. Please select an address matching the employee's city.");
+            }
+            else
+            {
+                Address linkedAddr = null;
+                try
+                {
+                    linkedAddr = _addressRepo.GetAddressById(employee.AddressId.Value);
+                }
+                catch { }
+
+                if (linkedAddr == null)
+                {
+                    ModelState.AddModelError("AddressId", "The selected address does not exist. Please choose a valid address.");
+                }
+                else if (!RoleAuthHelper.IsCityMatching(employee.City, linkedAddr))
+                {
+                    ModelState.AddModelError("AddressId", $"The selected address in '{linkedAddr.City}, {linkedAddr.State}' does not match the employee city '{employee.City}'. Please choose an address corresponding to {employee.City}.");
+                    ModelState.AddModelError("City", $"Employee city '{employee.City}' does not match the selected address in '{linkedAddr.City}, {linkedAddr.State}'.");
+                }
+            }
+
             try
             {
                 if (ModelState.IsValid)
@@ -235,7 +260,12 @@ namespace AiProjectMVC.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Failed to create employee: " + ex.Message);
+                string friendlyMessage = "Unable to create employee record. Please ensure all required fields are correctly filled and the address matches the city.";
+                if (ex.Message != null && ex.Message.IndexOf("AddressId", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    friendlyMessage = "Linked Address is required and must match the employee city.";
+                }
+                ModelState.AddModelError("", friendlyMessage);
                 try
                 {
                     ViewBag.AvailableUsers = _userRepo.GetUnassignedUsers() ?? new List<EmployeeUser>();
