@@ -257,3 +257,46 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $(document).on('submit', '#markCompleteForm', function (e) {
+                e.preventDefault();
+                var $form = $(this);
+                var $btn = $form.find('#btnMarkComplete');
+                $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1" role="status"></span> Saving...');
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: 'POST',
+                    data: $form.serialize(),
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    success: function (res) {
+                        if (res && res.success) {
+                            $('#completionStatusContainer').html(
+                                '<span class="badge bg-success-subtle text-success fs-6 px-3 py-2 rounded-pill"><i class="bi bi-check2 me-1"></i> Completed</span>'
+                            );
+                            $('#progressText').text(res.progress + '% Completed');
+                            $('#progressBar').css('width', res.progress + '%');
+
+                            // Update sidebar icon
+                            $('.list-group-item.bg-white').find('i.bi').removeClass('bi-play-circle-fill bi-circle text-primary text-muted')
+                                .addClass('bi-check-circle-fill text-success');
+
+                            if (res.isCompleted) {
+                                alert('Congratulations! You have completed 100% of this course! Your certificate has been issued.');
+                                window.location.reload();
+                            }
+                        } else {
+                            $form.off('submit').submit();
+                        }
+                    },
+                    error: function () {
+                        $form.off('submit').submit();
+                    }
+                });
+            });
+        });
+    </script>
+}
