@@ -1,0 +1,75 @@
+@model IEnumerable<LMS.Models.Submission>
+@{
+    ViewBag.Title = "My Assignment Submissions";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Project & Assignment Submissions</h2>
+            <p class="text-muted small">Check evaluation status, awarded marks, and instructor feedback</p>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card card-custom p-5 text-center shadow-sm">
+            <i class="bi bi-file-earmark-check fs-1 text-muted mb-3"></i>
+            <h5 class="fw-bold">No assignments submitted yet.</h5>
+            <p class="text-muted small mb-0">Practical assignments can be submitted directly from the classroom modules.</p>
+        </div>
+    }
+    else
+    {
+        <div class="card card-custom shadow-sm overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light small">
+                        <tr>
+                            <th>Assignment Title</th>
+                            <th>Course</th>
+                            <th>Submitted Date</th>
+                            <th>Status</th>
+                            <th>Score</th>
+                            <th>Feedback</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">@s.Assignment.Title</td>
+                                <td>@(s.Assignment.Course?.Title ?? "Course")</td>
+                                <td class="small text-muted">@s.SubmittedDate.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <span class="badge @(s.Status == "Graded" ? "bg-success" : (s.Status == "Late" ? "bg-warning text-dark" : "bg-primary")) px-3 py-1 rounded-pill">
+                                        @s.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (s.Marks.HasValue)
+                                    {
+                                        <strong class="text-success">@s.Marks / @s.Assignment.MaxMarks</strong>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Pending Grading</span>
+                                    }
+                                </td>
+                                <td class="small text-muted" style="max-width: 250px;">
+                                    @(string.IsNullOrEmpty(s.Feedback) ? "Awaiting review" : s.Feedback)
+                                </td>
+                                <td class="text-end">
+                                    <a href="@Url.Action("Details", "Assignment", new { id = s.AssignmentId })" class="btn btn-sm btn-outline-primary rounded-pill">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
