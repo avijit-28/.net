@@ -127,7 +127,8 @@ namespace LMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (_db.Categories.Any(c => c.CategoryName.Equals(model.CategoryName, StringComparison.OrdinalIgnoreCase)))
+                string catName = model.CategoryName.Trim().ToLower();
+                if (_db.Categories.Any(c => c.CategoryName.ToLower() == catName))
                 {
                     ModelState.AddModelError("CategoryName", "Category name already exists.");
                     return View(model);
