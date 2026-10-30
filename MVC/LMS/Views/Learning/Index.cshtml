@@ -114,7 +114,7 @@
                         <h3 class="fw-bold mb-0">@Model.CurrentLesson.Title</h3>
                     </div>
 
-                    <div class="mt-2 mt-md-0">
+                    <div class="mt-2 mt-md-0" id="completionStatusContainer">
                         @if (Model.IsCurrentCompleted)
                         {
                             <span class="badge bg-success-subtle text-success fs-6 px-3 py-2 rounded-pill">
@@ -127,7 +127,7 @@
                             {
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="lessonId" value="@Model.CurrentLesson.LessonId" />
-                                <button type="submit" class="btn btn-outline-success rounded-pill px-3 fw-semibold">
+                                <button type="submit" id="btnMarkComplete" class="btn btn-outline-success rounded-pill px-3 fw-semibold">
                                     <i class="bi bi-check-lg me-1"></i> Mark as Complete
                                 </button>
                             }
