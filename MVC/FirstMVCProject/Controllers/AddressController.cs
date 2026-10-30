@@ -15,6 +15,8 @@ namespace FirstMVCProject.Controllers
 
         // GET: Address
         [Route("")]
+        [Route("~/Address")]
+        [Route("~/Address/Index")]
         public ActionResult Index()
         {
             var addresses = _repo.GetAllAddress();
