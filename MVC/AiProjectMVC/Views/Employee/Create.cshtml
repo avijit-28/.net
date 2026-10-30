@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Create Employee";
     var addressList = ViewBag.Addresses as List<AiProjectMVC.Models.Address> ?? new List<AiProjectMVC.Models.Address>();
+    var availableUsers = ViewBag.AvailableUsers as List<AiProjectMVC.Models.EmployeeUser> ?? new List<AiProjectMVC.Models.EmployeeUser>();
 }
 
 <div class="row justify-content-center">
