@@ -13,7 +13,7 @@
     <div class="alert alert-danger">
         <p><strong>Controller:</strong> @Model.ControllerName</p>
         <p><strong>Action:</strong> @Model.ActionName</p>
-        if (Model.Exception != null)
+        @if (Model.Exception != null)
         {
             <p><strong>Exception:</strong> @Model.Exception.Message</p>
         }
