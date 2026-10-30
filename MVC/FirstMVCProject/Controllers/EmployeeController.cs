@@ -21,8 +21,8 @@ namespace FirstMVCProject.Controllers
         [Route("~/")]
         [Route("~/Employee")]
         [Route("~/Employee/Index")]
-        //[LogFilter]
-        [EmployeeAuditFilter]
+        [Route("~/employees")]
+        [Route("~/AllEmployees")]
         public ActionResult Index()
         {
             List<Employee> employees = _repo.GetAllEmployee();
