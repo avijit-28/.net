@@ -66,9 +66,10 @@
                             @Html.LabelFor(m => m.PhoneNumber, new { @class = "form-label" })
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="bi bi-telephone text-muted"></i></span>
-                                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "e.g. 9876543210", required = "required" })
+                                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "10 digit mobile (e.g. 9876543210)", maxlength = "10", pattern = "[0-9]{10}", required = "required" })
                             </div>
                             @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger small mt-1 d-block" })
+                            <span class="text-muted smaller mt-1 d-block">Must be exactly 10 digits (digits 0-9 only).</span>
                         </div>
 
                         <!-- Role -->
@@ -92,9 +93,10 @@
                             @Html.LabelFor(m => m.Password, new { @class = "form-label" })
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="bi bi-lock text-muted"></i></span>
-                                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Create a password" })
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Min 8 chars: letters, numbers & symbols", required = "required" })
                             </div>
                             @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small mt-1 d-block" })
+                            <span class="text-muted smaller mt-1 d-block">Min 8 alphanumeric & special char (e.g. <code>User@1234</code>).</span>
                         </div>
 
                         <!-- Confirm Password -->
@@ -102,7 +104,7 @@
                             @Html.LabelFor(m => m.ConfirmPassword, new { @class = "form-label" })
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="bi bi-shield-check text-muted"></i></span>
-                                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Confirm password" })
+                                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Re-enter password", required = "required" })
                             </div>
                             @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger small mt-1 d-block" })
                         </div>
