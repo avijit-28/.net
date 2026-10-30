@@ -58,3 +58,7 @@ OnActionExecuting Controller:Employee Action:Index Date:30-10-2026 16:46:15
 OnActionExecuted Controller:Employee Action:Index Date:30-10-2026 16:46:15
 OnResultExecuting Controller:Employee Action:Index Date:30-10-2026 16:46:15
 OnResultExecuted Controller:Employee Action:Index Date:30-10-2026 16:46:15
+OnActionExecuting Controller:Employee Action:Details Date:30-10-2026 16:49:44
+OnActionExecuted Controller:Employee Action:Details Date:30-10-2026 16:49:44
+OnResultExecuting Controller:Employee Action:Details Date:30-10-2026 16:49:44
+OnResultExecuted Controller:Employee Action:Details Date:30-10-2026 16:49:44
