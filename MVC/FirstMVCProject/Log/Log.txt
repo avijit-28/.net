@@ -122,3 +122,7 @@ OnActionExecuting Controller:Employee Action:Index Date:30-10-2026 16:53:27
 OnActionExecuted Controller:Employee Action:Index Date:30-10-2026 16:53:27
 OnResultExecuting Controller:Employee Action:Index Date:30-10-2026 16:53:27
 OnResultExecuted Controller:Employee Action:Index Date:30-10-2026 16:53:29
+OnActionExecuting Controller:Employee Action:Details Date:30-10-2026 16:53:37
+OnActionExecuted Controller:Employee Action:Details Date:30-10-2026 16:53:37
+OnResultExecuting Controller:Employee Action:Details Date:30-10-2026 16:53:37
+OnResultExecuted Controller:Employee Action:Details Date:30-10-2026 16:53:37
