@@ -1,0 +1,75 @@
+@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "d-flex align-items-center m-0" }))
+    {
+        @Html.AntiForgeryToken()
+        <ul class="navbar-nav align-items-center">
+            @if (User.IsInRole("Admin"))
+            {
+                <li class="nav-item me-2">
+                    <a class="nav-link text-warning fw-semibold" href="@Url.Action("Index", "Admin")">
+                        <i class="bi bi-shield-lock-fill me-1"></i> Admin Console
+                    </a>
+                </li>
+            }
+            else if (User.IsInRole("Instructor"))
+            {
+                <li class="nav-item me-2">
+                    <a class="nav-link text-info fw-semibold" href="@Url.Action("Index", "Instructor")">
+                        <i class="bi bi-mortarboard-fill me-1"></i> Instructor Studio
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item me-2">
+                    <a class="nav-link text-primary fw-semibold" href="@Url.Action("Index", "Student")">
+                        <i class="bi bi-speedometer2 me-1"></i> Student Portal
+                    </a>
+                </li>
+            }
+
+            <li class="nav-item me-2">
+                <a class="nav-link position-relative px-2" href="@Url.Action("Index", "Notifications")" title="Notifications">
+                    <i class="bi bi-bell-fill fs-5"></i>
+                </a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-dark fw-bold d-flex align-items-center" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="rounded-circle bg-primary text-white d-inline-flex justify-content-center align-items-center me-2" style="width: 32px; height: 32px; font-size: 14px;">
+                        @(User.Identity.GetUserName().Substring(0, 1).ToUpper())
+                    </span>
+                    <span class="d-none d-md-inline">@User.Identity.GetUserName()</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userMenu">
+                    <li><h6 class="dropdown-header">Signed in as @(User.IsInRole("Admin") ? "Administrator" : (User.IsInRole("Instructor") ? "Instructor" : "Student"))</h6></li>
+                    <li><a class="dropdown-item" href="@Url.Action("Profile", "Account")"><i class="bi bi-person me-2"></i> My Profile</a></li>
+                    <li><a class="dropdown-item" href="@Url.Action("ChangePassword", "Account")"><i class="bi bi-key me-2"></i> Change Password</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <button type="submit" class="dropdown-item text-danger">
+                            <i class="bi bi-box-arrow-right me-2"></i> Log Off
+                        </button>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    }
+}
+else
+{
+    <ul class="navbar-nav align-items-center">
+        <li class="nav-item me-2">
+            <a class="nav-link fw-semibold text-dark" href="@Url.Action("Login", "Account")">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="btn btn-primary px-3 rounded-pill fw-semibold" href="@Url.Action("Register", "Account")">
+                <i class="bi bi-person-plus me-1"></i> Get Started
+            </a>
+        </li>
+    </ul>
+}
