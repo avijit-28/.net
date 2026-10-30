@@ -41,23 +41,17 @@
                         @Html.ValidationMessageFor(m => m.UserNameOrEmail, "", new { @class = "text-danger small mt-1 d-block" })
                     </div>
 
-                    <!-- Password / Phone Field -->
+                    <!-- Password Field -->
                     <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            @Html.LabelFor(m => m.PasswordOrPhone, new { @class = "form-label" })
-                            <span class="text-muted small" title="For pre-registered users, enter your registered phone number e.g. 9876543210">
-                                <i class="bi bi-question-circle"></i> Phone / Key
-                            </span>
-                        </div>
+                        @Html.LabelFor(m => m.Password, new { @class = "form-label" })
                         <div class="input-group">
                             <span class="input-group-text bg-light"><i class="bi bi-key text-muted"></i></span>
-                            @Html.PasswordFor(m => m.PasswordOrPhone, new { @class = "form-control", placeholder = "Phone number or password", required = "required", id = "passwordInput" })
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Enter your password", required = "required", id = "passwordInput" })
                             <button class="btn btn-outline-secondary" type="button" id="togglePasswordBtn" title="Toggle visibility">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
-                        @Html.ValidationMessageFor(m => m.PasswordOrPhone, "", new { @class = "text-danger small mt-1 d-block" })
-                        <span class="text-muted small d-block mt-1">Use registered phone number (e.g. <code>9876543210</code>) or password.</span>
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small mt-1 d-block" })
                     </div>
 
                     <!-- Remember Me -->
