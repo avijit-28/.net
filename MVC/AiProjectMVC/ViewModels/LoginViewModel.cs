@@ -12,10 +12,10 @@ namespace AiProjectMVC.ViewModels
         [Display(Name = "Username or Email")]
         public string UserNameOrEmail { get; set; }
 
-        [Required(ErrorMessage = "Please enter your password or phone number.")]
+        [Required(ErrorMessage = "Please enter your password.")]
         [DataType(DataType.Password)]
-        [Display(Name = "Password / Phone Number")]
-        public string PasswordOrPhone { get; set; }
+        [Display(Name = "Password")]
+        public string Password { get; set; }
 
         [Display(Name = "Remember Me")]
         public bool RememberMe { get; set; }
