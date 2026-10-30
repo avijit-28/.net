@@ -10,7 +10,7 @@ namespace FirstMVCProject.Controllers
 {
     [RequireHttps]
     [RoutePrefix("AllEmployees")]
-    [LogFilter]
+    
     public class EmployeeController : Controller
     {
         private readonly EmployeeRepo _repo = new EmployeeRepo();
@@ -21,6 +21,7 @@ namespace FirstMVCProject.Controllers
         [Route("~/")]
         [Route("~/Employee")]
         [Route("~/Employee/Index")]
+        [LogFilter]
         public ActionResult Index()
         {
             List<Employee> employees = _repo.GetAllEmployee();
