@@ -1,9 +1,71 @@
-﻿@{
-    ViewBag.Title = "About";
+@{
+    ViewBag.Title = "About EduPlatform LMS";
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
 
-    <p>Use this area to provide additional information.</p>
-</main>
+<div class="py-5">
+    <div class="row align-items-center g-5 mb-5">
+        <div class="col-lg-6">
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill mb-3 fw-semibold">
+                About The Platform
+            </span>
+            <h1 class="fw-bold display-5 mb-3">Enterprise-Grade Learning Management Architecture</h1>
+            <p class="lead text-muted">
+                EduPlatform LMS is a full-featured, database-backed learning system built with ASP.NET MVC 5, .NET Framework 4.8, Entity Framework 6, and Microsoft SQL Server.
+            </p>
+            <p class="text-secondary">
+                Designed to provide robust role-based access control (Admin, Instructor, and Student), automated quiz scoring, interactive curriculums, progress tracking, assignment submissions, verifiable certificate issuance, and comprehensive administrative oversight.
+            </p>
+        </div>
+        <div class="col-lg-6">
+            <div class="card card-custom p-4 shadow-sm">
+                <h5 class="fw-bold mb-3"><i class="bi bi-stack me-2 text-primary"></i> Technology Stack</h5>
+                <ul class="list-group list-group-flush small">
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span>ASP.NET MVC 5</span>
+                        <span class="badge bg-primary">v5.2.9</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span>Runtime Target</span>
+                        <span class="badge bg-secondary">.NET Framework 4.8</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span>Database Engine</span>
+                        <span class="badge bg-success">Microsoft SQL Server 2025</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span>ORM & Identity</span>
+                        <span class="badge bg-info text-dark">Entity Framework 6.4 + ASP.NET Identity 2.2</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span>Frontend Framework</span>
+                        <span class="badge bg-warning text-dark">Bootstrap 5.2.3 + Bootstrap Icons</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-2">
+        <div class="col-md-4">
+            <div class="card card-custom p-4 h-100">
+                <i class="bi bi-person-workspace fs-1 text-primary mb-3"></i>
+                <h5 class="fw-bold">Instructor Studio</h5>
+                <p class="text-muted small">Course creation with hierarchical modules, lesson management (Video, PDF, Article, Link), quiz construction, and assignment grading with feedback.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-custom p-4 h-100">
+                <i class="bi bi-mortarboard fs-1 text-success mb-3"></i>
+                <h5 class="fw-bold">Student Experience</h5>
+                <p class="text-muted small">Dedicated learning classroom, live curriculum navigation, lesson completion tracking, real-time quiz assessment, and instant certificate generation.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-custom p-4 h-100">
+                <i class="bi bi-shield-check fs-1 text-warning mb-3"></i>
+                <h5 class="fw-bold">Admin Governance</h5>
+                <p class="text-muted small">Complete administrative control over user accounts, role delegations, course catalogs, categories, enrollment tracking, payments, and system announcements.</p>
+            </div>
+        </div>
+    </div>
+</div>
