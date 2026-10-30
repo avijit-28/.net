@@ -1,0 +1,286 @@
+@model LMS.ViewModels.CourseDetailViewModel
+@{
+    ViewBag.Title = Model.Course.Title;
+}
+
+<div class="py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Courses")">Courses</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Course.Title</li>
+        </ol>
+    </nav>
+
+    <!-- Course Header Banner -->
+    <div class="card card-custom p-4 p-md-5 mb-4 shadow-sm bg-white">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+                    <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 rounded-pill">
+                        @(Model.Course.Category?.CategoryName ?? "General")
+                    </span>
+                    <span class="badge bg-secondary-subtle text-secondary px-3 py-1 rounded-pill">
+                        @Model.Course.Level
+                    </span>
+                    <div class="rating-stars small ms-2">
+                        <i class="bi bi-star-fill"></i>
+                        <span class="fw-bold text-dark ms-1">@Model.AverageRating.ToString("0.0")</span>
+                        <span class="text-muted">(@Model.TotalReviews reviews)</span>
+                    </div>
+                </div>
+
+                <h1 class="fw-bold display-6 mb-3">@Model.Course.Title</h1>
+                <p class="lead text-muted mb-4">
+                    @(string.IsNullOrEmpty(Model.Course.Description) ? "Master these essential competencies through progressive modules and project assessments." : Model.Course.Description)
+                </p>
+
+                <div class="d-flex flex-wrap gap-4 text-muted small mb-3">
+                    <div><i class="bi bi-clock me-1 text-primary"></i> <strong>@Model.Course.DurationInHours</strong> Hours on-demand</div>
+                    <div><i class="bi bi-people me-1 text-primary"></i> <strong>@Model.Course.TotalStudents</strong> Enrolled Students</div>
+                    <div><i class="bi bi-award me-1 text-primary"></i> Certificate of Completion</div>
+                </div>
+
+                <div class="d-flex align-items-center gap-2 pt-2">
+                    <span class="small text-muted">Instructor:</span>
+                    <strong class="text-dark">@(Model.Instructor?.FullName ?? Model.Instructor?.UserName ?? "Faculty Instructor")</strong>
+                </div>
+            </div>
+
+            <!-- Enrollment / Pricing Card -->
+            <div class="col-lg-4">
+                <div class="card card-custom p-4 border shadow-sm text-center bg-light">
+                    <div class="mb-3">
+                        @if (Model.Course.Price == 0)
+                        {
+                            <span class="display-6 fw-bold text-success">FREE</span>
+                        }
+                        else
+                        {
+                            <span class="display-6 fw-bold text-dark">$@Model.Course.Price.ToString("N2")</span>
+                        }
+                    </div>
+
+                    @if (Model.IsEnrolled)
+                    {
+                        if (Model.Enrollment.Status == "Completed")
+                        {
+                            <div class="badge bg-success-subtle text-success p-2 mb-3 w-100 rounded">
+                                <i class="bi bi-check-circle-fill me-1"></i> Course Completed
+                            </div>
+                            <a href="@Url.Action("Certificates", "Student")" class="btn btn-success w-100 py-2 rounded-pill fw-semibold mb-2 shadow-sm">
+                                <i class="bi bi-patch-check-fill me-1"></i> View Certificate
+                            </a>
+                            <a href="@Url.Action("Index", "Learning", new { courseId = Model.Course.CourseId })" class="btn btn-outline-primary w-100 py-2 rounded-pill fw-semibold">
+                                Revisit Curriculum
+                            </a>
+                        }
+                        else
+                        {
+                            <div class="badge bg-primary-subtle text-primary p-2 mb-3 w-100 rounded">
+                                <i class="bi bi-hourglass-split me-1"></i> Currently Enrolled (@Model.Enrollment.CompletionPercentage%)
+                            </div>
+                            <a href="@Url.Action("Index", "Learning", new { courseId = Model.Course.CourseId })" class="btn btn-primary w-100 py-2 rounded-pill fw-semibold shadow-sm">
+                                <i class="bi bi-play-circle-fill me-1"></i> Continue Learning
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        if (Model.Course.Price == 0)
+                        {
+                            using (Html.BeginForm("Enroll", "Courses", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="courseId" value="@Model.Course.CourseId" />
+                                <button type="submit" class="btn btn-success w-100 py-2 rounded-pill fw-semibold shadow-sm mb-2">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i> Enroll Free Now
+                                </button>
+                            }
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Purchase", "Courses", new { courseId = Model.Course.CourseId })" class="btn btn-primary w-100 py-2 rounded-pill fw-semibold shadow-sm mb-2">
+                                <i class="bi bi-credit-card me-1"></i> Buy Course Now
+                            </a>
+                        }
+                        <small class="text-muted d-block mt-2">Instant lifetime access & verifiable certificate</small>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Curriculum and Reviews Row -->
+    <div class="row g-4">
+        <!-- Curriculum Accordion -->
+        <div class="col-lg-8">
+            <div class="card card-custom p-4 shadow-sm mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold mb-0"><i class="bi bi-collection-play me-2 text-primary"></i> Course Curriculum</h4>
+                    <span class="small text-muted">@Model.Modules.Count Modules • @Model.Modules.Sum(m => m.Lessons.Count) Lessons</span>
+                </div>
+
+                @if (!Model.Modules.Any())
+                {
+                    <p class="text-muted small py-3">Curriculum syllabus is currently being organized by the instructor.</p>
+                }
+                else
+                {
+                    <div class="accordion accordion-flush border rounded-3 overflow-hidden" id="curriculumAccordion">
+                        @for (int i = 0; i < Model.Modules.Count; i++)
+                        {
+                            var module = Model.Modules[i];
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading-@module.ModuleId">
+                                    <button class="accordion-button @(i > 0 ? "collapsed" : "") bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@module.ModuleId" aria-expanded="@(i == 0 ? "true" : "false")">
+                                        <div class="d-flex justify-content-between align-items-center w-100 pe-3">
+                                            <strong>Module @(i + 1): @module.ModuleName</strong>
+                                            <span class="badge bg-secondary-subtle text-secondary small">@module.Lessons.Count lessons</span>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="collapse-@module.ModuleId" class="accordion-collapse collapse @(i == 0 ? "show" : "")" aria-labelledby="heading-@module.ModuleId" data-bs-parent="#curriculumAccordion">
+                                    <div class="accordion-body p-0">
+                                        <ul class="list-group list-group-flush small">
+                                            @foreach (var lesson in module.Lessons)
+                                            {
+                                                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        @if (lesson.LessonType == "Video")
+                                                        {
+                                                            <i class="bi bi-play-circle text-primary fs-5"></i>
+                                                        }
+                                                        else if (lesson.LessonType == "Quiz")
+                                                        {
+                                                            <i class="bi bi-question-circle text-warning fs-5"></i>
+                                                        }
+                                                        else if (lesson.LessonType == "Assignment")
+                                                        {
+                                                            <i class="bi bi-file-earmark-text text-info fs-5"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bi bi-file-earmark-richtext text-secondary fs-5"></i>
+                                                        }
+                                                        <span>@lesson.Title</span>
+                                                        @if (lesson.IsPreview)
+                                                        {
+                                                            <span class="badge bg-success-subtle text-success small">Free Preview</span>
+                                                        }
+                                                    </div>
+                                                    <span class="text-muted">@lesson.DurationInMinutes min</span>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Student Reviews Section -->
+            <div class="card card-custom p-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0"><i class="bi bi-star-half me-2 text-warning"></i> Student Feedback & Reviews</h4>
+                    @if (Model.IsEnrolled)
+                    {
+                        <button class="btn btn-sm btn-outline-primary rounded-pill fw-semibold" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                            <i class="bi bi-pencil-square me-1"></i> @(Model.HasReviewed ? "Update Review" : "Write a Review")
+                        </button>
+                    }
+                </div>
+
+                @if (!Model.Reviews.Any())
+                {
+                    <div class="text-center py-4">
+                        <i class="bi bi-chat-left-dots fs-1 text-muted mb-2"></i>
+                        <p class="text-muted small">No reviews submitted for this course yet.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var review in Model.Reviews)
+                        {
+                            <div class="p-3 bg-light rounded-3 border">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <div class="rating-stars small">
+                                        @for (int s = 1; s <= 5; s++)
+                                        {
+                                            <i class="bi @(s <= review.Rating ? "bi-star-fill text-warning" : "bi-star text-muted")"></i>
+                                        }
+                                    </div>
+                                    <span class="text-muted" style="font-size: 11px;">@review.CreatedDate.ToString("MMM dd, yyyy")</span>
+                                </div>
+                                <p class="mb-0 small text-dark">@review.ReviewText</p>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Instructor Profile Sidebar -->
+        <div class="col-lg-4">
+            <div class="card card-custom p-4 shadow-sm mb-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-person-badge me-2 text-primary"></i> Instructor Profile</h5>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold fs-4" style="width: 56px; height: 56px;">
+                        @(Model.Instructor?.FullName?.Substring(0, 1) ?? "I")
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0">@(Model.Instructor?.FullName ?? Model.Instructor?.UserName ?? "Faculty Instructor")</h6>
+                        <small class="text-muted">Verified Educator</small>
+                    </div>
+                </div>
+                <p class="small text-muted mb-0">
+                    @(Model.Instructor?.Bio ?? "Dedicated industry specialist bringing real-world software engineering expertise and research experience into the curriculum.")
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Review Modal -->
+@if (Model.IsEnrolled)
+{
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="reviewModalLabel">Leave Course Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @using (Html.BeginForm("AddReview", "Courses", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="CourseId" value="@Model.Course.CourseId" />
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Your Rating</label>
+                            <select name="Rating" class="form-select" required>
+                                <option value="5" @(Model.UserReview?.Rating == 5 ? "selected" : "")>⭐⭐⭐⭐⭐ (5 - Exceptional)</option>
+                                <option value="4" @(Model.UserReview?.Rating == 4 ? "selected" : "")>⭐⭐⭐⭐ (4 - Very Good)</option>
+                                <option value="3" @(Model.UserReview?.Rating == 3 ? "selected" : "")>⭐⭐⭐ (3 - Average)</option>
+                                <option value="2" @(Model.UserReview?.Rating == 2 ? "selected" : "")>⭐⭐ (2 - Below Average)</option>
+                                <option value="1" @(Model.UserReview?.Rating == 1 ? "selected" : "")>⭐ (1 - Needs Improvement)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Review Feedback</label>
+                            <textarea name="ReviewText" class="form-control" rows="4" placeholder="Share your experience with other students..." required>@(Model.UserReview?.ReviewText)</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-semibold">Submit Review</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
