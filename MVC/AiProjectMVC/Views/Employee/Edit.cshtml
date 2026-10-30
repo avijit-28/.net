@@ -93,8 +93,7 @@
                                        class="form-control" 
                                        value="@Model.Salary" 
                                        min="1" 
-                                       max="10000000" 
-                                       step="500" 
+                                       step="1" 
                                        placeholder="e.g. 50000" 
                                        required />
                             </div>
@@ -128,16 +127,19 @@
 
                         <!-- Address ID Link -->
                         <div class="col-md-12">
-                            @Html.LabelFor(model => model.AddressId, "Linked Address (Optional)", new { @class = "form-label" })
+                            <label class="form-label fw-semibold">Linked Address <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light"><i class="bi bi-geo-fill text-muted"></i></span>
                                 @if (addressList.Any())
                                 {
-                                    <select name="AddressId" id="AddressId" class="form-select">
-                                        <option value="">-- None (No Address Linked) --</option>
+                                    <select name="AddressId" id="AddressId" class="form-select" required>
+                                        <option value="">-- Select Linked Address --</option>
                                         @foreach (var addr in addressList)
                                         {
-                                            <option value="@addr.AddressId" @(Model.AddressId == addr.AddressId ? "selected" : "")>
+                                            <option value="@addr.AddressId" 
+                                                    data-city="@addr.City" 
+                                                    data-state="@addr.State" 
+                                                    @(Model.AddressId == addr.AddressId ? "selected" : "")>
                                                 #@addr.AddressId - @addr.City, @addr.State (@addr.Country, @addr.Pin)
                                             </option>
                                         }
@@ -145,11 +147,12 @@
                                 }
                                 else
                                 {
-                                    @Html.EditorFor(model => model.AddressId, new { htmlAttributes = new { @class = "form-control", type = "number", placeholder = "Enter Address ID (e.g. 1)" } })
+                                    @Html.EditorFor(model => model.AddressId, new { htmlAttributes = new { @class = "form-control", type = "number", placeholder = "Enter Address ID (e.g. 1)", required = "required" } })
                                 }
                             </div>
+                            <div id="addressMatchFeedback" class="small mt-1" style="display:none;"></div>
                             @Html.ValidationMessageFor(model => model.AddressId, "", new { @class = "text-danger small mt-1 d-block" })
-                            <span class="text-muted small">Update linked address or unassign by choosing None.</span>
+                            <span class="text-muted small">Select an address matching the employee's city.</span>
                         </div>
                     </div>
 
@@ -172,4 +175,95 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // Real-time City and Address correlation check
+            function checkCityAddressMatch() {
+                var cityInput = ($('#City').val() || '').trim();
+                var selectedOption = $('#AddressId').find('option:selected');
+                var addressId = selectedOption.val();
+                var feedbackDiv = $('#addressMatchFeedback');
+
+                if (!cityInput || !addressId) {
+                    feedbackDiv.hide().text('').removeClass('text-danger text-success');
+                    $('#AddressId, #City').removeClass('is-invalid is-valid');
+                    return true;
+                }
+
+                var addrCity = (selectedOption.data('city') || '').toString().trim().toLowerCase();
+                var addrState = (selectedOption.data('state') || '').toString().trim().toLowerCase();
+                var empCity = cityInput.toLowerCase();
+
+                var isMatch = false;
+
+                // Exact equality or inclusion (e.g. "delhi" in "new delhi", or vice versa)
+                if (empCity === addrCity || addrCity.indexOf(empCity) !== -1 || empCity.indexOf(addrCity) !== -1) {
+                    isMatch = true;
+                } else if (addrState.indexOf(empCity) !== -1 || empCity.indexOf(addrState) !== -1) {
+                    isMatch = true;
+                } else {
+                    // Common Indian city name aliases
+                    var aliases = [
+                        ['bengaluru', 'bangalore'],
+                        ['calcutta', 'kolkata'],
+                        ['bombay', 'mumbai'],
+                        ['madras', 'chennai']
+                    ];
+                    for (var i = 0; i < aliases.length; i++) {
+                        var a = aliases[i][0];
+                        var b = aliases[i][1];
+                        if ((empCity.indexOf(a) !== -1 && addrCity.indexOf(b) !== -1) ||
+                            (empCity.indexOf(b) !== -1 && addrCity.indexOf(a) !== -1)) {
+                            isMatch = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (isMatch) {
+                    feedbackDiv.show()
+                        .removeClass('text-danger')
+                        .addClass('text-success')
+                        .html('<i class="bi bi-check-circle-fill me-1"></i> Valid match: Address is located in <strong>' + (selectedOption.data('city') || 'selected city') + '</strong>.');
+                    $('#AddressId, #City').removeClass('is-invalid').addClass('is-valid');
+                    return true;
+                } else {
+                    feedbackDiv.show()
+                        .removeClass('text-success')
+                        .addClass('text-danger')
+                        .html('<i class="bi bi-x-circle-fill me-1"></i> <strong>Location mismatch:</strong> Address is located in <strong>' + (selectedOption.data('city') || 'different city') + '</strong>, but employee city is <strong>' + cityInput + '</strong>. Please select an address matching ' + cityInput + '.');
+                    $('#AddressId, #City').removeClass('is-valid').addClass('is-invalid');
+                    return false;
+                }
+            }
+
+            // Trigger validation on input or change
+            $('#City').on('input change blur', function () {
+                checkCityAddressMatch();
+            });
+
+            $('#AddressId').on('change', function () {
+                var selectedOption = $(this).find('option:selected');
+                var optCity = selectedOption.data('city');
+                if (optCity && !$('#City').val()) {
+                    $('#City').val(optCity);
+                }
+                checkCityAddressMatch();
+            });
+
+            // Prevent form submit if city and address do not match
+            $('form').on('submit', function (e) {
+                if (!checkCityAddressMatch()) {
+                    e.preventDefault();
+                    $('#AddressId').focus();
+                    return false;
+                }
+            });
+
+            // Initial check on page load
+            if ($('#City').val() && $('#AddressId').val()) {
+                checkCityAddressMatch();
+            }
+        });
+    </script>
 }
