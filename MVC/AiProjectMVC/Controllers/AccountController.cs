@@ -45,7 +45,7 @@ namespace AiProjectMVC.Controllers
 
             try
             {
-                var user = _userRepo.AuthenticateUser(model.UserNameOrEmail, model.PasswordOrPhone);
+                var user = _userRepo.AuthenticateUser(model.UserNameOrEmail, model.Password);
 
                 if (user != null)
                 {
@@ -71,7 +71,7 @@ namespace AiProjectMVC.Controllers
                     return RedirectToAction("Dashboard", "Employee");
                 }
 
-                ModelState.AddModelError("", "Invalid Username/Email or Phone/Password. Please check your credentials.");
+                ModelState.AddModelError("", "Invalid Username/Email or Password. Please check your credentials.");
             }
             catch (Exception ex)
             {
@@ -118,7 +118,8 @@ namespace AiProjectMVC.Controllers
                     Name = model.Name,
                     Email = model.Email,
                     PhoneNumber = model.PhoneNumber,
-                    Role = !string.IsNullOrWhiteSpace(model.Role) ? model.Role : "Employee"
+                    Role = !string.IsNullOrWhiteSpace(model.Role) ? model.Role : "Employee",
+                    Password = model.Password
                 };
 
                 int newId = _userRepo.RegisterUser(newUser);
