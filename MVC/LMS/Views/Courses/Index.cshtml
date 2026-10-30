@@ -1,0 +1,201 @@
+@model LMS.ViewModels.CourseFilterViewModel
+@{
+    ViewBag.Title = "Course Catalog";
+}
+
+<div class="py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Courses</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Browse All Courses</h2>
+            <p class="text-muted small">Explore our database of structured learning tracks</p>
+        </div>
+        <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+            <strong>@Model.TotalItems</strong> Courses Available
+        </span>
+    </div>
+
+    <div class="row g-4">
+        <!-- Filter Sidebar -->
+        <div class="col-lg-3">
+            <div class="card card-custom p-4 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-funnel me-1 text-primary"></i> Filters</h5>
+                    <a href="@Url.Action("Index", "Courses")" class="small text-danger text-decoration-none">Reset</a>
+                </div>
+
+                @using (Html.BeginForm("Index", "Courses", FormMethod.Get))
+                {
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Search Keywords</label>
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="search" class="form-control" value="@Model.Search" placeholder="Title, topic, keywords..." />
+                            <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Category</label>
+                        <select name="categoryId" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="">All Categories</option>
+                            @foreach (var cat in Model.Categories)
+                            {
+                                <option value="@cat.CategoryId" @(Model.CategoryId == cat.CategoryId ? "selected" : "")>
+                                    @cat.CategoryName
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Difficulty Level</label>
+                        <select name="level" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="All" @(Model.Level == "All" || string.IsNullOrEmpty(Model.Level) ? "selected" : "")>All Levels</option>
+                            <option value="Beginner" @(Model.Level == "Beginner" ? "selected" : "")>Beginner</option>
+                            <option value="Intermediate" @(Model.Level == "Intermediate" ? "selected" : "")>Intermediate</option>
+                            <option value="Advanced" @(Model.Level == "Advanced" ? "selected" : "")>Advanced</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Pricing</label>
+                        <div class="form-check small mb-1">
+                            <input class="form-check-input" type="radio" name="priceType" id="priceAll" value="" @(string.IsNullOrEmpty(Model.PriceType) ? "checked" : "") onchange="this.form.submit()">
+                            <label class="form-check-label" for="priceAll">All</label>
+                        </div>
+                        <div class="form-check small mb-1">
+                            <input class="form-check-input" type="radio" name="priceType" id="priceFree" value="Free" @(Model.PriceType == "Free" ? "checked" : "") onchange="this.form.submit()">
+                            <label class="form-check-label" for="priceFree">Free Only</label>
+                        </div>
+                        <div class="form-check small">
+                            <input class="form-check-input" type="radio" name="priceType" id="pricePaid" value="Paid" @(Model.PriceType == "Paid" ? "checked" : "") onchange="this.form.submit()">
+                            <label class="form-check-label" for="pricePaid">Paid Only</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-semibold">Sort By</label>
+                        <select name="sortBy" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="newest" @(Model.SortBy == "newest" ? "selected" : "")>Newest Additions</option>
+                            <option value="rating" @(Model.SortBy == "rating" ? "selected" : "")>Highest Rated</option>
+                            <option value="popular" @(Model.SortBy == "popular" ? "selected" : "")>Most Students</option>
+                            <option value="price_asc" @(Model.SortBy == "price_asc" ? "selected" : "")>Price: Low to High</option>
+                            <option value="price_desc" @(Model.SortBy == "price_desc" ? "selected" : "")>Price: High to Low</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-sm btn-primary w-100 rounded-pill fw-semibold">
+                        Apply Filters
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Course Cards Grid -->
+        <div class="col-lg-9">
+            @if (!Model.Courses.Any())
+            {
+                <div class="card card-custom p-5 text-center shadow-sm">
+                    <i class="bi bi-search fs-1 text-muted mb-3"></i>
+                    <h5 class="fw-bold">No courses found matching your criteria.</h5>
+                    <p class="text-muted small mb-3">Try adjusting your filters, searching for a different keyword, or resetting all filters.</p>
+                    <div>
+                        <a href="@Url.Action("Index", "Courses")" class="btn btn-outline-primary rounded-pill px-4">
+                            Clear All Filters
+                        </a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row g-4">
+                    @foreach (var course in Model.Courses)
+                    {
+                        <div class="col-md-6 col-xl-4">
+                            <div class="card card-custom card-hover h-100 overflow-hidden">
+                                <div class="bg-light text-center py-4 border-bottom position-relative" style="height: 150px; display:flex; align-items:center; justify-content:center;">
+                                    <i class="bi bi-mortarboard-fill display-4 text-primary opacity-25"></i>
+                                    <span class="position-absolute top-0 end-0 m-2 badge bg-dark bg-opacity-75 small">
+                                        @course.Level
+                                    </span>
+                                </div>
+                                <div class="card-body d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-primary-subtle text-primary small">
+                                            @(course.Category?.CategoryName ?? "General")
+                                        </span>
+                                        <div class="rating-stars small">
+                                            <i class="bi bi-star-fill"></i>
+                                            <span class="fw-bold text-dark ms-1">@course.Rating.ToString("0.0")</span>
+                                            <span class="text-muted">(@course.TotalStudents)</span>
+                                        </div>
+                                    </div>
+
+                                    <h5 class="card-title fw-bold fs-6 mb-2">
+                                        <a href="@Url.Action("Details", "Courses", new { id = course.CourseId })" class="text-dark text-decoration-none">
+                                            @course.Title
+                                        </a>
+                                    </h5>
+
+                                    <p class="card-text text-muted small flex-grow-1">
+                                        @(string.IsNullOrEmpty(course.Description) ? "Comprehensive course curriculum designed for practical mastery." : (course.Description.Length > 90 ? course.Description.Substring(0, 87) + "..." : course.Description))
+                                    </p>
+
+                                    <div class="d-flex align-items-center text-muted small mb-3">
+                                        <i class="bi bi-clock me-1"></i> @course.DurationInHours hrs
+                                        <span class="mx-2">•</span>
+                                        <i class="bi bi-people me-1"></i> @course.TotalStudents students
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center pt-2 border-top mt-auto">
+                                        <div>
+                                            @if (course.Price == 0)
+                                            {
+                                                <span class="badge bg-success-subtle text-success fw-bold">FREE</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fw-bold fs-6 text-dark">$@course.Price.ToString("N2")</span>
+                                            }
+                                        </div>
+                                        <a href="@Url.Action("Details", "Courses", new { id = course.CourseId })" class="btn btn-sm btn-primary rounded-pill px-3">
+                                            View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Pagination -->
+                if (Model.TotalPages > 1)
+                {
+                    <nav class="mt-5 d-flex justify-content-center">
+                        <ul class="pagination pagination-sm shadow-sm">
+                            <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", "Courses", new { search = Model.Search, categoryId = Model.CategoryId, level = Model.Level, priceType = Model.PriceType, sortBy = Model.SortBy, page = Model.Page - 1 })">&laquo; Prev</a>
+                            </li>
+                            @for (int p = 1; p <= Model.TotalPages; p++)
+                            {
+                                <li class="page-item @(Model.Page == p ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", "Courses", new { search = Model.Search, categoryId = Model.CategoryId, level = Model.Level, priceType = Model.PriceType, sortBy = Model.SortBy, page = p })">@p</a>
+                                </li>
+                            }
+                            <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", "Courses", new { search = Model.Search, categoryId = Model.CategoryId, level = Model.Level, priceType = Model.PriceType, sortBy = Model.SortBy, page = Model.Page + 1 })">Next &raquo;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            }
+        </div>
+    </div>
+</div>
