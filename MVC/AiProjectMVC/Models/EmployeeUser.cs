@@ -37,5 +37,10 @@ namespace AiProjectMVC.Models
         [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
         [Display(Name = "Email Address")]
         public string Email { get; set; }
+
+        [StringLength(255, ErrorMessage = "Password cannot exceed 255 characters.")]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; }
     }
 }
