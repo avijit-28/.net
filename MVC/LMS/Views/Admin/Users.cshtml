@@ -29,6 +29,21 @@
         </div>
     }
 
+    <div class="d-flex gap-2 mb-3">
+        <a href="@Url.Action("Users", "Admin")" class="btn btn-sm @(string.IsNullOrEmpty(ViewBag.CurrentRoleFilter as string) ? "btn-primary" : "btn-outline-secondary") rounded-pill">
+            All Users
+        </a>
+        <a href="@Url.Action("Users", "Admin", new { roleFilter = "Student" })" class="btn btn-sm @((ViewBag.CurrentRoleFilter as string) == "Student" ? "btn-primary" : "btn-outline-secondary") rounded-pill">
+            <i class="bi bi-mortarboard me-1"></i> Students Only
+        </a>
+        <a href="@Url.Action("Users", "Admin", new { roleFilter = "Instructor" })" class="btn btn-sm @((ViewBag.CurrentRoleFilter as string) == "Instructor" ? "btn-primary" : "btn-outline-secondary") rounded-pill">
+            <i class="bi bi-person-badge me-1"></i> Instructors Only
+        </a>
+        <a href="@Url.Action("Users", "Admin", new { roleFilter = "Admin" })" class="btn btn-sm @((ViewBag.CurrentRoleFilter as string) == "Admin" ? "btn-primary" : "btn-outline-secondary") rounded-pill">
+            <i class="bi bi-shield-lock me-1"></i> Admins Only
+        </a>
+    </div>
+
     <div class="card border-0 shadow-sm">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
