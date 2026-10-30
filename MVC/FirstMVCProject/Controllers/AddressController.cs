@@ -8,11 +8,14 @@ using System.Web.Mvc;
 
 namespace FirstMVCProject.Controllers
 {
+    [RoutePrefix("addresses")]
     public class AddressController : Controller
     {
+
         private readonly AddressRepo _repo = new AddressRepo();
 
         // GET: Address
+        [Route("")]
         public ActionResult Index()
         {
             var addresses = _repo.GetAllAddress();
@@ -21,6 +24,7 @@ namespace FirstMVCProject.Controllers
         }
 
         // GET: Address/Details/5
+        [Route("details/{id:int}")]
         public ActionResult Details(int id)
         {
             Address address = _repo.GetAddressById(id);
@@ -34,6 +38,7 @@ namespace FirstMVCProject.Controllers
         }
 
         // GET: Address/Create
+        [Route("create")]
         public ActionResult Create()
         {
             return View();
@@ -42,6 +47,7 @@ namespace FirstMVCProject.Controllers
         // POST: Address/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("create")]
         public ActionResult Create(Address address)
         {
             try
@@ -62,6 +68,7 @@ namespace FirstMVCProject.Controllers
         }
 
         // GET: Address/Edit/5
+        [Route("edit/{id:int}")]
         public ActionResult Edit(int id)
         {
             Address address = _repo.GetAddressById(id);
@@ -76,6 +83,7 @@ namespace FirstMVCProject.Controllers
 
         // POST: Address/Edit/5
         [HttpPost]
+        [Route("edit/{id:int}")]
         public ActionResult Edit(Address address)
         {
             try
@@ -96,6 +104,7 @@ namespace FirstMVCProject.Controllers
         }
 
         // GET: Address/Delete/5
+        [Route("delete/{id:int}")]
         public ActionResult Delete(int id)
         {
             Address address = _repo.GetAddressById(id);
@@ -111,6 +120,7 @@ namespace FirstMVCProject.Controllers
         // POST: Address/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("delete/{id:int}")]
         public ActionResult Delete(int id, Address address)
         {
             try
