@@ -36,3 +36,15 @@ Exception Filter: Controller:Employee Action:TestException Exception:Test except
 Employee action started: TestException Controller:Employee Action:TestException Date:30-10-2026 19:22:09
 Employee action completed: TestException Controller:Employee Action:TestException Date:30-10-2026 19:22:09
 Exception Filter: Controller:Employee Action:TestException Exception:Test exception from EmployeeController Date:30-10-2026 19:22:09
+Employee action started: Index Controller:Employee Action:Index Date:30-10-2026 19:22:17
+Employee action completed: Index Controller:Employee Action:Index Date:30-10-2026 19:22:17
+Employee result started: Index Controller:Employee Action:Index Date:30-10-2026 19:22:17
+Employee result completed: Index Controller:Employee Action:Index Date:30-10-2026 19:22:19
+Employee action started: Index Controller:Employee Action:Index Date:30-10-2026 19:22:19
+Employee action completed: Index Controller:Employee Action:Index Date:30-10-2026 19:22:19
+Employee result started: Index Controller:Employee Action:Index Date:30-10-2026 19:22:19
+Employee result completed: Index Controller:Employee Action:Index Date:30-10-2026 19:22:19
+Employee action started: Index Controller:Employee Action:Index Date:30-10-2026 19:22:19
+Employee action completed: Index Controller:Employee Action:Index Date:30-10-2026 19:22:19
+Employee result started: Index Controller:Employee Action:Index Date:30-10-2026 19:22:19
+Employee result completed: Index Controller:Employee Action:Index Date:30-10-2026 19:22:19
