@@ -1,1 +1,4 @@
-﻿
+﻿OnActionExecuting Controller:Employee Action:Index Date:30-10-2026 16:39:39
+OnActionExecuted Controller:Employee Action:Index Date:30-10-2026 16:39:39
+OnResultExecuting Controller:Employee Action:Index Date:30-10-2026 16:39:39
+OnResultExecuted Controller:Employee Action:Index Date:30-10-2026 16:39:41
