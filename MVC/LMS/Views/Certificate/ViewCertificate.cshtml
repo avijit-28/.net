@@ -1,0 +1,93 @@
+@model LMS.ViewModels.CertificateViewModel
+@{
+    ViewBag.Title = "Certificate of Completion - " + Model.CertificateNumber;
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 d-print-none">
+        <a href="@Url.Action("Certificates", "Student")" class="btn btn-outline-secondary rounded-pill px-3">
+            <i class="bi bi-arrow-left me-1"></i> Back to Certificates
+        </a>
+        <button class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm" onclick="window.print()">
+            <i class="bi bi-printer-fill me-1"></i> Download / Print Certificate
+        </button>
+    </div>
+
+    <!-- Printable Certificate Document -->
+    <div class="card card-custom p-5 shadow bg-white border-3 border-primary position-relative" style="max-width: 900px; margin: 0 auto; min-height: 580px; background: radial-gradient(circle at top right, #f8fafc, #ffffff);">
+        <!-- Decorative Border Corner Accents -->
+        <div class="border border-2 border-primary-subtle p-4 p-md-5 rounded-3 text-center position-relative">
+            <div class="mb-4">
+                <span class="badge bg-primary px-3 py-2 rounded-pill fs-6 fw-bold letter-spacing-1 text-uppercase">
+                    <i class="bi bi-award-fill me-1"></i> EduPlatform Learning Management System
+                </span>
+            </div>
+
+            <h1 class="display-5 fw-extrabold text-dark tracking-tight mb-2" style="font-family: serif; letter-spacing: 2px;">
+                CERTIFICATE OF COMPLETION
+            </h1>
+            <p class="text-muted text-uppercase small letter-spacing-2 mb-4">
+                This certifies that
+            </p>
+
+            <h2 class="display-6 fw-bold text-primary mb-3 text-uppercase text-decoration-underline" style="letter-spacing: 1px;">
+                @Model.StudentName
+            </h2>
+
+            <p class="lead text-secondary mb-3">
+                has successfully fulfilled all curriculum requirements, assessments, and practical assignments for
+            </p>
+
+            <h3 class="fw-bold text-dark mb-4">
+                @Model.CourseTitle
+            </h3>
+
+            <div class="row justify-content-center g-4 my-3">
+                <div class="col-sm-4 border-end">
+                    <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 11px;">Final Assessment Score</small>
+                    <span class="fs-5 fw-bold text-success">@(Model.FinalScore.HasValue ? Model.FinalScore.Value.ToString("0.0") + "%" : "100.0%")</span>
+                </div>
+                <div class="col-sm-4 border-end">
+                    <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 11px;">Issue Date</small>
+                    <span class="fs-5 fw-bold text-dark">@Model.IssueDate.ToString("MMMM dd, yyyy")</span>
+                </div>
+                <div class="col-sm-4">
+                    <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 11px;">Certificate ID</small>
+                    <span class="fs-5 fw-bold text-primary">@Model.CertificateNumber</span>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-end mt-5 pt-4 border-top">
+                <div class="text-start">
+                    <div class="fw-bold text-dark border-top border-dark pt-1" style="width: 180px;">Academic Director</div>
+                    <small class="text-muted">Board of Examinations</small>
+                </div>
+                <div>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle p-2 rounded-circle">
+                        <i class="bi bi-patch-check-fill fs-3"></i>
+                    </span>
+                    <small class="d-block text-muted mt-1" style="font-size: 10px;">Officially Verified</small>
+                </div>
+                <div class="text-end">
+                    <div class="fw-bold text-dark border-top border-dark pt-1 ms-auto" style="width: 180px;">Program Instructor</div>
+                    <small class="text-muted">Faculty of Computing</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @@media print {
+        header, footer, .d-print-none, .navbar {
+            display: none !important;
+        }
+        body {
+            background: white !important;
+        }
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
