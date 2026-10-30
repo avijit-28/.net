@@ -1,0 +1,313 @@
+@model LMS.ViewModels.AdminDashboardViewModel
+@{
+    ViewBag.Title = "Admin Dashboard";
+}
+
+<div class="container-fluid py-4 px-lg-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-speedometer2 me-2 text-danger"></i>Admin Control Center</h2>
+            <p class="text-muted mb-0">Platform performance, operational analytics, user directory, and course management</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="@Url.Action("Users", "Admin")" class="btn btn-outline-dark">
+                <i class="bi bi-people me-1"></i> Manage Users
+            </a>
+            <a href="@Url.Action("Courses", "Admin")" class="btn btn-outline-primary">
+                <i class="bi bi-book me-1"></i> Course Catalog
+            </a>
+            <a href="@Url.Action("CreateAnnouncement", "Admin")" class="btn btn-primary">
+                <i class="bi bi-megaphone me-1"></i> Post Announcement
+            </a>
+        </div>
+    </div>
+
+    <!-- KPI Metric Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100 border-start border-primary border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-semibold">Total Revenue</span>
+                            <h3 class="fw-bold text-dark mt-2 mb-0">$@Model.TotalRevenue.ToString("N2")</h3>
+                            <small class="text-success"><i class="bi bi-graph-up-arrow me-1"></i>All-time gross sales</small>
+                        </div>
+                        <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-circle">
+                            <i class="bi bi-cash-stack fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100 border-start border-success border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-semibold">Enrollments</span>
+                            <h3 class="fw-bold text-dark mt-2 mb-0">@Model.TotalEnrollments</h3>
+                            <small class="text-muted">Across all published courses</small>
+                        </div>
+                        <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle">
+                            <i class="bi bi-mortarboard-fill fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100 border-start border-info border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-semibold">Total Learners</span>
+                            <h3 class="fw-bold text-dark mt-2 mb-0">@Model.TotalStudents</h3>
+                            <small class="text-info">@Model.TotalInstructors Instructors active</small>
+                        </div>
+                        <div class="p-3 bg-info bg-opacity-10 text-info rounded-circle">
+                            <i class="bi bi-people-fill fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm h-100 border-start border-warning border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-semibold">Courses</span>
+                            <h3 class="fw-bold text-dark mt-2 mb-0">@Model.PublishedCourses / @Model.TotalCourses</h3>
+                            <small class="text-muted">Published / Total Catalog</small>
+                        </div>
+                        <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-circle">
+                            <i class="bi bi-journal-check fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secondary Navigation Quick Bar -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-3">
+            <div class="d-flex flex-wrap gap-2 justify-content-around text-center">
+                <a href="@Url.Action("Users", "Admin")" class="btn btn-light flex-grow-1 border">
+                    <i class="bi bi-person-gear text-primary fs-5 d-block"></i>
+                    <span class="small fw-semibold">Users Directory</span>
+                </a>
+                <a href="@Url.Action("Categories", "Admin")" class="btn btn-light flex-grow-1 border">
+                    <i class="bi bi-tags text-success fs-5 d-block"></i>
+                    <span class="small fw-semibold">Categories (@Model.TotalCategories)</span>
+                </a>
+                <a href="@Url.Action("Courses", "Admin")" class="btn btn-light flex-grow-1 border">
+                    <i class="bi bi-collection-play text-warning fs-5 d-block"></i>
+                    <span class="small fw-semibold">Course Governance</span>
+                </a>
+                <a href="@Url.Action("Enrollments", "Admin")" class="btn btn-light flex-grow-1 border">
+                    <i class="bi bi-card-checklist text-info fs-5 d-block"></i>
+                    <span class="small fw-semibold">All Enrollments</span>
+                </a>
+                <a href="@Url.Action("Payments", "Admin")" class="btn btn-light flex-grow-1 border">
+                    <i class="bi bi-credit-card-2-front text-danger fs-5 d-block"></i>
+                    <span class="small fw-semibold">Transactions Log</span>
+                </a>
+                <a href="@Url.Action("Announcements", "Admin")" class="btn btn-light flex-grow-1 border">
+                    <i class="bi bi-bell text-secondary fs-5 d-block"></i>
+                    <span class="small fw-semibold">System Announcements</span>
+                </a>
+                <a href="@Url.Action("Reports", "Admin")" class="btn btn-light flex-grow-1 border">
+                    <i class="bi bi-bar-chart-line text-dark fs-5 d-block"></i>
+                    <span class="small fw-semibold">Reports & Analytics</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Tables Split -->
+    <div class="row g-4 mb-4">
+        <!-- Recent Enrollments -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-mortarboard me-2 text-primary"></i>Recent Enrollments</h5>
+                    <a href="@Url.Action("Enrollments", "Admin")" class="btn btn-sm btn-link text-decoration-none">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Student</th>
+                                <th>Course</th>
+                                <th>Enrolled Date</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.RecentEnrollments.Any())
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">No enrollments recorded yet.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                foreach (var e in Model.RecentEnrollments)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="font-monospace small">@e.StudentId</span>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold text-truncate" style="max-width: 200px;">
+                                                @(e.Course != null ? e.Course.Title : "Course #" + e.CourseId)
+                                            </div>
+                                        </td>
+                                        <td><small class="text-muted">@e.EnrollmentDate.ToString("MMM dd, yyyy")</small></td>
+                                        <td>
+                                            <span class="badge @(e.Status == "Completed" ? "bg-success" : "bg-primary")">
+                                                @e.ProgressPercentage%
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Payments -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-credit-card me-2 text-success"></i>Recent Transactions</h5>
+                    <a href="@Url.Action("Payments", "Admin")" class="btn btn-sm btn-link text-decoration-none">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Txn Ref</th>
+                                <th>Course</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.RecentPayments.Any())
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">No transactions recorded yet.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                foreach (var p in Model.RecentPayments)
+                                {
+                                    <tr>
+                                        <td><code class="small">@p.TransactionReference</code></td>
+                                        <td>
+                                            <div class="fw-semibold text-truncate" style="max-width: 180px;">
+                                                @(p.Course != null ? p.Course.Title : "Course #" + p.CourseId)
+                                            </div>
+                                        </td>
+                                        <td class="fw-bold text-success">$@p.Amount.ToString("N2")</td>
+                                        <td>
+                                            <span class="badge @(p.Status == "Completed" ? "bg-success" : "bg-secondary")">@p.Status</span>
+                                        </td>
+                                        <td><small class="text-muted">@p.PaymentDate.ToString("MMM dd")</small></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Distribution & Recent Users -->
+    <div class="row g-4">
+        <!-- Category Stats -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-pie-chart me-2 text-info"></i>Courses by Category</h5>
+                    <a href="@Url.Action("Categories", "Admin")" class="btn btn-sm btn-link text-decoration-none">Manage</a>
+                </div>
+                <div class="card-body">
+                    @if (!Model.CategoryStats.Any())
+                    {
+                        <p class="text-muted text-center py-3">No categories defined yet.</p>
+                    }
+                    else
+                    {
+                        foreach (var cat in Model.CategoryStats)
+                        {
+                            var pct = Model.TotalCourses > 0 ? (int)((double)cat.CourseCount / Model.TotalCourses * 100) : 0;
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between small fw-bold mb-1">
+                                    <span>@cat.CategoryName</span>
+                                    <span>@cat.CourseCount courses (@pct%)</span>
+                                </div>
+                                <div class="progress" style="height: 7px;">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: @pct%;"></div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Registered Users -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-people me-2 text-warning"></i>Recently Registered Users</h5>
+                    <a href="@Url.Action("Users", "Admin")" class="btn btn-sm btn-link text-decoration-none">Full Directory</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Joined Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (!Model.RecentUsers.Any())
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center py-4 text-muted">No users registered yet.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                foreach (var u in Model.RecentUsers)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold">@u.FullName</div>
+                                        </td>
+                                        <td>@u.Email</td>
+                                        <td><small class="text-muted">@u.CreatedDate.ToString("MMM dd, yyyy")</small></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
