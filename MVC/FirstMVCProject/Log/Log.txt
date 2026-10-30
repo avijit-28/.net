@@ -6,3 +6,4 @@ Employee action started: Index Controller:Employee Action:Index Date:30-10-2026 
 Employee action completed: Index Controller:Employee Action:Index Date:30-10-2026 18:48:22
 Employee action started: Details Controller:Employee Action:Details Date:30-10-2026 18:48:38
 Employee action completed: Details Controller:Employee Action:Details Date:30-10-2026 18:48:38
+Employee action started: TestException Controller:Employee Action:TestException Date:30-10-2026 18:48:50
