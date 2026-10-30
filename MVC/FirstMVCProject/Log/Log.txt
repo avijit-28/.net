@@ -10,3 +10,7 @@ OnActionExecuting Controller:Employee Action:Create Date:30-10-2026 18:04:59
 OnActionExecuted Controller:Employee Action:Create Date:30-10-2026 18:04:59
 OnResultExecuting Controller:Employee Action:Create Date:30-10-2026 18:04:59
 OnResultExecuted Controller:Employee Action:Create Date:30-10-2026 18:04:59
+OnActionExecuting Controller:Employee Action:Index Date:30-10-2026 18:08:49
+OnActionExecuted Controller:Employee Action:Index Date:30-10-2026 18:08:49
+OnResultExecuting Controller:Employee Action:Index Date:30-10-2026 18:08:49
+OnResultExecuted Controller:Employee Action:Index Date:30-10-2026 18:08:50
