@@ -6,13 +6,14 @@ using System.Web.Mvc;
 
 namespace FirstMVCProject.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         public ActionResult NonSecureMethod()
         {
             return View();
         }
-        [Authorize]
+        
         public ActionResult SecureMethod()
         {
             return View();
