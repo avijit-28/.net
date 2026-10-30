@@ -18,3 +18,11 @@ OnActionExecuting Controller:Employee Action:Details Date:30-10-2026 16:41:46
 OnActionExecuted Controller:Employee Action:Details Date:30-10-2026 16:41:46
 OnResultExecuting Controller:Employee Action:Details Date:30-10-2026 16:41:46
 OnResultExecuted Controller:Employee Action:Details Date:30-10-2026 16:41:46
+OnActionExecuting Controller:Employee Action:Index Date:30-10-2026 16:44:26
+OnActionExecuted Controller:Employee Action:Index Date:30-10-2026 16:44:27
+OnResultExecuting Controller:Employee Action:Index Date:30-10-2026 16:44:27
+OnResultExecuted Controller:Employee Action:Index Date:30-10-2026 16:44:28
+OnActionExecuting Controller:Employee Action:Details Date:30-10-2026 16:44:30
+OnActionExecuted Controller:Employee Action:Details Date:30-10-2026 16:44:30
+OnResultExecuting Controller:Employee Action:Details Date:30-10-2026 16:44:30
+OnResultExecuted Controller:Employee Action:Details Date:30-10-2026 16:44:30
