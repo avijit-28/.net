@@ -195,5 +195,7 @@ namespace LMS.ViewModels
 
         [Display(Name = "Feedback")]
         public string Feedback { get; set; }
+
+        public string Status { get; set; }
     }
 }
