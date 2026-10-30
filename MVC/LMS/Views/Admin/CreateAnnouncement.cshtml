@@ -1,0 +1,57 @@
+@model LMS.ViewModels.AnnouncementFormViewModel
+@{
+    ViewBag.Title = "Create Announcement";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Admin")">Admin</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Announcements", "Admin")">Announcements</a></li>
+            <li class="breadcrumb-item active" aria-current="page">New Announcement</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h4 class="fw-bold mb-0 text-primary"><i class="bi bi-megaphone me-2"></i>Post System Announcement</h4>
+                </div>
+                <div class="card-body p-4">
+                    @using (Html.BeginForm("CreateAnnouncement", "Admin", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Title, new { @class = "form-label fw-bold" })
+                            @Html.TextBoxFor(m => m.Title, new { @class = "form-control", placeholder = "e.g. Scheduled System Maintenance Notice" })
+                            @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Message, new { @class = "form-label fw-bold" })
+                            @Html.TextAreaFor(m => m.Message, new { @class = "form-control", rows = 6, placeholder = "Enter announcement message details, timelines, impact, and support contacts." })
+                            @Html.ValidationMessageFor(m => m.Message, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="form-check form-switch mb-4">
+                            @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-check-input", @checked = "checked" })
+                            @Html.LabelFor(m => m.IsActive, "Publish immediately to all users", new { @class = "form-check-label fw-semibold" })
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <a href="@Url.Action("Announcements", "Admin")" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-broadcast me-1"></i> Post Announcement
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
