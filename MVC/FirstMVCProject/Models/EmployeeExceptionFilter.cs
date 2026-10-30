@@ -32,14 +32,6 @@ namespace FirstMVCProject.Models
             // Mark exception as handled
             filterContext.ExceptionHandled = true;
 
-            // Clear any response headers/content and set status 500
-            if (filterContext.HttpContext != null && filterContext.HttpContext.Response != null)
-            {
-                filterContext.HttpContext.Response.Clear();
-                filterContext.HttpContext.Response.StatusCode = 500;
-                filterContext.HttpContext.Response.TrySkipIisCustomErrors = true;
-            }
-
             // Show Error view with error info model
             filterContext.Result = new ViewResult
             {
