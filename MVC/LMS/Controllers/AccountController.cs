@@ -70,7 +70,8 @@ namespace LMS.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    var user = await UserManager.FindByEmailAsync(model.Email);
+                    return await RedirectToUserDashboardAsync(user, returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
