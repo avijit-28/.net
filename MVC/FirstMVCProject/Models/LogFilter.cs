@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Web;
 using System.Web.Mvc;
@@ -8,6 +8,8 @@ namespace FirstMVCProject.Models
 {
     public class LogFilter : ActionFilterAttribute
     {
+        private static readonly object _fileLock = new object();
+
         public override void OnActionExecuting(
             ActionExecutingContext filterContext)
         {
@@ -48,28 +50,41 @@ namespace FirstMVCProject.Models
             string methodName,
             RouteData routeData)
         {
-            var controllerName =
-                routeData.Values["controller"];
+            try
+            {
+                var controllerName = routeData?.Values["controller"];
+                var actionName = routeData?.Values["action"];
 
-            var actionName =
-                routeData.Values["action"];
+                string message =
+                    methodName +
+                    " Controller:" +
+                    controllerName +
+                    " Action:" +
+                    actionName +
+                    " Date:" +
+                    DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss") +
+                    Environment.NewLine;
 
-            string message =
-                methodName +
-                " Controller:" +
-                controllerName +
-                " Action:" +
-                actionName +
-                " Date:" +
-                DateTime.Now.ToString() +
-                Environment.NewLine;
+                var context = HttpContext.Current;
+                if (context != null && context.Server != null)
+                {
+                    string filePath = context.Server.MapPath("~/Log/Log.txt");
+                    string dir = Path.GetDirectoryName(filePath);
+                    if (!Directory.Exists(dir))
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
 
-            File.AppendAllText(
-                HttpContext.Current.Server.MapPath(
-                    "~/Log/Log.txt"
-                ),
-                message
-            );
+                    lock (_fileLock)
+                    {
+                        File.AppendAllText(filePath, message);
+                    }
+                }
+            }
+            catch
+            {
+                // Silently handle logging exceptions so web requests are not broken
+            }
         }
     }
 }
