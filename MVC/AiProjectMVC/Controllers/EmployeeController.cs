@@ -257,12 +257,14 @@ namespace AiProjectMVC.Controllers
                 return RedirectToAction("Index");
             }
 
+            int targetId = employee != null && employee.ID > 0 ? employee.ID : id;
+
             try
             {
                 if (ModelState.IsValid)
                 {
                     _repo.UpdateEmployee(
-                        id,
+                        targetId,
                         employee.Name,
                         employee.Salary,
                         employee.Gender,
@@ -271,7 +273,16 @@ namespace AiProjectMVC.Controllers
                         employee.AddressId
                     );
 
-                    TempData["SuccessMessage"] = $"Employee '{employee.Name}' (ID: {id}) updated successfully!";
+                    try
+                    {
+                        _userRepo.UpdateUserName(targetId, employee.Name);
+                    }
+                    catch
+                    {
+                        // Continue even if corresponding EmployeeUser row doesn't exist
+                    }
+
+                    TempData["SuccessMessage"] = $"Employee '{employee.Name}' (ID: #{targetId}) updated successfully!";
                     return RedirectToAction("Index");
                 }
 
