@@ -28,6 +28,34 @@ namespace FirstMVCProject.Models
             Debug.WriteLine(message);
             Log(message, filterContext?.RouteData);
         }
+        public override void OnResultExecuting(
+    ResultExecutingContext filterContext)
+        {
+            string actionName =
+                filterContext?.RouteData?.Values["action"]?.ToString()
+                ?? "Unknown";
+
+            string message =
+                "Employee result started: " + actionName;
+
+            Debug.WriteLine(message);
+            Log(message, filterContext?.RouteData);
+        }
+
+        public override void OnResultExecuted(
+    ResultExecutedContext filterContext)
+        {
+            string actionName =
+                filterContext?.RouteData?.Values["action"]?.ToString()
+                ?? "Unknown";
+
+            string message =
+                "Employee result completed: " + actionName;
+
+            Debug.WriteLine(message);
+            Log(message, filterContext?.RouteData);
+        }
+
 
         private void Log(string status, RouteData routeData)
         {
