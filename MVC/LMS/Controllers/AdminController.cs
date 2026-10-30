@@ -179,7 +179,8 @@ namespace LMS.Controllers
                 var cat = _db.Categories.Find(model.CategoryId);
                 if (cat == null) return HttpNotFound();
 
-                if (_db.Categories.Any(c => c.CategoryId != model.CategoryId && c.CategoryName.Equals(model.CategoryName, StringComparison.OrdinalIgnoreCase)))
+                string catName = model.CategoryName.Trim().ToLower();
+                if (_db.Categories.Any(c => c.CategoryId != model.CategoryId && c.CategoryName.ToLower() == catName))
                 {
                     ModelState.AddModelError("CategoryName", "Category name already exists.");
                     return View(model);
