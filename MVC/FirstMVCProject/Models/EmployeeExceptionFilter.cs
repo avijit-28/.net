@@ -25,6 +25,15 @@ namespace FirstMVCProject.Models
             );
 
             Debug.WriteLine("======================================");
+
+            // Mark exception as handled
+            filterContext.ExceptionHandled = true;
+
+            // Show Error view
+            filterContext.Result = new ViewResult
+            {
+                ViewName = "Error"
+            };
         }
     }
 }
