@@ -183,6 +183,45 @@ namespace AiProjectMVC.Models
             return users;
         }
 
+        // Retrieve users that are registered in EmployeeUser but do NOT yet have an entry in Employee table
+        public List<EmployeeUser> GetUnassignedUsers()
+        {
+            List<EmployeeUser> users = new List<EmployeeUser>();
+
+            using (SqlConnection con = new SqlConnection(_conStr))
+            {
+                string sql = @"SELECT u.ID, u.UserName, u.Name, u.Role, u.PhoneNumber, u.Email, u.Password 
+                               FROM EmployeeUser u 
+                               LEFT JOIN Employee e ON u.ID = e.ID 
+                               WHERE e.ID IS NULL 
+                               ORDER BY u.ID ASC";
+
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    con.Open();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            users.Add(new EmployeeUser
+                            {
+                                ID = Convert.ToInt32(reader["ID"]),
+                                UserName = reader["UserName"] != DBNull.Value ? reader["UserName"].ToString() : string.Empty,
+                                Name = reader["Name"] != DBNull.Value ? reader["Name"].ToString() : string.Empty,
+                                Role = reader["Role"] != DBNull.Value ? reader["Role"].ToString() : "Employee",
+                                PhoneNumber = reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : string.Empty,
+                                Email = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : string.Empty,
+                                Password = reader["Password"] != DBNull.Value ? reader["Password"].ToString() : string.Empty
+                            });
+                        }
+                    }
+                }
+            }
+
+            return users;
+        }
+
         // Register new user
         public int RegisterUser(EmployeeUser user)
         {
