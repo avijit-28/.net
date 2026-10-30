@@ -1,4 +1,4 @@
-﻿using FirstMVCProject.Models;
+using FirstMVCProject.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,6 @@ namespace FirstMVCProject.Controllers
     [RoutePrefix("addresses")]
     public class AddressController : Controller
     {
-
         private readonly AddressRepo _repo = new AddressRepo();
 
         // GET: Address
@@ -83,13 +82,15 @@ namespace FirstMVCProject.Controllers
 
         // POST: Address/Edit/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Route("edit/{id:int}")]
-        public ActionResult Edit(Address address)
+        public ActionResult Edit(int id, Address address)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    address.AddressId = id;
                     _repo.UpdateAddress(address);
 
                     return RedirectToAction("Index");
