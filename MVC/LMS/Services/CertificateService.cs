@@ -90,5 +90,12 @@ namespace LMS.Services
                 .OrderByDescending(c => c.IssueDate)
                 .ToList();
         }
+
+        public Certificate GetCertificateByNumber(string certNumber)
+        {
+            return _db.Certificates
+                .Include(c => c.Course)
+                .FirstOrDefault(c => c.CertificateNumber == certNumber);
+        }
     }
 }
