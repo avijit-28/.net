@@ -178,6 +178,9 @@ namespace FirstMVCProject.Controllers
         }
 
         [Route("test-exception")]
+        [Route("~/test-exception")]
+        [Route("~/Employee/TestException")]
+        [Route("~/employees/test-exception")]
         public ActionResult TestException()
         {
             throw new System.Exception(
