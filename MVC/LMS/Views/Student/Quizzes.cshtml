@@ -1,0 +1,64 @@
+@model IEnumerable<LMS.Models.QuizAttempt>
+@{
+    ViewBag.Title = "Quiz Attempt History";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Quiz Assessment History</h2>
+            <p class="text-muted small">Scores and grading records across completed assessments</p>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card card-custom p-5 text-center shadow-sm">
+            <i class="bi bi-patch-question fs-1 text-muted mb-3"></i>
+            <h5 class="fw-bold">No quizzes taken yet.</h5>
+            <p class="text-muted small mb-0">You can take quizzes directly within the course classroom lessons.</p>
+        </div>
+    }
+    else
+    {
+        <div class="card card-custom shadow-sm overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light small">
+                        <tr>
+                            <th>Quiz Title</th>
+                            <th>Course</th>
+                            <th>Score %</th>
+                            <th>Marks</th>
+                            <th>Result</th>
+                            <th>Completed Date</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">@a.Quiz.Title</td>
+                                <td>@(a.Quiz.Course?.Title ?? "Course")</td>
+                                <td class="fw-bold @(a.IsPassed ? "text-success" : "text-danger")">@a.Score%</td>
+                                <td>@a.ObtainedMarks / @a.TotalMarks</td>
+                                <td>
+                                    <span class="badge @(a.IsPassed ? "bg-success" : "bg-danger") px-3 py-1 rounded-pill">
+                                        @(a.IsPassed ? "PASSED" : "FAILED")
+                                    </span>
+                                </td>
+                                <td class="small text-muted">@(a.CompletedAt.HasValue ? a.CompletedAt.Value.ToString("MMM dd, yyyy HH:mm") : "-")</td>
+                                <td class="text-end">
+                                    <a href="@Url.Action("Result", "Quiz", new { attemptId = a.AttemptId })" class="btn btn-sm btn-outline-primary rounded-pill">
+                                        View Breakdown
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
