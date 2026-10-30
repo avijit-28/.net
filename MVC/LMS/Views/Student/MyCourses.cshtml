@@ -1,0 +1,69 @@
+@model IEnumerable<LMS.Models.Enrollment>
+@{
+    ViewBag.Title = "My Enrolled Courses";
+}
+
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">My Enrolled Courses</h2>
+            <p class="text-muted small">Continue where you left off across all learning paths</p>
+        </div>
+        <a href="@Url.Action("Index", "Courses")" class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+            <i class="bi bi-search me-1"></i> Explore More Courses
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card card-custom p-5 text-center shadow-sm">
+            <i class="bi bi-journal-x fs-1 text-muted mb-3"></i>
+            <h5 class="fw-bold">No enrolled courses yet.</h5>
+            <p class="text-muted small mb-3">Browse our curated courses and enroll in tracks that match your interests.</p>
+            <div>
+                <a href="@Url.Action("Index", "Courses")" class="btn btn-primary rounded-pill px-4">Browse Course Catalog</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card card-custom card-hover h-100 overflow-hidden shadow-sm">
+                        <div class="bg-light text-center py-4 border-bottom position-relative" style="height: 150px; display:flex; align-items:center; justify-content:center;">
+                            <i class="bi bi-journal-richtext display-3 text-primary opacity-25"></i>
+                            <span class="position-absolute top-0 end-0 m-2 badge @(item.Status == "Completed" ? "bg-success" : "bg-primary")">
+                                @item.Status
+                            </span>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <span class="badge bg-primary-subtle text-primary small align-self-start mb-2">
+                                @(item.Course?.Category?.CategoryName ?? "General")
+                            </span>
+                            <h5 class="card-title fw-bold fs-6 mb-2">@item.Course.Title</h5>
+
+                            <div class="mb-3 mt-2">
+                                <div class="d-flex justify-content-between align-items-center small text-muted mb-1">
+                                    <span>Curriculum Completion</span>
+                                    <strong class="text-dark">@item.CompletionPercentage%</strong>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar @(item.Status == "Completed" ? "bg-success" : "bg-primary")" role="progressbar" style="width: @item.CompletionPercentage%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                                <small class="text-muted"><i class="bi bi-clock me-1"></i> @item.Course.DurationInHours hrs</small>
+                                <a href="@Url.Action("Index", "Learning", new { courseId = item.CourseId })" class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold">
+                                    <i class="bi bi-play-circle-fill me-1"></i> Continue
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
