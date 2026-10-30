@@ -23,6 +23,27 @@ namespace LMS.Controllers
             return View(model);
         }
 
+        // GET: Certificate/Verify?certNumber=LMS-2026-123456
+        [AllowAnonymous]
+        public ActionResult Verify(string certNumber)
+        {
+            if (string.IsNullOrWhiteSpace(certNumber))
+            {
+                ViewBag.ErrorMessage = "Please provide a valid certificate number.";
+                return View("VerifyCertificate", null);
+            }
+
+            var cert = _certificateService.GetCertificateByNumber(certNumber.Trim());
+            if (cert == null)
+            {
+                ViewBag.ErrorMessage = $"Certificate #{certNumber} was not found or is invalid.";
+                return View("VerifyCertificate", null);
+            }
+
+            var model = _certificateService.GetCertificateViewModel(cert.CertificateId);
+            return View("ViewCertificate", model);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
