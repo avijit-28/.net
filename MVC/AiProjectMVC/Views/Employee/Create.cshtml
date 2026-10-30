@@ -192,4 +192,25 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // When an Employee ID is selected from EmployeeUser, auto-fill Full Name while remaining fields stay intact
+            $('#ID').on('change', function () {
+                var selectedOpt = $(this).find('option:selected');
+                var name = selectedOpt.data('name');
+                if (name) {
+                    $('#Name').val(name);
+                }
+            });
+
+            // If an ID is already selected on page load, ensure Name is populated
+            var initialSelected = $('#ID').find('option:selected');
+            if (initialSelected.val() && !$('#Name').val()) {
+                var initialName = initialSelected.data('name');
+                if (initialName) {
+                    $('#Name').val(initialName);
+                }
+            }
+        });
+    </script>
 }
