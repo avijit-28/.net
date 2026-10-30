@@ -26,7 +26,7 @@
             </div>
 
             <div class="custom-card-body">
-                @using (Html.BeginForm())
+                @using (Html.BeginForm("Edit", "Employee", new { id = Model.ID }, FormMethod.Post, new { role = "form" }))
                 {
                     @Html.AntiForgeryToken()
                     @Html.HiddenFor(model => model.ID)
