@@ -1,0 +1,115 @@
+@model LMS.ViewModels.GradeSubmissionViewModel
+@{
+    ViewBag.Title = "Grade Submission - " + Model.AssignmentTitle;
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Instructor")">Studio</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("Submissions", "Instructor", new { assignmentId = Model.AssignmentId })">Submissions</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Grade: @Model.StudentName</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-file-earmark-person me-2 text-primary"></i>Student Submission</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                        <div>
+                            <span class="text-muted small">Student</span>
+                            <div class="fw-bold fs-6">@Model.StudentName</div>
+                        </div>
+                        <div class="text-end">
+                            <span class="text-muted small">Submitted On</span>
+                            <div>@Model.SubmittedDate.ToString("MMM dd, yyyy HH:mm")</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Assignment Requirements</label>
+                        <div class="p-3 bg-light rounded text-muted">
+                            <div class="fw-semibold text-dark mb-1">@Model.AssignmentTitle</div>
+                            <small class="text-secondary">Course: @Model.CourseTitle | Max Score: @Model.MaxMarks pts</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Student Response Text</label>
+                        <div class="p-3 bg-light rounded font-monospace" style="white-space: pre-wrap; min-height: 120px;">
+                            @(string.IsNullOrWhiteSpace(Model.SubmissionText) ? "No written text submitted." : Model.SubmissionText)
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.FileUrl))
+                    {
+                        <div>
+                            <label class="form-label fw-bold">Submitted File / Attachment</label>
+                            <div>
+                                <a href="@Model.FileUrl" target="_blank" class="btn btn-outline-primary">
+                                    <i class="bi bi-download me-1"></i> Download / View Attachment
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-award me-2 text-primary"></i>Grading & Feedback</h5>
+                </div>
+                <div class="card-body p-4">
+                    @using (Html.BeginForm("Grade", "Instructor", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.SubmissionId)
+                        @Html.HiddenFor(m => m.AssignmentId)
+                        @Html.HiddenFor(m => m.AssignmentTitle)
+                        @Html.HiddenFor(m => m.CourseTitle)
+                        @Html.HiddenFor(m => m.StudentName)
+                        @Html.HiddenFor(m => m.SubmittedDate)
+                        @Html.HiddenFor(m => m.SubmissionText)
+                        @Html.HiddenFor(m => m.FileUrl)
+                        @Html.HiddenFor(m => m.MaxMarks)
+
+                        if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                        }
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Score (out of @Model.MaxMarks)</label>
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.Marks, new { @class = "form-control fs-5 fw-bold text-primary", type = "number", min = "0", max = Model.MaxMarks.ToString(), required = "required" })
+                                <span class="input-group-text fw-bold">/ @Model.MaxMarks</span>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.Marks, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="mb-4">
+                            @Html.LabelFor(m => m.Feedback, new { @class = "form-label fw-bold" })
+                            @Html.TextAreaFor(m => m.Feedback, new { @class = "form-control", rows = 6, placeholder = "Provide constructive remarks, code review suggestions, and strengths of this submission." })
+                            @Html.ValidationMessageFor(m => m.Feedback, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary py-2 fw-bold">
+                                <i class="bi bi-check2-circle me-1"></i> Save Grade & Send Feedback
+                            </button>
+                            <a href="@Url.Action("Submissions", "Instructor", new { assignmentId = Model.AssignmentId })" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
