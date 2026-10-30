@@ -224,6 +224,29 @@ namespace LMS.Controllers
             }
         }
 
+        private async Task<ActionResult> RedirectToUserDashboardAsync(ApplicationUser user, string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
+            if (user != null)
+            {
+                var roles = await UserManager.GetRolesAsync(user.Id);
+                if (roles.Contains("Admin"))
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+                if (roles.Contains("Instructor"))
+                {
+                    return RedirectToAction("Index", "Instructor");
+                }
+            }
+
+            return RedirectToAction("Index", "Student");
+        }
+
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -231,14 +254,20 @@ namespace LMS.Controllers
                 return Redirect(returnUrl);
             }
 
-            if (User.IsInRole("Admin"))
+            string userId = User.Identity.GetUserId();
+            if (!string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("Index", "Admin");
+                var roles = UserManager.GetRoles(userId);
+                if (roles.Contains("Admin"))
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+                if (roles.Contains("Instructor"))
+                {
+                    return RedirectToAction("Index", "Instructor");
+                }
             }
-            if (User.IsInRole("Instructor"))
-            {
-                return RedirectToAction("Index", "Instructor");
-            }
+
             return RedirectToAction("Index", "Student");
         }
 
