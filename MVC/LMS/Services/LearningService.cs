@@ -22,19 +22,40 @@ namespace LMS.Services
 
         public LearningViewModel GetLearningState(int courseId, string studentId, int? lessonId = null)
         {
+            var course = _db.Courses
+                .Include(c => c.Modules.Select(m => m.Lessons))
+                .Include(c => c.Quizzes)
+                .Include(c => c.Assignments)
+                .FirstOrDefault(c => c.CourseId == courseId);
+
+            if (course == null) return null;
+
             var enrollment = _db.Enrollments
                 .FirstOrDefault(e => e.CourseId == courseId && e.StudentId == studentId && e.Status != "Cancelled");
 
             if (enrollment == null)
             {
-                return null;
+                // Allow course instructor or admin to preview classroom
+                bool isInstructor = !string.IsNullOrEmpty(studentId) && course.InstructorId == studentId;
+                bool isAdmin = false;
+                if (!string.IsNullOrEmpty(studentId))
+                {
+                    var adminRoleId = _db.Roles.Where(r => r.Name == "Admin").Select(r => r.Id).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(adminRoleId))
+                    {
+                        isAdmin = _db.Database.SqlQuery<int>(
+                            "SELECT COUNT(*) FROM AspNetUserRoles WHERE UserId = @uid AND RoleId = @rid",
+                            new System.Data.SqlClient.SqlParameter("@uid", studentId),
+                            new System.Data.SqlClient.SqlParameter("@rid", adminRoleId)
+                        ).FirstOrDefault() > 0;
+                    }
+                }
+
+                if (!isInstructor && !isAdmin)
+                {
+                    return null;
+                }
             }
-
-            var course = _db.Courses
-                .Include(c => c.Modules.Select(m => m.Lessons))
-                .FirstOrDefault(c => c.CourseId == courseId);
-
-            if (course == null) return null;
 
             var modules = course.Modules.OrderBy(m => m.ModuleOrder).ToList();
             var allLessons = new List<Lesson>();
