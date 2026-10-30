@@ -140,7 +140,7 @@ namespace LMS.Controllers
         }
 
         // GET: /Account/Profile
-        public async Task<ActionResult> Profile()
+        public new async Task<ActionResult> Profile()
         {
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user == null) return HttpNotFound();
@@ -163,7 +163,7 @@ namespace LMS.Controllers
         // POST: /Account/Profile
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Profile(ProfileViewModel model)
+        public new async Task<ActionResult> Profile(ProfileViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
 

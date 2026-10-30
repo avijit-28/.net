@@ -53,7 +53,7 @@ namespace LMS.Services
                 );
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Fallback to direct EF save
                 try
