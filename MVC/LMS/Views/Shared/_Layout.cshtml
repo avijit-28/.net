@@ -141,7 +141,16 @@
                             if (User.IsInRole("Student"))
                             {
                                 <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Index", "Student")"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+                                </li>
+                                <li class="nav-item">
                                     <a class="nav-link" href="@Url.Action("MyCourses", "Student")"><i class="bi bi-journal-bookmark me-1"></i> My Courses</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Assignments", "Student")"><i class="bi bi-file-earmark-check me-1"></i> Assignments</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Quizzes", "Student")"><i class="bi bi-patch-question me-1"></i> Quizzes</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="@Url.Action("Certificates", "Student")"><i class="bi bi-patch-check me-1"></i> Certificates</a>
@@ -150,7 +159,10 @@
                             else if (User.IsInRole("Instructor"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Courses", "Instructor")"><i class="bi bi-collection-play me-1"></i> Course Studio</a>
+                                    <a class="nav-link" href="@Url.Action("Index", "Instructor")"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Courses", "Instructor")"><i class="bi bi-collection-play me-1"></i> My Courses</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="@Url.Action("CreateCourse", "Instructor")"><i class="bi bi-plus-circle me-1"></i> New Course</a>
@@ -158,14 +170,20 @@
                             }
                             else if (User.IsInRole("Admin"))
                             {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Index", "Admin")"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+                                </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#" id="adminNav" role="button" data-bs-toggle="dropdown">
                                         <i class="bi bi-gear-wide-connected me-1"></i> Manage
                                     </a>
                                     <ul class="dropdown-menu shadow border-0" aria-labelledby="adminNav">
                                         <li><a class="dropdown-item" href="@Url.Action("Users", "Admin")"><i class="bi bi-people me-2"></i> Users</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Categories", "Admin")"><i class="bi bi-tags me-2"></i> Categories</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Students", "Admin")"><i class="bi bi-mortarboard me-2"></i> Students</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Instructors", "Admin")"><i class="bi bi-person-badge me-2"></i> Instructors</a></li>
+                                        <li><hr class="dropdown-divider"></li>
                                         <li><a class="dropdown-item" href="@Url.Action("Courses", "Admin")"><i class="bi bi-journal-text me-2"></i> All Courses</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Categories", "Admin")"><i class="bi bi-tags me-2"></i> Categories</a></li>
                                         <li><a class="dropdown-item" href="@Url.Action("Enrollments", "Admin")"><i class="bi bi-person-lines-fill me-2"></i> Enrollments</a></li>
                                         <li><a class="dropdown-item" href="@Url.Action("Payments", "Admin")"><i class="bi bi-credit-card me-2"></i> Payments</a></li>
                                         <li><a class="dropdown-item" href="@Url.Action("Announcements", "Admin")"><i class="bi bi-megaphone me-2"></i> Announcements</a></li>
