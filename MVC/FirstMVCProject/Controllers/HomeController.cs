@@ -9,6 +9,7 @@ namespace FirstMVCProject.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        [AllowAnonymous]
         public ActionResult NonSecureMethod()
         {
             return View();
