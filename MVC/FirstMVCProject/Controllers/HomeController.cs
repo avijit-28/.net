@@ -12,6 +12,7 @@ namespace FirstMVCProject.Controllers
         {
             return View();
         }
+        [Authorize]
         public ActionResult SecureMethod()
         {
             return View();
