@@ -130,6 +130,7 @@
     <Compile Include="Models\AddressRepo.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\EmployeeAuditFilter.cs" />
+    <Compile Include="Models\EmployeeExceptionFilter.cs" />
     <Compile Include="Models\EmployeeRepo.cs" />
     <Compile Include="Models\LogFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
