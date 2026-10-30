@@ -19,7 +19,7 @@ namespace FirstMVCProject
                 url: "AllEmployees",
                 defaults: new
                 {
-                    controller = "Employee",
+                    controller = "Home",
                     action = "Index"
                 }
             );
