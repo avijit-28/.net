@@ -9,6 +9,7 @@ using FirstMVCProject.ViewModels;
 namespace FirstMVCProject.Controllers
 {
     //[RequireHttps]
+    [EmployeeExceptionFilter]
     [RoutePrefix("AllEmployees")]
     [EmployeeAuditFilter]
     public class EmployeeController : Controller
@@ -174,6 +175,14 @@ namespace FirstMVCProject.Controllers
             {
                 return RedirectToAction("Index");
             }
+        }
+
+        [Route("test-exception")]
+        public ActionResult TestException()
+        {
+            throw new System.Exception(
+                "Test exception from EmployeeController"
+            );
         }
     }
 }
