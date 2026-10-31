@@ -3,191 +3,120 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewBag.Title - LMS Learning Management System</title>
+    <title>@ViewBag.Title - EduPlatform LMS</title>
+    
+    <!-- Bootstrap 5 CSS -->
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    
+    <!-- Modern Google Fonts: Plus Jakarta Sans & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --lms-primary: #2563eb;
-            --lms-primary-dark: #1d4ed8;
-            --lms-secondary: #0f172a;
-            --lms-bg: #f8fafc;
-            --lms-card-bg: #ffffff;
-            --lms-border: #e2e8f0;
-            --lms-text: #1e293b;
-            --lms-muted: #64748b;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--lms-bg);
-            color: var(--lms-text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .navbar-lms {
-            background: #ffffff;
-            border-bottom: 1px solid var(--lms-border);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-
-        .navbar-brand-lms {
-            font-weight: 800;
-            font-size: 1.35rem;
-            color: var(--lms-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            letter-spacing: -0.5px;
-        }
-
-        .navbar-brand-lms .badge-brand {
-            background: var(--lms-primary);
-            color: white;
-            padding: 0.2rem 0.55rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
-
-        .nav-link {
-            font-weight: 500;
-            color: #475569;
-            transition: color 0.15s ease-in-out;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            color: var(--lms-primary);
-        }
-
-        .card-custom {
-            background: #ffffff;
-            border: 1px solid var(--lms-border);
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.08);
-        }
-
-        .btn-primary {
-            background-color: var(--lms-primary);
-            border-color: var(--lms-primary);
-            font-weight: 500;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--lms-primary-dark);
-            border-color: var(--lms-primary-dark);
-        }
-
-        .stat-card {
-            border-left: 4px solid var(--lms-primary);
-        }
-
-        .rating-stars {
-            color: #f59e0b;
-        }
-
-        .footer-lms {
-            background: #0f172a;
-            color: #94a3b8;
-            margin-top: auto;
-            border-top: 1px solid #1e293b;
-        }
-
-        .footer-lms a {
-            color: #cbd5e1;
-            text-decoration: none;
-            transition: color 0.15s;
-        }
-
-        .footer-lms a:hover {
-            color: #ffffff;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- EduPlatform Master LMS Theme -->
+    <link href="~/Content/lms-theme.css" rel="stylesheet" />
+    
     @RenderSection("Styles", required: false)
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-lms sticky-top py-2">
-            <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-lms sticky-top py-2 px-lg-3">
+            <div class="container-fluid max-w-7xl">
                 <a class="navbar-brand-lms" href="@Url.Action("Index", "Home")">
                     <span class="badge-brand"><i class="bi bi-mortarboard-fill"></i> LMS</span>
-                    <span>EduPlatform</span>
+                    <span class="fw-extrabold tracking-tight">Edu<span class="text-primary">Platform</span></span>
                 </a>
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+
+                <button class="navbar-toggler border-0 shadow-none p-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-1">
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Index", "Home")"><i class="bi bi-house-door me-1"></i> Home</a>
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" href="@Url.Action("Index", "Home")">
+                                <i class="bi bi-house-door me-1 text-secondary"></i> Home
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Index", "Courses")"><i class="bi bi-book me-1"></i> Browse Courses</a>
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Courses" ? "active" : "")" href="@Url.Action("Index", "Courses")">
+                                <i class="bi bi-compass me-1 text-secondary"></i> Explore Courses
+                            </a>
                         </li>
+
                         @if (Request.IsAuthenticated)
                         {
                             if (User.IsInRole("Student"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Index", "Student")"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Student" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" href="@Url.Action("Index", "Student")">
+                                        <i class="bi bi-speedometer2 me-1 text-primary"></i> Dashboard
+                                    </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("MyCourses", "Student")"><i class="bi bi-journal-bookmark me-1"></i> My Courses</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Student" && ViewContext.RouteData.Values["action"]?.ToString() == "MyCourses" ? "active" : "")" href="@Url.Action("MyCourses", "Student")">
+                                        <i class="bi bi-journal-bookmark me-1 text-primary"></i> My Courses
+                                    </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Assignments", "Student")"><i class="bi bi-file-earmark-check me-1"></i> Assignments</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Student" && ViewContext.RouteData.Values["action"]?.ToString() == "Assignments" ? "active" : "")" href="@Url.Action("Assignments", "Student")">
+                                        <i class="bi bi-file-earmark-check me-1 text-primary"></i> Assignments
+                                    </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Quizzes", "Student")"><i class="bi bi-patch-question me-1"></i> Quizzes</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Student" && ViewContext.RouteData.Values["action"]?.ToString() == "Quizzes" ? "active" : "")" href="@Url.Action("Quizzes", "Student")">
+                                        <i class="bi bi-patch-question me-1 text-primary"></i> Quizzes
+                                    </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Certificates", "Student")"><i class="bi bi-patch-check me-1"></i> Certificates</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Student" && ViewContext.RouteData.Values["action"]?.ToString() == "Certificates" ? "active" : "")" href="@Url.Action("Certificates", "Student")">
+                                        <i class="bi bi-award me-1 text-warning"></i> Certificates
+                                    </a>
                                 </li>
                             }
                             else if (User.IsInRole("Instructor"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Index", "Instructor")"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Instructor" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" href="@Url.Action("Index", "Instructor")">
+                                        <i class="bi bi-speedometer2 me-1 text-info"></i> Studio
+                                    </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Courses", "Instructor")"><i class="bi bi-collection-play me-1"></i> My Courses</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Instructor" && ViewContext.RouteData.Values["action"]?.ToString() == "Courses" ? "active" : "")" href="@Url.Action("Courses", "Instructor")">
+                                        <i class="bi bi-collection-play me-1 text-info"></i> My Courses
+                                    </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("CreateCourse", "Instructor")"><i class="bi bi-plus-circle me-1"></i> New Course</a>
+                                    <a class="nav-link text-primary fw-bold" href="@Url.Action("CreateCourse", "Instructor")">
+                                        <i class="bi bi-plus-circle-fill me-1"></i> New Course
+                                    </a>
                                 </li>
                             }
                             else if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Index", "Admin")"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" href="@Url.Action("Index", "Admin")">
+                                        <i class="bi bi-speedometer2 me-1 text-danger"></i> Control Center
+                                    </a>
                                 </li>
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="adminNav" role="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-gear-wide-connected me-1"></i> Manage
+                                    <a class="nav-link dropdown-toggle" href="#" id="adminNav" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-gear-wide-connected me-1 text-danger"></i> Manage Platform
                                     </a>
-                                    <ul class="dropdown-menu shadow border-0" aria-labelledby="adminNav">
-                                        <li><a class="dropdown-item" href="@Url.Action("Users", "Admin")"><i class="bi bi-people me-2"></i> Users</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Students", "Admin")"><i class="bi bi-mortarboard me-2"></i> Students</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Instructors", "Admin")"><i class="bi bi-person-badge me-2"></i> Instructors</a></li>
+                                    <ul class="dropdown-menu shadow-lg border-0 rounded-3" aria-labelledby="adminNav">
+                                        <li><h6 class="dropdown-header text-uppercase small text-muted">User Directory</h6></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Users", "Admin")"><i class="bi bi-people me-2 text-primary"></i> All Users</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Students", "Admin")"><i class="bi bi-mortarboard me-2 text-success"></i> Students</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Instructors", "Admin")"><i class="bi bi-person-badge me-2 text-info"></i> Instructors</a></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Courses", "Admin")"><i class="bi bi-journal-text me-2"></i> All Courses</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Categories", "Admin")"><i class="bi bi-tags me-2"></i> Categories</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Enrollments", "Admin")"><i class="bi bi-person-lines-fill me-2"></i> Enrollments</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Payments", "Admin")"><i class="bi bi-credit-card me-2"></i> Payments</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Announcements", "Admin")"><i class="bi bi-megaphone me-2"></i> Announcements</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Reports", "Admin")"><i class="bi bi-graph-up me-2"></i> Reports</a></li>
+                                        <li><h6 class="dropdown-header text-uppercase small text-muted">Curriculum & Finance</h6></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Courses", "Admin")"><i class="bi bi-journal-text me-2 text-warning"></i> All Courses</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Categories", "Admin")"><i class="bi bi-tags me-2 text-secondary"></i> Categories</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Enrollments", "Admin")"><i class="bi bi-person-lines-fill me-2 text-success"></i> Enrollments</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Payments", "Admin")"><i class="bi bi-credit-card me-2 text-danger"></i> Payments</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Announcements", "Admin")"><i class="bi bi-megaphone me-2 text-primary"></i> Announcements</a></li>
+                                        <li><a class="dropdown-item" href="@Url.Action("Reports", "Admin")"><i class="bi bi-graph-up me-2 text-dark"></i> Reports & Analytics</a></li>
                                     </ul>
                                 </li>
                             }
@@ -207,28 +136,28 @@
     </header>
 
     <main class="flex-grow-1">
-        <div class="container py-3">
+        <div class="container-fluid max-w-7xl py-3 px-3 px-lg-4">
             @if (TempData["SuccessMessage"] != null)
             {
-                <div class="alert alert-success alert-dismissible fade show d-flex align-items-center rounded-3 shadow-sm" role="alert">
-                    <i class="bi bi-check-circle-fill fs-5 me-2"></i>
-                    <div>@TempData["SuccessMessage"]</div>
+                <div class="alert alert-success alert-dismissible fade show d-flex align-items-center rounded-3 shadow-sm border-0 border-start border-4 border-success mb-4" role="alert">
+                    <i class="bi bi-check-circle-fill fs-5 me-2 text-success"></i>
+                    <div class="fw-semibold">@TempData["SuccessMessage"]</div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
             @if (TempData["ErrorMessage"] != null)
             {
-                <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center rounded-3 shadow-sm" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
-                    <div>@TempData["ErrorMessage"]</div>
+                <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center rounded-3 shadow-sm border-0 border-start border-4 border-danger mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill fs-5 me-2 text-danger"></i>
+                    <div class="fw-semibold">@TempData["ErrorMessage"]</div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
             @if (TempData["InfoMessage"] != null)
             {
-                <div class="alert alert-info alert-dismissible fade show d-flex align-items-center rounded-3 shadow-sm" role="alert">
-                    <i class="bi bi-info-circle-fill fs-5 me-2"></i>
-                    <div>@TempData["InfoMessage"]</div>
+                <div class="alert alert-info alert-dismissible fade show d-flex align-items-center rounded-3 shadow-sm border-0 border-start border-4 border-info mb-4" role="alert">
+                    <i class="bi bi-info-circle-fill fs-5 me-2 text-info"></i>
+                    <div class="fw-semibold">@TempData["InfoMessage"]</div>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
@@ -237,62 +166,77 @@
         </div>
     </main>
 
+    <!-- Global Toast Container -->
+    <div id="lmsToastContainer"></div>
+
+    <!-- Master Footer -->
     <footer class="footer-lms py-5">
-        <div class="container">
-            <div class="row g-4">
+        <div class="container-fluid max-w-7xl px-3 px-lg-4">
+            <div class="row g-4 justify-content-between">
                 <div class="col-lg-4">
                     <div class="navbar-brand-lms text-white mb-3">
                         <span class="badge-brand"><i class="bi bi-mortarboard-fill"></i> LMS</span>
-                        <span>EduPlatform</span>
+                        <span class="fw-bold tracking-tight">EduPlatform</span>
                     </div>
-                    <p class="small text-secondary mb-3">
-                        A modern enterprise-grade Learning Management System engineered with ASP.NET MVC 5, Entity Framework 6, and SQL Server.
+                    <p class="small text-secondary mb-3" style="line-height: 1.7;">
+                        A next-generation enterprise Learning Management System engineered with ASP.NET MVC 5, Entity Framework 6, and Microsoft SQL Server. Built for high-impact software, AI, and cloud upskilling.
                     </p>
-                    <div class="d-flex gap-3 fs-5">
-                        <a href="#"><i class="bi bi-github"></i></a>
-                        <a href="#"><i class="bi bi-twitter-x"></i></a>
-                        <a href="#"><i class="bi bi-linkedin"></i></a>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-dark border border-secondary text-light px-2 py-1 small">
+                            <span class="pulse-dot pulse-success"></span> SQL Server Live
+                        </span>
+                        <span class="badge bg-dark border border-secondary text-light px-2 py-1 small">
+                            <i class="bi bi-shield-check text-success me-1"></i> Identity Auth
+                        </span>
                     </div>
                 </div>
-                <div class="col-6 col-lg-2">
-                    <h6 class="text-white fw-bold mb-3">Explore</h6>
+
+                <div class="col-6 col-md-3 col-lg-2">
+                    <h6 class="text-white fw-bold mb-3 small text-uppercase tracking-wider">Curriculum</h6>
                     <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
-                        <li><a href="@Url.Action("Index", "Courses")">All Courses</a></li>
-                        <li><a href="@Url.Action("Index", "Home")">Featured Subjects</a></li>
-                        <li><a href="@Url.Action("About", "Home")">About Us</a></li>
-                        <li><a href="@Url.Action("Contact", "Home")">Contact Support</a></li>
+                        <li><a href="@Url.Action("Index", "Courses")"><i class="bi bi-chevron-right me-1 text-primary"></i> All Courses</a></li>
+                        <li><a href="@Url.Action("Index", "Courses", new { level = "Beginner" })"><i class="bi bi-chevron-right me-1 text-primary"></i> Beginner Tracks</a></li>
+                        <li><a href="@Url.Action("Index", "Courses", new { level = "Advanced" })"><i class="bi bi-chevron-right me-1 text-primary"></i> Advanced Tracks</a></li>
+                        <li><a href="@Url.Action("VerifyCertificate", "Certificate")"><i class="bi bi-chevron-right me-1 text-primary"></i> Verify Credential</a></li>
                     </ul>
                 </div>
-                <div class="col-6 col-lg-3">
-                    <h6 class="text-white fw-bold mb-3">Portals</h6>
+
+                <div class="col-6 col-md-3 col-lg-2">
+                    <h6 class="text-white fw-bold mb-3 small text-uppercase tracking-wider">Portals</h6>
                     <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
-                        <li><a href="@Url.Action("Login", "Account")">Student Login</a></li>
-                        <li><a href="@Url.Action("Register", "Account")">Join as Instructor</a></li>
-                        <li><a href="@Url.Action("Index", "Admin")">Admin Dashboard</a></li>
-                        <li><a href="@Url.Action("Profile", "Account")">Account Settings</a></li>
+                        <li><a href="@Url.Action("Login", "Account")"><i class="bi bi-chevron-right me-1 text-primary"></i> Student Portal</a></li>
+                        <li><a href="@Url.Action("Register", "Account")"><i class="bi bi-chevron-right me-1 text-primary"></i> Become Instructor</a></li>
+                        <li><a href="@Url.Action("Index", "Admin")"><i class="bi bi-chevron-right me-1 text-primary"></i> Admin Center</a></li>
+                        <li><a href="@Url.Action("About", "Home")"><i class="bi bi-chevron-right me-1 text-primary"></i> About Platform</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-3">
-                    <h6 class="text-white fw-bold mb-3">System Information</h6>
-                    <p class="small text-secondary mb-1"><i class="bi bi-hdd-network me-1"></i> ASP.NET MVC 5 & .NET Framework 4.8</p>
-                    <p class="small text-secondary mb-1"><i class="bi bi-database me-1"></i> Microsoft SQL Server Enterprise</p>
-                    <p class="small text-secondary"><i class="bi bi-shield-check me-1"></i> ASP.NET Identity Cookie Auth</p>
+
+                <div class="col-md-6 col-lg-3">
+                    <h6 class="text-white fw-bold mb-3 small text-uppercase tracking-wider">Stay Updated</h6>
+                    <p class="small text-secondary mb-3">Subscribe for new curriculum drops, project assignments, and industry skill reports.</p>
+                    <form onsubmit="event.preventDefault(); LMS.toast('Thank you for subscribing to EduPlatform updates!', 'success'); this.reset();" class="d-flex gap-2">
+                        <input type="email" class="form-control form-control-sm bg-dark border-secondary text-white" placeholder="you@work.com" required style="border-radius: 9999px;">
+                        <button type="submit" class="btn btn-sm btn-primary px-3 rounded-pill text-nowrap">Join</button>
+                    </form>
                 </div>
             </div>
-            <hr class="border-secondary my-4">
+
+            <hr class="border-secondary my-4" style="opacity: 0.15;">
             <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center small text-secondary">
-                <div>&copy; @DateTime.UtcNow.Year LMS Platform. All rights reserved.</div>
+                <div>&copy; @DateTime.UtcNow.Year EduPlatform LMS. Designed with precision for professional learners.</div>
                 <div class="d-flex gap-3 mt-2 mt-sm-0">
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Security</a>
+                    <a href="@Url.Action("VerifyCertificate", "Certificate")">Credential Verification</a>
+                    <a href="@Url.Action("Contact", "Home")">Support</a>
+                    <a href="@Url.Action("About", "Home")">Architecture</a>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="~/Scripts/jquery-3.7.0.min.js"></script>
     <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <script src="~/Scripts/lms-app.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
