@@ -50,9 +50,9 @@
                         <tr>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    @if (!string.IsNullOrEmpty(course.ThumbnailUrl))
+                                    @if (!string.IsNullOrEmpty(course.Thumbnail))
                                     {
-                                        <img src="@course.ThumbnailUrl" class="rounded me-3" style="width: 50px; height: 35px; object-fit: cover;" alt="" />
+                                        <img src="@course.Thumbnail" class="rounded me-3" style="width: 50px; height: 35px; object-fit: cover;" alt="" />
                                     }
                                     <div>
                                         <a href="@Url.Action("Details", "Courses", new { id = course.CourseId })" target="_blank" class="fw-bold text-dark text-decoration-none">
@@ -63,7 +63,7 @@
                                 </div>
                             </td>
                             <td>@(course.Category != null ? course.Category.CategoryName : "Unassigned")</td>
-                            <td><span class="badge bg-light text-dark border">@course.DifficultyLevel</span></td>
+                            <td><span class="badge bg-light text-dark border">@course.Level</span></td>
                             <td class="fw-bold">
                                 @(course.Price == 0 ? "Free" : "$" + course.Price.ToString("N2"))
                             </td>
@@ -71,7 +71,7 @@
                                 <span class="badge bg-info-subtle text-info border border-info">@course.TotalStudents learners</span>
                             </td>
                             <td>
-                                <span class="text-warning"><i class="bi bi-star-fill me-1"></i></span>@course.AverageRating.ToString("0.0")
+                                <span class="text-warning"><i class="bi bi-star-fill me-1"></i></span>@course.Rating.ToString("0.0")
                             </td>
                             <td>
                                 @if (course.Status == "Published")
