@@ -261,7 +261,17 @@
             }
         });
 
-        // Radio option change handler
+        // Radio option container click & change handlers
+        $(document).on('click', '.quiz-option-container', function (e) {
+            if ($(e.target).is('.quiz-option-radio') || $(e.target).is('label')) {
+                return; // Let native radio/label handle it
+            }
+            var $radio = $(this).find('.quiz-option-radio');
+            if ($radio.length && !$radio.prop('checked')) {
+                $radio.prop('checked', true).trigger('change');
+            }
+        });
+
         $('.quiz-option-radio').on('change', function () {
             var $card = $(this).closest('.question-card');
             $card.find('.quiz-option-container').removeClass('selected');
@@ -283,6 +293,17 @@
         var $timerBar = $('#quizTimerBar');
         var $timerBadge = $('#timerBadge');
 
+        function formatTime(totalSecs) {
+            var m = Math.floor(totalSecs / 60);
+            var s = totalSecs % 60;
+            return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+        }
+
+        // Format immediately
+        if ($timeDisplay.length) {
+            $timeDisplay.text(formatTime(remainingSeconds));
+        }
+
         var timerInterval = setInterval(function () {
             if (remainingSeconds <= 0) {
                 clearInterval(timerInterval);
@@ -295,10 +316,7 @@
             }
 
             remainingSeconds--;
-            var mins = Math.floor(remainingSeconds / 60);
-            var secs = remainingSeconds % 60;
-            var displayStr = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
-            $timeDisplay.text(displayStr);
+            $timeDisplay.text(formatTime(remainingSeconds));
 
             var pct = (remainingSeconds / totalSeconds) * 100;
             $timerBar.css('width', pct + '%');
@@ -326,11 +344,13 @@
         var $input = $('#catalogSearchInput');
         var $cards = $('.course-catalog-item');
         var $emptyMsg = $('#catalogNoMatchMessage');
+        var $levelSelect = $('select[name="level"]');
 
         function filterItems() {
             var query = ($input.val() || '').toLowerCase().trim();
             var activeCategory = $('.category-chip-btn.active').data('cat-id') || '';
-            var activeLevel = $('.level-chip-btn.active').data('level') || '';
+            var activeLevel = $('.level-chip-btn.active').data('level') || ($levelSelect.length ? $levelSelect.val() : '') || '';
+            if (activeLevel === 'All') activeLevel = '';
 
             var visibleCount = 0;
 
@@ -363,13 +383,15 @@
             $input.on('input', filterItems);
         }
 
-        $('.category-chip-btn').on('click', function () {
-            $('.category-chip-btn').removeClass('active btn-primary').addClass('btn-light');
-            $(this).removeClass('btn-light').addClass('active btn-primary');
+        $(document).on('click', '.category-chip-btn', function (e) {
+            e.preventDefault();
+            $('.category-chip-btn').removeClass('active btn-primary').addClass('btn-light border');
+            $(this).removeClass('btn-light border').addClass('active btn-primary');
             filterItems();
         });
 
-        $('.level-chip-btn').on('click', function () {
+        $(document).on('click', '.level-chip-btn', function (e) {
+            e.preventDefault();
             $('.level-chip-btn').removeClass('active btn-primary').addClass('btn-outline-secondary');
             $(this).removeClass('btn-outline-secondary').addClass('active btn-primary');
             filterItems();
