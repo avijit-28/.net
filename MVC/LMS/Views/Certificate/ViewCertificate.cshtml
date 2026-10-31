@@ -1,76 +1,100 @@
 @model LMS.ViewModels.CertificateViewModel
 @{
-    ViewBag.Title = "Certificate of Completion - " + Model.CertificateNumber;
+    ViewBag.Title = "Official Certificate of Completion - " + Model.CertificateNumber;
 }
 
 <div class="py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4 d-print-none">
-        <a href="@Url.Action("Certificates", "Student")" class="btn btn-outline-secondary rounded-pill px-3">
+    <!-- Top Action Toolbar (Hidden during Print) -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2 d-print-none">
+        <a href="@Url.Action("Certificates", "Student")" class="btn btn-outline-secondary rounded-pill px-4">
             <i class="bi bi-arrow-left me-1"></i> Back to Certificates
         </a>
-        <button class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm" onclick="window.print()">
-            <i class="bi bi-printer-fill me-1"></i> Download / Print Certificate
-        </button>
+
+        <div class="d-flex gap-2 flex-wrap">
+            <button type="button" class="btn btn-outline-primary rounded-pill px-3 fw-semibold shadow-xs" id="btnCopyCertUrl">
+                <i class="bi bi-link-45deg me-1"></i> Copy Verification Link
+            </button>
+            <button type="button" class="btn btn-outline-info rounded-pill px-3 fw-semibold text-dark shadow-xs" id="btnShareLinkedIn">
+                <i class="bi bi-linkedin me-1 text-primary"></i> Share on LinkedIn
+            </button>
+            <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" onclick="window.print()">
+                <i class="bi bi-printer-fill me-1"></i> Print / Download PDF
+            </button>
+        </div>
     </div>
 
-    <!-- Printable Certificate Document -->
-    <div class="card card-custom p-5 shadow bg-white border-3 border-primary position-relative" style="max-width: 900px; margin: 0 auto; min-height: 580px; background: radial-gradient(circle at top right, #f8fafc, #ffffff);">
-        <!-- Decorative Border Corner Accents -->
-        <div class="border border-2 border-primary-subtle p-4 p-md-5 rounded-3 text-center position-relative">
+    <!-- Official Museum-Grade Certificate Document -->
+    <div class="certificate-frame shadow-lg position-relative mx-auto" style="max-width: 960px; min-height: 620px; background: #ffffff;">
+        <div class="border border-2 border-warning-subtle p-4 p-md-5 rounded-2 text-center position-relative h-100" style="background: radial-gradient(circle at 50% 50%, rgba(254, 240, 138, 0.08) 0%, transparent 70%);">
+            
+            <!-- Header Institution Emblem -->
             <div class="mb-4">
-                <span class="badge bg-primary px-3 py-2 rounded-pill fs-6 fw-bold letter-spacing-1 text-uppercase">
-                    <i class="bi bi-award-fill me-1"></i> EduPlatform Learning Management System
+                <span class="badge bg-dark text-white px-4 py-2 rounded-pill fs-6 fw-bold text-uppercase tracking-wider shadow-sm">
+                    <i class="bi bi-mortarboard-fill text-warning me-2"></i> EduPlatform Learning Management System
                 </span>
+                <div class="small text-muted text-uppercase tracking-widest mt-2" style="font-size: 10px;">Board of Academic Accreditation & Quality Standards</div>
             </div>
 
-            <h1 class="display-5 fw-extrabold text-dark tracking-tight mb-2" style="font-family: serif; letter-spacing: 2px;">
+            <!-- Title -->
+            <h1 class="display-5 fw-extrabold text-dark tracking-tight mb-2" style="font-family: 'Times New Roman', Georgia, serif; letter-spacing: 3px;">
                 CERTIFICATE OF COMPLETION
             </h1>
-            <p class="text-muted text-uppercase small letter-spacing-2 mb-4">
+            <p class="text-secondary text-uppercase small tracking-widest mb-4" style="font-size: 11px;">
                 This certifies that
             </p>
 
-            <h2 class="display-6 fw-bold text-primary mb-3 text-uppercase text-decoration-underline" style="letter-spacing: 1px;">
+            <!-- Student Name -->
+            <h2 class="display-6 fw-bold text-primary mb-3 text-uppercase" style="font-family: 'Times New Roman', Georgia, serif; letter-spacing: 1.5px; border-bottom: 2px solid #4f46e5; display: inline-block; padding-bottom: 4px;">
                 @Model.StudentName
             </h2>
 
-            <p class="lead text-secondary mb-3">
-                has successfully fulfilled all curriculum requirements, assessments, and practical assignments for
+            <p class="lead text-secondary mb-3 mt-3" style="font-size: 1.05rem;">
+                has successfully fulfilled all curriculum requirements, modules, practical projects, and assessment milestones for
             </p>
 
-            <h3 class="fw-bold text-dark mb-4">
+            <!-- Course Title -->
+            <h3 class="fw-extrabold text-dark mb-4 px-3" style="font-size: 1.5rem; letter-spacing: -0.02em;">
                 @Model.CourseTitle
             </h3>
 
-            <div class="row justify-content-center g-4 my-3">
+            <!-- Metrics Bar -->
+            <div class="row justify-content-center g-4 my-4 p-3 bg-light rounded-3 border">
                 <div class="col-sm-4 border-end">
-                    <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 11px;">Final Assessment Score</small>
-                    <span class="fs-5 fw-bold text-success">@(Model.FinalScore.HasValue ? Model.FinalScore.Value.ToString("0.0") + "%" : "100.0%")</span>
+                    <small class="text-muted text-uppercase d-block fw-bold" style="font-size: 10px;">Final Assessment Score</small>
+                    <span class="fs-4 fw-extrabold text-success">@(Model.FinalScore.HasValue ? Model.FinalScore.Value.ToString("0.0") + "%" : "100.0%")</span>
                 </div>
                 <div class="col-sm-4 border-end">
-                    <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 11px;">Issue Date</small>
+                    <small class="text-muted text-uppercase d-block fw-bold" style="font-size: 10px;">Issuance Date</small>
                     <span class="fs-5 fw-bold text-dark">@Model.IssueDate.ToString("MMMM dd, yyyy")</span>
                 </div>
                 <div class="col-sm-4">
-                    <small class="text-muted text-uppercase d-block fw-semibold" style="font-size: 11px;">Certificate ID</small>
-                    <span class="fs-5 fw-bold text-primary">@Model.CertificateNumber</span>
+                    <small class="text-muted text-uppercase d-block fw-bold" style="font-size: 10px;">Cryptographic ID</small>
+                    <span class="fs-6 fw-bold font-monospace text-primary">@Model.CertificateNumber</span>
                 </div>
             </div>
 
-            <div class="d-flex justify-content-between align-items-end mt-5 pt-4 border-top">
-                <div class="text-start">
-                    <div class="fw-bold text-dark border-top border-dark pt-1" style="width: 180px;">Academic Director</div>
-                    <small class="text-muted">Board of Examinations</small>
+            <!-- Signatures and Official Seal -->
+            <div class="row align-items-end mt-5 pt-3">
+                <div class="col-4 text-center">
+                    <div class="border-top border-dark pt-2 fw-bold text-dark mx-auto" style="max-width: 200px;">
+                        Dr. Evelyn Vance
+                    </div>
+                    <small class="text-muted d-block" style="font-size: 11px;">Director of Academic Standards</small>
                 </div>
-                <div>
-                    <span class="badge bg-success-subtle text-success border border-success-subtle p-2 rounded-circle">
-                        <i class="bi bi-patch-check-fill fs-3"></i>
-                    </span>
-                    <small class="d-block text-muted mt-1" style="font-size: 10px;">Officially Verified</small>
+
+                <div class="col-4 text-center">
+                    <div class="certificate-seal">
+                        <i class="bi bi-award-fill fs-3 mb-1"></i>
+                        <span style="font-size: 9px; letter-spacing: 0.5px;">VERIFIED</span>
+                    </div>
+                    <small class="text-muted d-block mt-2 font-monospace" style="font-size: 9px;">AUTHENTIC SECURE ID</small>
                 </div>
-                <div class="text-end">
-                    <div class="fw-bold text-dark border-top border-dark pt-1 ms-auto" style="width: 180px;">Program Instructor</div>
-                    <small class="text-muted">Faculty of Computing</small>
+
+                <div class="col-4 text-center">
+                    <div class="border-top border-dark pt-2 fw-bold text-dark mx-auto" style="max-width: 200px;">
+                        Marcus Holloway
+                    </div>
+                    <small class="text-muted d-block" style="font-size: 11px;">Faculty Lead Instructor</small>
                 </div>
             </div>
         </div>
@@ -79,15 +103,30 @@
 
 <style>
     @@media print {
-        header, footer, .d-print-none, .navbar {
+        header, footer, .d-print-none, .navbar, #lmsToastContainer {
             display: none !important;
         }
         body {
             background: white !important;
+            padding: 0 !important;
+            margin: 0 !important;
         }
-        .card {
-            border: none !important;
+        .certificate-frame {
+            border: 4px double #d4af37 !important;
             box-shadow: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-height: auto !important;
+            page-break-inside: avoid;
         }
     }
 </style>
+
+@section Scripts {
+    <script>
+        $(function () {
+            LMS.initCertificate();
+            LMS.confetti({ particleCount: 80 });
+        });
+    </script>
+}
