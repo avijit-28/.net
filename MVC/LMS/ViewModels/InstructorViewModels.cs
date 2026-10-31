@@ -38,6 +38,7 @@ namespace LMS.ViewModels
 
         [Required]
         [Range(0, 100000, ErrorMessage = "Price must be 0 or positive.")]
+        [Display(Name = "Course Price (₹)")]
         public decimal Price { get; set; } = 0;
 
         [Required]

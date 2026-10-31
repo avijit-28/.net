@@ -33,11 +33,11 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small text-uppercase fw-bold" style="font-size: 11px;">Gross Platform Sales</span>
-                        <h3 class="fw-extrabold text-dark mt-2 mb-0">$@Model.TotalRevenue.ToString("N2")</h3>
+                        <h3 class="fw-extrabold text-dark mt-2 mb-0"><span class="rupee-symbol">₹</span>@Model.TotalRevenue.ToString("N2")</h3>
                         <small class="text-success"><i class="bi bi-graph-up-arrow me-1"></i>All-time revenue</small>
                     </div>
                     <div class="p-3 bg-primary-subtle text-primary rounded-circle shadow-xs">
-                        <i class="bi bi-cash-stack fs-3"></i>
+                        <i class="bi bi-currency-rupee fs-3"></i>
                     </div>
                 </div>
             </div>
@@ -215,7 +215,7 @@
                                                 @(p.Course != null ? p.Course.Title : "Course #" + p.CourseId)
                                             </div>
                                         </td>
-                                        <td class="fw-bold text-success">$@p.Amount.ToString("N2")</td>
+                                        <td class="fw-bold text-success"><span class="rupee-symbol">₹</span>@p.Amount.ToString("N2")</td>
                                         <td>
                                             <span class="badge @(p.PaymentStatus == "Completed" ? "bg-success" : "bg-secondary") rounded-pill">@p.PaymentStatus</span>
                                         </td>

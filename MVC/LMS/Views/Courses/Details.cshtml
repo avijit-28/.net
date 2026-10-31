@@ -61,7 +61,7 @@
                         }
                         else
                         {
-                            <span class="display-6 fw-extrabold text-dark">$@Model.Course.Price.ToString("N2")</span>
+                            <span class="display-6 fw-extrabold text-dark"><span class="rupee-symbol">₹</span>@Model.Course.Price.ToString("N2")</span>
                             <div class="small text-muted mt-1">One-time payment • Lifetime access</div>
                         }
                     </div>
@@ -105,7 +105,7 @@
                         }
                         else
                         {
-                            <a href="@Url.Action("Purchase", "Courses", new { courseId = Model.Course.CourseId })" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm mb-2">
+                            <a href="@Url.Action("Payment", "Courses", new { courseId = Model.Course.CourseId })" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm mb-2">
                                 <i class="bi bi-credit-card-fill me-1"></i> Buy Course & Start Learning
                             </a>
                         }

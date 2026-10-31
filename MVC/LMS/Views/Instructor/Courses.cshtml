@@ -47,7 +47,7 @@
                                 </td>
                                 <td><span class="badge bg-light text-dark border">@(c.Category?.CategoryName ?? "General")</span></td>
                                 <td><span class="badge bg-secondary-subtle text-secondary">@c.Level</span></td>
-                                <td class="fw-semibold">@(c.Price == 0 ? "FREE" : "$" + c.Price.ToString("N2"))</td>
+                                <td class="fw-semibold">@if (c.Price == 0) { <span class="text-success fw-bold">FREE</span> } else { <span><span class="rupee-symbol">₹</span>@c.Price.ToString("N2")</span> }</td>
                                 <td>
                                     <a href="@Url.Action("Students", "Instructor", new { courseId = c.CourseId })" class="text-decoration-none">
                                         @c.TotalStudents students &rarr;

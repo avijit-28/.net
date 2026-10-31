@@ -107,6 +107,42 @@ namespace LMS.Controllers
             return RedirectToAction("Index", "Learning", new { courseId });
         }
 
+        // GET: Courses/Payment
+        [Authorize(Roles = "Student")]
+        public ActionResult Payment(int courseId)
+        {
+            string studentId = User.Identity.GetUserId();
+            var course = _db.Courses.Find(courseId);
+            if (course == null) return HttpNotFound();
+
+            if (_enrollmentService.IsEnrolled(studentId, courseId))
+            {
+                TempData["InfoMessage"] = "You are already enrolled in this course.";
+                return RedirectToAction("Index", "Learning", new { courseId });
+            }
+
+            return View(course);
+        }
+
+        // POST: Courses/Payment
+        [HttpPost]
+        [Authorize(Roles = "Student")]
+        [ValidateAntiForgeryToken]
+        public ActionResult Payment(int courseId, string paymentMethod)
+        {
+            string studentId = User.Identity.GetUserId();
+            bool success = _paymentService.ProcessCoursePayment(studentId, courseId, paymentMethod, out string transactionId, out string error);
+
+            if (!success)
+            {
+                TempData["ErrorMessage"] = error;
+                return RedirectToAction("Payment", new { courseId });
+            }
+
+            TempData["SuccessMessage"] = $"Payment successful! Transaction ID: {transactionId}. Welcome to the course!";
+            return RedirectToAction("Index", "Learning", new { courseId });
+        }
+
         // POST: Courses/AddReview
         [HttpPost]
         [Authorize(Roles = "Student")]

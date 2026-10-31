@@ -10,6 +10,22 @@
     var LMS = window.LMS = window.LMS || {};
 
     /* ==========================================================================
+       0. Currency Formatting Helpers (Indian Rupee - INR / ₹)
+       ========================================================================== */
+    LMS.currencySymbol = '₹';
+    LMS.currencyCode = 'INR';
+    LMS.formatRupee = function (amount) {
+        var num = parseFloat(amount) || 0;
+        return LMS.currencySymbol + num.toLocaleString('en-IN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    };
+    LMS.formatCurrency = function (amount) {
+        return LMS.formatRupee(amount);
+    };
+
+    /* ==========================================================================
        1. Toast Notification System
        ========================================================================== */
     LMS.toast = function (message, type, duration) {

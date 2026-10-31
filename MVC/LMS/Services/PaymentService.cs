@@ -63,7 +63,7 @@ namespace LMS.Services
                 {
                     UserId = studentId,
                     Title = "Payment Successful",
-                    Message = $"Your payment of ${course.Price:N2} for '{course.Title}' was successful. You now have full access!",
+                    Message = $"Your payment of ₹{course.Price:N2} for '{course.Title}' was successful. You now have full access!",
                     NotificationType = "Payment",
                     IsRead = false,
                     CreatedDate = DateTime.UtcNow

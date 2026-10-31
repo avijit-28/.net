@@ -19,7 +19,7 @@
         </div>
         <div>
             <span class="badge bg-success fs-6 px-3 py-2 rounded-pill shadow-xs">
-                Total Revenue: $@(Model.Where(p => p.PaymentStatus == "Completed").Sum(p => (decimal?)p.Amount ?? 0).ToString("N2"))
+                Total Revenue: <span class="rupee-symbol">₹</span>@(Model.Where(p => p.PaymentStatus == "Completed").Sum(p => (decimal?)p.Amount ?? 0).ToString("N2"))
             </span>
         </div>
     </div>
@@ -62,7 +62,7 @@
                                         @(p.Course != null ? p.Course.Title : "Course #" + p.CourseId)
                                     </div>
                                 </td>
-                                <td class="fw-extrabold text-success">$@p.Amount.ToString("N2")</td>
+                                <td class="fw-extrabold text-success"><span class="rupee-symbol">₹</span>@p.Amount.ToString("N2")</td>
                                 <td>
                                     <span class="badge bg-light text-dark border">@p.PaymentMethod</span>
                                 </td>

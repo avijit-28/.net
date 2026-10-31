@@ -65,7 +65,7 @@
                             <td>@(course.Category != null ? course.Category.CategoryName : "Unassigned")</td>
                             <td><span class="badge bg-light text-dark border">@course.Level</span></td>
                             <td class="fw-bold">
-                                @(course.Price == 0 ? "Free" : "$" + course.Price.ToString("N2"))
+                                @if (course.Price == 0) { <span class="text-success">Free</span> } else { <span><span class="rupee-symbol">₹</span>@course.Price.ToString("N2")</span> }
                             </td>
                             <td>
                                 <span class="badge bg-info-subtle text-info border border-info">@course.TotalStudents learners</span>
