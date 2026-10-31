@@ -5,39 +5,36 @@
 }
 
 <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
-            <h2 class="fw-bold mb-1"><i class="bi bi-bell-fill me-2 text-primary"></i>Notifications Center</h2>
-            <p class="text-muted mb-0">Stay updated on your learning milestones, grades, and platform activity</p>
+            <span class="badge badge-primary-subtle px-3 py-1 rounded-pill mb-2 fw-semibold">
+                <span class="pulse-dot pulse-primary"></span> Activity Feed
+            </span>
+            <h2 class="fw-extrabold mb-1 tracking-tight">Notifications Center</h2>
+            <p class="text-muted small mb-0">Stay updated on curriculum announcements, quiz assessments, and project grades</p>
         </div>
         @if (unreadCount > 0)
         {
             using (Html.BeginForm("MarkAllAsRead", "Notifications", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-check2-all me-1"></i> Mark All as Read
+                <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-semibold shadow-xs">
+                    <i class="bi bi-check2-all me-1"></i> Mark All as Read (@unreadCount)
                 </button>
             }
         }
     </div>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
-
     @if (!Model.Any())
     {
-        <div class="card border-0 shadow-sm text-center py-5">
+        <div class="card card-custom border-0 shadow-sm text-center py-5 bg-white">
             <div class="card-body">
-                <i class="bi bi-bell-slash text-muted display-4"></i>
-                <h4 class="mt-3 fw-bold">All caught up!</h4>
-                <p class="text-muted">You do not have any notifications right now.</p>
-                <a href="@Url.Action("Index", "Courses")" class="btn btn-primary mt-2">
+                <div class="rounded-circle bg-light p-4 d-inline-flex mx-auto mb-3">
+                    <i class="bi bi-bell-slash text-muted fs-1"></i>
+                </div>
+                <h4 class="fw-bold">All caught up!</h4>
+                <p class="text-muted small">You do not have any unread notifications right now.</p>
+                <a href="@Url.Action("Index", "Courses")" class="btn btn-primary rounded-pill px-4 fw-semibold mt-2">
                     Browse Courses
                 </a>
             </div>
@@ -45,16 +42,16 @@
     }
     else
     {
-        <div class="card border-0 shadow-sm">
+        <div class="card card-custom border-0 shadow-sm overflow-hidden bg-white">
             <div class="list-group list-group-flush">
                 @foreach (var n in Model)
                 {
-                    <div class="list-group-item p-3 @(n.IsRead ? "bg-white" : "bg-light border-start border-primary border-4")">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="d-flex">
-                                <div class="me-3 mt-1">
-                                    <div class="avatar @(n.IsRead ? "bg-light text-muted" : "bg-primary text-white") rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                                        <i class="bi bi-info-circle-fill"></i>
+                    <div class="list-group-item p-3 @(n.IsRead ? "bg-white" : "bg-light border-start border-4 border-primary")">
+                        <div class="d-flex justify-content-between align-items-start gap-3">
+                            <div class="d-flex gap-3">
+                                <div class="mt-1">
+                                    <div class="rounded-circle @(n.IsRead ? "bg-light text-muted" : "bg-primary text-white") p-2 d-flex align-items-center justify-content-center shadow-xs" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-bell-fill fs-6"></i>
                                     </div>
                                 </div>
                                 <div>
@@ -62,10 +59,10 @@
                                         @n.Title
                                         @if (!n.IsRead)
                                         {
-                                            <span class="badge bg-primary ms-1">New</span>
+                                            <span class="badge bg-primary ms-1 rounded-pill" style="font-size: 10px;">New</span>
                                         }
                                     </h6>
-                                    <p class="mb-1 text-secondary">@n.Message</p>
+                                    <p class="mb-1 text-secondary small" style="line-height: 1.6;">@n.Message</p>
                                     <small class="text-muted"><i class="bi bi-clock me-1"></i>@n.CreatedDate.ToString("MMM dd, yyyy HH:mm")</small>
                                 </div>
                             </div>
@@ -74,8 +71,8 @@
                                 using (Html.BeginForm("MarkAsRead", "Notifications", new { id = n.NotificationId }, FormMethod.Post, new { @class = "ms-3" }))
                                 {
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-sm btn-outline-secondary" title="Mark as read">
-                                        <i class="bi bi-check"></i>
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill" title="Mark as read">
+                                        <i class="bi bi-check-lg"></i>
                                     </button>
                                 }
                             }
