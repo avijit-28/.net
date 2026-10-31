@@ -35,13 +35,15 @@
                 <i class="bi bi-funnel-fill text-primary me-1"></i> Subject:
             </span>
             <a href="@Url.Action("Index", "Courses", new { search = Model.Search, level = Model.Level, priceType = Model.PriceType, sortBy = Model.SortBy })"
-               class="btn btn-sm @(Model.CategoryId == null ? "btn-primary" : "btn-light border") rounded-pill px-3 text-nowrap">
+               class="btn btn-sm category-chip-btn @(Model.CategoryId == null ? "active btn-primary" : "btn-light border") rounded-pill px-3 text-nowrap"
+               data-cat-id="">
                 All Subjects
             </a>
             @foreach (var cat in Model.Categories)
             {
                 <a href="@Url.Action("Index", "Courses", new { categoryId = cat.CategoryId, search = Model.Search, level = Model.Level, priceType = Model.PriceType, sortBy = Model.SortBy })"
-                   class="btn btn-sm @(Model.CategoryId == cat.CategoryId ? "btn-primary" : "btn-light border") rounded-pill px-3 text-nowrap">
+                   class="btn btn-sm category-chip-btn @(Model.CategoryId == cat.CategoryId ? "active btn-primary" : "btn-light border") rounded-pill px-3 text-nowrap"
+                   data-cat-id="@cat.CategoryId">
                     @cat.CategoryName
                 </a>
             }
@@ -74,6 +76,12 @@
 
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-dark">Difficulty Level</label>
+                        <div class="d-flex flex-wrap gap-1 mb-2">
+                            <button type="button" class="btn btn-xs level-chip-btn @(string.IsNullOrEmpty(Model.Level) || Model.Level == "All" ? "active btn-primary" : "btn-outline-secondary") rounded-pill px-2 py-1 small" data-level="">All</button>
+                            <button type="button" class="btn btn-xs level-chip-btn @(Model.Level == "Beginner" ? "active btn-primary" : "btn-outline-secondary") rounded-pill px-2 py-1 small" data-level="Beginner">Beginner</button>
+                            <button type="button" class="btn btn-xs level-chip-btn @(Model.Level == "Intermediate" ? "active btn-primary" : "btn-outline-secondary") rounded-pill px-2 py-1 small" data-level="Intermediate">Mid</button>
+                            <button type="button" class="btn btn-xs level-chip-btn @(Model.Level == "Advanced" ? "active btn-primary" : "btn-outline-secondary") rounded-pill px-2 py-1 small" data-level="Advanced">Adv</button>
+                        </div>
                         <select name="level" class="form-select form-select-sm" onchange="this.form.submit()">
                             <option value="All" @(Model.Level == "All" || string.IsNullOrEmpty(Model.Level) ? "selected" : "")>All Levels</option>
                             <option value="Beginner" @(Model.Level == "Beginner" ? "selected" : "")>Beginner</option>
