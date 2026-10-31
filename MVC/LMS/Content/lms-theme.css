@@ -356,6 +356,33 @@ input, select, textarea {
     color: #f1f5f9 !important;
 }
 
+body.theater-mode-active {
+    background-color: #040711 !important;
+}
+
+body.theater-mode-active .navbar-lms {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.theater-mode-active .navbar-brand-lms {
+    color: #ffffff !important;
+}
+
+body.theater-mode-active .nav-link {
+    color: #94a3b8 !important;
+}
+
+body.theater-mode-active .nav-link:hover {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.theater-mode-active .footer-lms {
+    background: #040711 !important;
+    border-top-color: rgba(255, 255, 255, 0.05) !important;
+}
+
 .theater-mode .classroom-sidebar {
     background: #0f172a !important;
     border-color: #1e293b !important;
