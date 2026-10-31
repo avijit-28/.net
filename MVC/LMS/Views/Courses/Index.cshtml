@@ -67,7 +67,7 @@
                         </div>
                     </div>
 
-                    @if (Model.CategoryId.HasValue)
+                    if (Model.CategoryId.HasValue)
                     {
                         <input type="hidden" name="categoryId" value="@Model.CategoryId.Value" />
                     }
