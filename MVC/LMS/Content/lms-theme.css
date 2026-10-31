@@ -508,17 +508,24 @@ body.theater-mode-active .footer-lms {
 .quiz-option-container {
     transition: var(--lms-transition);
     border: 2px solid transparent;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: var(--lms-radius);
 }
 
 .quiz-option-container:hover {
     border-color: #cbd5e1;
     background: #ffffff !important;
+    transform: translateY(-1px);
 }
 
 .quiz-option-container.selected {
     border-color: var(--lms-primary) !important;
     background: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
 }
 
 /* Urgent countdown timer pulse */
