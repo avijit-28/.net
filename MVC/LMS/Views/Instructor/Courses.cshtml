@@ -76,7 +76,7 @@
                                             @if (c.Status != "Published")
                                             {
                                                 <li>
-                                                    using (Html.BeginForm("PublishCourse", "Instructor", new { id = c.CourseId }, FormMethod.Post))
+                                                    @using (Html.BeginForm("PublishCourse", "Instructor", new { id = c.CourseId }, FormMethod.Post))
                                                     {
                                                         @Html.AntiForgeryToken()
                                                         <button type="submit" class="dropdown-item text-success fw-bold">
@@ -88,7 +88,7 @@
                                             @if (c.Status == "Draft")
                                             {
                                                 <li>
-                                                    using (Html.BeginForm("DeleteCourse", "Instructor", new { id = c.CourseId }, FormMethod.Post))
+                                                    @using (Html.BeginForm("DeleteCourse", "Instructor", new { id = c.CourseId }, FormMethod.Post))
                                                     {
                                                         @Html.AntiForgeryToken()
                                                         <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Delete this draft course?');">
