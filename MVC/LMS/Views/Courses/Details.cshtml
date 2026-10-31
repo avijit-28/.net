@@ -94,7 +94,7 @@
                     {
                         if (Model.Course.Price == 0)
                         {
-                            using (Html.BeginForm("Enroll", "Courses", FormMethod.Post))
+                            @using (Html.BeginForm("Enroll", "Courses", FormMethod.Post))
                             {
                                 @Html.AntiForgeryToken()
                                 <input type="hidden" name="courseId" value="@Model.Course.CourseId" />
