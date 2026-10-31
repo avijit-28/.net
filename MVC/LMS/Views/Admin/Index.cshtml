@@ -209,7 +209,7 @@
                                 foreach (var p in Model.RecentPayments)
                                 {
                                     <tr>
-                                        <td><code class="small text-dark font-monospace">@p.TransactionReference</code></td>
+                                        <td><code class="small text-dark font-monospace">@(p.TransactionId ?? "TXN-" + p.PaymentId)</code></td>
                                         <td>
                                             <div class="fw-semibold text-truncate text-dark" style="max-width: 180px;">
                                                 @(p.Course != null ? p.Course.Title : "Course #" + p.CourseId)
@@ -217,7 +217,7 @@
                                         </td>
                                         <td class="fw-bold text-success">$@p.Amount.ToString("N2")</td>
                                         <td>
-                                            <span class="badge @(p.Status == "Completed" ? "bg-success" : "bg-secondary") rounded-pill">@p.Status</span>
+                                            <span class="badge @(p.PaymentStatus == "Completed" ? "bg-success" : "bg-secondary") rounded-pill">@p.PaymentStatus</span>
                                         </td>
                                         <td><small class="text-muted">@p.PaymentDate.ToString("MMM dd")</small></td>
                                     </tr>
