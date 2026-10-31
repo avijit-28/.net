@@ -206,19 +206,19 @@
                     <div class="d-flex justify-content-center mt-5">
                         <nav aria-label="Course catalog navigation">
                             <ul class="pagination pagination-sm shadow-sm rounded-pill overflow-hidden">
-                                <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-                                    <a class="page-link" href="@Url.Action("Index", "Courses", new { page = Model.CurrentPage - 1, search = Model.Search, categoryId = Model.CategoryId, level = Model.Level, priceType = Model.PriceType, sortBy = Model.SortBy })">
+                                <li class="page-item @(Model.Page == 1 ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", "Courses", new { page = Model.Page - 1, search = Model.Search, categoryId = Model.CategoryId, level = Model.Level, priceType = Model.PriceType, sortBy = Model.SortBy })">
                                         <i class="bi bi-chevron-left"></i>
                                     </a>
                                 </li>
                                 @for (int p = 1; p <= Model.TotalPages; p++)
                                 {
-                                    <li class="page-item @(p == Model.CurrentPage ? "active" : "")">
+                                    <li class="page-item @(p == Model.Page ? "active" : "")">
                                         <a class="page-link" href="@Url.Action("Index", "Courses", new { page = p, search = Model.Search, categoryId = Model.CategoryId, level = Model.Level, priceType = Model.PriceType, sortBy = Model.SortBy })">@p</a>
                                     </li>
                                 }
-                                <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
-                                    <a class="page-link" href="@Url.Action("Index", "Courses", new { page = Model.CurrentPage + 1, search = Model.Search, categoryId = Model.CategoryId, level = Model.Level, priceType = Model.PriceType, sortBy = Model.SortBy })">
+                                <li class="page-item @(Model.Page == Model.TotalPages ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", "Courses", new { page = Model.Page + 1, search = Model.Search, categoryId = Model.CategoryId, level = Model.Level, priceType = Model.PriceType, sortBy = Model.SortBy })">
                                         <i class="bi bi-chevron-right"></i>
                                     </a>
                                 </li>
