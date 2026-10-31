@@ -138,12 +138,14 @@
         var isTheater = localStorage.getItem('lms_theater_mode') === 'true';
         if (isTheater) {
             $('.classroom-container').addClass('theater-mode');
+            $('body').addClass('theater-mode-active');
             $('#btnToggleTheater').addClass('active').html('<i class="bi bi-sun-fill me-1"></i> Normal View');
         }
 
         $('#btnToggleTheater').on('click', function () {
             var $c = $('.classroom-container');
             $c.toggleClass('theater-mode');
+            $('body').toggleClass('theater-mode-active');
             var active = $c.hasClass('theater-mode');
             localStorage.setItem('lms_theater_mode', active);
             if (active) {
