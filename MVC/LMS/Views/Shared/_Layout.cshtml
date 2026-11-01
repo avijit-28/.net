@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewBag.Title - EduPlatform LMS</title>
     
+    <!-- Title / Favicon Icons -->
+    <link rel="icon" type="image/png" href="@Url.Content("~/Content/images/logo-icon.png")" />
+    <link rel="shortcut icon" type="image/png" href="@Url.Content("~/Content/images/logo-icon.png")" />
+    <link rel="apple-touch-icon" href="@Url.Content("~/Content/images/logo-icon.png")" />
+    
     <!-- Bootstrap 5 CSS -->
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
@@ -20,12 +25,34 @@
     @RenderSection("Styles", required: false)
 </head>
 <body>
+    <!-- Fullsite Brand Preloader (Smooth transition on complete page load) -->
+    <div id="globalPreloader" aria-hidden="true">
+        <div class="preloader-card">
+            <div class="preloader-logo-wrap">
+                <img src="@Url.Content("~/Content/images/logo-icon.png")" alt="LMS" class="preloader-logo" />
+                <div class="preloader-spinner-ring"></div>
+            </div>
+            <div class="preloader-title">LMS</div>
+            <div class="preloader-subtitle">Loading EduPlatform LMS...</div>
+            <div class="preloader-bar-wrap">
+                <div class="preloader-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation / Route Progress Bar & Loading Indicator -->
+    <div id="routeProgressBar"></div>
+    <div id="routeLoadingPill" class="route-loading-pill shadow-sm">
+        <span class="spinner-border spinner-border-sm text-warning" style="width: 0.95rem; height: 0.95rem;" role="status"></span>
+        <span class="small fw-semibold text-dark">Loading...</span>
+    </div>
+
     <header>
         <nav class="navbar navbar-expand-lg navbar-lms sticky-top py-2 px-lg-4">
             <div class="container-fluid max-w-7xl">
                 <!-- Left: Brand Logo -->
-                <a class="navbar-brand-lms me-3" href="@Url.Action("Index", "Home")">
-                    <span class="badge-brand-icon"><i class="bi bi-mortarboard-fill"></i></span>
+                <a class="navbar-brand-lms me-3 d-flex align-items-center gap-2" href="@Url.Action("Index", "Home")">
+                    <img src="@Url.Content("~/Content/images/logo-icon.png")" alt="LMS Logo" class="brand-logo-img rounded-3 shadow-xs" style="width: 36px; height: 36px; object-fit: contain;" />
                     <div class="d-flex flex-column text-start">
                         <span class="brand-title">LMS</span>
                         <span class="brand-subtitle d-none d-sm-inline">Learning Management System</span>
@@ -255,8 +282,8 @@
         <div class="container-fluid max-w-7xl px-3 px-lg-4">
             <div class="row g-4 justify-content-between">
                 <div class="col-lg-4">
-                    <div class="navbar-brand-lms text-white mb-3">
-                        <span class="badge-brand-icon"><i class="bi bi-mortarboard-fill"></i></span>
+                    <div class="navbar-brand-lms text-white mb-3 d-flex align-items-center gap-2">
+                        <img src="@Url.Content("~/Content/images/logo-icon.png")" alt="LMS Logo" class="rounded-3 shadow-xs" style="width: 36px; height: 36px; object-fit: contain;" />
                         <div class="d-flex flex-column text-start">
                             <span class="brand-title">LMS</span>
                             <span class="brand-subtitle text-light opacity-75">Learning Management System</span>

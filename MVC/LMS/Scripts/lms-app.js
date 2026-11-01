@@ -150,25 +150,58 @@
         var lessonId = options.lessonId;
         var courseId = options.courseId;
 
-        // Theater mode toggle
-        var isTheater = localStorage.getItem('lms_theater_mode') === 'true';
-        if (isTheater) {
-            $('.classroom-container').addClass('theater-mode');
-            $('body').addClass('theater-mode-active');
-            $('#btnToggleTheater').addClass('active').html('<i class="bi bi-sun-fill me-1"></i> Normal View');
+        // Focus Mode / Distraction-Free Theater Toggle
+        var $classroom = $('.classroom-container');
+        var $body = $('body');
+        var $focusBtn = $('#btnToggleTheater');
+        var $sidebarToggle = $('#btnToggleSidebarInFocus');
+        var $sidebar = $('.classroom-sidebar');
+
+        function setFocusMode(active) {
+            if (active) {
+                $classroom.addClass('focus-mode').removeClass('theater-mode');
+                $body.addClass('focus-mode-active').removeClass('theater-mode-active');
+                $focusBtn.addClass('btn-primary text-white').removeClass('btn-outline-light')
+                         .html('<i class="bi bi-fullscreen-exit me-1"></i> Exit Focus Mode');
+                $sidebarToggle.removeClass('d-none');
+                localStorage.setItem('lms_focus_mode', 'true');
+            } else {
+                $classroom.removeClass('focus-mode theater-mode');
+                $body.removeClass('focus-mode-active theater-mode-active');
+                $sidebar.removeClass('show-in-focus');
+                $focusBtn.removeClass('btn-primary text-white').addClass('btn-outline-light')
+                         .html('<i class="bi bi-moon-stars me-1"></i> Focus Mode');
+                $sidebarToggle.addClass('d-none');
+                localStorage.setItem('lms_focus_mode', 'false');
+            }
         }
 
-        $('#btnToggleTheater').on('click', function () {
-            var $c = $('.classroom-container');
-            $c.toggleClass('theater-mode');
-            $('body').toggleClass('theater-mode-active');
-            var active = $c.hasClass('theater-mode');
-            localStorage.setItem('lms_theater_mode', active);
-            if (active) {
-                $(this).addClass('active').html('<i class="bi bi-sun-fill me-1"></i> Normal View');
-                LMS.toast('Focus / Theater Mode activated', 'info');
+        // Restore saved preference
+        var savedFocus = localStorage.getItem('lms_focus_mode') === 'true';
+        if (savedFocus) {
+            setFocusMode(true);
+        }
+
+        $focusBtn.on('click', function () {
+            var isCurrentlyFocus = $classroom.hasClass('focus-mode');
+            setFocusMode(!isCurrentlyFocus);
+            if (!isCurrentlyFocus) {
+                LMS.toast('Distraction-Free Focus Mode activated (Press Esc to exit)', 'info');
             } else {
-                $(this).removeClass('active').html('<i class="bi bi-moon-stars me-1"></i> Focus Mode');
+                LMS.toast('Returned to Normal Classroom View', 'info');
+            }
+        });
+
+        // Syllabus drawer toggle when inside Focus Mode
+        $sidebarToggle.on('click', function () {
+            $sidebar.toggleClass('show-in-focus');
+        });
+
+        // Esc key exits Focus Mode
+        $(document).on('keydown', function (e) {
+            if (e.key === 'Escape' && $classroom.hasClass('focus-mode')) {
+                setFocusMode(false);
+                LMS.toast('Exited Focus Mode', 'info');
             }
         });
 
@@ -177,21 +210,60 @@
             var storageKey = 'lms_scratchpad_' + courseId + '_' + lessonId;
             var $textarea = $('#lessonScratchpad');
             var $saveStatus = $('#scratchpadStatus');
+            var $charCount = $('#scratchpadCharCount');
+
+            function updateCharCount() {
+                var len = ($textarea.val() || '').length;
+                if ($charCount.length) {
+                    $charCount.text(len + ' characters');
+                }
+            }
 
             if ($textarea.length) {
                 var savedNotes = localStorage.getItem(storageKey);
                 if (savedNotes) {
                     $textarea.val(savedNotes);
+                    updateCharCount();
                 }
 
                 var debounceTimer;
                 $textarea.on('input', function () {
+                    updateCharCount();
                     $saveStatus.html('<i class="bi bi-arrow-repeat spin"></i> Saving...');
                     clearTimeout(debounceTimer);
                     debounceTimer = setTimeout(function () {
                         localStorage.setItem(storageKey, $textarea.val());
-                        $saveStatus.html('<i class="bi bi-check2 text-success"></i> Autosaved locally');
-                    }, 500);
+                        $saveStatus.html('<i class="bi bi-cloud-check-fill text-success"></i> Autosaved locally');
+                    }, 400);
+                });
+
+                // Copy notes to clipboard
+                $('#btnCopyNotes').on('click', function () {
+                    var notes = $textarea.val();
+                    if (!notes || !notes.trim()) {
+                        LMS.toast('Scratchpad is empty', 'warning');
+                        return;
+                    }
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(notes).then(function () {
+                            LMS.toast('Notes copied to clipboard!', 'success');
+                        });
+                    } else {
+                        $textarea.select();
+                        document.execCommand('copy');
+                        LMS.toast('Notes copied to clipboard!', 'success');
+                    }
+                });
+
+                // Clear notes for this lesson
+                $('#btnClearNotes').on('click', function () {
+                    if (confirm('Clear scratchpad notes for this lesson?')) {
+                        $textarea.val('');
+                        localStorage.removeItem(storageKey);
+                        updateCharCount();
+                        $saveStatus.html('<i class="bi bi-cloud-check-fill text-success"></i> Cleared');
+                        LMS.toast('Scratchpad cleared', 'info');
+                    }
                 });
             }
         }
@@ -445,9 +517,104 @@
     };
 
     /* ==========================================================================
-       7. UI Initializers (Tooltips, Password Toggles)
+       7. Global Page Preloader & Route Navigation Progress Engine
+       ========================================================================== */
+    LMS.initGlobalLoader = function () {
+        var $preloader = $('#globalPreloader');
+        var $progressBar = $('#routeProgressBar');
+        var $loadingPill = $('#routeLoadingPill');
+        var progressTimer;
+
+        // Dismiss preloader once the DOM and assets are fully loaded
+        function dismissPreloader() {
+            if ($preloader.length && !$preloader.hasClass('fade-out')) {
+                $preloader.addClass('fade-out');
+                setTimeout(function () {
+                    $preloader.remove();
+                }, 400);
+            }
+        }
+
+        // Window load event
+        $(window).on('load', function () {
+            dismissPreloader();
+        });
+
+        // Safety fallback so users are never blocked even on slow assets
+        setTimeout(dismissPreloader, 650);
+
+        // Route Progress Bar Controller
+        LMS.startLoading = function () {
+            if (!$progressBar.length) return;
+            clearInterval(progressTimer);
+            $progressBar.removeClass('running').css({ width: '0%', opacity: 1 }).addClass('running');
+            $loadingPill.css('display', 'flex');
+
+            var current = 15;
+            $progressBar.css('width', current + '%');
+
+            progressTimer = setInterval(function () {
+                if (current < 85) {
+                    current += Math.random() * 12 + 5;
+                    $progressBar.css('width', current + '%');
+                }
+            }, 250);
+        };
+
+        LMS.finishLoading = function () {
+            if (!$progressBar.length) return;
+            clearInterval(progressTimer);
+            $progressBar.css('width', '100%');
+            setTimeout(function () {
+                $progressBar.css('opacity', '0');
+                $loadingPill.fadeOut(200);
+                setTimeout(function () {
+                    $progressBar.css('width', '0%').removeClass('running');
+                }, 300);
+            }, 200);
+        };
+
+        // Intercept standard navigation link clicks to show responsive loading progress
+        $(document).on('click', 'a[href]', function (e) {
+            var href = $(this).attr('href');
+            var target = $(this).attr('target');
+            var isDownload = $(this).attr('download') !== undefined || $(this).hasClass('no-loader');
+
+            if (!href || href === '#' || href.indexOf('javascript:') === 0 || href.indexOf('#') === 0 || target === '_blank' || isDownload || e.ctrlKey || e.metaKey || e.shiftKey) {
+                return;
+            }
+
+            // Internal application route transition
+            LMS.startLoading();
+        });
+
+        // Intercept form submissions
+        $(document).on('submit', 'form:not([data-ajax="true"]):not(.no-loader)', function () {
+            if ($(this).valid && !$(this).valid()) return;
+            LMS.startLoading();
+        });
+
+        // Trigger on beforeunload
+        window.addEventListener('beforeunload', function () {
+            LMS.startLoading();
+        });
+
+        // Global jQuery AJAX Listeners
+        $(document).ajaxStart(function () {
+            LMS.startLoading();
+        });
+        $(document).ajaxStop(function () {
+            LMS.finishLoading();
+        });
+    };
+
+    /* ==========================================================================
+       8. UI Initializers (Tooltips, Password Toggles, Preloader)
        ========================================================================== */
     $(function () {
+        // Initialize Global Loading System
+        LMS.initGlobalLoader();
+
         // Init Bootstrap tooltips if available
         if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

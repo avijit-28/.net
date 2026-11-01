@@ -6,7 +6,7 @@
 
 <div class="classroom-container card card-custom shadow-sm border-0 overflow-hidden mb-4">
     <!-- Top Classroom Header Bar -->
-    <div class="bg-dark text-white p-3 p-md-4 d-flex flex-wrap justify-content-between align-items-center gap-3 border-bottom border-secondary" style="border-color: rgba(255,255,255,0.1) !important;">
+    <div class="classroom-top-bar bg-dark text-white p-3 p-md-4 d-flex flex-wrap justify-content-between align-items-center gap-3 border-bottom border-secondary" style="border-color: rgba(255,255,255,0.1) !important;">
         <div class="d-flex align-items-center gap-3">
             <a href="@Url.Action("MyCourses", "Student")" class="btn btn-sm btn-outline-light rounded-pill px-3">
                 <i class="bi bi-arrow-left me-1"></i> My Courses
@@ -17,24 +17,29 @@
             </div>
         </div>
 
-        <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center gap-2">
+            <!-- Syllabus Toggle (Visible in Focus Mode) -->
+            <button type="button" class="btn btn-sm btn-outline-light rounded-pill px-3 d-none" id="btnToggleSidebarInFocus" title="Toggle Syllabus Sidebar">
+                <i class="bi bi-layout-sidebar-inset me-1"></i> Syllabus
+            </button>
+
             <!-- Focus / Theater Mode Switch -->
-            <button type="button" class="btn btn-sm btn-outline-light rounded-pill px-3" id="btnToggleTheater" title="Toggle Theater / Focus Mode">
+            <button type="button" class="btn btn-sm btn-outline-light rounded-pill px-3 fw-semibold" id="btnToggleTheater" title="Toggle Distraction-Free Focus Mode">
                 <i class="bi bi-moon-stars me-1"></i> Focus Mode
             </button>
 
             <!-- Progress Meter -->
-            <div class="d-none d-sm-block text-end" style="min-width: 140px;">
+            <div class="d-none d-sm-block text-end ms-2" style="min-width: 130px;">
                 <div class="small text-secondary" style="font-size: 11px;">Course Progress</div>
                 <div class="fw-bold text-success" id="progressText">@Model.ProgressPercentage% Completed</div>
             </div>
-            <div class="progress" style="width: 130px; height: 10px; background: rgba(255,255,255,0.15);">
+            <div class="progress d-none d-sm-block" style="width: 110px; height: 10px; background: rgba(255,255,255,0.15);">
                 <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" id="progressBar" role="progressbar" style="width: @Model.ProgressPercentage%;"></div>
             </div>
 
             @if (Model.IsCourseCompleted)
             {
-                <a href="@Url.Action("Certificates", "Student")" class="btn btn-sm btn-warning fw-bold rounded-pill shadow-sm text-dark">
+                <a href="@Url.Action("Certificates", "Student")" class="btn btn-sm btn-warning fw-bold rounded-pill shadow-sm text-dark ms-1">
                     <i class="bi bi-award-fill me-1"></i> Certificate Ready!
                 </a>
             }
@@ -441,16 +446,39 @@
                     }
 
                     <!-- Student Interactive Scratchpad (Persisted in LocalStorage) -->
-                    <div class="scratchpad-container">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <label class="form-label fw-bold small text-dark mb-0">
-                                <i class="bi bi-pen me-1 text-primary"></i> Personal Lesson Scratchpad
-                            </label>
-                            <span class="small text-muted" id="scratchpadStatus">
-                                <i class="bi bi-check2 text-success"></i> Autosaved locally
-                            </span>
+                    <div class="scratchpad-card card border-0 shadow-sm p-4 mt-4" style="border: 1.5px solid #E2E8F0 !important;">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center bg-white shadow-xs border" style="width: 36px; height: 36px;">
+                                    <i class="bi bi-journal-code text-orange fs-5"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-dark">Personal Lesson Scratchpad</h6>
+                                    <span class="text-muted small" style="font-size: 11px;">Your private notes, insights &amp; code snippets (persisted automatically)</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill" id="scratchpadStatus">
+                                    <i class="bi bi-cloud-check-fill me-1"></i> Autosaved locally
+                                </span>
+                                <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill px-2 py-1" id="btnCopyNotes" title="Copy notes to clipboard" style="font-size: 11px;">
+                                    <i class="bi bi-clipboard me-1"></i> Copy
+                                </button>
+                                <button type="button" class="btn btn-xs btn-outline-danger rounded-pill px-2 py-1" id="btnClearNotes" title="Clear notes for this lesson" style="font-size: 11px;">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
                         </div>
-                        <textarea id="lessonScratchpad" class="scratchpad-textarea" placeholder="Type your personal insights, code snippets, or study notes here. They will automatically persist in your browser for this lesson..."></textarea>
+
+                        <div class="position-relative">
+                            <textarea id="lessonScratchpad" class="scratchpad-textarea form-control shadow-none" 
+                                      placeholder="Write your study notes, key takeaways, formulas, or code snippets here... Notes automatically save in real-time per lesson." 
+                                      rows="5"></textarea>
+                            <div class="d-flex justify-content-between align-items-center mt-2 px-1 text-muted small" style="font-size: 11px;">
+                                <span><i class="bi bi-shield-check text-success me-1"></i> Private to your browser session</span>
+                                <span id="scratchpadCharCount">0 characters</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

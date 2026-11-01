@@ -1031,9 +1031,321 @@ p, .lead {
     transition: var(--lms-transition);
 }
 
-.theater-mode {
+.theater-mode,
+.focus-mode {
     background: var(--lms-navy-dark) !important;
     color: #f1f5f9 !important;
+}
+
+/* ==========================================================================
+   Focus Mode / Distraction-Free Classroom Theater
+   ========================================================================== */
+body.focus-mode-active {
+    overflow: hidden !important;
+    background: #041620 !important;
+}
+
+body.focus-mode-active header,
+body.focus-mode-active footer,
+body.focus-mode-active .navbar-lms,
+body.focus-mode-active .footer-lms {
+    display: none !important;
+}
+
+.classroom-container.focus-mode {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    z-index: 1050 !important;
+    background: #041620 !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.classroom-container.focus-mode .classroom-top-bar {
+    background: #062330 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 0.85rem 1.5rem !important;
+    flex-shrink: 0;
+}
+
+/* In Focus Mode: Curriculum sidebar is toggleable overlay or collapsed */
+.classroom-container.focus-mode .classroom-sidebar {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 65px;
+    bottom: 0;
+    width: 360px;
+    z-index: 1060;
+    background: #062330 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 12px 0 35px rgba(0, 0, 0, 0.55);
+    max-height: calc(100vh - 65px) !important;
+    overflow-y: auto;
+}
+
+.classroom-container.focus-mode .classroom-sidebar.show-in-focus {
+    display: block !important;
+    animation: focusSidebarIn 0.25s ease-out;
+}
+
+@keyframes focusSidebarIn {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.classroom-container.focus-mode .classroom-stage {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    max-width: 1350px !important;
+    margin: 0 auto !important;
+    background: #041620 !important;
+    color: #F8FAFC !important;
+    padding: 2.25rem 2rem !important;
+    min-height: auto !important;
+}
+
+.classroom-container.focus-mode .classroom-stage h1,
+.classroom-container.focus-mode .classroom-stage h2,
+.classroom-container.focus-mode .classroom-stage h3,
+.classroom-container.focus-mode .classroom-stage h4,
+.classroom-container.focus-mode .classroom-stage h5,
+.classroom-container.focus-mode .classroom-stage h6,
+.classroom-container.focus-mode .classroom-stage strong,
+.classroom-container.focus-mode .classroom-stage .text-dark {
+    color: #FFFFFF !important;
+}
+
+.classroom-container.focus-mode .classroom-stage .text-muted,
+.classroom-container.focus-mode .classroom-stage .text-secondary {
+    color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.classroom-container.focus-mode .video-wrapper,
+.classroom-container.focus-mode .ratio-16x9 {
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 16px !important;
+    overflow: hidden;
+    background: #000000 !important;
+}
+
+.classroom-container.focus-mode .scratchpad-card {
+    background: #062330 !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.classroom-container.focus-mode .scratchpad-textarea {
+    background: #041620 !important;
+    color: #FFFFFF !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* ==========================================================================
+   Personal Lesson Scratchpad Component
+   ========================================================================== */
+.scratchpad-card {
+    border-radius: 16px;
+    background: #F8FAFC;
+    border: 1.5px solid #E2E8F0;
+    transition: var(--lms-transition);
+}
+
+.scratchpad-card:hover {
+    border-color: #CBD5E1;
+}
+
+.scratchpad-textarea {
+    width: 100% !important;
+    min-height: 140px;
+    padding: 0.95rem 1.15rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    border-radius: 12px;
+    border: 1.5px solid #CBD5E1;
+    background-color: #FFFFFF;
+    color: #0F172A;
+    resize: vertical;
+    transition: all 0.2s ease-in-out;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    display: block;
+}
+
+.scratchpad-textarea:focus {
+    border-color: #FF7A18 !important;
+    background-color: #FFFFFF !important;
+    box-shadow: 0 0 0 3.5px rgba(255, 122, 24, 0.2) !important;
+    outline: none !important;
+}
+
+/* ==========================================================================
+   Global Page Preloader & Navigation Progress System
+   ========================================================================== */
+#globalPreloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #062330;
+    z-index: 9999999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.35s ease-out, visibility 0.35s ease-out;
+}
+
+#globalPreloader.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.preloader-card {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+.preloader-logo-wrap {
+    position: relative;
+    width: 84px;
+    height: 84px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+}
+
+.preloader-logo {
+    width: 68px;
+    height: 68px;
+    border-radius: 18px;
+    object-fit: contain;
+    box-shadow: 0 10px 25px rgba(255, 122, 24, 0.4);
+    animation: preloaderPulse 1.8s infinite ease-in-out;
+}
+
+.preloader-spinner-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 122, 24, 0.15);
+    border-top-color: #FF7A18;
+    border-right-color: #FF9A45;
+    animation: preloaderSpin 0.9s linear infinite;
+}
+
+@keyframes preloaderSpin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes preloaderPulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255,122,24,0.4)); }
+    50% { transform: scale(1.06); filter: drop-shadow(0 0 25px rgba(255,122,24,0.7)); }
+}
+
+.preloader-title {
+    color: #FFFFFF;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.65rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    letter-spacing: -0.02em;
+}
+
+.preloader-subtitle {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+
+.preloader-bar-wrap {
+    width: 220px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+    overflow: hidden;
+    position: relative;
+}
+
+.preloader-bar-fill {
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, #FF7A18, #FF9A45, #5B3FE4);
+    border-radius: 9999px;
+    position: absolute;
+    animation: preloaderSlide 1.2s ease-in-out infinite;
+}
+
+@keyframes preloaderSlide {
+    0% { left: -40%; width: 30%; }
+    50% { width: 60%; }
+    100% { left: 100%; width: 30%; }
+}
+
+/* Top Route Progress Bar */
+#routeProgressBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, #FF7A18 0%, #FF9A45 50%, #5B3FE4 100%);
+    box-shadow: 0 0 10px #FF7A18, 0 0 5px #FF9A45;
+    z-index: 10000000;
+    transition: width 0.25s ease-out, opacity 0.3s ease-out;
+    pointer-events: none;
+    opacity: 0;
+}
+
+#routeProgressBar.running {
+    opacity: 1;
+}
+
+/* Route Floating Loading Pill */
+.route-loading-pill {
+    position: fixed;
+    top: 14px;
+    right: 20px;
+    z-index: 10000001;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(6, 35, 48, 0.12);
+    border-radius: 9999px;
+    padding: 0.35rem 0.9rem;
+    display: none;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #062330;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    animation: pillFadeIn 0.2s ease-out;
+}
+
+@keyframes pillFadeIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Footer (Deep Petrol Navy) */
