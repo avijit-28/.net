@@ -25,6 +25,76 @@
     @RenderSection("Styles", required: false)
 </head>
 <body>
+    <!-- Global Brand Preloader (Automatically displays until page is fully loaded and on transitions) -->
+    <div id="globalPreloader" aria-hidden="true">
+        <div class="preloader-card">
+            <div class="preloader-logo-wrap">
+                <img src="@Url.Content("~/Content/images/logo-icon.png")" alt="LMS" class="preloader-logo" />
+                <div class="preloader-spinner-ring"></div>
+            </div>
+            <div class="preloader-title">LMS</div>
+            <div class="preloader-subtitle">Loading EduPlatform LMS...</div>
+            <div class="preloader-bar-wrap">
+                <div class="preloader-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function () {
+            var preloader = document.getElementById('globalPreloader');
+            if (!preloader) return;
+
+            function dismiss() {
+                if (preloader && !preloader.classList.contains('fade-out')) {
+                    preloader.classList.add('fade-out');
+                    setTimeout(function () {
+                        preloader.style.display = 'none';
+                    }, 400);
+                }
+            }
+
+            if (document.readyState === 'complete') {
+                setTimeout(dismiss, 100);
+            } else {
+                window.addEventListener('load', function () {
+                    setTimeout(dismiss, 120);
+                });
+                setTimeout(dismiss, 1200);
+            }
+
+            document.addEventListener('click', function (e) {
+                var a = e.target.closest('a');
+                if (!a) return;
+                var href = a.getAttribute('href');
+                var target = a.getAttribute('target');
+                var isDownload = a.hasAttribute('download') || a.classList.contains('no-loader');
+
+                if (!href || href === '#' || href.indexOf('javascript:') === 0 || href.indexOf('#') === 0 || target === '_blank' || isDownload || e.ctrlKey || e.metaKey || e.shiftKey) {
+                    return;
+                }
+
+                if (a.hostname === window.location.hostname) {
+                    preloader.style.display = 'flex';
+                    preloader.classList.remove('fade-out');
+                }
+            }, true);
+
+            document.addEventListener('submit', function (e) {
+                var form = e.target;
+                if (form && !form.classList.contains('no-loader')) {
+                    preloader.style.display = 'flex';
+                    preloader.classList.remove('fade-out');
+                }
+            }, true);
+
+            window.addEventListener('pageshow', function (e) {
+                if (e.persisted) {
+                    dismiss();
+                }
+            });
+        })();
+    </script>
+
     <!-- Top Route Progress Bar (Sleek, instantaneous loading feedback like GitHub/YouTube) -->
     <div id="routeProgressBar"></div>
     <div id="routeLoadingPill" class="route-loading-pill shadow-sm">

@@ -38,15 +38,30 @@
             {
                 <div class="col-md-6 col-lg-4">
                     <div class="card card-custom card-hover h-100 overflow-hidden shadow-sm d-flex flex-column bg-white">
-                        <div class="bg-light text-center py-4 border-bottom position-relative" style="height: 150px; display:flex; align-items:center; justify-content:center; background: radial-gradient(circle, #f8fafc 0%, #e2e8f0 100%);">
-                            <i class="bi bi-journal-richtext display-3 text-primary opacity-25"></i>
-                            <span class="position-absolute top-0 end-0 m-2 badge @(item.Status == "Completed" ? "bg-success" : "bg-primary") rounded-pill px-3 py-1 small">
-                                @item.Status
-                            </span>
-                            <span class="position-absolute bottom-0 start-0 m-2 badge bg-white text-dark shadow-xs border small">
-                                <i class="bi bi-clock me-1 text-primary"></i> @item.Course.DurationInHours hrs
-                            </span>
-                        </div>
+                        @if (!string.IsNullOrWhiteSpace(item.Course?.Thumbnail))
+                        {
+                            <div class="position-relative overflow-hidden bg-dark" style="height: 160px;">
+                                <img src="@item.Course.Thumbnail" alt="@item.Course.Title" class="w-100 h-100" style="object-fit: cover;" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'bg-light text-center py-4 h-100 d-flex align-items-center justify-content-center\'><i class=\'bi bi-mortarboard-fill display-4 text-primary opacity-25\'></i></div>';" />
+                                <span class="position-absolute top-0 end-0 m-2 badge @(item.Status == "Completed" ? "bg-success" : "bg-primary") rounded-pill px-3 py-1 small shadow-xs">
+                                    @item.Status
+                                </span>
+                                <span class="position-absolute bottom-0 start-0 m-2 badge bg-dark bg-opacity-75 text-white rounded-pill px-3 py-1 small">
+                                    <i class="bi bi-clock me-1 text-warning"></i> @item.Course.DurationInHours hrs
+                                </span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="bg-light text-center py-4 border-bottom position-relative" style="height: 160px; display:flex; align-items:center; justify-content:center; background: radial-gradient(circle, #f8fafc 0%, #e2e8f0 100%);">
+                                <i class="bi bi-mortarboard-fill display-4 text-primary opacity-25"></i>
+                                <span class="position-absolute top-0 end-0 m-2 badge @(item.Status == "Completed" ? "bg-success" : "bg-primary") rounded-pill px-3 py-1 small">
+                                    @item.Status
+                                </span>
+                                <span class="position-absolute bottom-0 start-0 m-2 badge bg-white text-dark shadow-xs border small">
+                                    <i class="bi bi-clock me-1 text-primary"></i> @item.Course.DurationInHours hrs
+                                </span>
+                            </div>
+                        }
                         <div class="card-body d-flex flex-column p-4">
                             <span class="badge badge-primary-subtle small align-self-start mb-2">
                                 @(item.Course?.Category?.CategoryName ?? "General")

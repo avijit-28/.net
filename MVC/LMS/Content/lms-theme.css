@@ -1189,10 +1189,32 @@ body.focus-mode-active .footer-lms {
 }
 
 /* ==========================================================================
-   Global Route Progress System (Non-Blocking, Fast & Responsive)
+   Global Brand Preloader & Route Transition Screen
    ========================================================================== */
 #globalPreloader {
-    display: none !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #062330;
+    z-index: 9999999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.35s ease-out, visibility 0.35s ease-out;
+    pointer-events: all;
+}
+
+#globalPreloader.fade-out {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
 
 .preloader-card {
