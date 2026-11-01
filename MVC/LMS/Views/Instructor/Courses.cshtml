@@ -14,19 +14,19 @@
         </a>
     </div>
 
-    <div class="card card-custom shadow-sm border-0" style="overflow: visible !important; min-height: 280px;">
-        <div class="table-responsive" style="overflow: visible !important; min-height: 250px;">
+    <div class="card card-custom shadow-sm border-0 mb-5" style="overflow: visible !important; min-height: 380px; padding-bottom: 90px;">
+        <div class="table-responsive" style="overflow: visible !important; min-height: 300px;">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light small">
                     <tr>
-                        <th>Course Title</th>
+                        <th style="min-width: 260px;">Course Title</th>
                         <th>Category</th>
                         <th>Level</th>
                         <th>Price</th>
                         <th>Students</th>
                         <th>Rating</th>
                         <th>Status</th>
-                        <th class="text-end">Actions</th>
+                        <th class="text-end" style="min-width: 250px;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,8 +42,24 @@
                         {
                             <tr>
                                 <td>
-                                    <div class="fw-bold text-dark">@c.Title</div>
-                                    <small class="text-muted">Created: @c.CreatedDate.ToString("MMM dd, yyyy")</small>
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrWhiteSpace(c.Thumbnail))
+                                        {
+                                            <img src="@c.Thumbnail" class="rounded-3 shadow-xs me-3 flex-shrink-0" style="width: 52px; height: 38px; object-fit: cover;" alt="" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'60\' height=\'45\' viewBox=\'0 0 60 45\'><rect fill=\'%23062330\' width=\'60\' height=\'45\'/><text fill=\'%23FF7A18\' font-family=\'sans-serif\' font-size=\'10\' font-weight=\'bold\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dominant-baseline=\'middle\'>LMS</text></svg>';" />
+                                        }
+                                        else
+                                        {
+                                            <div class="rounded-3 bg-primary-subtle text-primary d-flex align-items-center justify-content-center shadow-xs me-3 flex-shrink-0" style="width: 52px; height: 38px;">
+                                                <i class="bi bi-collection-play-fill fs-5"></i>
+                                            </div>
+                                        }
+                                        <div>
+                                            <a href="@Url.Action("Details", "Courses", new { id = c.CourseId })" target="_blank" class="fw-bold text-dark text-decoration-none d-block">
+                                                @c.Title
+                                            </a>
+                                            <small class="text-muted">Created: @c.CreatedDate.ToString("MMM dd, yyyy")</small>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td><span class="badge bg-light text-dark border">@(c.Category?.CategoryName ?? "General")</span></td>
                                 <td><span class="badge bg-secondary-subtle text-secondary">@c.Level</span></td>
@@ -54,7 +70,7 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <span class="rating-stars small"><i class="bi bi-star-fill"></i> @c.Rating.ToString("0.0")</span>
+                                    <span class="rating-stars small"><i class="bi bi-star-fill text-warning"></i> @c.Rating.ToString("0.0")</span>
                                 </td>
                                 <td>
                                     <span class="badge @(c.Status == "Published" ? "bg-success" : (c.Status == "Draft" ? "bg-secondary" : "bg-dark")) px-2 py-1 rounded-pill">
@@ -69,22 +85,22 @@
                                         <a href="@Url.Action("EditCourse", "Instructor", new { id = c.CourseId })" class="btn btn-sm btn-outline-secondary rounded-pill px-3" title="Edit Course Details">
                                             <i class="bi bi-pencil me-1"></i> Edit
                                         </a>
-                                        <div class="dropdown d-inline-block dropstart">
-                                            <button class="btn btn-sm btn-light border rounded-pill px-2" type="button" data-bs-toggle="dropdown" data-bs-popper-config='{"strategy":"fixed"}' aria-expanded="false" title="More Options">
+                                        <div class="btn-group dropstart d-inline-block">
+                                            <button class="btn btn-sm btn-light border rounded-pill px-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="More Options">
                                                 <i class="bi bi-three-dots-vertical"></i>
                                             </button>
-                                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2" style="z-index: 1060; min-width: 190px;">
-                                                <li><a class="dropdown-item" href="@Url.Action("Quizzes", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-patch-question me-2"></i> Quizzes</a></li>
-                                                <li><a class="dropdown-item" href="@Url.Action("Assignments", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-file-earmark-text me-2"></i> Assignments</a></li>
-                                                <li><a class="dropdown-item" href="@Url.Action("Students", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-people me-2"></i> Enrolled Students</a></li>
-                                                <li><hr class="dropdown-divider"></li>
+                                            <ul class="dropdown-menu shadow-lg border-0 py-2 studio-dropdown-menu" style="z-index: 99999; min-width: 200px;">
+                                                <li><a class="dropdown-item py-2" href="@Url.Action("Quizzes", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-patch-question text-warning me-2"></i> Quizzes &amp; Exams</a></li>
+                                                <li><a class="dropdown-item py-2" href="@Url.Action("Assignments", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-file-earmark-text text-info me-2"></i> Tasks &amp; Assignments</a></li>
+                                                <li><a class="dropdown-item py-2" href="@Url.Action("Students", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-people text-primary me-2"></i> Enrolled Students</a></li>
+                                                <li><hr class="dropdown-divider my-1"></li>
                                                 @if (c.Status != "Published")
                                                 {
                                                     <li>
                                                         @using (Html.BeginForm("PublishCourse", "Instructor", new { id = c.CourseId }, FormMethod.Post))
                                                         {
                                                             @Html.AntiForgeryToken()
-                                                            <button type="submit" class="dropdown-item text-success fw-bold">
+                                                            <button type="submit" class="dropdown-item py-2 text-success fw-bold">
                                                                 <i class="bi bi-cloud-upload me-2"></i> Publish Course
                                                             </button>
                                                         }
@@ -96,7 +112,7 @@
                                                         @using (Html.BeginForm("DeleteCourse", "Instructor", new { id = c.CourseId }, FormMethod.Post))
                                                         {
                                                             @Html.AntiForgeryToken()
-                                                            <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure you want to permanently delete course \'@Html.Raw(HttpUtility.JavaScriptStringEncode(c.Title))\'? This cannot be undone.');">
+                                                            <button type="submit" class="dropdown-item py-2 text-danger" onclick="return confirm('Are you sure you want to permanently delete course \'@Html.Raw(HttpUtility.JavaScriptStringEncode(c.Title))\'? This cannot be undone.');">
                                                                 <i class="bi bi-trash me-2"></i> Delete Course
                                                             </button>
                                                         }
