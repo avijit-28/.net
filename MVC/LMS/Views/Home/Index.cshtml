@@ -335,11 +335,11 @@
                         <div class="course-card-v2">
                             <!-- Course Thumbnail -->
                             <div class="course-thumbnail-wrapper">
-                                @if (!string.IsNullOrWhiteSpace(course.ThumbnailUrl))
+                                @if (!string.IsNullOrWhiteSpace(course.Thumbnail))
                                 {
-                                    <img src="@course.ThumbnailUrl" alt="@course.Title" class="course-thumbnail-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                                    <img src="@course.Thumbnail" alt="@course.Title" class="course-thumbnail-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                                 }
-                                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white" style="display: @(string.IsNullOrWhiteSpace(course.ThumbnailUrl) ? "flex" : "none"); background: linear-gradient(135deg, #062330 0%, #0a3547 100%);">
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white" style="display: @(string.IsNullOrWhiteSpace(course.Thumbnail) ? "flex" : "none"); background: linear-gradient(135deg, #062330 0%, #0a3547 100%);">
                                     <i class="bi bi-laptop fs-1 text-orange opacity-75"></i>
                                 </div>
                                 <span class="course-card-category-badge">
