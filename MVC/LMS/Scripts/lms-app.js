@@ -517,48 +517,35 @@
     };
 
     /* ==========================================================================
-       7. Global Page Preloader & Route Navigation Progress Engine
+       7. Fast Non-Blocking Route Navigation Progress Engine (Instant Page Display)
        ========================================================================== */
     LMS.initGlobalLoader = function () {
-        var $preloader = $('#globalPreloader');
+        // Immediately remove any lingering preloader overlay so pages show instantly
+        var oldPreloader = document.getElementById('globalPreloader');
+        if (oldPreloader) {
+            oldPreloader.remove();
+        }
+
         var $progressBar = $('#routeProgressBar');
         var $loadingPill = $('#routeLoadingPill');
         var progressTimer;
-
-        // Dismiss preloader once the DOM and assets are fully loaded
-        function dismissPreloader() {
-            if ($preloader.length && !$preloader.hasClass('fade-out')) {
-                $preloader.addClass('fade-out');
-                setTimeout(function () {
-                    $preloader.remove();
-                }, 400);
-            }
-        }
-
-        // Window load event
-        $(window).on('load', function () {
-            dismissPreloader();
-        });
-
-        // Safety fallback so users are never blocked even on slow assets
-        setTimeout(dismissPreloader, 650);
 
         // Route Progress Bar Controller
         LMS.startLoading = function () {
             if (!$progressBar.length) return;
             clearInterval(progressTimer);
             $progressBar.removeClass('running').css({ width: '0%', opacity: 1 }).addClass('running');
-            $loadingPill.css('display', 'flex');
+            if ($loadingPill.length) $loadingPill.css('display', 'flex');
 
-            var current = 15;
+            var current = 25;
             $progressBar.css('width', current + '%');
 
             progressTimer = setInterval(function () {
                 if (current < 85) {
-                    current += Math.random() * 12 + 5;
+                    current += Math.random() * 15 + 8;
                     $progressBar.css('width', current + '%');
                 }
-            }, 250);
+            }, 200);
         };
 
         LMS.finishLoading = function () {
@@ -567,12 +554,15 @@
             $progressBar.css('width', '100%');
             setTimeout(function () {
                 $progressBar.css('opacity', '0');
-                $loadingPill.fadeOut(200);
+                if ($loadingPill.length) $loadingPill.fadeOut(150);
                 setTimeout(function () {
                     $progressBar.css('width', '0%').removeClass('running');
-                }, 300);
-            }, 200);
+                }, 200);
+            }, 150);
         };
+
+        // Finish any ongoing progress on DOM ready
+        LMS.finishLoading();
 
         // Intercept standard navigation link clicks to show responsive loading progress
         $(document).on('click', 'a[href]', function (e) {
@@ -591,11 +581,6 @@
         // Intercept form submissions
         $(document).on('submit', 'form:not([data-ajax="true"]):not(.no-loader)', function () {
             if ($(this).valid && !$(this).valid()) return;
-            LMS.startLoading();
-        });
-
-        // Trigger on beforeunload
-        window.addEventListener('beforeunload', function () {
             LMS.startLoading();
         });
 
