@@ -935,16 +935,49 @@ namespace LMS.Controllers
         }
 
         // GET: Instructor/Payments
-        public ActionResult Payments(string filter = "All")
+        public ActionResult Payments(string filter = "All", int? courseId = null, string search = null)
         {
-            var model = _paymentService.GetInstructorPayments(CurrentUserId, filter);
+            var model = _paymentService.GetInstructorPayments(CurrentUserId, filter, courseId, search);
             return View(model);
         }
 
         // GET: Instructor/Earnings
-        public ActionResult Earnings(string filter = "All")
+        public ActionResult Earnings(string filter = "All", int? courseId = null, string search = null)
         {
-            return Payments(filter);
+            return Payments(filter, courseId, search);
+        }
+
+        // GET: Instructor/ExportEarningsPdf
+        [HttpGet]
+        public ActionResult ExportEarningsPdf(string filter = "All", int? courseId = null, string search = null)
+        {
+            var model = _paymentService.GetInstructorPayments(CurrentUserId, filter, courseId, search);
+            return new Rotativa.ViewAsPdf("EarningsPdf", model)
+            {
+                FileName = $"Instructor-Earnings-Statement-{DateTime.UtcNow:yyyyMMdd-HHmm}.pdf",
+                PageOrientation = Rotativa.Options.Orientation.Landscape,
+                PageSize = Rotativa.Options.Size.A4,
+                PageMargins = new Rotativa.Options.Margins(10, 10, 10, 10)
+            };
+        }
+
+        // GET: Instructor/ExportEarningsCsv
+        [HttpGet]
+        public ActionResult ExportEarningsCsv(string filter = "All", int? courseId = null, string search = null)
+        {
+            var model = _paymentService.GetInstructorPayments(CurrentUserId, filter, courseId, search);
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("Transaction ID,Date (UTC),Course Title,Learner Name,Learner Email,Role,Gross Amount (INR),Platform Commission (5%),Your Net Earnings (95%),Payment Method,Status");
+            foreach (var t in model.Transactions)
+            {
+                sb.AppendLine($"\"{t.TransactionId}\",\"{t.PaymentDate:yyyy-MM-dd HH:mm}\",\"{EscapeCsv(t.CourseTitle)}\",\"{EscapeCsv(t.BuyerName)}\",\"{EscapeCsv(t.BuyerEmail)}\",\"{t.BuyerRole}\",{t.Amount:F2},{t.AdminCommission:F2},{t.InstructorEarnings:F2},\"{EscapeCsv(t.PaymentMethod)}\",\"{t.PaymentStatus}\"");
+            }
+            return File(System.Text.Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", $"Instructor-Earnings-{DateTime.UtcNow:yyyyMMdd-HHmm}.csv");
+        }
+
+        private static string EscapeCsv(string s)
+        {
+            return s?.Replace("\"", "\"\"") ?? "";
         }
 
         protected override void Dispose(bool disposing)

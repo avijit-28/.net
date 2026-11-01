@@ -5,6 +5,7 @@
     int unreadNotifCount = 0;
     string userDisplayName = User.Identity.GetUserName() ?? "User";
     string userEmail = User.Identity.GetUserName() ?? "";
+    string userProfilePicture = null;
     string roleName = "Student";
 
     try
@@ -22,6 +23,10 @@
                 if (!string.IsNullOrWhiteSpace(curUser.Email))
                 {
                     userEmail = curUser.Email;
+                }
+                if (!string.IsNullOrWhiteSpace(curUser.ProfilePicture))
+                {
+                    userProfilePicture = curUser.ProfilePicture;
                 }
             }
         }
@@ -64,7 +69,11 @@
         <li class="nav-item dropdown ms-lg-1">
             <a class="nav-user-btn dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="d-inline-flex align-items-center gap-2">
-                    <span class="nav-avatar-circle">
+                    @if (!string.IsNullOrWhiteSpace(userProfilePicture))
+                    {
+                        <img src="@userProfilePicture" class="nav-avatar-circle" style="object-fit: cover;" alt="@userDisplayName" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                    }
+                    <span class="nav-avatar-circle" style="display: @(string.IsNullOrWhiteSpace(userProfilePicture) ? "flex" : "none");">
                         @(string.IsNullOrEmpty(userDisplayName) ? "U" : userDisplayName.Substring(0, 1).ToUpper())
                     </span>
                     <span class="d-inline text-truncate" style="max-width: 130px;">@userDisplayName</span>
@@ -72,8 +81,16 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 mt-2 py-2" aria-labelledby="userMenu" style="min-width: 240px;">
                 <li class="px-3 py-2 border-bottom bg-light">
-                    <div class="fw-bold small text-dark text-truncate">@userDisplayName</div>
-                    <div class="text-muted small text-truncate mb-2" style="font-size: 11px;">@userEmail</div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        @if (!string.IsNullOrWhiteSpace(userProfilePicture))
+                        {
+                            <img src="@userProfilePicture" class="rounded-circle shadow-xs flex-shrink-0" style="width: 38px; height: 38px; object-fit: cover;" alt="@userDisplayName" onerror="this.style.display='none';" />
+                        }
+                        <div class="overflow-hidden">
+                            <div class="fw-bold small text-dark text-truncate">@userDisplayName</div>
+                            <div class="text-muted small text-truncate" style="font-size: 11px;">@userEmail</div>
+                        </div>
+                    </div>
                     <div>
                         @if (roleName == "Admin")
                         {

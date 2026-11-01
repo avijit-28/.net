@@ -3,6 +3,16 @@
     ViewBag.Title = "Platform Reports & Analytics";
     var completionRate = Model.TotalEnrollments > 0 ? (int)((double)Model.TotalCertificates / Model.TotalEnrollments * 100) : 0;
     var avgRevenuePerStudent = Model.TotalStudents > 0 ? Model.TotalRevenue / Model.TotalStudents : 0;
+
+    var catNames = Model.CategoryStats != null && Model.CategoryStats.Any() 
+        ? string.Join(",", Model.CategoryStats.Select(c => $"\"{HttpUtility.JavaScriptStringEncode(c.CategoryName)}\""))
+        : "\"General\"";
+    var catCounts = Model.CategoryStats != null && Model.CategoryStats.Any()
+        ? string.Join(",", Model.CategoryStats.Select(c => c.CourseCount))
+        : "1";
+
+    var adminShare = Model.TotalRevenue * 0.05m;
+    var teacherShare = Model.TotalRevenue * 0.95m;
 }
 
 <div class="py-4">
@@ -19,11 +29,19 @@
                 <span class="pulse-dot pulse-primary"></span> Executive Telemetry
             </span>
             <h2 class="fw-extrabold mb-1 tracking-tight">Operational Reports & Analytics</h2>
-            <p class="text-muted small mb-0">Platform health KPIs, completion velocity, revenue metrics, and domain distribution</p>
+            <p class="text-muted small mb-0">Platform health KPIs, interactive analytics charts, completion velocity, and financial breakdown</p>
         </div>
-        <button class="btn btn-outline-secondary rounded-pill px-4 fw-semibold shadow-xs" onclick="window.print();">
-            <i class="bi bi-printer me-1"></i> Print / Export Report
-        </button>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="@Url.Action("ExportReportPdf", "Admin")" class="btn btn-outline-danger rounded-pill px-3 fw-semibold shadow-xs">
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Export PDF Report
+            </a>
+            <a href="@Url.Action("ExportReportCsv", "Admin")" class="btn btn-outline-success rounded-pill px-3 fw-semibold shadow-xs">
+                <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i> Export CSV
+            </a>
+            <button class="btn btn-outline-secondary rounded-pill px-3 fw-semibold shadow-xs" onclick="window.print();">
+                <i class="bi bi-printer me-1"></i> Print
+            </button>
+        </div>
     </div>
 
     <!-- Core KPI Matrix -->
@@ -65,16 +83,71 @@
         </div>
     </div>
 
-    <!-- Analytics Breakdown -->
+    <!-- Interactive Data Visualization Charts -->
+    <div class="row g-4 mb-4">
+        <!-- Revenue Distribution & Earnings Stream -->
+        <div class="col-lg-7">
+            <div class="card card-custom shadow-sm bg-white border-0 p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-graph-up-arrow me-2 text-primary"></i>Financial Distribution Telemetry</h5>
+                        <small class="text-muted">Total platform revenue split: Instructor payout (95%) vs Admin reserve (5%)</small>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1 font-monospace fw-bold">
+                        Total: <span class="rupee-symbol">&#8377;</span>@Model.TotalRevenue.ToString("N2")
+                    </span>
+                </div>
+                <div style="position: relative; height: 280px;">
+                    <canvas id="revenueBreakdownChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category & Domain Share Doughnut Chart -->
+        <div class="col-lg-5">
+            <div class="card card-custom shadow-sm bg-white border-0 p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-pie-chart-fill me-2 text-info"></i>Domain Distribution</h5>
+                        <small class="text-muted">Curriculum share across categories</small>
+                    </div>
+                    <span class="badge bg-light text-muted border rounded-pill px-2 py-1 small">
+                        @(Model.CategoryStats != null ? Model.CategoryStats.Count : 0) Domains
+                    </span>
+                </div>
+                <div style="position: relative; height: 280px;">
+                    <canvas id="categoryDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Learner Completion Funnel Bar Chart -->
+    <div class="card card-custom shadow-sm bg-white border-0 p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-bar-chart-line-fill me-2 text-success"></i>Learner Milestone & Completion Funnel</h5>
+                <small class="text-muted">Overview of platform user pipeline: registered accounts, enrolled learners, and verified certificate recipients</small>
+            </div>
+            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fw-bold">
+                @Model.TotalCertificates Credentials Issued
+            </span>
+        </div>
+        <div style="position: relative; height: 240px;">
+            <canvas id="learnerMilestoneChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Category Distribution & System Health Details Table -->
     <div class="row g-4 mb-4">
         <div class="col-lg-6">
             <div class="card card-custom shadow-sm h-100 bg-white border-0 overflow-hidden">
                 <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-pie-chart-fill me-2 text-primary"></i>Category Distribution & Demand</h5>
-                    <span class="badge bg-light text-muted border small">@Model.CategoryStats.Count Domains</span>
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-list-check me-2 text-primary"></i>Category Details</h5>
+                    <span class="badge bg-light text-muted border small">@(Model.CategoryStats != null ? Model.CategoryStats.Count : 0) Active</span>
                 </div>
                 <div class="card-body p-4">
-                    @if (!Model.CategoryStats.Any())
+                    @if (Model.CategoryStats == null || !Model.CategoryStats.Any())
                     {
                         <p class="text-muted text-center py-4">No categories recorded.</p>
                     }
@@ -95,7 +168,7 @@
                                         var pct = Model.TotalCourses > 0 ? (int)((double)cat.CourseCount / Model.TotalCourses * 100) : 0;
                                         <tr>
                                             <td class="fw-semibold text-dark">@cat.CategoryName</td>
-                                            <td><span class="badge badge-primary-subtle rounded-pill px-2 py-1">@cat.CourseCount</span></td>
+                                            <td><span class="badge badge-primary-subtle rounded-pill px-2 py-1">@cat.CourseCount courses</span></td>
                                             <td style="width: 45%;">
                                                 <div class="d-flex align-items-center gap-2">
                                                     <div class="progress flex-grow-1" style="height: 6px;">
@@ -126,38 +199,31 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
                             <div>
-                                <div class="fw-bold text-dark">Database Connectivity</div>
-                                <small class="text-muted">Microsoft SQL Server Local Instance & Entity Framework 6</small>
+                                <div class="fw-bold text-dark">Database Engine</div>
+                                <small class="text-muted">Microsoft SQL Server & Entity Framework 6 Live</small>
                             </div>
                             <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1"><i class="bi bi-check-circle me-1"></i>Operational</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
                             <div>
-                                <div class="fw-bold text-dark">Authentication Engine</div>
-                                <small class="text-muted">ASP.NET Identity 2.2 / OWIN Secure Cookie Authentication</small>
-                            </div>
-                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1"><i class="bi bi-check-circle me-1"></i>Active</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
-                            <div>
-                                <div class="fw-bold text-dark">Role-Based Access Control</div>
-                                <small class="text-muted">Strict [Authorize(Roles="...")] across Admin, Instructor, Student</small>
-                            </div>
-                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1"><i class="bi bi-check-circle me-1"></i>Enforced</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
-                            <div>
-                                <div class="fw-bold text-dark">Automated Assessment Engine</div>
-                                <small class="text-muted">Quiz grading with instant certificate issuance threshold</small>
+                                <div class="fw-bold text-dark">Report & Document Engine</div>
+                                <small class="text-muted">High-precision vector PDF rendering pipeline</small>
                             </div>
                             <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1"><i class="bi bi-check-circle me-1"></i>Ready</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
                             <div>
-                                <div class="fw-bold text-dark">Payment Gateway Simulator</div>
-                                <small class="text-muted">Simulated multi-channel checkout with audit trail logging</small>
+                                <div class="fw-bold text-dark">Commission Split Engine</div>
+                                <small class="text-muted">Automated 5% Platform / 95% Faculty revenue allocation</small>
                             </div>
                             <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1"><i class="bi bi-check-circle me-1"></i>Active</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                            <div>
+                                <div class="fw-bold text-dark">Certification Gatekeeper</div>
+                                <small class="text-muted">Mandatory 100% module + final exam clearance verification</small>
+                            </div>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1"><i class="bi bi-check-circle me-1"></i>Enforced</span>
                         </li>
                     </ul>
                 </div>
@@ -165,3 +231,112 @@
         </div>
     </div>
 </div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. Revenue Breakdown Bar Chart
+            var revCtx = document.getElementById('revenueBreakdownChart');
+            if (revCtx) {
+                new Chart(revCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Gross Revenue', 'Faculty Earnings (95%)', 'Admin Platform Fee (5%)'],
+                        datasets: [{
+                            label: 'Amount (INR)',
+                            data: [@Model.TotalRevenue, @teacherShare, @adminShare],
+                            backgroundColor: [
+                                'rgba(79, 70, 229, 0.85)',
+                                'rgba(16, 185, 129, 0.85)',
+                                'rgba(245, 158, 11, 0.85)'
+                            ],
+                            borderColor: [
+                                '#4f46e5',
+                                '#10b981',
+                                '#f59e0b'
+                            ],
+                            borderWidth: 1,
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) { return '\u20B9' + value.toLocaleString(); }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 2. Category Distribution Doughnut Chart
+            var catCtx = document.getElementById('categoryDistributionChart');
+            if (catCtx) {
+                new Chart(catCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [@Html.Raw(catNames)],
+                        datasets: [{
+                            data: [@catCounts],
+                            backgroundColor: [
+                                '#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#14b8a6'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+
+            // 3. Learner Milestone Funnel Chart
+            var mileCtx = document.getElementById('learnerMilestoneChart');
+            if (mileCtx) {
+                new Chart(mileCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Total Students Registered', 'Total Course Enrollments', 'Certificates Earned'],
+                        datasets: [{
+                            label: 'Volume',
+                            data: [@Model.TotalStudents, @Model.TotalEnrollments, @Model.TotalCertificates],
+                            backgroundColor: [
+                                'rgba(6, 182, 212, 0.8)',
+                                'rgba(79, 70, 229, 0.8)',
+                                'rgba(16, 185, 129, 0.8)'
+                            ],
+                            borderColor: ['#06b6d4', '#4f46e5', '#10b981'],
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: { beginAtZero: true }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

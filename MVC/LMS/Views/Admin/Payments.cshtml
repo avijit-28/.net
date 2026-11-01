@@ -21,10 +21,16 @@
             <h2 class="fw-extrabold mb-1 tracking-tight">Platform Payment Transactions</h2>
             <p class="text-muted small mb-0">Comprehensive record of all course sales, purchases made by students and educators across the platform</p>
         </div>
-        <div>
-            <span class="badge bg-success-subtle text-success border border-success-subtle fs-6 px-3 py-2 rounded-pill shadow-xs">
-                Total Platform Revenue: <span class="rupee-symbol">&#8377;</span>@Model.TotalRevenue.ToString("N2")
-            </span>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <a href="@Url.Action("ExportTransactionsPdf", "Admin", new { filter = Model.CurrentFilter, courseId = Model.SelectedCourseId, search = Model.SearchQuery })" class="btn btn-outline-danger rounded-pill px-3 fw-semibold shadow-xs">
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Export PDF
+            </a>
+            <a href="@Url.Action("ExportTransactionsCsv", "Admin", new { filter = Model.CurrentFilter, courseId = Model.SelectedCourseId, search = Model.SearchQuery })" class="btn btn-outline-success rounded-pill px-3 fw-semibold shadow-xs">
+                <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i> Export CSV
+            </a>
+            <button class="btn btn-outline-secondary rounded-pill px-3 fw-semibold shadow-xs" onclick="window.print();">
+                <i class="bi bi-printer me-1"></i> Print
+            </button>
         </div>
     </div>
 
@@ -78,7 +84,7 @@
         <div class="col-md-3">
             <div class="card card-custom p-3 p-md-4 bg-white border-0 shadow-sm h-100">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Student vs Instructor</span>
+                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Buyer Breakdown</span>
                     <div class="rounded-circle bg-warning-subtle text-warning p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
                         <i class="bi bi-people-fill fs-5"></i>
                     </div>
@@ -86,31 +92,53 @@
                 <h3 class="fw-extrabold mb-1 text-dark tracking-tight">
                     @Model.StudentPurchasesCount <span class="fs-6 text-muted fw-normal">stu /</span> @Model.InstructorPurchasesCount <span class="fs-6 text-muted fw-normal">inst</span>
                 </h3>
-                <small class="text-muted">Buyer demographic breakdown</small>
+                <small class="text-muted">Students vs Educators</small>
             </div>
         </div>
     </div>
 
-    <!-- Filter Buttons / Tabs -->
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
-        <div class="btn-group p-1 bg-light rounded-pill border" role="group">
-            <a href="@Url.Action("Payments", "Admin", new { filter = "All" })"
-               class="btn btn-sm rounded-pill px-3 fw-semibold @(Model.CurrentFilter == "All" || string.IsNullOrEmpty(Model.CurrentFilter) ? "btn-primary shadow-xs" : "btn-light text-muted border-0")">
-                All Purchases (@Model.TotalTransactionsCount)
-            </a>
-            <a href="@Url.Action("Payments", "Admin", new { filter = "Student" })"
-               class="btn btn-sm rounded-pill px-3 fw-semibold @(Model.CurrentFilter == "Student" ? "btn-primary shadow-xs" : "btn-light text-muted border-0")">
-                <i class="bi bi-mortarboard me-1"></i> Purchased by Students (@Model.StudentPurchasesCount)
-            </a>
-            <a href="@Url.Action("Payments", "Admin", new { filter = "Instructor" })"
-               class="btn btn-sm rounded-pill px-3 fw-semibold @(Model.CurrentFilter == "Instructor" ? "btn-primary shadow-xs" : "btn-light text-muted border-0")">
-                <i class="bi bi-person-badge me-1"></i> Purchased by Instructors (@Model.InstructorPurchasesCount)
-            </a>
-        </div>
+    <!-- Filter Form Bar (Role, Course-wise, and Search) -->
+    <div class="card card-custom p-3 bg-white border-0 shadow-sm mb-4">
+        @using (Html.BeginForm("Payments", "Admin", FormMethod.Get, new { @class = "row g-2 align-items-center" }))
+        {
+            <div class="col-lg-3 col-md-4">
+                <label class="form-label small fw-bold text-muted mb-1">Purchaser Role Filter</label>
+                <div class="btn-group w-100 p-1 bg-light rounded-pill border" role="group">
+                    <a href="@Url.Action("Payments", "Admin", new { filter = "All", courseId = Model.SelectedCourseId, search = Model.SearchQuery })"
+                       class="btn btn-xs rounded-pill px-2 fw-semibold @(Model.CurrentFilter == "All" || string.IsNullOrEmpty(Model.CurrentFilter) ? "btn-primary shadow-xs" : "btn-light text-muted border-0")" style="font-size: 11px;">
+                        All (@Model.TotalTransactionsCount)
+                    </a>
+                    <a href="@Url.Action("Payments", "Admin", new { filter = "Student", courseId = Model.SelectedCourseId, search = Model.SearchQuery })"
+                       class="btn btn-xs rounded-pill px-2 fw-semibold @(Model.CurrentFilter == "Student" ? "btn-primary shadow-xs" : "btn-light text-muted border-0")" style="font-size: 11px;">
+                        Students (@Model.StudentPurchasesCount)
+                    </a>
+                    <a href="@Url.Action("Payments", "Admin", new { filter = "Instructor", courseId = Model.SelectedCourseId, search = Model.SearchQuery })"
+                       class="btn btn-xs rounded-pill px-2 fw-semibold @(Model.CurrentFilter == "Instructor" ? "btn-primary shadow-xs" : "btn-light text-muted border-0")" style="font-size: 11px;">
+                        Teachers (@Model.InstructorPurchasesCount)
+                    </a>
+                </div>
+                <input type="hidden" name="filter" value="@Model.CurrentFilter" />
+            </div>
 
-        <div class="small text-muted">
-            Displaying @Model.Transactions.Count transaction@(Model.Transactions.Count == 1 ? "" : "s")
-        </div>
+            <div class="col-lg-4 col-md-4">
+                <label class="form-label small fw-bold text-muted mb-1">Filter by Course</label>
+                @Html.DropDownList("courseId", Model.CourseList, new { @class = "form-select form-select-sm" })
+            </div>
+
+            <div class="col-lg-3 col-md-4">
+                <label class="form-label small fw-bold text-muted mb-1">Search Keywords</label>
+                <input type="text" name="search" value="@Model.SearchQuery" class="form-control form-control-sm" placeholder="Txn ID, Buyer Name, Email..." />
+            </div>
+
+            <div class="col-lg-2 col-md-12 d-flex gap-2 align-items-end mt-auto">
+                <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3 w-100 fw-semibold">
+                    <i class="bi bi-funnel-fill me-1"></i> Filter
+                </button>
+                <a href="@Url.Action("Payments", "Admin")" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="Reset all filters">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            </div>
+        }
     </div>
 
     <!-- Master Transaction Table -->
@@ -140,7 +168,7 @@
                                     <i class="bi bi-credit-card fs-1 d-block mb-2 text-secondary"></i>
                                     <h6 class="fw-bold mb-1">No transactions recorded</h6>
                                     <p class="small text-muted mb-0">
-                                        @(Model.CurrentFilter != "All" ? "No purchases found matching the selected role filter." : "Transactions will appear here when courses are purchased on the platform.")
+                                        No purchases found matching the selected filter criteria.
                                     </p>
                                 </div>
                             </td>
@@ -178,19 +206,19 @@
                                     @if (txn.BuyerRole == "Instructor")
                                     {
                                         <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2 py-1 small">
-                                            <i class="bi bi-person-badge me-1"></i> Instructor Buyer
+                                            <i class="bi bi-person-badge me-1"></i> Educator
                                         </span>
                                     }
                                     else if (txn.BuyerRole == "Admin")
                                     {
                                         <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1 small">
-                                            <i class="bi bi-shield-lock me-1"></i> Admin Buyer
+                                            <i class="bi bi-shield-lock me-1"></i> Admin
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1 small">
-                                            <i class="bi bi-mortarboard me-1"></i> Student Buyer
+                                            <i class="bi bi-mortarboard me-1"></i> Student
                                         </span>
                                     }
                                 </td>

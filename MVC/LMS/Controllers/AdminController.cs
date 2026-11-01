@@ -641,10 +641,38 @@ namespace LMS.Controllers
         }
 
         // GET: Admin/Payments
-        public ActionResult Payments(string filter = "All")
+        public ActionResult Payments(string filter = "All", int? courseId = null, string search = null)
         {
-            var model = _paymentService.GetAdminPayments(filter);
+            var model = _paymentService.GetAdminPayments(filter, courseId, search);
             return View(model);
+        }
+
+        // GET: Admin/ExportTransactionsPdf
+        [HttpGet]
+        public ActionResult ExportTransactionsPdf(string filter = "All", int? courseId = null, string search = null)
+        {
+            var model = _paymentService.GetAdminPayments(filter, courseId, search);
+            return new Rotativa.ViewAsPdf("TransactionsPdf", model)
+            {
+                FileName = $"Platform-Transactions-Audit-{DateTime.UtcNow:yyyyMMdd-HHmm}.pdf",
+                PageOrientation = Rotativa.Options.Orientation.Landscape,
+                PageSize = Rotativa.Options.Size.A4,
+                PageMargins = new Rotativa.Options.Margins(10, 10, 10, 10)
+            };
+        }
+
+        // GET: Admin/ExportTransactionsCsv
+        [HttpGet]
+        public ActionResult ExportTransactionsCsv(string filter = "All", int? courseId = null, string search = null)
+        {
+            var model = _paymentService.GetAdminPayments(filter, courseId, search);
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("Transaction ID,Date (UTC),Course,Buyer Name,Buyer Email,Buyer Role,Instructor,Amount (INR),Platform Commission (5%),Instructor Earnings (95%),Payment Method,Status");
+            foreach (var t in model.Transactions)
+            {
+                sb.AppendLine($"\"{t.TransactionId}\",\"{t.PaymentDate:yyyy-MM-dd HH:mm}\",\"{EscapeCsv(t.CourseTitle)}\",\"{EscapeCsv(t.BuyerName)}\",\"{EscapeCsv(t.BuyerEmail)}\",\"{t.BuyerRole}\",\"{EscapeCsv(t.InstructorName)}\",{t.Amount:F2},{t.AdminCommission:F2},{t.InstructorEarnings:F2},\"{EscapeCsv(t.PaymentMethod)}\",\"{t.PaymentStatus}\"");
+            }
+            return File(System.Text.Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", $"Platform-Transactions-{DateTime.UtcNow:yyyyMMdd-HHmm}.csv");
         }
 
         // GET: Admin/Announcements
@@ -709,6 +737,49 @@ namespace LMS.Controllers
         {
             var model = _dashboardService.GetAdminDashboard();
             return View(model);
+        }
+
+        // GET: Admin/ExportReportPdf
+        [HttpGet]
+        public ActionResult ExportReportPdf()
+        {
+            var model = _dashboardService.GetAdminDashboard();
+            return new Rotativa.ViewAsPdf("ReportPdf", model)
+            {
+                FileName = $"Platform-Executive-Report-{DateTime.UtcNow:yyyyMMdd-HHmm}.pdf",
+                PageOrientation = Rotativa.Options.Orientation.Portrait,
+                PageSize = Rotativa.Options.Size.A4,
+                PageMargins = new Rotativa.Options.Margins(12, 12, 12, 12)
+            };
+        }
+
+        // GET: Admin/ExportReportCsv
+        [HttpGet]
+        public ActionResult ExportReportCsv()
+        {
+            var model = _dashboardService.GetAdminDashboard();
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("Executive Metric,Value");
+            sb.AppendLine($"Total Registered Users,{model.TotalUsers}");
+            sb.AppendLine($"Total Students,{model.TotalStudents}");
+            sb.AppendLine($"Total Instructors,{model.TotalInstructors}");
+            sb.AppendLine($"Total Courses,{model.TotalCourses}");
+            sb.AppendLine($"Published Courses,{model.PublishedCourses}");
+            sb.AppendLine($"Total Enrollments,{model.TotalEnrollments}");
+            sb.AppendLine($"Total Platform Revenue (INR),{model.TotalRevenue:F2}");
+            sb.AppendLine($"Total Certificates Issued,{model.TotalCertificates}");
+            sb.AppendLine();
+            sb.AppendLine("Category Name,Course Count");
+            foreach (var c in model.CategoryStats)
+            {
+                sb.AppendLine($"\"{EscapeCsv(c.CategoryName)}\",{c.CourseCount}");
+            }
+            return File(System.Text.Encoding.UTF8.GetBytes(sb.ToString()), "text/csv", $"Platform-Executive-Report-{DateTime.UtcNow:yyyyMMdd-HHmm}.csv");
+        }
+
+        private static string EscapeCsv(string s)
+        {
+            return s?.Replace("\"", "\"\"") ?? "";
         }
 
         protected override void Dispose(bool disposing)

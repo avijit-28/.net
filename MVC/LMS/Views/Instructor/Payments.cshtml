@@ -8,7 +8,7 @@
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb small">
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "Instructor")" class="text-decoration-none">Instructor Studio</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Course Earnings & Transactions</li>
+            <li class="breadcrumb-item active" aria-current="page">Course Earnings &amp; Transactions</li>
         </ol>
     </nav>
 
@@ -18,15 +18,21 @@
             <span class="badge badge-primary-subtle px-3 py-1 rounded-pill mb-2 fw-semibold">
                 <i class="bi bi-wallet2 text-primary me-1"></i> Revenue Ledger
             </span>
-            <h2 class="fw-extrabold mb-1 tracking-tight">Course Sales & Earnings</h2>
+            <h2 class="fw-extrabold mb-1 tracking-tight">Course Sales &amp; Earnings</h2>
             <p class="text-muted small mb-0">Track real-time purchase transactions and revenue generated across all your authored courses</p>
         </div>
-        <div class="d-flex align-items-center gap-2">
-            <a href="@Url.Action("Courses", "Instructor")" class="btn btn-outline-secondary rounded-pill px-3">
-                <i class="bi bi-collection-play me-1"></i> My Courses
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <a href="@Url.Action("ExportEarningsPdf", "Instructor", new { filter = Model.CurrentFilter, courseId = Model.SelectedCourseId, search = Model.SearchQuery })" class="btn btn-outline-danger rounded-pill px-3 fw-semibold shadow-xs">
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Export PDF
             </a>
-            <a href="@Url.Action("CreateCourse", "Instructor")" class="btn btn-primary rounded-pill px-3 fw-semibold shadow-sm">
-                <i class="bi bi-plus-circle me-1"></i> Create New Course
+            <a href="@Url.Action("ExportEarningsCsv", "Instructor", new { filter = Model.CurrentFilter, courseId = Model.SelectedCourseId, search = Model.SearchQuery })" class="btn btn-outline-success rounded-pill px-3 fw-semibold shadow-xs">
+                <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i> Export CSV
+            </a>
+            <button class="btn btn-outline-secondary rounded-pill px-3 fw-semibold shadow-xs" onclick="window.print();">
+                <i class="bi bi-printer me-1"></i> Print
+            </button>
+            <a href="@Url.Action("Courses", "Instructor")" class="btn btn-primary rounded-pill px-3 fw-semibold shadow-sm">
+                <i class="bi bi-collection-play me-1"></i> My Courses
             </a>
         </div>
     </div>
@@ -44,14 +50,14 @@
                 <h3 class="fw-extrabold mb-1 text-success tracking-tight">
                     <span class="rupee-symbol">&#8377;</span>@Model.TotalEarnings.ToString("N2")
                 </h3>
-                <small class="text-muted">Net lifetime revenue deposited to instructor</small>
+                <small class="text-muted">Net lifetime revenue deposited to you</small>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card card-custom p-4 bg-white border-0 shadow-sm h-100">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Gross Platform Sales</span>
+                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Gross Course Sales</span>
                     <div class="rounded-circle bg-primary-subtle text-primary p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                         <i class="bi bi-wallet2 fs-5"></i>
                     </div>
@@ -66,7 +72,7 @@
         <div class="col-md-3">
             <div class="card card-custom p-4 bg-white border-0 shadow-sm h-100">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Admin Platform Fee (5%)</span>
+                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Platform Fee (5%)</span>
                     <div class="rounded-circle bg-danger-subtle text-danger p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                         <i class="bi bi-percent fs-5"></i>
                     </div>
@@ -74,7 +80,7 @@
                 <h3 class="fw-extrabold mb-1 text-danger tracking-tight">
                     <span class="rupee-symbol">&#8377;</span>@Model.TotalCommissionDeducted.ToString("N2")
                 </h3>
-                <small class="text-muted">5% platform management fee</small>
+                <small class="text-muted">5% platform management deduction</small>
             </div>
         </div>
 
@@ -94,26 +100,48 @@
         </div>
     </div>
 
-    <!-- Filter Pills / Tabs -->
-    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
-        <div class="btn-group p-1 bg-light rounded-pill border" role="group">
-            <a href="@Url.Action("Payments", "Instructor", new { filter = "All" })"
-               class="btn btn-sm rounded-pill px-3 fw-semibold @(Model.CurrentFilter == "All" || string.IsNullOrEmpty(Model.CurrentFilter) ? "btn-primary shadow-xs" : "btn-light text-muted border-0")">
-                All Purchases (@Model.TotalTransactionsCount)
-            </a>
-            <a href="@Url.Action("Payments", "Instructor", new { filter = "Student" })"
-               class="btn btn-sm rounded-pill px-3 fw-semibold @(Model.CurrentFilter == "Student" ? "btn-primary shadow-xs" : "btn-light text-muted border-0")">
-                <i class="bi bi-mortarboard me-1"></i> Student Buyers (@Model.TotalStudentPurchasesCount)
-            </a>
-            <a href="@Url.Action("Payments", "Instructor", new { filter = "Instructor" })"
-               class="btn btn-sm rounded-pill px-3 fw-semibold @(Model.CurrentFilter == "Instructor" ? "btn-primary shadow-xs" : "btn-light text-muted border-0")">
-                <i class="bi bi-person-badge me-1"></i> Instructor Buyers (@Model.TotalInstructorPurchasesCount)
-            </a>
-        </div>
+    <!-- Filter Form Bar -->
+    <div class="card card-custom p-3 bg-white border-0 shadow-sm mb-4">
+        @using (Html.BeginForm("Earnings", "Instructor", FormMethod.Get, new { @class = "row g-2 align-items-center" }))
+        {
+            <div class="col-lg-3 col-md-4">
+                <label class="form-label small fw-bold text-muted mb-1">Purchaser Role Filter</label>
+                <div class="btn-group w-100 p-1 bg-light rounded-pill border" role="group">
+                    <a href="@Url.Action("Earnings", "Instructor", new { filter = "All", courseId = Model.SelectedCourseId, search = Model.SearchQuery })"
+                       class="btn btn-xs rounded-pill px-2 fw-semibold @(Model.CurrentFilter == "All" || string.IsNullOrEmpty(Model.CurrentFilter) ? "btn-primary shadow-xs" : "btn-light text-muted border-0")" style="font-size: 11px;">
+                        All (@Model.TotalTransactionsCount)
+                    </a>
+                    <a href="@Url.Action("Earnings", "Instructor", new { filter = "Student", courseId = Model.SelectedCourseId, search = Model.SearchQuery })"
+                       class="btn btn-xs rounded-pill px-2 fw-semibold @(Model.CurrentFilter == "Student" ? "btn-primary shadow-xs" : "btn-light text-muted border-0")" style="font-size: 11px;">
+                        Students (@Model.TotalStudentPurchasesCount)
+                    </a>
+                    <a href="@Url.Action("Earnings", "Instructor", new { filter = "Instructor", courseId = Model.SelectedCourseId, search = Model.SearchQuery })"
+                       class="btn btn-xs rounded-pill px-2 fw-semibold @(Model.CurrentFilter == "Instructor" ? "btn-primary shadow-xs" : "btn-light text-muted border-0")" style="font-size: 11px;">
+                        Teachers (@Model.TotalInstructorPurchasesCount)
+                    </a>
+                </div>
+                <input type="hidden" name="filter" value="@Model.CurrentFilter" />
+            </div>
 
-        <div class="small text-muted">
-            Displaying @Model.Transactions.Count transaction@(Model.Transactions.Count == 1 ? "" : "s") for your authored courses
-        </div>
+            <div class="col-lg-4 col-md-4">
+                <label class="form-label small fw-bold text-muted mb-1">Filter by Course</label>
+                @Html.DropDownList("courseId", Model.CourseList, new { @class = "form-select form-select-sm" })
+            </div>
+
+            <div class="col-lg-3 col-md-4">
+                <label class="form-label small fw-bold text-muted mb-1">Search Keywords</label>
+                <input type="text" name="search" value="@Model.SearchQuery" class="form-control form-control-sm" placeholder="Txn ID, Learner Name, Email..." />
+            </div>
+
+            <div class="col-lg-2 col-md-12 d-flex gap-2 align-items-end mt-auto">
+                <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3 w-100 fw-semibold">
+                    <i class="bi bi-funnel-fill me-1"></i> Filter
+                </button>
+                <a href="@Url.Action("Earnings", "Instructor")" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="Reset all filters">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            </div>
+        }
     </div>
 
     <!-- Transactions Table -->
@@ -142,7 +170,7 @@
                                     <i class="bi bi-receipt-cutoff fs-1 d-block mb-2 text-secondary"></i>
                                     <h6 class="fw-bold mb-1">No transaction records found</h6>
                                     <p class="small text-muted mb-0">
-                                        @(Model.CurrentFilter != "All" ? "No purchases matching the selected buyer filter." : "Transactions will appear here when students or other instructors purchase your courses.")
+                                        No purchases matching the selected filter criteria.
                                     </p>
                                 </div>
                             </td>
@@ -174,19 +202,19 @@
                                     @if (txn.BuyerRole == "Instructor")
                                     {
                                         <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2 py-1 small">
-                                            <i class="bi bi-person-badge me-1"></i> Instructor Buyer
+                                            <i class="bi bi-person-badge me-1"></i> Educator
                                         </span>
                                     }
                                     else if (txn.BuyerRole == "Admin")
                                     {
                                         <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1 small">
-                                            <i class="bi bi-shield-lock me-1"></i> Admin Buyer
+                                            <i class="bi bi-shield-lock me-1"></i> Admin
                                         </span>
                                     }
                                     else
                                     {
                                         <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2 py-1 small">
-                                            <i class="bi bi-mortarboard me-1"></i> Student Buyer
+                                            <i class="bi bi-mortarboard me-1"></i> Student
                                         </span>
                                     }
                                 </td>

@@ -32,6 +32,9 @@ namespace LMS.ViewModels
         public int TotalPaidEnrollments { get; set; }
         public decimal AverageOrderValue { get; set; }
         public string CurrentFilter { get; set; } = "All"; // "All", "Student", "Instructor"
+        public int? SelectedCourseId { get; set; }
+        public string SearchQuery { get; set; }
+        public List<System.Web.Mvc.SelectListItem> CourseList { get; set; } = new List<System.Web.Mvc.SelectListItem>();
         public int TotalTransactionsCount { get; set; }
         public int TotalStudentPurchasesCount { get; set; }
         public int TotalInstructorPurchasesCount { get; set; }
@@ -49,6 +52,9 @@ namespace LMS.ViewModels
         public decimal InstructorPurchasesTotal { get; set; }
         public int InstructorPurchasesCount { get; set; }
         public string CurrentFilter { get; set; } = "All"; // "All", "Student", "Instructor"
+        public int? SelectedCourseId { get; set; }
+        public string SearchQuery { get; set; }
+        public List<System.Web.Mvc.SelectListItem> CourseList { get; set; } = new List<System.Web.Mvc.SelectListItem>();
         public List<CoursePaymentRecordViewModel> Transactions { get; set; } = new List<CoursePaymentRecordViewModel>();
     }
 }

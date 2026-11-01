@@ -138,12 +138,14 @@ namespace LMS.Services
             return "Student";
         }
 
-        public InstructorPaymentsViewModel GetInstructorPayments(string instructorId, string filter = "All")
+        public InstructorPaymentsViewModel GetInstructorPayments(string instructorId, string filter = "All", int? courseId = null, string search = null)
         {
-            var courseIds = _db.Courses
+            var instructorCourses = _db.Courses
                 .Where(c => c.InstructorId == instructorId)
-                .Select(c => c.CourseId)
+                .OrderBy(c => c.Title)
                 .ToList();
+
+            var courseIds = instructorCourses.Select(c => c.CourseId).ToList();
 
             var payments = courseIds.Any()
                 ? _db.Payments
@@ -202,7 +204,37 @@ namespace LMS.Services
             var filteredRecords = records;
             if (!string.IsNullOrEmpty(filter) && filter != "All")
             {
-                filteredRecords = records.Where(r => string.Equals(r.BuyerRole, filter, StringComparison.OrdinalIgnoreCase)).ToList();
+                filteredRecords = filteredRecords.Where(r => string.Equals(r.BuyerRole, filter, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (courseId.HasValue && courseId.Value > 0)
+            {
+                filteredRecords = filteredRecords.Where(r => r.CourseId == courseId.Value).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var q = search.Trim().ToLower();
+                filteredRecords = filteredRecords.Where(r =>
+                    (r.TransactionId != null && r.TransactionId.ToLower().Contains(q)) ||
+                    (r.BuyerName != null && r.BuyerName.ToLower().Contains(q)) ||
+                    (r.BuyerEmail != null && r.BuyerEmail.ToLower().Contains(q)) ||
+                    (r.CourseTitle != null && r.CourseTitle.ToLower().Contains(q))
+                ).ToList();
+            }
+
+            var courseSelectList = new List<System.Web.Mvc.SelectListItem>
+            {
+                new System.Web.Mvc.SelectListItem { Value = "", Text = "All My Courses", Selected = !courseId.HasValue }
+            };
+            foreach (var c in instructorCourses)
+            {
+                courseSelectList.Add(new System.Web.Mvc.SelectListItem
+                {
+                    Value = c.CourseId.ToString(),
+                    Text = c.Title,
+                    Selected = courseId.HasValue && courseId.Value == c.CourseId
+                });
             }
 
             return new InstructorPaymentsViewModel
@@ -213,6 +245,9 @@ namespace LMS.Services
                 TotalPaidEnrollments = totalPaidEnrollments,
                 AverageOrderValue = avgOrderValue,
                 CurrentFilter = filter ?? "All",
+                SelectedCourseId = courseId,
+                SearchQuery = search,
+                CourseList = courseSelectList,
                 TotalTransactionsCount = records.Count,
                 TotalStudentPurchasesCount = studentPurchasesCount,
                 TotalInstructorPurchasesCount = instructorPurchasesCount,
@@ -220,7 +255,7 @@ namespace LMS.Services
             };
         }
 
-        public AdminPaymentsViewModel GetAdminPayments(string filter = "All")
+        public AdminPaymentsViewModel GetAdminPayments(string filter = "All", int? courseId = null, string search = null)
         {
             var payments = _db.Payments
                 .Include(p => p.Course)
@@ -290,7 +325,39 @@ namespace LMS.Services
             var filteredRecords = records;
             if (!string.IsNullOrEmpty(filter) && filter != "All")
             {
-                filteredRecords = records.Where(r => string.Equals(r.BuyerRole, filter, StringComparison.OrdinalIgnoreCase)).ToList();
+                filteredRecords = filteredRecords.Where(r => string.Equals(r.BuyerRole, filter, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (courseId.HasValue && courseId.Value > 0)
+            {
+                filteredRecords = filteredRecords.Where(r => r.CourseId == courseId.Value).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var q = search.Trim().ToLower();
+                filteredRecords = filteredRecords.Where(r =>
+                    (r.TransactionId != null && r.TransactionId.ToLower().Contains(q)) ||
+                    (r.BuyerName != null && r.BuyerName.ToLower().Contains(q)) ||
+                    (r.BuyerEmail != null && r.BuyerEmail.ToLower().Contains(q)) ||
+                    (r.InstructorName != null && r.InstructorName.ToLower().Contains(q)) ||
+                    (r.CourseTitle != null && r.CourseTitle.ToLower().Contains(q))
+                ).ToList();
+            }
+
+            var allCourses = _db.Courses.OrderBy(c => c.Title).ToList();
+            var courseSelectList = new List<System.Web.Mvc.SelectListItem>
+            {
+                new System.Web.Mvc.SelectListItem { Value = "", Text = "All Platform Courses", Selected = !courseId.HasValue }
+            };
+            foreach (var c in allCourses)
+            {
+                courseSelectList.Add(new System.Web.Mvc.SelectListItem
+                {
+                    Value = c.CourseId.ToString(),
+                    Text = c.Title,
+                    Selected = courseId.HasValue && courseId.Value == c.CourseId
+                });
             }
 
             return new AdminPaymentsViewModel
@@ -304,6 +371,9 @@ namespace LMS.Services
                 InstructorPurchasesTotal = instructorTotal,
                 InstructorPurchasesCount = instructorCount,
                 CurrentFilter = filter ?? "All",
+                SelectedCourseId = courseId,
+                SearchQuery = search,
+                CourseList = courseSelectList,
                 Transactions = filteredRecords
             };
         }
