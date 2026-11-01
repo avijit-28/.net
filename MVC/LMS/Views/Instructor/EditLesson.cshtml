@@ -75,7 +75,7 @@
                     </div>
                     <div class="col-12">
                         @Html.LabelFor(m => m.Description, new { @class = "form-label fw-semibold" })
-                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "2", placeholder = "Brief outline of concepts mastered in this lesson..." })
+                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = "5", placeholder = "Brief outline of concepts mastered in this lesson..." })
                         @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger small" })
                     </div>
                     <div class="col-12">

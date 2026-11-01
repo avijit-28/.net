@@ -85,6 +85,7 @@ namespace LMS.Controllers
                     Price = model.Price,
                     Level = model.Level,
                     DurationInHours = model.DurationInHours,
+                    ValidityInDays = model.ValidityInDays > 0 ? model.ValidityInDays : 30,
                     Status = model.Status ?? "Draft",
                     CreatedDate = DateTime.UtcNow,
                     PublishedDate = model.Status == "Published" ? (DateTime?)DateTime.UtcNow : null
@@ -117,6 +118,7 @@ namespace LMS.Controllers
                 Price = course.Price,
                 Level = course.Level,
                 DurationInHours = course.DurationInHours,
+                ValidityInDays = course.ValidityInDays > 0 ? course.ValidityInDays : 30,
                 Status = course.Status,
                 Categories = GetCategorySelectList()
             };
@@ -141,6 +143,7 @@ namespace LMS.Controllers
                 course.Price = model.Price;
                 course.Level = model.Level;
                 course.DurationInHours = model.DurationInHours;
+                course.ValidityInDays = model.ValidityInDays > 0 ? model.ValidityInDays : 30;
                 course.UpdatedDate = DateTime.UtcNow;
 
                 if (course.Status != "Published" && model.Status == "Published")

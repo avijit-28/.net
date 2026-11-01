@@ -179,6 +179,12 @@ namespace LMS.Services
             var enrollment = _db.Enrollments.FirstOrDefault(e => e.CourseId == courseId && e.StudentId == studentId);
             if (enrollment != null)
             {
+                // If course validity has expired, block completing and certificate issuance until re-enrolled
+                if (enrollment.IsExpired && enrollment.Status != "Completed")
+                {
+                    return enrollment.CompletionPercentage;
+                }
+
                 enrollment.CompletionPercentage = completionPercentage;
                 if (completionPercentage >= 100)
                 {

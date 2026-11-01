@@ -54,6 +54,12 @@ namespace LMS.Services
             }
 
             var existing = _db.Submissions.FirstOrDefault(s => s.AssignmentId == assignmentId && s.StudentId == studentId);
+            if (existing != null && existing.Status == "Graded")
+            {
+                errorMessage = "This assignment has already been evaluated and graded by the instructor. Further submissions are not permitted.";
+                return false;
+            }
+
             bool isLate = assignment.DueDate.HasValue && DateTime.UtcNow > assignment.DueDate.Value;
 
             if (existing == null)

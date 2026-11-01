@@ -5,8 +5,23 @@ using LMS.Models;
 
 namespace LMS.ViewModels
 {
+    public class StudentTaskItemViewModel
+    {
+        public int AssignmentId { get; set; }
+        public string Title { get; set; }
+        public string CourseTitle { get; set; }
+        public int CourseId { get; set; }
+        public decimal MaxMarks { get; set; }
+        public DateTime? DueDate { get; set; }
+        public bool IsSubmitted { get; set; }
+        public string SubmissionStatus { get; set; } // "Not Submitted", "In Review", "Graded"
+        public decimal? MarksAwarded { get; set; }
+        public string Feedback { get; set; }
+    }
+
     public class StudentDashboardViewModel
     {
+        public string StudentFirstName { get; set; }
         public int ActiveCourses { get; set; }
         public int CompletedCourses { get; set; }
         public int CertificatesCount { get; set; }
@@ -16,6 +31,7 @@ namespace LMS.ViewModels
         public List<Certificate> Certificates { get; set; } = new List<Certificate>();
         public List<Announcement> Announcements { get; set; } = new List<Announcement>();
         public List<Assignment> UpcomingAssignments { get; set; } = new List<Assignment>();
+        public List<StudentTaskItemViewModel> PracticalTasks { get; set; } = new List<StudentTaskItemViewModel>();
         public List<QuizAttempt> RecentQuizResults { get; set; } = new List<QuizAttempt>();
     }
 

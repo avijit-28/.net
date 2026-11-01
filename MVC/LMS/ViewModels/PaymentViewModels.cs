@@ -17,6 +17,8 @@ namespace LMS.ViewModels
         public string BuyerEmail { get; set; }
         public string BuyerRole { get; set; } // "Student", "Instructor", "Admin"
         public decimal Amount { get; set; }
+        public decimal AdminCommission { get; set; } // 5% platform charge
+        public decimal InstructorEarnings { get; set; } // 95% teacher earnings
         public string PaymentMethod { get; set; }
         public string PaymentStatus { get; set; } // "Completed", "Pending", "Failed"
         public DateTime PaymentDate { get; set; }
@@ -24,7 +26,9 @@ namespace LMS.ViewModels
 
     public class InstructorPaymentsViewModel
     {
-        public decimal TotalEarnings { get; set; }
+        public decimal TotalGrossSales { get; set; }
+        public decimal TotalEarnings { get; set; } // 95% net earnings
+        public decimal TotalCommissionDeducted { get; set; } // 5% platform fee
         public int TotalPaidEnrollments { get; set; }
         public decimal AverageOrderValue { get; set; }
         public string CurrentFilter { get; set; } = "All"; // "All", "Student", "Instructor"
@@ -36,7 +40,9 @@ namespace LMS.ViewModels
 
     public class AdminPaymentsViewModel
     {
-        public decimal TotalRevenue { get; set; }
+        public decimal TotalRevenue { get; set; } // Gross Platform Sales
+        public decimal TotalAdminCommission { get; set; } // 5% Admin Platform Fee
+        public decimal TotalInstructorPayouts { get; set; } // 95% Instructor Net Payouts
         public int TotalTransactionsCount { get; set; }
         public decimal StudentPurchasesTotal { get; set; }
         public int StudentPurchasesCount { get; set; }

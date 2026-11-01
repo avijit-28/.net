@@ -23,6 +23,27 @@ namespace LMS.Controllers
             return View(model);
         }
 
+        // GET: Certificate/DownloadPdf/5
+        public ActionResult DownloadPdf(int id)
+        {
+            var model = _certificateService.GetCertificateViewModel(id);
+            if (model == null) return HttpNotFound();
+
+            return new Rotativa.ViewAsPdf("CertificatePdf", model)
+            {
+                FileName = $"Certificate-{model.CertificateNumber}.pdf",
+                PageOrientation = Rotativa.Options.Orientation.Landscape,
+                PageSize = Rotativa.Options.Size.A4,
+                PageMargins = new Rotativa.Options.Margins(5, 5, 5, 5)
+            };
+        }
+
+        // GET: Certificate/DownloadCertificate/5
+        public ActionResult DownloadCertificate(int id)
+        {
+            return DownloadPdf(id);
+        }
+
         // GET: Certificate/Verify?certNumber=LMS-2026-123456
         [HttpGet]
         [AllowAnonymous]

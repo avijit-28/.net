@@ -48,6 +48,10 @@ namespace LMS.ViewModels
         [Range(0, 1000)]
         public decimal DurationInHours { get; set; } = 0;
 
+        [Display(Name = "Course Access Validity (Days)")]
+        [Range(1, 3650, ErrorMessage = "Access validity must be between 1 and 3650 days.")]
+        public int ValidityInDays { get; set; } = 30; // Access validity in days set by instructor
+
         public string Status { get; set; } = "Draft"; // Draft, Published, Archived
 
         public IEnumerable<SelectListItem> Categories { get; set; }

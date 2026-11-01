@@ -45,18 +45,25 @@
                 </div>
 
                 <div class="row g-3 mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         @Html.LabelFor(m => m.Price, new { @class = "form-label fw-semibold" })
                         <div class="input-group">
                             <span class="input-group-text"><span class="rupee-symbol">&#8377;</span></span>
                             @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         @Html.LabelFor(m => m.DurationInHours, new { @class = "form-label fw-semibold" })
                         <div class="input-group">
                             @Html.TextBoxFor(m => m.DurationInHours, new { @class = "form-control" })
                             <span class="input-group-text">Hours</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.LabelFor(m => m.ValidityInDays, new { @class = "form-label fw-semibold" })
+                        <div class="input-group">
+                            @Html.TextBoxFor(m => m.ValidityInDays, new { @class = "form-control" })
+                            <span class="input-group-text">Days</span>
                         </div>
                     </div>
                 </div>

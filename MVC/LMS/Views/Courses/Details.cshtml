@@ -62,13 +62,23 @@
                         else
                         {
                             <span class="display-6 fw-extrabold text-dark"><span class="rupee-symbol">&#8377;</span>@Model.Course.Price.ToString("N2")</span>
-                            <div class="small text-muted mt-1">One-time payment &bull; Lifetime access</div>
+                            <div class="small text-muted mt-1">One-time payment &bull; @(Model.Course.ValidityInDays > 0 ? Model.Course.ValidityInDays + " Days Access" : "Lifetime Access")</div>
                         }
                     </div>
 
                     @if (Model.IsEnrolled)
                     {
-                        if (Model.Enrollment.Status == "Completed")
+                        if (Model.Enrollment.IsExpired && Model.Enrollment.Status != "Completed")
+                        {
+                            <div class="badge bg-danger-subtle text-danger p-2 mb-2 w-100 rounded-3">
+                                <i class="bi bi-clock-history me-1"></i> Course Validity Expired (@Model.Course.ValidityInDays Days)
+                            </div>
+                            <p class="small text-muted mb-3">Your course access period has ended. Please re-enroll to resume lessons and complete your certification.</p>
+                            <a href="@Url.Action("Payment", "Courses", new { courseId = Model.Course.CourseId })" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm mb-2">
+                                <i class="bi bi-arrow-repeat me-1"></i> Re-Enroll in Course
+                            </a>
+                        }
+                        else if (Model.Enrollment.Status == "Completed")
                         {
                             <div class="badge bg-success-subtle text-success p-2 mb-3 w-100 rounded-3">
                                 <i class="bi bi-check-circle-fill me-1"></i> Course Curriculum Completed (100%)
@@ -83,7 +93,7 @@
                         else
                         {
                             <div class="badge bg-primary-subtle text-primary p-2 mb-3 w-100 rounded-3">
-                                <i class="bi bi-hourglass-split me-1"></i> Enrolled: @Model.Enrollment.CompletionPercentage% Completed
+                                <i class="bi bi-hourglass-split me-1"></i> Enrolled: @Model.Enrollment.CompletionPercentage% &bull; @Model.Enrollment.DaysRemaining days left
                             </div>
                             <a href="@Url.Action("Index", "Learning", new { courseId = Model.Course.CourseId })" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm mb-2">
                                 <i class="bi bi-play-circle-fill me-1"></i> Continue Learning Now
@@ -175,10 +185,31 @@
                                                         {
                                                             <i class="bi bi-file-earmark-richtext-fill text-secondary fs-5"></i>
                                                         }
-                                                        <span class="fw-semibold text-dark">@lesson.Title</span>
-                                                        @if (lesson.IsPreview)
+                                                        @if (Model.IsEnrolled && (!Model.Enrollment.IsExpired || Model.Enrollment.Status == "Completed"))
                                                         {
-                                                            <span class="badge bg-success-subtle text-success small">Free Preview</span>
+                                                            <a href="@Url.Action("Index", "Learning", new { courseId = Model.Course.CourseId, lessonId = lesson.LessonId })" class="fw-semibold text-dark text-decoration-none chapter-direct-link" title="Open lesson in classroom">
+                                                                @lesson.Title <span class="badge bg-primary-subtle text-primary small ms-2"><i class="bi bi-box-arrow-in-right me-1"></i>Open &rarr;</span>
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="javascript:void(0);" class="fw-semibold text-dark text-decoration-none btn-trigger-enroll" data-chapter-title="@lesson.Title" title="Click to enroll and unlock this lesson">
+                                                                @lesson.Title
+                                                            </a>
+                                                            if (lesson.IsPreview)
+                                                            {
+                                                                <button type="button" class="btn btn-xs btn-outline-success rounded-pill px-2 py-0 fw-bold btn-free-preview ms-2 shadow-xs" 
+                                                                        data-lesson-id="@lesson.LessonId"
+                                                                        data-title="@lesson.Title"
+                                                                        data-duration="@lesson.DurationInMinutes"
+                                                                        title="Watch free preview lecture">
+                                                                    <i class="bi bi-play-circle-fill me-1"></i> Free Preview
+                                                                </button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge bg-light text-muted border small ms-2"><i class="bi bi-lock-fill me-1"></i>Locked</span>
+                                                            }
                                                         }
                                                     </div>
                                                     <span class="text-muted"><i class="bi bi-clock me-1"></i> @lesson.DurationInMinutes min</span>
@@ -261,7 +292,7 @@
             <div class="card card-custom p-4 shadow-sm bg-light border">
                 <h6 class="fw-bold text-dark mb-2"><i class="bi bi-patch-check-fill text-success me-2"></i> Quality Guarantee</h6>
                 <ul class="list-unstyled small text-secondary mb-0 d-flex flex-column gap-2">
-                    <li><i class="bi bi-check2 text-success me-1"></i> Unlimited lifetime access to curriculum</li>
+                    <li><i class="bi bi-check2 text-success me-1"></i> @(Model.Course.ValidityInDays > 0 ? Model.Course.ValidityInDays + " days full curriculum access period" : "Unlimited lifetime access to curriculum")</li>
                     <li><i class="bi bi-check2 text-success me-1"></i> Interactive classroom player with focus mode</li>
                     <li><i class="bi bi-check2 text-success me-1"></i> Verifiable certificate issued upon completion</li>
                     <li><i class="bi bi-check2 text-success me-1"></i> Graded projects and live timed quizzes</li>
@@ -311,6 +342,107 @@
     </div>
 }
 
+<!-- Free Preview Modal Pop-up -->
+<div class="modal fade" id="freePreviewModal" tabindex="-1" aria-labelledby="freePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+            <div class="modal-header bg-dark text-white border-0 py-3 px-4">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-success rounded-pill px-3 py-1 small">Free Preview</span>
+                    <h5 class="modal-title fw-bold mb-0 text-truncate" id="freePreviewModalLabel">Lesson Preview</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0 bg-black">
+                <div id="previewVideoContainer" class="ratio ratio-16x9 w-100 bg-black d-flex align-items-center justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading lesson stream...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-top p-3 p-md-4 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <div class="small text-muted" id="previewDurationText"><i class="bi bi-clock me-1"></i> Preview duration</div>
+                    <div class="small fw-semibold text-dark mt-1 text-truncate" style="max-width: 400px;" id="previewSummaryText"></div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">Close</button>
+                    @if (!Model.IsEnrolled)
+                    {
+                        <a href="@Url.Action("Payment", "Courses", new { courseId = Model.Course.CourseId })" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                            Enroll in Course &rarr;
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enroll Prompt Modal Pop-up -->
+<div class="modal fade" id="enrollPromptModal" tabindex="-1" aria-labelledby="enrollPromptModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+            <div class="modal-header bg-primary text-white border-0 py-3 px-4">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-lock-fill fs-5"></i>
+                    <h5 class="modal-title fw-bold mb-0" id="enrollPromptModalLabel">Enrollment Required</h5>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <div class="rounded-circle bg-primary-subtle text-primary p-3 d-inline-flex mb-3 shadow-xs">
+                    <i class="bi bi-mortarboard-fill display-5"></i>
+                </div>
+                <h5 class="fw-bold mb-2 text-dark" id="enrollPromptChapterName">Selected Lesson</h5>
+                <p class="text-muted small mb-3">
+                    This lecture is part of the complete structured curriculum for <strong class="text-dark">@Model.Course.Title</strong>. Enroll now to unlock all video lectures, hands-on assignments, quizzes, code resources, and an accredited certificate!
+                </p>
+
+                <div class="p-3 bg-light rounded-3 border mb-3 text-start small">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted">Access Validity:</span>
+                        <strong class="text-dark"><i class="bi bi-hourglass-split text-primary me-1"></i>@(Model.Course.ValidityInDays > 0 ? Model.Course.ValidityInDays + " Days Access" : "Lifetime Access")</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">Course Price:</span>
+                        <strong class="text-success fs-6">
+                            @if (Model.Course.Price == 0)
+                            {
+                                <span>FREE</span>
+                            }
+                            else
+                            {
+                                <span><span class="rupee-symbol">&#8377;</span>@Model.Course.Price.ToString("N2")</span>
+                            }
+                        </strong>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-top p-3 px-4 d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                @if (Model.Course.Price == 0)
+                {
+                    using (Html.BeginForm("Enroll", "Courses", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="courseId" value="@Model.Course.CourseId" />
+                        <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold shadow-sm">
+                            <i class="bi bi-check-circle-fill me-1"></i> Enroll Free Now
+                        </button>
+                    }
+                }
+                else
+                {
+                    <a href="@Url.Action("Payment", "Courses", new { courseId = Model.Course.CourseId })" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                        <i class="bi bi-unlock-fill me-1"></i> Buy &amp; Unlock Now &rarr;
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         $(function () {
@@ -324,6 +456,81 @@
                     $('.accordion-collapse').collapse('show');
                     $(this).text('Collapse All Modules');
                     allCollapsed = false;
+                }
+            });
+
+            // Free Preview Modal Handler
+            var previewModalEl = document.getElementById('freePreviewModal');
+            var previewModal = previewModalEl ? new bootstrap.Modal(previewModalEl) : null;
+
+            $('.btn-free-preview').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var lessonId = $(this).data('lesson-id');
+                var fallbackTitle = $(this).data('title') || 'Lesson Preview';
+                var duration = $(this).data('duration') || 0;
+
+                $('#freePreviewModalLabel').text(fallbackTitle);
+                $('#previewDurationText').html('<i class="bi bi-clock me-1 text-primary"></i> ' + duration + ' min');
+                $('#previewSummaryText').text('Loading preview details...');
+                $('#previewVideoContainer').html('<div class="d-flex align-items-center justify-content-center h-100 text-white"><div class="spinner-border text-primary me-2"></div> Initializing stream...</div>');
+
+                if (previewModal) {
+                    previewModal.show();
+                }
+
+                $.ajax({
+                    url: '@Url.Action("FreePreview", "Courses")',
+                    type: 'GET',
+                    data: { lessonId: lessonId },
+                    success: function (res) {
+                        if (res && res.success) {
+                            $('#freePreviewModalLabel').text(res.title);
+                            $('#previewDurationText').html('<i class="bi bi-clock me-1 text-primary"></i> ' + res.duration + ' minutes &bull; Free Preview');
+                            $('#previewSummaryText').text(res.summary || res.courseTitle || '');
+
+                            var videoHtml = '';
+                            if (res.isDirectVideo && res.videoUrl) {
+                                videoHtml = '<video controls autoplay playsinline class="w-100 h-100" style="object-fit: contain; background: #000;">' +
+                                    '<source src="' + res.videoUrl + '" type="video/mp4">' +
+                                    'Your browser does not support the video tag.' +
+                                    '</video>';
+                            } else if (res.embedUrl) {
+                                videoHtml = '<iframe src="' + res.embedUrl + '" class="w-100 h-100 border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+                            } else {
+                                videoHtml = '<div class="d-flex flex-column align-items-center justify-content-center h-100 text-white p-4 text-center">' +
+                                    '<i class="bi bi-file-earmark-text display-3 text-primary mb-2"></i>' +
+                                    '<h5 class="fw-bold mb-2">' + res.title + '</h5>' +
+                                    '<p class="small text-secondary mb-0">' + (res.summary || 'Free preview notes available.') + '</p>' +
+                                    '</div>';
+                            }
+                            $('#previewVideoContainer').html(videoHtml);
+                        } else {
+                            $('#previewVideoContainer').html('<div class="text-white text-center p-4">' + (res.message || 'Unable to load preview.') + '</div>');
+                        }
+                    },
+                    error: function () {
+                        $('#previewVideoContainer').html('<div class="text-white text-center p-4 text-danger"><i class="bi bi-exclamation-triangle-fill fs-2 d-block mb-2"></i> Error loading free preview. Please try again.</div>');
+                    }
+                });
+            });
+
+            if (previewModalEl) {
+                previewModalEl.addEventListener('hidden.bs.modal', function () {
+                    $('#previewVideoContainer').html('');
+                });
+            }
+
+            // Enroll Prompt Modal Handler for locked chapters
+            var enrollModalEl = document.getElementById('enrollPromptModal');
+            var enrollModal = enrollModalEl ? new bootstrap.Modal(enrollModalEl) : null;
+
+            $('.btn-trigger-enroll').on('click', function (e) {
+                e.preventDefault();
+                var chapterTitle = $(this).data('chapter-title') || 'Selected Chapter';
+                $('#enrollPromptChapterName').text(chapterTitle);
+                if (enrollModal) {
+                    enrollModal.show();
                 }
             });
         });

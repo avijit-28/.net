@@ -31,17 +31,22 @@ namespace LMS.Services
                 return false;
             }
 
-            if (_enrollmentService.IsEnrolled(studentId, courseId))
+            if (_enrollmentService.HasActiveAccess(studentId, courseId))
             {
-                errorMessage = "You are already enrolled in this course.";
+                errorMessage = "You already have active access to this course.";
                 return false;
             }
+
+            decimal adminFee = Math.Round(course.Price * 0.05m, 2);
+            decimal teacherShare = course.Price - adminFee;
 
             var payment = new Payment
             {
                 StudentId = studentId,
                 CourseId = courseId,
                 Amount = course.Price,
+                AdminCommission = adminFee,
+                InstructorEarnings = teacherShare,
                 PaymentMethod = paymentMethod ?? "Credit Card (Mock/Test)",
                 TransactionId = transactionId,
                 PaymentStatus = "Completed",
@@ -161,6 +166,9 @@ namespace LMS.Services
                 buyers.TryGetValue(p.StudentId, out var buyer);
                 string buyerRole = DetermineUserRole(buyer, rolesMap);
 
+                decimal adminComm = p.AdminCommission > 0 ? p.AdminCommission : Math.Round(p.Amount * 0.05m, 2);
+                decimal teacherEarn = p.InstructorEarnings > 0 ? p.InstructorEarnings : (p.Amount - adminComm);
+
                 records.Add(new CoursePaymentRecordViewModel
                 {
                     PaymentId = p.PaymentId,
@@ -173,6 +181,8 @@ namespace LMS.Services
                     BuyerEmail = buyer != null ? buyer.Email : "N/A",
                     BuyerRole = buyerRole,
                     Amount = p.Amount,
+                    AdminCommission = adminComm,
+                    InstructorEarnings = teacherEarn,
                     PaymentMethod = p.PaymentMethod,
                     PaymentStatus = p.PaymentStatus,
                     PaymentDate = p.PaymentDate
@@ -180,9 +190,11 @@ namespace LMS.Services
             }
 
             var completed = records.Where(r => r.PaymentStatus == "Completed").ToList();
-            decimal totalEarnings = completed.Sum(r => r.Amount);
+            decimal totalGross = completed.Sum(r => r.Amount);
+            decimal totalNetEarnings = completed.Sum(r => r.InstructorEarnings);
+            decimal totalCommissionDeducted = completed.Sum(r => r.AdminCommission);
             int totalPaidEnrollments = completed.Count;
-            decimal avgOrderValue = totalPaidEnrollments > 0 ? Math.Round(totalEarnings / totalPaidEnrollments, 2) : 0;
+            decimal avgOrderValue = totalPaidEnrollments > 0 ? Math.Round(totalGross / totalPaidEnrollments, 2) : 0;
 
             int studentPurchasesCount = records.Count(r => r.BuyerRole == "Student");
             int instructorPurchasesCount = records.Count(r => r.BuyerRole == "Instructor");
@@ -195,7 +207,9 @@ namespace LMS.Services
 
             return new InstructorPaymentsViewModel
             {
-                TotalEarnings = totalEarnings,
+                TotalGrossSales = totalGross,
+                TotalEarnings = totalNetEarnings,
+                TotalCommissionDeducted = totalCommissionDeducted,
                 TotalPaidEnrollments = totalPaidEnrollments,
                 AverageOrderValue = avgOrderValue,
                 CurrentFilter = filter ?? "All",
@@ -234,6 +248,8 @@ namespace LMS.Services
                 }
 
                 string buyerRole = DetermineUserRole(buyer, rolesMap);
+                decimal adminComm = p.AdminCommission > 0 ? p.AdminCommission : Math.Round(p.Amount * 0.05m, 2);
+                decimal teacherEarn = p.InstructorEarnings > 0 ? p.InstructorEarnings : (p.Amount - adminComm);
 
                 records.Add(new CoursePaymentRecordViewModel
                 {
@@ -249,6 +265,8 @@ namespace LMS.Services
                     BuyerEmail = buyer != null ? buyer.Email : "N/A",
                     BuyerRole = buyerRole,
                     Amount = p.Amount,
+                    AdminCommission = adminComm,
+                    InstructorEarnings = teacherEarn,
                     PaymentMethod = p.PaymentMethod,
                     PaymentStatus = p.PaymentStatus,
                     PaymentDate = p.PaymentDate
@@ -257,6 +275,8 @@ namespace LMS.Services
 
             var completed = records.Where(r => r.PaymentStatus == "Completed").ToList();
             decimal totalRevenue = completed.Sum(r => r.Amount);
+            decimal totalAdminCommission = completed.Sum(r => r.AdminCommission);
+            decimal totalInstructorPayouts = completed.Sum(r => r.InstructorEarnings);
             int totalCount = records.Count;
 
             var studentCompleted = completed.Where(r => r.BuyerRole == "Student").ToList();
@@ -276,6 +296,8 @@ namespace LMS.Services
             return new AdminPaymentsViewModel
             {
                 TotalRevenue = totalRevenue,
+                TotalAdminCommission = totalAdminCommission,
+                TotalInstructorPayouts = totalInstructorPayouts,
                 TotalTransactionsCount = totalCount,
                 StudentPurchasesTotal = studentTotal,
                 StudentPurchasesCount = studentCount,

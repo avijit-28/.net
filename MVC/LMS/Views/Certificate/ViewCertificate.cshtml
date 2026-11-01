@@ -17,8 +17,11 @@
             <button type="button" class="btn btn-outline-info rounded-pill px-3 fw-semibold text-dark shadow-xs" id="btnShareLinkedIn">
                 <i class="bi bi-linkedin me-1 text-primary"></i> Share on LinkedIn
             </button>
-            <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" onclick="window.print()">
-                <i class="bi bi-printer-fill me-1"></i> Print / Download PDF
+            <a href="@Url.Action("DownloadPdf", "Certificate", new { id = Model.CertificateId })" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+                <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download PDF (Rotativa)
+            </a>
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3 fw-semibold shadow-xs" onclick="window.print()">
+                <i class="bi bi-printer-fill me-1"></i> Print
             </button>
         </div>
     </div>

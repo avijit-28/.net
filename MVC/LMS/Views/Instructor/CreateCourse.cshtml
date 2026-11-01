@@ -45,20 +45,29 @@
                 </div>
 
                 <div class="row g-3 mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         @Html.LabelFor(m => m.Price, new { @class = "form-label fw-semibold" })
                         <div class="input-group">
                             <span class="input-group-text"><span class="rupee-symbol">&#8377;</span></span>
                             @Html.TextBoxFor(m => m.Price, new { @class = "form-control", placeholder = "0.00 (Set 0 for Free)" })
                         </div>
-                        <small class="text-muted">Enter 0 to offer this course free of charge (in INR / &#8377;).</small>
+                        <small class="text-muted">Enter 0 for free (in INR / &#8377;).</small>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         @Html.LabelFor(m => m.DurationInHours, new { @class = "form-label fw-semibold" })
                         <div class="input-group">
                             @Html.TextBoxFor(m => m.DurationInHours, new { @class = "form-control", placeholder = "15.5" })
                             <span class="input-group-text">Hours</span>
                         </div>
+                        <small class="text-muted">Total content length.</small>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.LabelFor(m => m.ValidityInDays, new { @class = "form-label fw-semibold" })
+                        <div class="input-group">
+                            @Html.TextBoxFor(m => m.ValidityInDays, new { @class = "form-control", placeholder = "30" })
+                            <span class="input-group-text">Days</span>
+                        </div>
+                        <small class="text-muted">Access window to finish coursework.</small>
                     </div>
                 </div>
 

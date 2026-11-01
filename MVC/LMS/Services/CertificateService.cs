@@ -25,6 +25,12 @@ namespace LMS.Services
                 return existing;
             }
 
+            var enrollment = _db.Enrollments.FirstOrDefault(e => e.StudentId == studentId && e.CourseId == courseId);
+            if (enrollment != null && enrollment.IsExpired && enrollment.Status != "Completed")
+            {
+                throw new InvalidOperationException("Your course validity period has ended. You must re-enroll to complete all coursework and receive your accredited certificate.");
+            }
+
             // Generate unique Certificate Number
             string certNumber = $"LMS-{DateTime.UtcNow.Year}-{new Random().Next(100000, 999999)}";
             while (_db.Certificates.Any(c => c.CertificateNumber == certNumber))

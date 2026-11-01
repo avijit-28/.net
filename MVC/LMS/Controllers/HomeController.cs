@@ -13,6 +13,7 @@ namespace LMS.Controllers
         {
             var featuredCourses = _db.Courses
                 .Include(c => c.Category)
+                .Include(c => c.Instructor)
                 .Where(c => c.Status == "Published")
                 .OrderByDescending(c => c.Rating)
                 .ThenByDescending(c => c.TotalStudents)

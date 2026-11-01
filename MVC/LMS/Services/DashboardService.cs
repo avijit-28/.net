@@ -147,15 +147,42 @@ namespace LMS.Services
 
             var completedQuizzes = _db.QuizAttempts.Count(q => q.StudentId == studentId && q.CompletedAt != null);
 
+            var studentUser = _db.Users.Find(studentId);
+            string displayName = !string.IsNullOrWhiteSpace(studentUser?.FullName) ? studentUser.FullName : (studentUser?.UserName ?? "Learner");
+            string firstName = LMS.Helpers.UserHelper.GetFirstName(displayName);
+
             var enrolledCourseIds = enrollments.Select(e => e.CourseId).ToList();
             var upcomingAssignments = enrolledCourseIds.Count > 0
                 ? _db.Assignments
                     .Include(a => a.Course)
-                    .Where(a => enrolledCourseIds.Contains(a.CourseId) && (a.DueDate == null || a.DueDate >= DateTime.UtcNow))
-                    .OrderBy(a => a.DueDate)
-                    .Take(5)
+                    .Where(a => enrolledCourseIds.Contains(a.CourseId))
+                    .OrderByDescending(a => a.AssignmentId)
+                    .Take(6)
                     .ToList()
                 : new List<Assignment>();
+
+            var studentSubmissions = _db.Submissions
+                .Where(s => s.StudentId == studentId)
+                .ToList();
+
+            var practicalTasks = new List<StudentTaskItemViewModel>();
+            foreach (var a in upcomingAssignments)
+            {
+                var sub = studentSubmissions.FirstOrDefault(s => s.AssignmentId == a.AssignmentId);
+                practicalTasks.Add(new StudentTaskItemViewModel
+                {
+                    AssignmentId = a.AssignmentId,
+                    Title = a.Title,
+                    CourseTitle = a.Course?.Title ?? "Course",
+                    CourseId = a.CourseId,
+                    MaxMarks = a.MaxMarks,
+                    DueDate = a.DueDate,
+                    IsSubmitted = sub != null,
+                    SubmissionStatus = sub != null ? sub.Status : "Not Submitted",
+                    MarksAwarded = sub?.Marks,
+                    Feedback = sub?.Feedback
+                });
+            }
 
             var recentQuizResults = _db.QuizAttempts
                 .Include(q => q.Quiz.Course)
@@ -172,6 +199,7 @@ namespace LMS.Services
 
             return new StudentDashboardViewModel
             {
+                StudentFirstName = firstName,
                 ActiveCourses = activeCount,
                 CompletedCourses = completedCount,
                 CertificatesCount = certificates.Count,
@@ -180,6 +208,7 @@ namespace LMS.Services
                 Certificates = certificates,
                 Announcements = announcements,
                 UpcomingAssignments = upcomingAssignments,
+                PracticalTasks = practicalTasks,
                 RecentQuizResults = recentQuizResults
             };
         }

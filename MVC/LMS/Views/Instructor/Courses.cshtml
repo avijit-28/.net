@@ -14,8 +14,8 @@
         </a>
     </div>
 
-    <div class="card card-custom shadow-sm overflow-hidden">
-        <div class="table-responsive">
+    <div class="card card-custom shadow-sm border-0" style="overflow: visible !important; min-height: 280px;">
+        <div class="table-responsive" style="overflow: visible !important; min-height: 250px;">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light small">
                     <tr>
@@ -69,11 +69,11 @@
                                         <a href="@Url.Action("EditCourse", "Instructor", new { id = c.CourseId })" class="btn btn-sm btn-outline-secondary rounded-pill px-3" title="Edit Course Details">
                                             <i class="bi bi-pencil me-1"></i> Edit
                                         </a>
-                                        <div class="dropdown d-inline-block">
-                                            <button class="btn btn-sm btn-light border rounded-pill px-2" type="button" data-bs-toggle="dropdown" title="More Options">
+                                        <div class="dropdown d-inline-block dropstart">
+                                            <button class="btn btn-sm btn-light border rounded-pill px-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="More Options">
                                                 <i class="bi bi-three-dots-vertical"></i>
                                             </button>
-                                            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2" style="z-index: 1060; min-width: 190px;">
                                                 <li><a class="dropdown-item" href="@Url.Action("Quizzes", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-patch-question me-2"></i> Quizzes</a></li>
                                                 <li><a class="dropdown-item" href="@Url.Action("Assignments", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-file-earmark-text me-2"></i> Assignments</a></li>
                                                 <li><a class="dropdown-item" href="@Url.Action("Students", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-people me-2"></i> Enrolled Students</a></li>

@@ -151,27 +151,34 @@
                 <div class="lesson-viewer flex-grow-1 mb-4">
                     @if (Model.CurrentLesson.LessonType == "Video")
                     {
-                        <div class="bg-dark rounded-3 overflow-hidden shadow-sm mb-4 text-center p-3 position-relative" style="min-height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                            @if (!string.IsNullOrEmpty(Model.CurrentLesson.VideoUrl) && (Model.CurrentLesson.VideoUrl.Contains("embed") || Model.CurrentLesson.VideoUrl.Contains("youtube") || Model.CurrentLesson.VideoUrl.Contains("vimeo")))
+                        <div class="bg-dark rounded-3 overflow-hidden shadow mb-4 position-relative" style="min-height: 420px; display: flex; align-items: center; justify-content: center; background: #000000;">
+                            @if (!string.IsNullOrWhiteSpace(Model.CurrentLesson.VideoUrl))
                             {
-                                <div class="ratio ratio-16x9 w-100 rounded-2 overflow-hidden shadow">
-                                    <iframe src="@Model.CurrentLesson.VideoUrl" title="@Model.CurrentLesson.Title" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                </div>
+                                if (LMS.Helpers.VideoHelper.IsDirectVideoFile(Model.CurrentLesson.VideoUrl))
+                                {
+                                    <div class="ratio ratio-16x9 w-100 rounded-2 overflow-hidden shadow-lg">
+                                        <video controls playsinline class="w-100 h-100" style="object-fit: contain; background: #000;">
+                                            <source src="@Model.CurrentLesson.VideoUrl" type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                }
+                                else
+                                {
+                                    var embedUrl = LMS.Helpers.VideoHelper.ToEmbedUrl(Model.CurrentLesson.VideoUrl);
+                                    <div class="ratio ratio-16x9 w-100 rounded-2 overflow-hidden shadow-lg">
+                                        <iframe src="@embedUrl" title="@Model.CurrentLesson.Title" class="w-100 h-100 border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                                    </div>
+                                }
                             }
                             else
                             {
-                                <div class="py-5">
-                                    <div class="rounded-circle bg-primary text-white p-4 d-inline-flex mb-3 shadow">
-                                        <i class="bi bi-play-circle-fill display-4"></i>
+                                <div class="py-5 text-center p-4">
+                                    <div class="rounded-circle bg-primary bg-opacity-25 text-primary p-4 d-inline-flex mb-3 shadow-sm">
+                                        <i class="bi bi-camera-video-off-fill display-4"></i>
                                     </div>
-                                    <h5 class="text-white fw-bold">Interactive Video Lesson</h5>
-                                    <p class="text-secondary small mb-3">High-definition stream initialized and ready for streaming.</p>
-                                    @if (!string.IsNullOrEmpty(Model.CurrentLesson.VideoUrl))
-                                    {
-                                        <a href="@Model.CurrentLesson.VideoUrl" target="_blank" class="btn btn-primary rounded-pill px-4 shadow-sm">
-                                            <i class="bi bi-box-arrow-up-right me-1"></i> Launch Stream in Full View
-                                        </a>
-                                    }
+                                    <h5 class="text-white fw-bold">Video Lecture Coming Soon</h5>
+                                    <p class="text-secondary small mb-0">The instructor has not attached a video stream link for this lesson yet.</p>
                                 </div>
                             }
                         </div>

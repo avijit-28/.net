@@ -26,6 +26,14 @@ namespace LMS.Models
 
         public DateTime? CompletionDate { get; set; }
 
+        public DateTime? ExpiryDate { get; set; } // Course validity end date
+
+        [NotMapped]
+        public bool IsExpired => Status != "Completed" && ExpiryDate.HasValue && DateTime.UtcNow > ExpiryDate.Value;
+
+        [NotMapped]
+        public int DaysRemaining => ExpiryDate.HasValue ? Math.Max(0, (int)Math.Ceiling((ExpiryDate.Value - DateTime.UtcNow).TotalDays)) : 0;
+
         [NotMapped]
         public decimal ProgressPercentage
         {

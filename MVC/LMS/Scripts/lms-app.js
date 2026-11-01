@@ -410,6 +410,8 @@
             e.preventDefault();
             $('.level-chip-btn').removeClass('active btn-primary').addClass('btn-outline-secondary');
             $(this).removeClass('btn-outline-secondary').addClass('active btn-primary');
+            var lvl = $(this).data('level') || '';
+            $('#filterLevelInput').val(lvl);
             filterItems();
         });
     };

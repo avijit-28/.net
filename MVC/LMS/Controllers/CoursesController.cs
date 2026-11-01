@@ -44,6 +44,42 @@ namespace LMS.Controllers
             return View(model);
         }
 
+        // GET: Courses/FreePreview?lessonId=5
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult FreePreview(int lessonId)
+        {
+            var lesson = _db.Lessons.Include("Module.Course").FirstOrDefault(l => l.LessonId == lessonId);
+            if (lesson == null)
+            {
+                return Json(new { success = false, message = "Lesson not found." }, JsonRequestBehavior.AllowGet);
+            }
+
+            if (!lesson.IsPreview)
+            {
+                return Json(new { success = false, message = "This lesson is not marked for free preview." }, JsonRequestBehavior.AllowGet);
+            }
+
+            string embedUrl = !string.IsNullOrWhiteSpace(lesson.VideoUrl) ? LMS.Helpers.VideoHelper.ToEmbedUrl(lesson.VideoUrl) : string.Empty;
+            bool isDirectVideo = !string.IsNullOrWhiteSpace(lesson.VideoUrl) && LMS.Helpers.VideoHelper.IsDirectVideoFile(lesson.VideoUrl);
+
+            return Json(new
+            {
+                success = true,
+                lessonId = lesson.LessonId,
+                title = lesson.Title,
+                duration = lesson.DurationInMinutes,
+                lessonType = lesson.LessonType,
+                videoUrl = lesson.VideoUrl ?? string.Empty,
+                embedUrl = embedUrl,
+                isDirectVideo = isDirectVideo,
+                summary = lesson.Description ?? string.Empty,
+                content = lesson.Content ?? string.Empty,
+                resourceUrl = lesson.ResourceUrl ?? string.Empty,
+                courseTitle = lesson.Module?.Course?.Title ?? string.Empty
+            }, JsonRequestBehavior.AllowGet);
+        }
+
         // POST: Courses/Enroll
         [HttpPost]
         [Authorize]
@@ -64,9 +100,9 @@ namespace LMS.Controllers
                 return RedirectToAction("Index", "Learning", new { courseId });
             }
 
-            if (_enrollmentService.IsEnrolled(currentUserId, courseId))
+            if (_enrollmentService.HasActiveAccess(currentUserId, courseId))
             {
-                TempData["InfoMessage"] = "You are already enrolled in this course.";
+                TempData["InfoMessage"] = "You already have active access to this course.";
                 return RedirectToAction("Index", "Learning", new { courseId });
             }
 
@@ -120,9 +156,9 @@ namespace LMS.Controllers
                 return RedirectToAction("Index", "Learning", new { courseId });
             }
 
-            if (_enrollmentService.IsEnrolled(currentUserId, courseId))
+            if (_enrollmentService.HasActiveAccess(currentUserId, courseId))
             {
-                TempData["InfoMessage"] = "You are already enrolled in this course.";
+                TempData["InfoMessage"] = "You already have active access to this course.";
                 return RedirectToAction("Index", "Learning", new { courseId });
             }
 
@@ -155,9 +191,9 @@ namespace LMS.Controllers
                 return RedirectToAction("Index", "Learning", new { courseId });
             }
 
-            if (_enrollmentService.IsEnrolled(currentUserId, courseId))
+            if (_enrollmentService.HasActiveAccess(currentUserId, courseId))
             {
-                TempData["InfoMessage"] = "You are already enrolled in this course.";
+                TempData["InfoMessage"] = "You already have active access to this course.";
                 return RedirectToAction("Index", "Learning", new { courseId });
             }
 

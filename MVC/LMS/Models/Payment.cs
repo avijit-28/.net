@@ -20,6 +20,10 @@ namespace LMS.Models
 
         public decimal Amount { get; set; }
 
+        public decimal AdminCommission { get; set; } = 0; // 5% platform fee for admin
+
+        public decimal InstructorEarnings { get; set; } = 0; // 95% net share for instructor
+
         [Required]
         [StringLength(50)]
         public string PaymentMethod { get; set; }

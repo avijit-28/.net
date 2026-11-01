@@ -33,10 +33,10 @@
 
     <!-- Summary KPI Cards -->
     <div class="row g-3 mb-4">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="card card-custom p-4 bg-white border-0 shadow-sm h-100">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Total Course Earnings</span>
+                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Net Instructor Share (95%)</span>
                     <div class="rounded-circle bg-success-subtle text-success p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                         <i class="bi bi-cash-coin fs-5"></i>
                     </div>
@@ -44,37 +44,52 @@
                 <h3 class="fw-extrabold mb-1 text-success tracking-tight">
                     <span class="rupee-symbol">&#8377;</span>@Model.TotalEarnings.ToString("N2")
                 </h3>
-                <small class="text-muted">Net lifetime revenue from course purchases</small>
+                <small class="text-muted">Net lifetime revenue deposited to instructor</small>
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <div class="card card-custom p-4 bg-white border-0 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Gross Platform Sales</span>
+                    <div class="rounded-circle bg-primary-subtle text-primary p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-wallet2 fs-5"></i>
+                    </div>
+                </div>
+                <h3 class="fw-extrabold mb-1 text-dark tracking-tight">
+                    <span class="rupee-symbol">&#8377;</span>@Model.TotalGrossSales.ToString("N2")
+                </h3>
+                <small class="text-muted">Total course purchase value</small>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card card-custom p-4 bg-white border-0 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Admin Platform Fee (5%)</span>
+                    <div class="rounded-circle bg-danger-subtle text-danger p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-percent fs-5"></i>
+                    </div>
+                </div>
+                <h3 class="fw-extrabold mb-1 text-danger tracking-tight">
+                    <span class="rupee-symbol">&#8377;</span>@Model.TotalCommissionDeducted.ToString("N2")
+                </h3>
+                <small class="text-muted">5% platform management fee</small>
+            </div>
+        </div>
+
+        <div class="col-md-3">
             <div class="card card-custom p-4 bg-white border-0 shadow-sm h-100">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="text-muted small fw-semibold text-uppercase tracking-wider">Paid Enrollments</span>
-                    <div class="rounded-circle bg-primary-subtle text-primary p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    <div class="rounded-circle bg-info-subtle text-info p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                         <i class="bi bi-people-fill fs-5"></i>
                     </div>
                 </div>
                 <h3 class="fw-extrabold mb-1 text-dark tracking-tight">
                     @Model.TotalPaidEnrollments
                 </h3>
-                <small class="text-muted">Total verified paid students & instructor learners</small>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card card-custom p-4 bg-white border-0 shadow-sm h-100">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-semibold text-uppercase tracking-wider">Average Order Value</span>
-                    <div class="rounded-circle bg-warning-subtle text-warning p-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                        <i class="bi bi-graph-up-arrow fs-5"></i>
-                    </div>
-                </div>
-                <h3 class="fw-extrabold mb-1 text-dark tracking-tight">
-                    <span class="rupee-symbol">&#8377;</span>@Model.AverageOrderValue.ToString("N2")
-                </h3>
-                <small class="text-muted">Average transaction amount per course enrollment</small>
+                <small class="text-muted">Verified paying learners</small>
             </div>
         </div>
     </div>
@@ -110,7 +125,9 @@
                         <th class="ps-4">Course Title</th>
                         <th>Buyer Name &amp; Email</th>
                         <th>Buyer Type</th>
-                        <th>Amount Paid</th>
+                        <th>Course Price</th>
+                        <th>Admin Fee (5%)</th>
+                        <th>Net Payout (95%)</th>
                         <th>Transaction ID</th>
                         <th>Date &amp; Time</th>
                         <th class="text-end pe-4">Status</th>
@@ -120,7 +137,7 @@
                     @if (!Model.Transactions.Any())
                     {
                         <tr>
-                            <td colspan="7" class="text-center py-5 text-muted">
+                            <td colspan="9" class="text-center py-5 text-muted">
                                 <div class="py-4">
                                     <i class="bi bi-receipt-cutoff fs-1 d-block mb-2 text-secondary"></i>
                                     <h6 class="fw-bold mb-1">No transaction records found</h6>
@@ -174,8 +191,18 @@
                                     }
                                 </td>
                                 <td>
-                                    <span class="fw-extrabold text-success">
+                                    <span class="fw-semibold text-dark">
                                         <span class="rupee-symbol">&#8377;</span>@txn.Amount.ToString("N2")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="small text-danger fw-semibold">
+                                        -<span class="rupee-symbol">&#8377;</span>@txn.AdminCommission.ToString("N2")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="fw-extrabold text-success fs-6">
+                                        <span class="rupee-symbol">&#8377;</span>@txn.InstructorEarnings.ToString("N2")
                                     </span>
                                 </td>
                                 <td>

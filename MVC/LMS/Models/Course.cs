@@ -34,6 +34,8 @@ namespace LMS.Models
 
         public decimal DurationInHours { get; set; } = 0;
 
+        public int ValidityInDays { get; set; } = 30; // Access validity period in days (set by instructor)
+
         [Required]
         [StringLength(30)]
         public string Status { get; set; } = "Draft";
@@ -50,6 +52,9 @@ namespace LMS.Models
 
         [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
+
+        [ForeignKey("InstructorId")]
+        public virtual ApplicationUser Instructor { get; set; }
 
         public virtual ICollection<Module> Modules { get; set; } = new List<Module>();
         public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();

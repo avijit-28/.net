@@ -23,8 +23,8 @@ namespace LMS.Controllers
         {
             string studentId = User.Identity.GetUserId();
 
-            // Check if user is enrolled
-            if (!_enrollmentService.IsEnrolled(studentId, courseId))
+            // Check if user has active enrolled access
+            if (!_enrollmentService.HasActiveAccess(studentId, courseId))
             {
                 // Allow instructor of course or admin to preview
                 var course = _db.Courses.Find(courseId);
@@ -33,7 +33,14 @@ namespace LMS.Controllers
 
                 if (!isInstructor && !isAdmin)
                 {
-                    TempData["ErrorMessage"] = "You must be enrolled in this course to access the classroom.";
+                    if (_enrollmentService.IsEnrolled(studentId, courseId))
+                    {
+                        TempData["ErrorMessage"] = "Your course access period has ended. Please re-enroll in the course to resume lessons and complete your certification.";
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "You must be enrolled in this course to access the classroom.";
+                    }
                     return RedirectToAction("Details", "Courses", new { id = courseId });
                 }
             }

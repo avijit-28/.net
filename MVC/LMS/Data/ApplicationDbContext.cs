@@ -59,6 +59,8 @@ namespace LMS.Data
             modelBuilder.Entity<Submission>().Property(s => s.Marks).HasPrecision(6, 2);
             modelBuilder.Entity<Certificate>().Property(c => c.FinalScore).HasPrecision(5, 2);
             modelBuilder.Entity<Payment>().Property(p => p.Amount).HasPrecision(18, 2);
+            modelBuilder.Entity<Payment>().Property(p => p.AdminCommission).HasPrecision(18, 2);
+            modelBuilder.Entity<Payment>().Property(p => p.InstructorEarnings).HasPrecision(18, 2);
 
             // Optional 1-to-many relationships without cascade delete
             modelBuilder.Entity<Quiz>()

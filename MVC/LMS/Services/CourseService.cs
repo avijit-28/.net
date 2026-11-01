@@ -21,6 +21,7 @@ namespace LMS.Services
         {
             var query = _db.Courses
                 .Include(c => c.Category)
+                .Include(c => c.Instructor)
                 .Where(c => c.Status == "Published");
 
             if (!string.IsNullOrWhiteSpace(search))

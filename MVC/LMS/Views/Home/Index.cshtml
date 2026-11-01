@@ -170,15 +170,30 @@
                 <div class="col-md-6 col-lg-4">
                     <div class="card card-custom card-hover h-100 overflow-hidden d-flex flex-column">
                         <!-- Card Header Media Banner -->
-                        <div class="position-relative bg-light text-center py-4 border-bottom" style="height: 160px; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #f1f5f9 0%, #e2e8f0 100%);">
-                            <i class="bi bi-code-slash display-3 text-secondary opacity-25"></i>
-                            <span class="position-absolute top-0 end-0 m-3 badge bg-dark bg-opacity-75 rounded-pill px-3 py-1">
-                                @course.Level
-                            </span>
-                            <span class="position-absolute bottom-0 start-0 m-3 badge bg-white text-dark shadow-sm border small">
-                                <i class="bi bi-clock me-1 text-primary"></i> @course.DurationInHours hrs
-                            </span>
-                        </div>
+                        @if (!string.IsNullOrWhiteSpace(course.Thumbnail))
+                        {
+                            <div class="position-relative overflow-hidden bg-dark" style="height: 160px;">
+                                <img src="@course.Thumbnail" alt="@course.Title" class="w-100 h-100" style="object-fit: cover;" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'bg-light text-center py-4 h-100 d-flex align-items-center justify-content-center\'><i class=\'bi bi-mortarboard-fill display-4 text-primary opacity-25\'></i></div>';" />
+                                <span class="position-absolute top-0 end-0 m-3 badge bg-dark bg-opacity-75 rounded-pill px-3 py-1">
+                                    @course.Level
+                                </span>
+                                <span class="position-absolute bottom-0 start-0 m-3 badge bg-white text-dark shadow-sm border small">
+                                    <i class="bi bi-clock me-1 text-primary"></i> @course.DurationInHours hrs
+                                </span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="position-relative bg-light text-center py-4 border-bottom" style="height: 160px; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #f1f5f9 0%, #e2e8f0 100%);">
+                                <i class="bi bi-code-slash display-3 text-secondary opacity-25"></i>
+                                <span class="position-absolute top-0 end-0 m-3 badge bg-dark bg-opacity-75 rounded-pill px-3 py-1">
+                                    @course.Level
+                                </span>
+                                <span class="position-absolute bottom-0 start-0 m-3 badge bg-white text-dark shadow-sm border small">
+                                    <i class="bi bi-clock me-1 text-primary"></i> @course.DurationInHours hrs
+                                </span>
+                            </div>
+                        }
 
                         <div class="card-body d-flex flex-column p-4">
                             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -190,6 +205,14 @@
                                     <span class="fw-bold text-dark ms-1">@course.Rating.ToString("0.0")</span>
                                     <span class="text-muted">(@course.TotalStudents students)</span>
                                 </div>
+                            </div>
+
+                            <!-- Instructor Tag -->
+                            <div class="d-flex align-items-center gap-1 text-muted small mb-2">
+                                <i class="bi bi-person-circle text-primary"></i>
+                                <span class="fw-semibold text-truncate" style="max-width: 200px;">
+                                    @(course.Instructor != null && !string.IsNullOrEmpty(course.Instructor.FullName) ? course.Instructor.FullName : (course.Instructor != null ? course.Instructor.UserName : "Faculty Instructor"))
+                                </span>
                             </div>
 
                             <h5 class="card-title fw-bold mb-2">@course.Title</h5>

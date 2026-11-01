@@ -22,25 +22,28 @@ namespace LMS.Services
             return _db.Enrollments.Any(e => e.StudentId == studentId && e.CourseId == courseId && e.Status != "Cancelled");
         }
 
+        public bool HasActiveAccess(string studentId, int courseId)
+        {
+            var enrollment = _db.Enrollments.FirstOrDefault(e => e.StudentId == studentId && e.CourseId == courseId);
+            if (enrollment == null) return false;
+            if (enrollment.Status == "Cancelled") return false;
+            if (enrollment.Status == "Completed") return true;
+            if (enrollment.ExpiryDate.HasValue && DateTime.UtcNow > enrollment.ExpiryDate.Value)
+            {
+                return false; // Expired access
+            }
+            return true;
+        }
+
         public bool EnrollStudent(string studentId, int courseId, out string errorMessage)
         {
             errorMessage = string.Empty;
 
             var existing = _db.Enrollments.FirstOrDefault(e => e.StudentId == studentId && e.CourseId == courseId);
-            if (existing != null)
+            if (existing != null && existing.Status != "Cancelled" && (existing.Status == "Completed" || !existing.IsExpired))
             {
-                if (existing.Status != "Cancelled")
-                {
-                    errorMessage = "You are already enrolled in this course.";
-                    return false;
-                }
-                else
-                {
-                    existing.Status = "Active";
-                    existing.EnrollmentDate = DateTime.UtcNow;
-                    _db.SaveChanges();
-                    return true;
-                }
+                errorMessage = "You already have active access to this course.";
+                return false;
             }
 
             try
@@ -65,16 +68,30 @@ namespace LMS.Services
                         return false;
                     }
 
-                    var enrollment = new Enrollment
+                    int validityDays = course.ValidityInDays > 0 ? course.ValidityInDays : 30;
+
+                    if (existing != null)
                     {
-                        StudentId = studentId,
-                        CourseId = courseId,
-                        Status = "Active",
-                        EnrollmentDate = DateTime.UtcNow,
-                        CompletionPercentage = 0
-                    };
-                    _db.Enrollments.Add(enrollment);
-                    course.TotalStudents += 1;
+                        existing.Status = "Active";
+                        existing.EnrollmentDate = DateTime.UtcNow;
+                        existing.ExpiryDate = DateTime.UtcNow.AddDays(validityDays);
+                        existing.CompletionPercentage = 0;
+                        existing.CompletionDate = null;
+                    }
+                    else
+                    {
+                        var enrollment = new Enrollment
+                        {
+                            StudentId = studentId,
+                            CourseId = courseId,
+                            Status = "Active",
+                            EnrollmentDate = DateTime.UtcNow,
+                            ExpiryDate = DateTime.UtcNow.AddDays(validityDays),
+                            CompletionPercentage = 0
+                        };
+                        _db.Enrollments.Add(enrollment);
+                        course.TotalStudents += 1;
+                    }
                     _db.SaveChanges();
                     return true;
                 }
