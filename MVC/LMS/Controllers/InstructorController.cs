@@ -938,13 +938,14 @@ namespace LMS.Controllers
         public ActionResult Payments(string filter = "All", int? courseId = null, string search = null)
         {
             var model = _paymentService.GetInstructorPayments(CurrentUserId, filter, courseId, search);
-            return View(model);
+            return View("Payments", model);
         }
 
         // GET: Instructor/Earnings
         public ActionResult Earnings(string filter = "All", int? courseId = null, string search = null)
         {
-            return Payments(filter, courseId, search);
+            var model = _paymentService.GetInstructorPayments(CurrentUserId, filter, courseId, search);
+            return View("Payments", model);
         }
 
         // GET: Instructor/ExportEarningsPdf

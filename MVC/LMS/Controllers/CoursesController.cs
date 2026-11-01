@@ -15,12 +15,14 @@ namespace LMS.Controllers
         private readonly CourseService _courseService;
         private readonly EnrollmentService _enrollmentService;
         private readonly PaymentService _paymentService;
+        private readonly StripeService _stripeService;
 
         public CoursesController()
         {
             _courseService = new CourseService(_db);
             _enrollmentService = new EnrollmentService(_db);
             _paymentService = new PaymentService(_db);
+            _stripeService = new StripeService();
         }
 
         // GET: Courses
@@ -176,7 +178,7 @@ namespace LMS.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public ActionResult Payment(int courseId, string paymentMethod)
+        public ActionResult Payment(int courseId, string paymentMethod, string cardNumber = null, string expMonth = null, string expYear = null, string cvc = null)
         {
             string currentUserId = User.Identity.GetUserId();
             var course = _db.Courses.Find(courseId);
@@ -197,7 +199,44 @@ namespace LMS.Controllers
                 return RedirectToAction("Index", "Learning", new { courseId });
             }
 
-            bool success = _paymentService.ProcessCoursePayment(currentUserId, courseId, paymentMethod, out string transactionId, out string error);
+            string stripeTransactionId = null;
+
+            // If user selected Stripe Card payment or provided card details
+            if (!string.IsNullOrWhiteSpace(cardNumber) || (paymentMethod != null && paymentMethod.IndexOf("Stripe", StringComparison.OrdinalIgnoreCase) >= 0))
+            {
+                string cleanCard = (cardNumber ?? "").Replace(" ", "").Trim();
+                if (string.IsNullOrWhiteSpace(cleanCard))
+                {
+                    cleanCard = "4242424242424242"; // Default Stripe standard test card
+                }
+
+                var chargeResult = _stripeService.ProcessDirectCardCharge(
+                    currentUserId,
+                    courseId,
+                    course.Title,
+                    course.Price,
+                    cleanCard,
+                    expMonth ?? "12",
+                    expYear ?? "2028",
+                    cvc ?? "123");
+
+                if (!chargeResult.Success)
+                {
+                    TempData["ErrorMessage"] = "Stripe Authorization Error: " + (chargeResult.ErrorMessage ?? "Payment was declined by Stripe test gateway.");
+                    return RedirectToAction("Payment", new { courseId });
+                }
+
+                stripeTransactionId = chargeResult.PaymentIntentId ?? ("ST-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper());
+                paymentMethod = "Stripe Card (Test Gateway)";
+            }
+
+            bool success = _paymentService.ProcessCoursePayment(
+                currentUserId,
+                courseId,
+                paymentMethod,
+                out string transactionId,
+                out string error,
+                stripeTransactionId);
 
             if (!success)
             {
@@ -205,8 +244,102 @@ namespace LMS.Controllers
                 return RedirectToAction("Payment", new { courseId });
             }
 
-            TempData["SuccessMessage"] = $"Payment successful! Transaction ID: {transactionId}. Welcome to the course!";
+            TempData["SuccessMessage"] = $"Payment successful via {paymentMethod}! Transaction ID: {transactionId}. Welcome to the course!";
             return RedirectToAction("Index", "Learning", new { courseId });
+        }
+
+        // POST: Courses/CreateStripeCheckout
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateStripeCheckout(int courseId)
+        {
+            string currentUserId = User.Identity.GetUserId();
+            var course = _db.Courses.Find(courseId);
+            if (course == null) return HttpNotFound();
+
+            if (_enrollmentService.HasActiveAccess(currentUserId, courseId))
+            {
+                TempData["InfoMessage"] = "You already have active access to this course.";
+                return RedirectToAction("Index", "Learning", new { courseId });
+            }
+
+            string host = Request.Url.Scheme + "://" + Request.Url.Authority;
+            string successUrl = $"{host}/Courses/StripeSuccess?session_id={{CHECKOUT_SESSION_ID}}&courseId={courseId}";
+            string cancelUrl = $"{host}/Courses/StripeCancel?courseId={courseId}";
+
+            var sessionResult = _stripeService.CreateCheckoutSession(
+                currentUserId,
+                courseId,
+                course.Title,
+                course.Price,
+                successUrl,
+                cancelUrl);
+
+            if (!sessionResult.Success || string.IsNullOrEmpty(sessionResult.CheckoutUrl))
+            {
+                TempData["ErrorMessage"] = "Stripe Gateway Error: " + (sessionResult.ErrorMessage ?? "Could not initiate checkout session.");
+                return RedirectToAction("Payment", new { courseId });
+            }
+
+            return Redirect(sessionResult.CheckoutUrl);
+        }
+
+        // GET: Courses/StripeSuccess
+        [HttpGet]
+        [Authorize]
+        public ActionResult StripeSuccess(string session_id, int courseId)
+        {
+            string currentUserId = User.Identity.GetUserId();
+            var course = _db.Courses.Find(courseId);
+            if (course == null) return HttpNotFound();
+
+            if (string.IsNullOrWhiteSpace(session_id))
+            {
+                TempData["ErrorMessage"] = "Invalid Stripe session reference.";
+                return RedirectToAction("Payment", new { courseId });
+            }
+
+            // Verify with Stripe API
+            var verification = _stripeService.VerifyCheckoutSession(session_id);
+            if (!verification.IsPaid)
+            {
+                TempData["ErrorMessage"] = "Stripe payment verification failed or payment is still pending. " + (verification.ErrorMessage ?? "");
+                return RedirectToAction("Payment", new { courseId });
+            }
+
+            if (_enrollmentService.HasActiveAccess(currentUserId, courseId))
+            {
+                TempData["SuccessMessage"] = "Payment confirmed! Your enrollment is active.";
+                return RedirectToAction("Index", "Learning", new { courseId });
+            }
+
+            string stripeTxn = !string.IsNullOrEmpty(verification.PaymentIntentId) ? verification.PaymentIntentId : session_id;
+            bool success = _paymentService.ProcessCoursePayment(
+                currentUserId,
+                courseId,
+                "Stripe Hosted Checkout",
+                out string transactionId,
+                out string error,
+                stripeTxn);
+
+            if (!success)
+            {
+                TempData["ErrorMessage"] = error;
+                return RedirectToAction("Payment", new { courseId });
+            }
+
+            TempData["SuccessMessage"] = $"Payment successful via Stripe Gateway! Stripe Transaction ID: {stripeTxn}. Welcome to {course.Title}!";
+            return RedirectToAction("Index", "Learning", new { courseId });
+        }
+
+        // GET: Courses/StripeCancel
+        [HttpGet]
+        [Authorize]
+        public ActionResult StripeCancel(int courseId)
+        {
+            TempData["InfoMessage"] = "Stripe checkout was cancelled. You have not been charged.";
+            return RedirectToAction("Payment", new { courseId });
         }
 
         // POST: Courses/AddReview

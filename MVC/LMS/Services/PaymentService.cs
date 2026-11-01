@@ -19,10 +19,10 @@ namespace LMS.Services
             _enrollmentService = new EnrollmentService(db);
         }
 
-        public bool ProcessCoursePayment(string studentId, int courseId, string paymentMethod, out string transactionId, out string errorMessage)
+        public bool ProcessCoursePayment(string studentId, int courseId, string paymentMethod, out string transactionId, out string errorMessage, string customTransactionId = null)
         {
             errorMessage = string.Empty;
-            transactionId = "TXN-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+            transactionId = !string.IsNullOrWhiteSpace(customTransactionId) ? customTransactionId : ("TXN-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper());
 
             var course = _db.Courses.Find(courseId);
             if (course == null)
