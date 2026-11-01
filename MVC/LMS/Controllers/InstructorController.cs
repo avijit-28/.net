@@ -549,6 +549,82 @@ namespace LMS.Controllers
             return View(model);
         }
 
+        // GET: Instructor/EditQuiz/5
+        public ActionResult EditQuiz(int id)
+        {
+            var quiz = _db.Quizzes.Include(q => q.Course).FirstOrDefault(q => q.QuizId == id);
+            if (quiz == null || !IsOwnerOrAdmin(quiz.Course)) return new HttpUnauthorizedResult();
+
+            var model = new QuizFormViewModel
+            {
+                QuizId = quiz.QuizId,
+                CourseId = quiz.CourseId,
+                CourseTitle = quiz.Course?.Title,
+                LessonId = quiz.LessonId,
+                Title = quiz.Title,
+                Description = quiz.Description,
+                PassingPercentage = quiz.PassingPercentage,
+                TimeLimitMinutes = quiz.TimeLimitMinutes,
+                TotalMarks = quiz.TotalMarks
+            };
+
+            return View(model);
+        }
+
+        // POST: Instructor/EditQuiz
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditQuiz(QuizFormViewModel model)
+        {
+            var quiz = _db.Quizzes.Include(q => q.Course).FirstOrDefault(q => q.QuizId == model.QuizId);
+            if (quiz == null || !IsOwnerOrAdmin(quiz.Course)) return new HttpUnauthorizedResult();
+
+            if (ModelState.IsValid)
+            {
+                quiz.Title = model.Title;
+                quiz.Description = model.Description;
+                quiz.PassingPercentage = model.PassingPercentage;
+                quiz.TimeLimitMinutes = model.TimeLimitMinutes;
+                quiz.LessonId = model.LessonId;
+
+                _db.SaveChanges();
+                TempData["SuccessMessage"] = "Quiz assessment updated successfully!";
+                return RedirectToAction("Quizzes", new { courseId = quiz.CourseId });
+            }
+
+            model.CourseTitle = quiz.Course?.Title;
+            return View(model);
+        }
+
+        // POST: Instructor/DeleteQuiz/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteQuiz(int id)
+        {
+            var quiz = _db.Quizzes.Include(q => q.Course).FirstOrDefault(q => q.QuizId == id);
+            if (quiz == null || !IsOwnerOrAdmin(quiz.Course)) return new HttpUnauthorizedResult();
+
+            int courseId = quiz.CourseId;
+
+            var answers = _db.QuizAnswers.Where(qa => qa.QuizAttempt.QuizId == id).ToList();
+            _db.QuizAnswers.RemoveRange(answers);
+
+            var attempts = _db.QuizAttempts.Where(qa => qa.QuizId == id).ToList();
+            _db.QuizAttempts.RemoveRange(attempts);
+
+            var options = _db.QuestionOptions.Where(qo => qo.Question.QuizId == id).ToList();
+            _db.QuestionOptions.RemoveRange(options);
+
+            var questions = _db.Questions.Where(q => q.QuizId == id).ToList();
+            _db.Questions.RemoveRange(questions);
+
+            _db.Quizzes.Remove(quiz);
+            _db.SaveChanges();
+
+            TempData["SuccessMessage"] = "Quiz deleted successfully.";
+            return RedirectToAction("Quizzes", new { courseId });
+        }
+
         // GET: Instructor/Questions?quizId=5
         public ActionResult Questions(int quizId)
         {
@@ -655,6 +731,73 @@ namespace LMS.Controllers
             }
 
             return View(model);
+        }
+
+        // GET: Instructor/EditAssignment/5
+        public ActionResult EditAssignment(int id)
+        {
+            var assignment = _db.Assignments.Include(a => a.Course).FirstOrDefault(a => a.AssignmentId == id);
+            if (assignment == null || !IsOwnerOrAdmin(assignment.Course)) return new HttpUnauthorizedResult();
+
+            var model = new AssignmentFormViewModel
+            {
+                AssignmentId = assignment.AssignmentId,
+                CourseId = assignment.CourseId,
+                CourseTitle = assignment.Course?.Title,
+                LessonId = assignment.LessonId,
+                Title = assignment.Title,
+                Description = assignment.Description,
+                DueDate = assignment.DueDate,
+                MaxMarks = assignment.MaxMarks
+            };
+
+            return View(model);
+        }
+
+        // POST: Instructor/EditAssignment
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditAssignment(AssignmentFormViewModel model)
+        {
+            var assignment = _db.Assignments.Include(a => a.Course).FirstOrDefault(a => a.AssignmentId == model.AssignmentId);
+            if (assignment == null || !IsOwnerOrAdmin(assignment.Course)) return new HttpUnauthorizedResult();
+
+            if (ModelState.IsValid)
+            {
+                assignment.Title = model.Title;
+                assignment.Description = model.Description;
+                assignment.DueDate = model.DueDate;
+                assignment.MaxMarks = model.MaxMarks;
+                assignment.LessonId = model.LessonId;
+
+                _db.SaveChanges();
+                TempData["SuccessMessage"] = "Assignment task updated successfully!";
+                return RedirectToAction("Assignments", new { courseId = assignment.CourseId });
+            }
+
+            model.CourseTitle = assignment.Course?.Title;
+            return View(model);
+        }
+
+        // POST: Instructor/DeleteAssignment/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteAssignment(int id)
+        {
+            var assignment = _db.Assignments.Include(a => a.Course).Include(a => a.Submissions).FirstOrDefault(a => a.AssignmentId == id);
+            if (assignment == null || !IsOwnerOrAdmin(assignment.Course)) return new HttpUnauthorizedResult();
+
+            int courseId = assignment.CourseId;
+            if (assignment.Submissions != null && assignment.Submissions.Count > 0)
+            {
+                _db.Submissions.RemoveRange(assignment.Submissions);
+            }
+
+            _db.Assignments.Remove(assignment);
+            _db.SaveChanges();
+
+            TempData["SuccessMessage"] = "Assignment task deleted successfully.";
+            return RedirectToAction("Assignments", new { courseId });
         }
 
         // GET: Instructor/Submissions?assignmentId=5

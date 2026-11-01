@@ -97,6 +97,8 @@ namespace LMS.Services
             var course = _db.Courses
                 .Include(c => c.Category)
                 .Include(c => c.Modules.Select(m => m.Lessons))
+                .Include(c => c.Quizzes)
+                .Include(c => c.Assignments)
                 .FirstOrDefault(c => c.CourseId == courseId);
 
             if (course == null) return null;
@@ -134,6 +136,8 @@ namespace LMS.Services
                 Course = course,
                 Instructor = instructor,
                 Modules = modules,
+                Quizzes = course.Quizzes.Where(q => q.IsActive).OrderBy(q => q.CreatedDate).ToList(),
+                Assignments = course.Assignments.OrderBy(a => a.DueDate).ToList(),
                 Reviews = reviews,
                 IsEnrolled = enrollment != null,
                 Enrollment = enrollment,

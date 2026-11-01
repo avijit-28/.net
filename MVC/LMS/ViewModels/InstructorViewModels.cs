@@ -116,6 +116,7 @@ namespace LMS.ViewModels
     {
         public int QuizId { get; set; }
         public int CourseId { get; set; }
+        public string CourseTitle { get; set; }
         public int? LessonId { get; set; }
 
         [Required]
@@ -163,6 +164,7 @@ namespace LMS.ViewModels
     {
         public int AssignmentId { get; set; }
         public int CourseId { get; set; }
+        public string CourseTitle { get; set; }
         public int? LessonId { get; set; }
 
         [Required]

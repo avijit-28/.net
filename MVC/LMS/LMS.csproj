@@ -301,9 +301,11 @@
     <Content Include="Views\Instructor\EditLesson.cshtml" />
     <Content Include="Views\Instructor\Quizzes.cshtml" />
     <Content Include="Views\Instructor\CreateQuiz.cshtml" />
+    <Content Include="Views\Instructor\EditQuiz.cshtml" />
     <Content Include="Views\Instructor\Questions.cshtml" />
     <Content Include="Views\Instructor\Assignments.cshtml" />
     <Content Include="Views\Instructor\CreateAssignment.cshtml" />
+    <Content Include="Views\Instructor\EditAssignment.cshtml" />
     <Content Include="Views\Instructor\Submissions.cshtml" />
     <Content Include="Views\Instructor\Grade.cshtml" />
     <Content Include="Views\Instructor\Students.cshtml" />

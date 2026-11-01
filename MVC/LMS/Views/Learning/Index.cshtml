@@ -100,6 +100,70 @@
                         </div>
                     </div>
                 }
+
+                @if (Model.Course.Assignments != null && Model.Course.Assignments.Any())
+                {
+                    <div class="accordion-item border-bottom bg-transparent">
+                        <h2 class="accordion-header" id="heading-learning-assignments">
+                            <button class="accordion-button collapsed bg-transparent py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-learning-assignments">
+                                <div class="w-100 pe-2">
+                                    <div class="small text-info fw-bold text-uppercase" style="font-size: 10px;">Hands-On Tasks</div>
+                                    <div class="fw-bold text-dark small"><i class="bi bi-file-earmark-code-fill text-info me-1"></i> Practical Projects (@Model.Course.Assignments.Count)</div>
+                                </div>
+                            </button>
+                        </h2>
+                        <div id="collapse-learning-assignments" class="accordion-collapse collapse" data-bs-parent="#learningAccordion">
+                            <div class="accordion-body p-0">
+                                <div class="list-group list-group-flush">
+                                    @foreach (var task in Model.Course.Assignments)
+                                    {
+                                        <a href="@Url.Action("Details", "Assignment", new { id = task.AssignmentId })" class="list-group-item list-group-item-action py-3 px-3 d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center gap-2 overflow-hidden pe-2">
+                                                <i class="bi bi-file-earmark-code text-info fs-5"></i>
+                                                <div class="small text-truncate">@task.Title</div>
+                                            </div>
+                                            <span class="badge bg-info-subtle text-info small" style="font-size: 10px;">
+                                                @task.MaxMarks pts
+                                            </span>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Course.Quizzes != null && Model.Course.Quizzes.Any())
+                {
+                    <div class="accordion-item border-bottom bg-transparent">
+                        <h2 class="accordion-header" id="heading-learning-quizzes">
+                            <button class="accordion-button collapsed bg-transparent py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-learning-quizzes">
+                                <div class="w-100 pe-2">
+                                    <div class="small text-warning fw-bold text-uppercase" style="font-size: 10px;">Assessments</div>
+                                    <div class="fw-bold text-dark small"><i class="bi bi-patch-question-fill text-warning me-1"></i> Quizzes &amp; Exams (@Model.Course.Quizzes.Count)</div>
+                                </div>
+                            </button>
+                        </h2>
+                        <div id="collapse-learning-quizzes" class="accordion-collapse collapse" data-bs-parent="#learningAccordion">
+                            <div class="accordion-body p-0">
+                                <div class="list-group list-group-flush">
+                                    @foreach (var q in Model.Course.Quizzes)
+                                    {
+                                        <a href="@Url.Action("Take", "Quiz", new { id = q.QuizId })" class="list-group-item list-group-item-action py-3 px-3 d-flex align-items-center justify-content-between">
+                                            <div class="d-flex align-items-center gap-2 overflow-hidden pe-2">
+                                                <i class="bi bi-patch-question text-warning fs-5"></i>
+                                                <div class="small text-truncate">@q.Title</div>
+                                            </div>
+                                            <span class="badge bg-warning-subtle text-dark small" style="font-size: 10px;">
+                                                @(q.TimeLimitMinutes ?? 30)m
+                                            </span>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
 

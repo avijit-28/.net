@@ -108,9 +108,21 @@
                                     }
                                 </td>
                                 <td class="text-end pe-4">
-                                    <a href="@Url.Action("Submissions", "Instructor", new { assignmentId = item.AssignmentId })" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
-                                        <i class="bi bi-eye me-1"></i> Review Submissions
-                                    </a>
+                                    <div class="d-inline-flex align-items-center gap-2">
+                                        <a href="@Url.Action("EditAssignment", "Instructor", new { id = item.AssignmentId })" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-semibold" title="Edit Task Details">
+                                            <i class="bi bi-pencil me-1"></i> Edit Task
+                                        </a>
+                                        <a href="@Url.Action("Submissions", "Instructor", new { assignmentId = item.AssignmentId })" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
+                                            <i class="bi bi-eye me-1"></i> Review Submissions
+                                        </a>
+                                        @using (Html.BeginForm("DeleteAssignment", "Instructor", new { id = item.AssignmentId }, FormMethod.Post, new { @class = "d-inline" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2" title="Delete Task" onclick="return confirm('Are you sure you want to delete assignment \'@Html.Raw(HttpUtility.JavaScriptStringEncode(item.Title))\'?');">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        }
+                                    </div>
                                 </td>
                             </tr>
                         }

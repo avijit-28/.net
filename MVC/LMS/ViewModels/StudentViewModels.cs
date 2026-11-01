@@ -40,6 +40,8 @@ namespace LMS.ViewModels
         public Course Course { get; set; }
         public ApplicationUser Instructor { get; set; }
         public List<Module> Modules { get; set; } = new List<Module>();
+        public List<Quiz> Quizzes { get; set; } = new List<Quiz>();
+        public List<Assignment> Assignments { get; set; } = new List<Assignment>();
         public List<CourseReview> Reviews { get; set; } = new List<CourseReview>();
         public bool IsEnrolled { get; set; }
         public Enrollment Enrollment { get; set; }
