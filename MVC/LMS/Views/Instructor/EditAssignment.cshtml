@@ -39,6 +39,13 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="form-label fw-bold small text-dark">Associated Curriculum Module</label>
+                    @Html.DropDownListFor(m => m.ModuleId, Model.ModuleList, new { @class = "form-select" })
+                    <small class="text-muted">Link this practical project to a curriculum module so it appears inside that module, or leave blank for a course-wide project.</small>
+                    @Html.ValidationMessageFor(m => m.ModuleId, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="mb-3">
                     @Html.LabelFor(m => m.Description, "Project Specification & Criteria", new { @class = "form-label fw-bold small text-dark" })
                     @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 6, placeholder = "Detail the project objectives, required technologies, implementation deliverables, and repository submission instructions...", required = "required" })
                     @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger small" })

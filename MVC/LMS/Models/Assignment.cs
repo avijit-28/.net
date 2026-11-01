@@ -13,6 +13,8 @@ namespace LMS.Models
 
         public int CourseId { get; set; }
 
+        public int? ModuleId { get; set; }
+
         public int? LessonId { get; set; }
 
         [Required]
@@ -29,6 +31,9 @@ namespace LMS.Models
 
         [ForeignKey("CourseId")]
         public virtual Course Course { get; set; }
+
+        [ForeignKey("ModuleId")]
+        public virtual Module Module { get; set; }
 
         [ForeignKey("LessonId")]
         public virtual Lesson Lesson { get; set; }

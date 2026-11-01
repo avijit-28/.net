@@ -69,10 +69,22 @@ namespace LMS.Data
                 .HasForeignKey(q => q.LessonId)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<Quiz>()
+                .HasOptional(q => q.Module)
+                .WithMany(m => m.Quizzes)
+                .HasForeignKey(q => q.ModuleId)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<Assignment>()
                 .HasOptional(a => a.Lesson)
                 .WithMany()
                 .HasForeignKey(a => a.LessonId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Assignment>()
+                .HasOptional(a => a.Module)
+                .WithMany(m => m.Assignments)
+                .HasForeignKey(a => a.ModuleId)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Payment>()

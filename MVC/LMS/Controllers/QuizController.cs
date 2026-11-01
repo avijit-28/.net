@@ -41,6 +41,17 @@ namespace LMS.Controllers
                 return RedirectToAction("Details", "Courses", new { id = quiz.CourseId });
             }
 
+            // If this is the Final Exam, enforce that 100% of curriculum modules are complete
+            if (quiz.IsFinalExam && !isInstructor && !isAdmin)
+            {
+                var enrollment = _db.Enrollments.FirstOrDefault(e => e.StudentId == studentId && e.CourseId == quiz.CourseId && e.Status != "Cancelled");
+                if (enrollment == null || enrollment.CompletionPercentage < 100)
+                {
+                    TempData["ErrorMessage"] = "The Final Mandatory Certification Exam is LOCKED! You must complete 100% of all curriculum modules (lessons, tasks, and quizzes) before attempting this final exam.";
+                    return RedirectToAction("Index", "Learning", new { courseId = quiz.CourseId });
+                }
+            }
+
             var attempt = _quizService.StartAttempt(id, studentId);
             if (attempt == null)
             {

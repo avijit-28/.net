@@ -41,6 +41,10 @@ namespace LMS.ViewModels
         public ApplicationUser Instructor { get; set; }
         public List<Module> Modules { get; set; } = new List<Module>();
         public List<Quiz> Quizzes { get; set; } = new List<Quiz>();
+        public List<Quiz> ModuleQuizzes { get; set; } = new List<Quiz>();
+        public Quiz FinalExam { get; set; }
+        public bool IsFinalExamUnlocked { get; set; }
+        public bool HasPassedFinalExam { get; set; }
         public List<Assignment> Assignments { get; set; } = new List<Assignment>();
         public List<CourseReview> Reviews { get; set; } = new List<CourseReview>();
         public bool IsEnrolled { get; set; }
@@ -63,6 +67,14 @@ namespace LMS.ViewModels
         public int? NextLessonId { get; set; }
         public bool IsCurrentCompleted { get; set; }
         public bool IsCourseCompleted { get; set; }
+        public Quiz FinalExam { get; set; }
+        public bool IsFinalExamUnlocked { get; set; }
+        public bool HasPassedFinalExam { get; set; }
+        public decimal FinalExamScore { get; set; }
+        public HashSet<int> SubmittedAssignmentIds { get; set; } = new HashSet<int>();
+        public HashSet<int> PassedQuizIds { get; set; } = new HashSet<int>();
+        public List<Assignment> CourseAssignments { get; set; } = new List<Assignment>();
+        public List<Quiz> ModuleQuizzes { get; set; } = new List<Quiz>();
         public Certificate Certificate { get; set; }
     }
 

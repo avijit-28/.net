@@ -36,6 +36,31 @@
                     @Html.ValidationMessageFor(m => m.Title, "", new { @class = "text-danger small" })
                 </div>
 
+                <div class="card p-3 mb-3 border bg-light-subtle rounded-3">
+                    <label class="form-label fw-bold small text-dark mb-2">Quiz Scope & Category</label>
+                    <div class="form-check mb-2">
+                        @Html.RadioButtonFor(m => m.IsFinalExam, false, new { @class = "form-check-input", id = "quizTypeModule", onchange = "toggleQuizScope()" })
+                        <label class="form-check-label fw-semibold small text-dark" for="quizTypeModule">
+                            <i class="bi bi-collection-play-fill text-primary me-1"></i> Module Checkpoint Quiz
+                            <span class="text-muted fw-normal d-block small">Embedded inside a curriculum module. Required to complete that module's progress.</span>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        @Html.RadioButtonFor(m => m.IsFinalExam, true, new { @class = "form-check-input", id = "quizTypeFinal", onchange = "toggleQuizScope()" })
+                        <label class="form-check-label fw-semibold small text-dark" for="quizTypeFinal">
+                            <i class="bi bi-award-fill text-warning me-1"></i> Final Mandatory Course Exam
+                            <span class="text-muted fw-normal d-block small">Placed after all modules. Unlocks ONLY when 100% of modules are finished. Passing this issues the certificate.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-3" id="moduleSelectGroup">
+                    <label class="form-label fw-bold small text-dark">Associated Curriculum Module</label>
+                    @Html.DropDownListFor(m => m.ModuleId, Model.ModuleList, new { @class = "form-select", id = "moduleDropdown" })
+                    <small class="text-muted">Choose which module this checkpoint quiz evaluates.</small>
+                    @Html.ValidationMessageFor(m => m.ModuleId, "", new { @class = "text-danger small" })
+                </div>
+
                 <div class="mb-3">
                     @Html.LabelFor(m => m.Description, "Quiz Instructions & Scope", new { @class = "form-label fw-bold small text-dark" })
                     @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 3, placeholder = "Explain what areas are evaluated, rules on attempts, and grading criteria..." })
@@ -72,3 +97,16 @@
         </div>
     </div>
 </div>
+
+@section scripts {
+    <script>
+        function toggleQuizScope() {
+            var isFinal = document.getElementById('quizTypeFinal').checked;
+            var modGroup = document.getElementById('moduleSelectGroup');
+            if (modGroup) {
+                modGroup.style.display = isFinal ? 'none' : 'block';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', toggleQuizScope);
+    </script>
+}

@@ -496,14 +496,36 @@ namespace LMS.Controllers
             return View(model);
         }
 
+        private List<SelectListItem> GetCourseModulesList(int courseId, int? selectedModuleId = null)
+        {
+            var modules = _db.Modules.Where(m => m.CourseId == courseId).OrderBy(m => m.ModuleOrder).ToList();
+            var list = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "", Text = "-- Select Module (or Course-Wide) --", Selected = !selectedModuleId.HasValue }
+            };
+            foreach (var m in modules)
+            {
+                list.Add(new SelectListItem
+                {
+                    Value = m.ModuleId.ToString(),
+                    Text = $"Module {m.ModuleOrder}: {m.ModuleName}",
+                    Selected = selectedModuleId.HasValue && selectedModuleId.Value == m.ModuleId
+                });
+            }
+            return list;
+        }
+
         // GET: Instructor/Quizzes?courseId=5
         public ActionResult Quizzes(int courseId)
         {
-            var course = _db.Courses.Include(c => c.Quizzes.Select(q => q.Questions)).FirstOrDefault(c => c.CourseId == courseId);
+            var course = _db.Courses
+                .Include(c => c.Quizzes.Select(q => q.Questions))
+                .Include(c => c.Quizzes.Select(q => q.Module))
+                .FirstOrDefault(c => c.CourseId == courseId);
             if (!IsOwnerOrAdmin(course)) return new HttpUnauthorizedResult();
 
             ViewBag.Course = course;
-            return View(course.Quizzes.ToList());
+            return View(course.Quizzes.OrderByDescending(q => q.IsFinalExam).ThenBy(q => q.CreatedDate).ToList());
         }
 
         // GET: Instructor/CreateQuiz?courseId=5
@@ -512,7 +534,12 @@ namespace LMS.Controllers
             var course = _db.Courses.Find(courseId);
             if (!IsOwnerOrAdmin(course)) return new HttpUnauthorizedResult();
 
-            var model = new QuizFormViewModel { CourseId = courseId };
+            var model = new QuizFormViewModel
+            {
+                CourseId = courseId,
+                CourseTitle = course.Title,
+                ModuleList = GetCourseModulesList(courseId)
+            };
             return View(model);
         }
 
@@ -529,7 +556,9 @@ namespace LMS.Controllers
                 var quiz = new Quiz
                 {
                     CourseId = model.CourseId,
-                    LessonId = model.LessonId,
+                    ModuleId = model.IsFinalExam ? (int?)null : model.ModuleId,
+                    LessonId = model.IsFinalExam ? (int?)null : model.LessonId,
+                    IsFinalExam = model.IsFinalExam,
                     Title = model.Title,
                     Description = model.Description,
                     PassingPercentage = model.PassingPercentage,
@@ -542,10 +571,14 @@ namespace LMS.Controllers
                 _db.Quizzes.Add(quiz);
                 _db.SaveChanges();
 
-                TempData["SuccessMessage"] = "Quiz created! Now add assessment questions.";
+                TempData["SuccessMessage"] = model.IsFinalExam
+                    ? "Mandatory Final Course Exam created! Now add final assessment questions."
+                    : "Module Quiz created! Now add assessment questions.";
                 return RedirectToAction("Questions", new { quizId = quiz.QuizId });
             }
 
+            model.CourseTitle = course.Title;
+            model.ModuleList = GetCourseModulesList(model.CourseId, model.ModuleId);
             return View(model);
         }
 
@@ -560,12 +593,15 @@ namespace LMS.Controllers
                 QuizId = quiz.QuizId,
                 CourseId = quiz.CourseId,
                 CourseTitle = quiz.Course?.Title,
+                ModuleId = quiz.ModuleId,
                 LessonId = quiz.LessonId,
+                IsFinalExam = quiz.IsFinalExam,
                 Title = quiz.Title,
                 Description = quiz.Description,
                 PassingPercentage = quiz.PassingPercentage,
                 TimeLimitMinutes = quiz.TimeLimitMinutes,
-                TotalMarks = quiz.TotalMarks
+                TotalMarks = quiz.TotalMarks,
+                ModuleList = GetCourseModulesList(quiz.CourseId, quiz.ModuleId)
             };
 
             return View(model);
@@ -585,7 +621,9 @@ namespace LMS.Controllers
                 quiz.Description = model.Description;
                 quiz.PassingPercentage = model.PassingPercentage;
                 quiz.TimeLimitMinutes = model.TimeLimitMinutes;
-                quiz.LessonId = model.LessonId;
+                quiz.IsFinalExam = model.IsFinalExam;
+                quiz.ModuleId = model.IsFinalExam ? (int?)null : model.ModuleId;
+                quiz.LessonId = model.IsFinalExam ? (int?)null : model.LessonId;
 
                 _db.SaveChanges();
                 TempData["SuccessMessage"] = "Quiz assessment updated successfully!";
@@ -593,6 +631,7 @@ namespace LMS.Controllers
             }
 
             model.CourseTitle = quiz.Course?.Title;
+            model.ModuleList = GetCourseModulesList(quiz.CourseId, model.ModuleId);
             return View(model);
         }
 
@@ -685,11 +724,14 @@ namespace LMS.Controllers
         // GET: Instructor/Assignments?courseId=5
         public ActionResult Assignments(int courseId)
         {
-            var course = _db.Courses.Include(c => c.Assignments.Select(a => a.Submissions)).FirstOrDefault(c => c.CourseId == courseId);
+            var course = _db.Courses
+                .Include(c => c.Assignments.Select(a => a.Submissions))
+                .Include(c => c.Assignments.Select(a => a.Module))
+                .FirstOrDefault(c => c.CourseId == courseId);
             if (!IsOwnerOrAdmin(course)) return new HttpUnauthorizedResult();
 
             ViewBag.Course = course;
-            return View(course.Assignments.ToList());
+            return View(course.Assignments.OrderByDescending(a => a.CreatedDate).ToList());
         }
 
         // GET: Instructor/CreateAssignment?courseId=5
@@ -698,7 +740,12 @@ namespace LMS.Controllers
             var course = _db.Courses.Find(courseId);
             if (!IsOwnerOrAdmin(course)) return new HttpUnauthorizedResult();
 
-            var model = new AssignmentFormViewModel { CourseId = courseId };
+            var model = new AssignmentFormViewModel
+            {
+                CourseId = courseId,
+                CourseTitle = course.Title,
+                ModuleList = GetCourseModulesList(courseId)
+            };
             return View(model);
         }
 
@@ -715,6 +762,7 @@ namespace LMS.Controllers
                 var assignment = new Assignment
                 {
                     CourseId = model.CourseId,
+                    ModuleId = model.ModuleId,
                     LessonId = model.LessonId,
                     Title = model.Title,
                     Description = model.Description,
@@ -730,6 +778,8 @@ namespace LMS.Controllers
                 return RedirectToAction("Assignments", new { courseId = model.CourseId });
             }
 
+            model.CourseTitle = course.Title;
+            model.ModuleList = GetCourseModulesList(model.CourseId, model.ModuleId);
             return View(model);
         }
 
@@ -744,11 +794,13 @@ namespace LMS.Controllers
                 AssignmentId = assignment.AssignmentId,
                 CourseId = assignment.CourseId,
                 CourseTitle = assignment.Course?.Title,
+                ModuleId = assignment.ModuleId,
                 LessonId = assignment.LessonId,
                 Title = assignment.Title,
                 Description = assignment.Description,
                 DueDate = assignment.DueDate,
-                MaxMarks = assignment.MaxMarks
+                MaxMarks = assignment.MaxMarks,
+                ModuleList = GetCourseModulesList(assignment.CourseId, assignment.ModuleId)
             };
 
             return View(model);
@@ -768,6 +820,7 @@ namespace LMS.Controllers
                 assignment.Description = model.Description;
                 assignment.DueDate = model.DueDate;
                 assignment.MaxMarks = model.MaxMarks;
+                assignment.ModuleId = model.ModuleId;
                 assignment.LessonId = model.LessonId;
 
                 _db.SaveChanges();
@@ -776,6 +829,7 @@ namespace LMS.Controllers
             }
 
             model.CourseTitle = assignment.Course?.Title;
+            model.ModuleList = GetCourseModulesList(assignment.CourseId, model.ModuleId);
             return View(model);
         }
 

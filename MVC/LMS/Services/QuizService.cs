@@ -129,6 +129,74 @@ namespace LMS.Services
                 CreatedDate = DateTime.UtcNow
             });
 
+            // Handle Final Exam vs Module Quiz progression
+            var courseId = attempt.Quiz.CourseId;
+            var enrollment = _db.Enrollments.FirstOrDefault(e => e.CourseId == courseId && e.StudentId == studentId);
+
+            if (attempt.Quiz.IsFinalExam && isPassed)
+            {
+                if (enrollment != null)
+                {
+                    enrollment.Status = "Completed";
+                    enrollment.CompletionDate = DateTime.UtcNow;
+                    enrollment.CompletionPercentage = 100m;
+                }
+                var certificateService = new CertificateService(_db);
+                certificateService.GenerateCertificate(studentId, courseId, score);
+
+                _db.Notifications.Add(new Notification
+                {
+                    UserId = studentId,
+                    Title = "Official Certification Granted!",
+                    Message = $"Congratulations! You passed the Mandatory Final Exam with {score}%! Your official verifiable certificate is ready.",
+                    NotificationType = "Certificate",
+                    IsRead = false,
+                    CreatedDate = DateTime.UtcNow
+                });
+            }
+            else if (!attempt.Quiz.IsFinalExam && isPassed)
+            {
+                // Recalculate module progress
+                var allLessons = _db.Lessons.Where(l => l.Module.CourseId == courseId).Select(l => l.LessonId).ToList();
+                int completedLessons = allLessons.Count > 0 ? _db.LessonProgresses.Count(p => p.StudentId == studentId && p.IsCompleted && allLessons.Contains(p.LessonId)) : 0;
+                var modQuizzes = _db.Quizzes.Where(q => q.CourseId == courseId && !q.IsFinalExam && q.IsActive).Select(q => q.QuizId).ToList();
+                int passedModQuizzes = modQuizzes.Count > 0 ? _db.QuizAttempts.Where(a => a.StudentId == studentId && (a.IsPassed || a.AttemptId == attemptId) && modQuizzes.Contains(a.QuizId)).Select(a => a.QuizId).Distinct().Count() : 0;
+                var assigns = _db.Assignments.Where(a => a.CourseId == courseId).Select(a => a.AssignmentId).ToList();
+                int submittedAssigns = assigns.Count > 0 ? _db.Submissions.Where(s => s.StudentId == studentId && assigns.Contains(s.AssignmentId)).Select(s => s.AssignmentId).Distinct().Count() : 0;
+
+                int totalModItems = allLessons.Count + modQuizzes.Count + assigns.Count;
+                int completedModItems = completedLessons + passedModQuizzes + submittedAssigns;
+                decimal compPercent = totalModItems > 0 ? Math.Round((decimal)completedModItems * 100m / totalModItems, 2) : 100m;
+
+                if (enrollment != null)
+                {
+                    enrollment.CompletionPercentage = compPercent;
+                    var finalExam = _db.Quizzes.FirstOrDefault(q => q.CourseId == courseId && q.IsFinalExam && q.IsActive);
+                    if (completedModItems >= totalModItems)
+                    {
+                        if (finalExam == null)
+                        {
+                            enrollment.Status = "Completed";
+                            enrollment.CompletionDate = DateTime.UtcNow;
+                            var certificateService = new CertificateService(_db);
+                            certificateService.GenerateCertificate(studentId, courseId, 100);
+                        }
+                        else
+                        {
+                            _db.Notifications.Add(new Notification
+                            {
+                                UserId = studentId,
+                                Title = "Final Exam Unlocked!",
+                                Message = $"All curriculum modules complete! The Mandatory Final Exam '{finalExam.Title}' is now UNLOCKED.",
+                                NotificationType = "ExamUnlocked",
+                                IsRead = false,
+                                CreatedDate = DateTime.UtcNow
+                            });
+                        }
+                    }
+                }
+            }
+
             _db.SaveChanges();
 
             return new QuizResultViewModel

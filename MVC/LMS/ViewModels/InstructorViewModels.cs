@@ -117,7 +117,11 @@ namespace LMS.ViewModels
         public int QuizId { get; set; }
         public int CourseId { get; set; }
         public string CourseTitle { get; set; }
+        public int? ModuleId { get; set; }
         public int? LessonId { get; set; }
+        public bool IsFinalExam { get; set; } = false;
+
+        public List<System.Web.Mvc.SelectListItem> ModuleList { get; set; } = new List<System.Web.Mvc.SelectListItem>();
 
         [Required]
         [StringLength(200)]
@@ -165,7 +169,10 @@ namespace LMS.ViewModels
         public int AssignmentId { get; set; }
         public int CourseId { get; set; }
         public string CourseTitle { get; set; }
+        public int? ModuleId { get; set; }
         public int? LessonId { get; set; }
+
+        public List<System.Web.Mvc.SelectListItem> ModuleList { get; set; } = new List<System.Web.Mvc.SelectListItem>();
 
         [Required]
         [StringLength(200)]

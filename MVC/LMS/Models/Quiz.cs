@@ -13,7 +13,11 @@ namespace LMS.Models
 
         public int CourseId { get; set; }
 
+        public int? ModuleId { get; set; }
+
         public int? LessonId { get; set; }
+
+        public bool IsFinalExam { get; set; } = false;
 
         [Required]
         [StringLength(200)]
@@ -33,6 +37,9 @@ namespace LMS.Models
 
         [ForeignKey("CourseId")]
         public virtual Course Course { get; set; }
+
+        [ForeignKey("ModuleId")]
+        public virtual Module Module { get; set; }
 
         [ForeignKey("LessonId")]
         public virtual Lesson Lesson { get; set; }

@@ -153,18 +153,23 @@
                         @for (int i = 0; i < Model.Modules.Count; i++)
                         {
                             var module = Model.Modules[i];
+                            var moduleTasks = Model.Assignments != null ? Model.Assignments.Where(a => a.ModuleId == module.ModuleId).ToList() : new List<LMS.Models.Assignment>();
+                            var moduleQuizzes = Model.ModuleQuizzes != null ? Model.ModuleQuizzes.Where(q => q.ModuleId == module.ModuleId || (q.LessonId.HasValue && module.Lessons.Any(l => l.LessonId == q.LessonId.Value))).ToList() : new List<LMS.Models.Quiz>();
+                            int totalModuleItems = module.Lessons.Count + moduleTasks.Count + moduleQuizzes.Count;
+
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="heading-@module.ModuleId">
                                     <button class="accordion-button @(i > 0 ? "collapsed" : "") bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@module.ModuleId" aria-expanded="@(i == 0 ? "true" : "false")">
                                         <div class="d-flex justify-content-between align-items-center w-100 pe-3">
                                             <strong class="text-dark">Module @(i + 1): @module.ModuleName</strong>
-                                            <span class="badge bg-secondary-subtle text-secondary small">@module.Lessons.Count lessons</span>
+                                            <span class="badge bg-secondary-subtle text-secondary small">@totalModuleItems items</span>
                                         </div>
                                     </button>
                                 </h2>
                                 <div id="collapse-@module.ModuleId" class="accordion-collapse collapse @(i == 0 ? "show" : "")" aria-labelledby="heading-@module.ModuleId" data-bs-parent="#curriculumAccordion">
                                     <div class="accordion-body p-0">
                                         <ul class="list-group list-group-flush small">
+                                            <!-- Module Lessons -->
                                             @foreach (var lesson in module.Lessons)
                                             {
                                                 <li class="list-group-item d-flex justify-content-between align-items-center py-3">
@@ -215,27 +220,84 @@
                                                     <span class="text-muted"><i class="bi bi-clock me-1"></i> @lesson.DurationInMinutes min</span>
                                                 </li>
                                             }
+
+                                            <!-- Module Tasks -->
+                                            @foreach (var task in moduleTasks)
+                                            {
+                                                <li class="list-group-item d-flex justify-content-between align-items-center py-3 bg-info-subtle bg-opacity-10">
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <i class="bi bi-file-earmark-code-fill text-info fs-5"></i>
+                                                        @if (Model.IsEnrolled && (!Model.Enrollment.IsExpired || Model.Enrollment.Status == "Completed"))
+                                                        {
+                                                            <a href="@Url.Action("Details", "Assignment", new { id = task.AssignmentId })" class="fw-semibold text-dark text-decoration-none chapter-direct-link" title="Open task workspace">
+                                                                <span class="badge bg-info-subtle text-info me-1 py-0 px-1" style="font-size: 9px;">TASK</span> @task.Title <span class="badge bg-info-subtle text-info small ms-2"><i class="bi bi-box-arrow-in-right me-1"></i>Open Task &rarr;</span>
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="javascript:void(0);" class="fw-semibold text-dark text-decoration-none btn-trigger-enroll" data-chapter-title="@task.Title" title="Click to enroll and unlock this task">
+                                                                <span class="badge bg-info-subtle text-info me-1 py-0 px-1" style="font-size: 9px;">TASK</span> @task.Title
+                                                            </a>
+                                                            <span class="badge bg-light text-muted border small ms-2"><i class="bi bi-lock-fill me-1"></i>Locked</span>
+                                                        }
+                                                    </div>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <span class="badge bg-light text-dark border"><i class="bi bi-award text-success me-1"></i>@task.MaxMarks pts</span>
+                                                    </div>
+                                                </li>
+                                            }
+
+                                            <!-- Module Quizzes -->
+                                            @foreach (var quiz in moduleQuizzes)
+                                            {
+                                                <li class="list-group-item d-flex justify-content-between align-items-center py-3 bg-warning-subtle bg-opacity-10">
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <i class="bi bi-patch-question-fill text-warning fs-5"></i>
+                                                        @if (Model.IsEnrolled && (!Model.Enrollment.IsExpired || Model.Enrollment.Status == "Completed"))
+                                                        {
+                                                            <a href="@Url.Action("Take", "Quiz", new { id = quiz.QuizId })" class="fw-semibold text-dark text-decoration-none chapter-direct-link" title="Take quiz">
+                                                                <span class="badge bg-warning-subtle text-dark me-1 py-0 px-1" style="font-size: 9px;">QUIZ</span> @quiz.Title <span class="badge bg-warning-subtle text-dark small ms-2"><i class="bi bi-lightning-charge me-1"></i>Take Quiz &rarr;</span>
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="javascript:void(0);" class="fw-semibold text-dark text-decoration-none btn-trigger-enroll" data-chapter-title="@quiz.Title" title="Click to enroll and unlock this quiz">
+                                                                <span class="badge bg-warning-subtle text-dark me-1 py-0 px-1" style="font-size: 9px;">QUIZ</span> @quiz.Title
+                                                            </a>
+                                                            <span class="badge bg-light text-muted border small ms-2"><i class="bi bi-lock-fill me-1"></i>Locked</span>
+                                                        }
+                                                    </div>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <span class="badge bg-light text-dark border"><i class="bi bi-stopwatch text-primary me-1"></i>@(quiz.TimeLimitMinutes ?? 30) min</span>
+                                                        <span class="badge bg-light text-dark border">Pass: @quiz.PassingPercentage%</span>
+                                                    </div>
+                                                </li>
+                                            }
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                         }
 
-                        @if (Model.Assignments.Any())
+                        <!-- Course-Wide Projects (if any) -->
+                        @{
+                            var courseWideTasks = Model.Assignments != null ? Model.Assignments.Where(a => !a.ModuleId.HasValue).ToList() : new List<LMS.Models.Assignment>();
+                        }
+                        @if (courseWideTasks.Any())
                         {
                             <div class="accordion-item border-top">
                                 <h2 class="accordion-header" id="heading-course-assignments">
                                     <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-course-assignments" aria-expanded="false">
                                         <div class="d-flex justify-content-between align-items-center w-100 pe-3">
-                                            <strong class="text-dark"><i class="bi bi-file-earmark-code-fill text-info me-2"></i>Practical Tasks &amp; Hands-On Projects</strong>
-                                            <span class="badge bg-info-subtle text-info small">@Model.Assignments.Count tasks</span>
+                                            <strong class="text-dark"><i class="bi bi-folder-check text-info me-2"></i>Capstone Tasks &amp; Hands-On Projects</strong>
+                                            <span class="badge bg-info-subtle text-info small">@courseWideTasks.Count tasks</span>
                                         </div>
                                     </button>
                                 </h2>
                                 <div id="collapse-course-assignments" class="accordion-collapse collapse" aria-labelledby="heading-course-assignments" data-bs-parent="#curriculumAccordion">
                                     <div class="accordion-body p-0">
                                         <ul class="list-group list-group-flush small">
-                                            @foreach (var task in Model.Assignments)
+                                            @foreach (var task in courseWideTasks)
                                             {
                                                 <li class="list-group-item d-flex justify-content-between align-items-center py-3">
                                                     <div class="d-flex align-items-center gap-2">
@@ -256,57 +318,6 @@
                                                     </div>
                                                     <div class="d-flex align-items-center gap-2">
                                                         <span class="badge bg-light text-dark border"><i class="bi bi-award text-success me-1"></i>@task.MaxMarks pts</span>
-                                                        @if (task.DueDate.HasValue)
-                                                        {
-                                                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle d-none d-md-inline-block">
-                                                                <i class="bi bi-clock me-1"></i>Due: @task.DueDate.Value.ToString("MMM dd")
-                                                            </span>
-                                                        }
-                                                    </div>
-                                                </li>
-                                            }
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-
-                        @if (Model.Quizzes.Any())
-                        {
-                            <div class="accordion-item border-top">
-                                <h2 class="accordion-header" id="heading-course-quizzes">
-                                    <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-course-quizzes" aria-expanded="false">
-                                        <div class="d-flex justify-content-between align-items-center w-100 pe-3">
-                                            <strong class="text-dark"><i class="bi bi-patch-question-fill text-warning me-2"></i>Evaluations &amp; Knowledge Quizzes</strong>
-                                            <span class="badge bg-warning-subtle text-dark small">@Model.Quizzes.Count quizzes</span>
-                                        </div>
-                                    </button>
-                                </h2>
-                                <div id="collapse-course-quizzes" class="accordion-collapse collapse" aria-labelledby="heading-course-quizzes" data-bs-parent="#curriculumAccordion">
-                                    <div class="accordion-body p-0">
-                                        <ul class="list-group list-group-flush small">
-                                            @foreach (var quiz in Model.Quizzes)
-                                            {
-                                                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <i class="bi bi-patch-question-fill text-warning fs-5"></i>
-                                                        @if (Model.IsEnrolled && (!Model.Enrollment.IsExpired || Model.Enrollment.Status == "Completed"))
-                                                        {
-                                                            <a href="@Url.Action("Take", "Quiz", new { id = quiz.QuizId })" class="fw-semibold text-dark text-decoration-none chapter-direct-link" title="Take quiz">
-                                                                @quiz.Title <span class="badge bg-warning-subtle text-dark small ms-2"><i class="bi bi-lightning-charge me-1"></i>Take Quiz &rarr;</span>
-                                                            </a>
-                                                        }
-                                                        else
-                                                        {
-                                                            <a href="javascript:void(0);" class="fw-semibold text-dark text-decoration-none btn-trigger-enroll" data-chapter-title="@quiz.Title" title="Click to enroll and unlock this quiz">
-                                                                @quiz.Title
-                                                            </a>
-                                                            <span class="badge bg-light text-muted border small ms-2"><i class="bi bi-lock-fill me-1"></i>Locked</span>
-                                                        }
-                                                    </div>
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <span class="badge bg-light text-dark border"><i class="bi bi-stopwatch text-primary me-1"></i>@(quiz.TimeLimitMinutes ?? 30) min</span>
-                                                        <span class="badge bg-light text-dark border">Pass: @quiz.PassingPercentage%</span>
                                                     </div>
                                                 </li>
                                             }
@@ -316,6 +327,50 @@
                             </div>
                         }
                     </div>
+
+                    <!-- Dedicated Final Mandatory Course Exam Section -->
+                    if (Model.FinalExam != null)
+                    {
+                        <div class="card card-custom p-4 mt-4 border @(Model.HasPassedFinalExam ? "border-success bg-success-subtle bg-opacity-25" : (Model.IsFinalExamUnlocked ? "border-warning bg-warning-subtle bg-opacity-25" : "border-secondary-subtle bg-light text-muted")) shadow-sm">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle @(Model.HasPassedFinalExam ? "bg-success text-white" : (Model.IsFinalExamUnlocked ? "bg-warning text-dark" : "bg-secondary text-white")) p-3 d-flex align-items-center justify-content-center shadow-xs" style="width: 52px; height: 52px;">
+                                        <i class="bi @(Model.HasPassedFinalExam ? "bi-award-fill" : (Model.IsFinalExamUnlocked ? "bi-unlock-fill" : "bi-lock-fill")) fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                                            <span class="badge @(Model.HasPassedFinalExam ? "bg-success text-white" : (Model.IsFinalExamUnlocked ? "bg-warning text-dark" : "bg-secondary text-white")) rounded-pill px-3 py-1 small fw-bold">
+                                                @(Model.HasPassedFinalExam ? "EXAM CLEARED - CERTIFICATE ISSUED" : (Model.IsFinalExamUnlocked ? "FINAL EXAM UNLOCKED - READY TO ATTEMPT" : "MANDATORY FINAL EXAM - LOCKED"))
+                                            </span>
+                                            <span class="font-monospace small text-muted"><i class="bi bi-stopwatch me-1"></i>@(Model.FinalExam.TimeLimitMinutes ?? 30) min limit &bull; Passing: @Model.FinalExam.PassingPercentage%</span>
+                                        </div>
+                                        <h5 class="fw-bold mb-1 @(Model.IsFinalExamUnlocked || Model.HasPassedFinalExam ? "text-dark" : "text-muted")">@Model.FinalExam.Title</h5>
+                                        <p class="small text-muted mb-0">@(string.IsNullOrEmpty(Model.FinalExam.Description) ? "Mandatory final exam required after completing 100% of curriculum modules to unlock your official verified certificate." : Model.FinalExam.Description)</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    @if (Model.HasPassedFinalExam)
+                                    {
+                                        <a href="@Url.Action("Certificates", "Student")" class="btn btn-warning fw-bold text-dark rounded-pill px-4 shadow-sm">
+                                            <i class="bi bi-award-fill me-1"></i> View Certificate
+                                        </a>
+                                    }
+                                    else if (Model.IsFinalExamUnlocked)
+                                    {
+                                        <a href="@Url.Action("Take", "Quiz", new { id = Model.FinalExam.QuizId })" class="btn btn-warning text-dark rounded-pill fw-bold px-4 shadow-sm">
+                                            <i class="bi bi-lightning-charge-fill me-1"></i> Take Final Exam Now
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-outline-secondary rounded-pill px-4 opacity-75" disabled title="Complete all modules first to unlock this final exam">
+                                            <i class="bi bi-lock-fill me-1"></i> Complete Modules to Unlock
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
                 }
             </div>
 

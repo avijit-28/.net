@@ -56,12 +56,19 @@
                 @for (int mIdx = 0; mIdx < Model.Modules.Count; mIdx++)
                 {
                     var module = Model.Modules[mIdx];
+                    var moduleTasks = Model.CourseAssignments != null ? Model.CourseAssignments.Where(a => a.ModuleId == module.ModuleId).ToList() : new List<LMS.Models.Assignment>();
+                    var moduleQuizzes = Model.ModuleQuizzes != null ? Model.ModuleQuizzes.Where(q => q.ModuleId == module.ModuleId || (q.LessonId.HasValue && module.Lessons.Any(l => l.LessonId == q.LessonId.Value))).ToList() : new List<LMS.Models.Quiz>();
                     bool isModuleActive = (Model.CurrentLesson != null && module.Lessons.Any(l => l.LessonId == Model.CurrentLesson.LessonId));
+                    int totalItemsInMod = module.Lessons.Count + moduleTasks.Count + moduleQuizzes.Count;
+
                     <div class="accordion-item border-bottom bg-transparent">
                         <h2 class="accordion-header" id="heading-@module.ModuleId">
                             <button class="accordion-button @(isModuleActive ? "" : "collapsed") bg-transparent py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@module.ModuleId">
                                 <div class="w-100 pe-2">
-                                    <div class="small text-muted fw-bold text-uppercase" style="font-size: 10px;">Module @(mIdx + 1)</div>
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="small text-muted fw-bold text-uppercase" style="font-size: 10px;">Module @(mIdx + 1)</span>
+                                        <span class="badge bg-light text-muted border" style="font-size: 9px;">@totalItemsInMod items</span>
+                                    </div>
                                     <div class="fw-bold text-dark small">@module.ModuleName</div>
                                 </div>
                             </button>
@@ -69,6 +76,7 @@
                         <div id="collapse-@module.ModuleId" class="accordion-collapse collapse @(isModuleActive ? "show" : "")" data-bs-parent="#learningAccordion">
                             <div class="accordion-body p-0">
                                 <div class="list-group list-group-flush">
+                                    <!-- Module Lessons -->
                                     @foreach (var lesson in module.Lessons)
                                     {
                                         bool isCurrent = Model.CurrentLesson != null && lesson.LessonId == Model.CurrentLesson.LessonId;
@@ -95,35 +103,91 @@
                                             </span>
                                         </a>
                                     }
+
+                                    <!-- Module Hands-On Tasks / Assignments -->
+                                    @foreach (var task in moduleTasks)
+                                    {
+                                        bool isSubmitted = Model.SubmittedAssignmentIds != null && Model.SubmittedAssignmentIds.Contains(task.AssignmentId);
+                                        <a href="@Url.Action("Details", "Assignment", new { id = task.AssignmentId })" class="list-group-item list-group-item-action py-3 px-3 d-flex align-items-center justify-content-between bg-info-subtle bg-opacity-10">
+                                            <div class="d-flex align-items-center gap-2 overflow-hidden pe-2">
+                                                @if (isSubmitted)
+                                                {
+                                                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-file-earmark-code-fill text-info fs-5"></i>
+                                                }
+                                                <div class="small text-truncate"><span class="badge bg-info-subtle text-info me-1 py-0 px-1" style="font-size: 9px;">TASK</span> @task.Title</div>
+                                            </div>
+                                            <span class="badge @(isSubmitted ? "bg-success-subtle text-success" : "bg-info-subtle text-info") small" style="font-size: 10px;">
+                                                @(isSubmitted ? "Submitted" : task.MaxMarks + " pts")
+                                            </span>
+                                        </a>
+                                    }
+
+                                    <!-- Module Checkpoint Quizzes -->
+                                    @foreach (var quiz in moduleQuizzes)
+                                    {
+                                        bool isPassed = Model.PassedQuizIds != null && Model.PassedQuizIds.Contains(quiz.QuizId);
+                                        <a href="@Url.Action("Take", "Quiz", new { id = quiz.QuizId })" class="list-group-item list-group-item-action py-3 px-3 d-flex align-items-center justify-content-between bg-warning-subtle bg-opacity-10">
+                                            <div class="d-flex align-items-center gap-2 overflow-hidden pe-2">
+                                                @if (isPassed)
+                                                {
+                                                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-patch-question-fill text-warning fs-5"></i>
+                                                }
+                                                <div class="small text-truncate"><span class="badge bg-warning-subtle text-dark me-1 py-0 px-1" style="font-size: 9px;">QUIZ</span> @quiz.Title</div>
+                                            </div>
+                                            <span class="badge @(isPassed ? "bg-success-subtle text-success" : "bg-warning-subtle text-dark") small" style="font-size: 10px;">
+                                                @(isPassed ? "Passed" : (quiz.TimeLimitMinutes ?? 30) + "m")
+                                            </span>
+                                        </a>
+                                    }
                                 </div>
                             </div>
                         </div>
                     </div>
                 }
 
-                @if (Model.Course.Assignments != null && Model.Course.Assignments.Any())
+                <!-- Course-Wide Projects / Capstones (unassigned to a single module) -->
+                @{
+                    var generalTasks = Model.CourseAssignments != null ? Model.CourseAssignments.Where(a => !a.ModuleId.HasValue).ToList() : new List<LMS.Models.Assignment>();
+                }
+                @if (generalTasks.Any())
                 {
                     <div class="accordion-item border-bottom bg-transparent">
-                        <h2 class="accordion-header" id="heading-learning-assignments">
-                            <button class="accordion-button collapsed bg-transparent py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-learning-assignments">
+                        <h2 class="accordion-header" id="heading-general-tasks">
+                            <button class="accordion-button collapsed bg-transparent py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-general-tasks">
                                 <div class="w-100 pe-2">
-                                    <div class="small text-info fw-bold text-uppercase" style="font-size: 10px;">Hands-On Tasks</div>
-                                    <div class="fw-bold text-dark small"><i class="bi bi-file-earmark-code-fill text-info me-1"></i> Practical Projects (@Model.Course.Assignments.Count)</div>
+                                    <div class="small text-info fw-bold text-uppercase" style="font-size: 10px;">Capstone Projects</div>
+                                    <div class="fw-bold text-dark small"><i class="bi bi-folder-check text-info me-1"></i> Course-Wide Tasks (@generalTasks.Count)</div>
                                 </div>
                             </button>
                         </h2>
-                        <div id="collapse-learning-assignments" class="accordion-collapse collapse" data-bs-parent="#learningAccordion">
+                        <div id="collapse-general-tasks" class="accordion-collapse collapse" data-bs-parent="#learningAccordion">
                             <div class="accordion-body p-0">
                                 <div class="list-group list-group-flush">
-                                    @foreach (var task in Model.Course.Assignments)
+                                    @foreach (var task in generalTasks)
                                     {
+                                        bool isSubmitted = Model.SubmittedAssignmentIds != null && Model.SubmittedAssignmentIds.Contains(task.AssignmentId);
                                         <a href="@Url.Action("Details", "Assignment", new { id = task.AssignmentId })" class="list-group-item list-group-item-action py-3 px-3 d-flex align-items-center justify-content-between">
                                             <div class="d-flex align-items-center gap-2 overflow-hidden pe-2">
-                                                <i class="bi bi-file-earmark-code text-info fs-5"></i>
+                                                @if (isSubmitted)
+                                                {
+                                                    <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-file-earmark-code text-info fs-5"></i>
+                                                }
                                                 <div class="small text-truncate">@task.Title</div>
                                             </div>
-                                            <span class="badge bg-info-subtle text-info small" style="font-size: 10px;">
-                                                @task.MaxMarks pts
+                                            <span class="badge @(isSubmitted ? "bg-success-subtle text-success" : "bg-info-subtle text-info") small" style="font-size: 10px;">
+                                                @(isSubmitted ? "Submitted" : task.MaxMarks + " pts")
                                             </span>
                                         </a>
                                     }
@@ -133,34 +197,56 @@
                     </div>
                 }
 
-                @if (Model.Course.Quizzes != null && Model.Course.Quizzes.Any())
+                <!-- Dedicated Final Mandatory Certification Exam Section -->
+                @if (Model.FinalExam != null)
                 {
-                    <div class="accordion-item border-bottom bg-transparent">
-                        <h2 class="accordion-header" id="heading-learning-quizzes">
-                            <button class="accordion-button collapsed bg-transparent py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-learning-quizzes">
-                                <div class="w-100 pe-2">
-                                    <div class="small text-warning fw-bold text-uppercase" style="font-size: 10px;">Assessments</div>
-                                    <div class="fw-bold text-dark small"><i class="bi bi-patch-question-fill text-warning me-1"></i> Quizzes &amp; Exams (@Model.Course.Quizzes.Count)</div>
-                                </div>
-                            </button>
-                        </h2>
-                        <div id="collapse-learning-quizzes" class="accordion-collapse collapse" data-bs-parent="#learningAccordion">
-                            <div class="accordion-body p-0">
-                                <div class="list-group list-group-flush">
-                                    @foreach (var q in Model.Course.Quizzes)
-                                    {
-                                        <a href="@Url.Action("Take", "Quiz", new { id = q.QuizId })" class="list-group-item list-group-item-action py-3 px-3 d-flex align-items-center justify-content-between">
-                                            <div class="d-flex align-items-center gap-2 overflow-hidden pe-2">
-                                                <i class="bi bi-patch-question text-warning fs-5"></i>
-                                                <div class="small text-truncate">@q.Title</div>
-                                            </div>
-                                            <span class="badge bg-warning-subtle text-dark small" style="font-size: 10px;">
-                                                @(q.TimeLimitMinutes ?? 30)m
-                                            </span>
-                                        </a>
-                                    }
-                                </div>
+                    <div class="p-3 border-top bg-white">
+                        <div class="card p-3 rounded-3 @(Model.HasPassedFinalExam ? "border-success bg-success-subtle bg-opacity-25" : (Model.IsFinalExamUnlocked ? "border-warning bg-warning-subtle bg-opacity-25" : "border-secondary-subtle bg-light text-muted")) shadow-xs">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge @(Model.HasPassedFinalExam ? "bg-success text-white" : (Model.IsFinalExamUnlocked ? "bg-warning text-dark" : "bg-secondary text-white")) rounded-pill px-2 py-1" style="font-size: 10px;">
+                                    <i class="bi @(Model.HasPassedFinalExam ? "bi-check2-circle" : (Model.IsFinalExamUnlocked ? "bi-unlock-fill" : "bi-lock-fill")) me-1"></i>
+                                    @(Model.HasPassedFinalExam ? "EXAM CLEARED" : (Model.IsFinalExamUnlocked ? "FINAL EXAM READY" : "FINAL EXAM LOCKED"))
+                                </span>
+                                <span class="font-monospace small text-muted" style="font-size: 10px;">Pass: @Model.FinalExam.PassingPercentage%</span>
                             </div>
+
+                            <h6 class="fw-bold mb-1 @(Model.IsFinalExamUnlocked || Model.HasPassedFinalExam ? "text-dark" : "text-muted")" style="font-size: 13px;">
+                                <i class="bi bi-award-fill text-warning me-1"></i> @Model.FinalExam.Title
+                            </h6>
+
+                            <p class="small text-muted mb-2" style="font-size: 11px;">
+                                @if (Model.HasPassedFinalExam)
+                                {
+                                    <span>Cleared with <strong>@Model.FinalExamScore%</strong>. Official certificate unlocked!</span>
+                                }
+                                else if (Model.IsFinalExamUnlocked)
+                                {
+                                    <span class="text-dark fw-semibold">100% Modules complete! Clear this exam to get your certificate.</span>
+                                }
+                                else
+                                {
+                                    <span>Complete 100% of curriculum lessons, tasks, and quizzes to unlock.</span>
+                                }
+                            </p>
+
+                            @if (Model.HasPassedFinalExam)
+                            {
+                                <a href="@Url.Action("Certificates", "Student")" class="btn btn-sm btn-success rounded-pill fw-bold w-100 py-1" style="font-size: 12px;">
+                                    <i class="bi bi-award me-1"></i> View Credential
+                                </a>
+                            }
+                            else if (Model.IsFinalExamUnlocked)
+                            {
+                                <a href="@Url.Action("Take", "Quiz", new { id = Model.FinalExam.QuizId })" class="btn btn-sm btn-warning text-dark rounded-pill fw-bold w-100 py-1 shadow-xs" style="font-size: 12px;">
+                                    <i class="bi bi-lightning-charge-fill me-1"></i> Take Final Exam Now
+                                </a>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill w-100 py-1 opacity-75" disabled style="font-size: 12px;">
+                                    <i class="bi bi-lock-fill me-1"></i> Unlocks at 100%
+                                </button>
+                            }
                         </div>
                     </div>
                 }
@@ -179,6 +265,37 @@
             }
             else
             {
+                if (Model.IsFinalExamUnlocked && !Model.HasPassedFinalExam && Model.FinalExam != null)
+                {
+                    <div class="alert alert-warning border-0 border-start border-4 border-warning shadow-sm rounded-3 mb-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-award-fill text-warning fs-3"></i>
+                            <div>
+                                <strong class="d-block text-dark">100% Curriculum Modules Completed!</strong>
+                                <span class="small text-muted">Clear the Mandatory Final Certification Exam to unlock your official credential.</span>
+                            </div>
+                        </div>
+                        <a href="@Url.Action("Take", "Quiz", new { id = Model.FinalExam.QuizId })" class="btn btn-warning text-dark rounded-pill fw-bold px-4 shadow-sm">
+                            <i class="bi bi-lightning-charge-fill me-1"></i> Take Final Exam Now
+                        </a>
+                    </div>
+                }
+                else if (Model.HasPassedFinalExam || Model.IsCourseCompleted)
+                {
+                    <div class="alert alert-success border-0 border-start border-4 border-success shadow-sm rounded-3 mb-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-patch-check-fill text-success fs-3"></i>
+                            <div>
+                                <strong class="d-block text-success">Congratulations! Course Completed & Final Exam Cleared!</strong>
+                                <span class="small text-muted">Your official verified digital certificate is available for download and verification.</span>
+                            </div>
+                        </div>
+                        <a href="@Url.Action("Certificates", "Student")" class="btn btn-success rounded-pill fw-bold px-4 shadow-sm">
+                            <i class="bi bi-award-fill me-1"></i> View Certificate
+                        </a>
+                    </div>
+                }
+
                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom">
                     <div>
                         <div class="d-flex align-items-center gap-2 mb-1">

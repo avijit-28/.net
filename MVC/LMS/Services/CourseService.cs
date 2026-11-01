@@ -97,6 +97,8 @@ namespace LMS.Services
             var course = _db.Courses
                 .Include(c => c.Category)
                 .Include(c => c.Modules.Select(m => m.Lessons))
+                .Include(c => c.Modules.Select(m => m.Quizzes))
+                .Include(c => c.Modules.Select(m => m.Assignments))
                 .Include(c => c.Quizzes)
                 .Include(c => c.Assignments)
                 .FirstOrDefault(c => c.CourseId == courseId);
@@ -129,6 +131,17 @@ namespace LMS.Services
                 m.Lessons = m.Lessons.OrderBy(l => l.LessonOrder).ToList();
             }
 
+            var allQuizzes = course.Quizzes.Where(q => q.IsActive).ToList();
+            var finalExam = allQuizzes.FirstOrDefault(q => q.IsFinalExam);
+            var moduleQuizzes = allQuizzes.Where(q => !q.IsFinalExam).OrderBy(q => q.CreatedDate).ToList();
+
+            bool isFinalExamUnlocked = enrollment != null && enrollment.CompletionPercentage >= 100;
+            bool hasPassedFinalExam = false;
+            if (finalExam != null && !string.IsNullOrEmpty(studentId))
+            {
+                hasPassedFinalExam = _db.QuizAttempts.Any(a => a.StudentId == studentId && a.QuizId == finalExam.QuizId && a.IsPassed);
+            }
+
             decimal avgRating = reviews.Any() ? (decimal)reviews.Average(r => r.Rating) : course.Rating;
 
             return new CourseDetailViewModel
@@ -136,7 +149,11 @@ namespace LMS.Services
                 Course = course,
                 Instructor = instructor,
                 Modules = modules,
-                Quizzes = course.Quizzes.Where(q => q.IsActive).OrderBy(q => q.CreatedDate).ToList(),
+                Quizzes = allQuizzes,
+                ModuleQuizzes = moduleQuizzes,
+                FinalExam = finalExam,
+                IsFinalExamUnlocked = isFinalExamUnlocked,
+                HasPassedFinalExam = hasPassedFinalExam,
                 Assignments = course.Assignments.OrderBy(a => a.DueDate).ToList(),
                 Reviews = reviews,
                 IsEnrolled = enrollment != null,

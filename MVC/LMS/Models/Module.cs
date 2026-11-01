@@ -28,5 +28,7 @@ namespace LMS.Models
         public virtual Course Course { get; set; }
 
         public virtual ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
+        public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
+        public virtual ICollection<Assignment> Assignments { get; set; } = new List<Assignment>();
     }
 }
