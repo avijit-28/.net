@@ -148,13 +148,18 @@ else
 {
     <ul class="navbar-nav align-items-center gap-2 mb-0 ms-lg-auto">
         <li class="nav-item">
-            <a class="nav-link fw-semibold" href="@Url.Action("Login", "Account")">
-                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+            <a class="nav-search-btn me-1" href="@Url.Action("Index", "Courses")" title="Search Courses" aria-label="Search Catalog">
+                <i class="bi bi-search fs-6"></i>
             </a>
         </li>
         <li class="nav-item">
-            <a class="btn btn-primary px-3 rounded-pill fw-semibold shadow-sm d-inline-flex align-items-center" style="height: 40px;" href="@Url.Action("Register", "Account")">
-                <i class="bi bi-rocket-takeoff-fill me-1"></i> Get Started
+            <a class="btn-nav-login" href="@Url.Action("Login", "Account")">
+                Log in
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="btn-nav-register" href="@Url.Action("Register", "Account")">
+                Register Free
             </a>
         </li>
     </ul>
