@@ -93,9 +93,11 @@ namespace LMS.Services
 
         public Certificate GetCertificateByNumber(string certNumber)
         {
+            if (string.IsNullOrWhiteSpace(certNumber)) return null;
+            string trimmed = certNumber.Trim().ToLower();
             return _db.Certificates
                 .Include(c => c.Course)
-                .FirstOrDefault(c => c.CertificateNumber == certNumber);
+                .FirstOrDefault(c => c.CertificateNumber.ToLower() == trimmed);
         }
     }
 }

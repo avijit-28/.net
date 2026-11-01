@@ -24,24 +24,42 @@ namespace LMS.Controllers
         }
 
         // GET: Certificate/Verify?certNumber=LMS-2026-123456
+        [HttpGet]
         [AllowAnonymous]
-        public ActionResult Verify(string certNumber)
+        public ActionResult Verify(string certNumber = null, string certificateNumber = null, string id = null)
         {
-            if (string.IsNullOrWhiteSpace(certNumber))
+            var target = !string.IsNullOrWhiteSpace(certificateNumber)
+                ? certificateNumber
+                : (!string.IsNullOrWhiteSpace(certNumber) ? certNumber : id);
+
+            if (target == null)
             {
-                ViewBag.ErrorMessage = "Please provide a valid certificate number.";
-                return View("VerifyCertificate", null);
+                return View("VerifyCertificate");
             }
 
-            var cert = _certificateService.GetCertificateByNumber(certNumber.Trim());
+            if (string.IsNullOrWhiteSpace(target))
+            {
+                ViewBag.ErrorMessage = "Please provide a valid certificate number.";
+                return View("VerifyCertificate");
+            }
+
+            var cert = _certificateService.GetCertificateByNumber(target.Trim());
             if (cert == null)
             {
-                ViewBag.ErrorMessage = $"Certificate #{certNumber} was not found or is invalid.";
-                return View("VerifyCertificate", null);
+                ViewBag.ErrorMessage = $"Certificate #{target.Trim()} was not found or is invalid.";
+                return View("VerifyCertificate");
             }
 
             var model = _certificateService.GetCertificateViewModel(cert.CertificateId);
             return View("ViewCertificate", model);
+        }
+
+        // GET: Certificate/VerifyCertificate?certificateNumber=LMS-2026-123456
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult VerifyCertificate(string certNumber = null, string certificateNumber = null, string id = null)
+        {
+            return Verify(certNumber, certificateNumber, id);
         }
 
         protected override void Dispose(bool disposing)

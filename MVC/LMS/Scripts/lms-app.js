@@ -10,9 +10,9 @@
     var LMS = window.LMS = window.LMS || {};
 
     /* ==========================================================================
-       0. Currency Formatting Helpers (Indian Rupee - INR / ₹)
+       0. Currency Formatting Helpers (Indian Rupee - INR / Rs)
        ========================================================================== */
-    LMS.currencySymbol = '₹';
+    LMS.currencySymbol = '\u20B9';
     LMS.currencyCode = 'INR';
     LMS.formatRupee = function (amount) {
         var num = parseFloat(amount) || 0;

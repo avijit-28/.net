@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using LMS.Data;
 using LMS.Models;
+using LMS.ViewModels;
 
 namespace LMS.Services
 {
@@ -59,15 +62,33 @@ namespace LMS.Services
                     _db.SaveChanges();
                 }
 
+                // Notify buyer
                 _db.Notifications.Add(new Notification
                 {
                     UserId = studentId,
                     Title = "Payment Successful",
-                    Message = $"Your payment of ₹{course.Price:N2} for '{course.Title}' was successful. You now have full access!",
+                    Message = $"Your payment of Rs. {course.Price:N2} for '{course.Title}' was successful. You now have full access!",
                     NotificationType = "Payment",
                     IsRead = false,
                     CreatedDate = DateTime.UtcNow
                 });
+
+                // Notify course instructor who created the course
+                if (!string.IsNullOrEmpty(course.InstructorId) && course.InstructorId != studentId)
+                {
+                    var buyer = _db.Users.Find(studentId);
+                    string buyerName = buyer != null ? (!string.IsNullOrWhiteSpace(buyer.FullName) ? buyer.FullName : buyer.UserName) : "A learner";
+                    _db.Notifications.Add(new Notification
+                    {
+                        UserId = course.InstructorId,
+                        Title = "New Course Purchase!",
+                        Message = $"{buyerName} has purchased your course '{course.Title}' for Rs. {course.Price:N2}. Transaction: {transactionId}.",
+                        NotificationType = "CourseSale",
+                        IsRead = false,
+                        CreatedDate = DateTime.UtcNow
+                    });
+                }
+
                 _db.SaveChanges();
                 return true;
             }
@@ -76,6 +97,193 @@ namespace LMS.Services
                 errorMessage = enrollError;
                 return false;
             }
+        }
+
+        private string DetermineUserRole(ApplicationUser user, Dictionary<string, string> rolesMap)
+        {
+            if (user == null) return "Student";
+
+            var userRoleNames = new List<string>();
+            if (user.Roles != null && user.Roles.Any())
+            {
+                foreach (var r in user.Roles)
+                {
+                    if (rolesMap.TryGetValue(r.RoleId, out string rName) && !string.IsNullOrEmpty(rName))
+                    {
+                        userRoleNames.Add(rName);
+                    }
+                }
+            }
+
+            // Highest privilege / role specificity first
+            if (userRoleNames.Any(r => string.Equals(r, "Instructor", StringComparison.OrdinalIgnoreCase)))
+                return "Instructor";
+
+            if (userRoleNames.Any(r => string.Equals(r, "Admin", StringComparison.OrdinalIgnoreCase)))
+                return "Admin";
+
+            if (userRoleNames.Any(r => string.Equals(r, "Student", StringComparison.OrdinalIgnoreCase)))
+                return "Student";
+
+            if (!string.IsNullOrEmpty(user.RequestedRole))
+            {
+                if (string.Equals(user.RequestedRole, "Instructor", StringComparison.OrdinalIgnoreCase)) return "Instructor";
+                if (string.Equals(user.RequestedRole, "Admin", StringComparison.OrdinalIgnoreCase)) return "Admin";
+            }
+            return "Student";
+        }
+
+        public InstructorPaymentsViewModel GetInstructorPayments(string instructorId, string filter = "All")
+        {
+            var courseIds = _db.Courses
+                .Where(c => c.InstructorId == instructorId)
+                .Select(c => c.CourseId)
+                .ToList();
+
+            var payments = courseIds.Any()
+                ? _db.Payments
+                    .Include(p => p.Course)
+                    .Where(p => courseIds.Contains(p.CourseId))
+                    .OrderByDescending(p => p.PaymentDate)
+                    .ToList()
+                : new List<Payment>();
+
+            var rolesMap = _db.Roles.ToDictionary(r => r.Id, r => r.Name);
+            var buyerIds = payments.Select(p => p.StudentId).Distinct().ToList();
+            var buyers = _db.Users
+                .Include(u => u.Roles)
+                .Where(u => buyerIds.Contains(u.Id))
+                .ToDictionary(u => u.Id, u => u);
+
+            var records = new List<CoursePaymentRecordViewModel>();
+            foreach (var p in payments)
+            {
+                buyers.TryGetValue(p.StudentId, out var buyer);
+                string buyerRole = DetermineUserRole(buyer, rolesMap);
+
+                records.Add(new CoursePaymentRecordViewModel
+                {
+                    PaymentId = p.PaymentId,
+                    TransactionId = p.TransactionId ?? ("TXN-" + p.PaymentId),
+                    CourseId = p.CourseId,
+                    CourseTitle = p.Course != null ? p.Course.Title : "Course #" + p.CourseId,
+                    InstructorId = instructorId,
+                    BuyerId = p.StudentId,
+                    BuyerName = buyer != null ? (!string.IsNullOrWhiteSpace(buyer.FullName) ? buyer.FullName : buyer.UserName) : "Enrolled Learner",
+                    BuyerEmail = buyer != null ? buyer.Email : "N/A",
+                    BuyerRole = buyerRole,
+                    Amount = p.Amount,
+                    PaymentMethod = p.PaymentMethod,
+                    PaymentStatus = p.PaymentStatus,
+                    PaymentDate = p.PaymentDate
+                });
+            }
+
+            var completed = records.Where(r => r.PaymentStatus == "Completed").ToList();
+            decimal totalEarnings = completed.Sum(r => r.Amount);
+            int totalPaidEnrollments = completed.Count;
+            decimal avgOrderValue = totalPaidEnrollments > 0 ? Math.Round(totalEarnings / totalPaidEnrollments, 2) : 0;
+
+            int studentPurchasesCount = records.Count(r => r.BuyerRole == "Student");
+            int instructorPurchasesCount = records.Count(r => r.BuyerRole == "Instructor");
+
+            var filteredRecords = records;
+            if (!string.IsNullOrEmpty(filter) && filter != "All")
+            {
+                filteredRecords = records.Where(r => string.Equals(r.BuyerRole, filter, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            return new InstructorPaymentsViewModel
+            {
+                TotalEarnings = totalEarnings,
+                TotalPaidEnrollments = totalPaidEnrollments,
+                AverageOrderValue = avgOrderValue,
+                CurrentFilter = filter ?? "All",
+                TotalTransactionsCount = records.Count,
+                TotalStudentPurchasesCount = studentPurchasesCount,
+                TotalInstructorPurchasesCount = instructorPurchasesCount,
+                Transactions = filteredRecords
+            };
+        }
+
+        public AdminPaymentsViewModel GetAdminPayments(string filter = "All")
+        {
+            var payments = _db.Payments
+                .Include(p => p.Course)
+                .OrderByDescending(p => p.PaymentDate)
+                .ToList();
+
+            var rolesMap = _db.Roles.ToDictionary(r => r.Id, r => r.Name);
+            var buyerIds = payments.Select(p => p.StudentId).Distinct().ToList();
+            var instructorIds = payments.Where(p => p.Course != null).Select(p => p.Course.InstructorId).Distinct().ToList();
+            var allUserIds = buyerIds.Union(instructorIds).ToList();
+
+            var users = _db.Users
+                .Include(u => u.Roles)
+                .Where(u => allUserIds.Contains(u.Id))
+                .ToDictionary(u => u.Id, u => u);
+
+            var records = new List<CoursePaymentRecordViewModel>();
+            foreach (var p in payments)
+            {
+                users.TryGetValue(p.StudentId, out var buyer);
+                ApplicationUser instructor = null;
+                if (p.Course != null && !string.IsNullOrEmpty(p.Course.InstructorId))
+                {
+                    users.TryGetValue(p.Course.InstructorId, out instructor);
+                }
+
+                string buyerRole = DetermineUserRole(buyer, rolesMap);
+
+                records.Add(new CoursePaymentRecordViewModel
+                {
+                    PaymentId = p.PaymentId,
+                    TransactionId = p.TransactionId ?? ("TXN-" + p.PaymentId),
+                    CourseId = p.CourseId,
+                    CourseTitle = p.Course != null ? p.Course.Title : "Course #" + p.CourseId,
+                    InstructorId = p.Course != null ? p.Course.InstructorId : null,
+                    InstructorName = instructor != null ? (!string.IsNullOrWhiteSpace(instructor.FullName) ? instructor.FullName : instructor.UserName) : "Course Instructor",
+                    InstructorEmail = instructor != null ? instructor.Email : "N/A",
+                    BuyerId = p.StudentId,
+                    BuyerName = buyer != null ? (!string.IsNullOrWhiteSpace(buyer.FullName) ? buyer.FullName : buyer.UserName) : "Customer",
+                    BuyerEmail = buyer != null ? buyer.Email : "N/A",
+                    BuyerRole = buyerRole,
+                    Amount = p.Amount,
+                    PaymentMethod = p.PaymentMethod,
+                    PaymentStatus = p.PaymentStatus,
+                    PaymentDate = p.PaymentDate
+                });
+            }
+
+            var completed = records.Where(r => r.PaymentStatus == "Completed").ToList();
+            decimal totalRevenue = completed.Sum(r => r.Amount);
+            int totalCount = records.Count;
+
+            var studentCompleted = completed.Where(r => r.BuyerRole == "Student").ToList();
+            decimal studentTotal = studentCompleted.Sum(r => r.Amount);
+            int studentCount = records.Count(r => r.BuyerRole == "Student");
+
+            var instructorCompleted = completed.Where(r => r.BuyerRole == "Instructor").ToList();
+            decimal instructorTotal = instructorCompleted.Sum(r => r.Amount);
+            int instructorCount = records.Count(r => r.BuyerRole == "Instructor");
+
+            var filteredRecords = records;
+            if (!string.IsNullOrEmpty(filter) && filter != "All")
+            {
+                filteredRecords = records.Where(r => string.Equals(r.BuyerRole, filter, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            return new AdminPaymentsViewModel
+            {
+                TotalRevenue = totalRevenue,
+                TotalTransactionsCount = totalCount,
+                StudentPurchasesTotal = studentTotal,
+                StudentPurchasesCount = studentCount,
+                InstructorPurchasesTotal = instructorTotal,
+                InstructorPurchasesCount = instructorCount,
+                CurrentFilter = filter ?? "All",
+                Transactions = filteredRecords
+            };
         }
     }
 }

@@ -1,0 +1,48 @@
+using System;
+using System.Collections.Generic;
+
+namespace LMS.ViewModels
+{
+    public class CoursePaymentRecordViewModel
+    {
+        public int PaymentId { get; set; }
+        public string TransactionId { get; set; }
+        public int CourseId { get; set; }
+        public string CourseTitle { get; set; }
+        public string InstructorId { get; set; }
+        public string InstructorName { get; set; }
+        public string InstructorEmail { get; set; }
+        public string BuyerId { get; set; }
+        public string BuyerName { get; set; }
+        public string BuyerEmail { get; set; }
+        public string BuyerRole { get; set; } // "Student", "Instructor", "Admin"
+        public decimal Amount { get; set; }
+        public string PaymentMethod { get; set; }
+        public string PaymentStatus { get; set; } // "Completed", "Pending", "Failed"
+        public DateTime PaymentDate { get; set; }
+    }
+
+    public class InstructorPaymentsViewModel
+    {
+        public decimal TotalEarnings { get; set; }
+        public int TotalPaidEnrollments { get; set; }
+        public decimal AverageOrderValue { get; set; }
+        public string CurrentFilter { get; set; } = "All"; // "All", "Student", "Instructor"
+        public int TotalTransactionsCount { get; set; }
+        public int TotalStudentPurchasesCount { get; set; }
+        public int TotalInstructorPurchasesCount { get; set; }
+        public List<CoursePaymentRecordViewModel> Transactions { get; set; } = new List<CoursePaymentRecordViewModel>();
+    }
+
+    public class AdminPaymentsViewModel
+    {
+        public decimal TotalRevenue { get; set; }
+        public int TotalTransactionsCount { get; set; }
+        public decimal StudentPurchasesTotal { get; set; }
+        public int StudentPurchasesCount { get; set; }
+        public decimal InstructorPurchasesTotal { get; set; }
+        public int InstructorPurchasesCount { get; set; }
+        public string CurrentFilter { get; set; } = "All"; // "All", "Student", "Instructor"
+        public List<CoursePaymentRecordViewModel> Transactions { get; set; } = new List<CoursePaymentRecordViewModel>();
+    }
+}

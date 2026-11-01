@@ -11,6 +11,11 @@ namespace LMS.Data
             Database.SetInitializer<ApplicationDbContext>(null);
         }
 
+        public ApplicationDbContext(string connectionString) : base(connectionString, throwIfV1Schema: false)
+        {
+            Database.SetInitializer<ApplicationDbContext>(null);
+        }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
@@ -38,6 +43,11 @@ namespace LMS.Data
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Configure user approval properties
+            modelBuilder.Entity<ApplicationUser>().Property(u => u.ApprovalStatus).HasMaxLength(50);
+            modelBuilder.Entity<ApplicationUser>().Property(u => u.RequestedRole).HasMaxLength(50);
+            modelBuilder.Entity<ApplicationUser>().Property(u => u.RejectionReason).HasMaxLength(500);
 
             // Configure decimal precisions
             modelBuilder.Entity<Course>().Property(c => c.Price).HasPrecision(18, 2);

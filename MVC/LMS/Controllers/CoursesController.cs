@@ -46,21 +46,37 @@ namespace LMS.Controllers
 
         // POST: Courses/Enroll
         [HttpPost]
-        [Authorize(Roles = "Student")]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public ActionResult Enroll(int courseId)
         {
-            string studentId = User.Identity.GetUserId();
+            string currentUserId = User.Identity.GetUserId();
             var course = _db.Courses.Find(courseId);
             if (course == null) return HttpNotFound();
+
+            // If instructor of the course or Admin, grant direct access to learning
+            bool isAdmin = User.IsInRole("Admin");
+            if (course.InstructorId == currentUserId || isAdmin)
+            {
+                TempData["InfoMessage"] = isAdmin
+                    ? "As an Administrator, you have full access to the classroom."
+                    : "You are the instructor of this course. You have direct access to the classroom.";
+                return RedirectToAction("Index", "Learning", new { courseId });
+            }
+
+            if (_enrollmentService.IsEnrolled(currentUserId, courseId))
+            {
+                TempData["InfoMessage"] = "You are already enrolled in this course.";
+                return RedirectToAction("Index", "Learning", new { courseId });
+            }
 
             if (course.Price > 0)
             {
                 // Must go through payment flow
-                return RedirectToAction("Purchase", new { courseId });
+                return RedirectToAction("Payment", new { courseId });
             }
 
-            bool success = _enrollmentService.EnrollStudent(studentId, courseId, out string errorMessage);
+            bool success = _enrollmentService.EnrollStudent(currentUserId, courseId, out string errorMessage);
             if (!success)
             {
                 TempData["ErrorMessage"] = errorMessage;
@@ -72,52 +88,48 @@ namespace LMS.Controllers
         }
 
         // GET: Courses/Purchase
-        [Authorize(Roles = "Student")]
+        [Authorize]
         public ActionResult Purchase(int courseId)
         {
-            string studentId = User.Identity.GetUserId();
+            return RedirectToAction("Payment", new { courseId });
+        }
+
+        // POST: Courses/Purchase
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult Purchase(int courseId, string paymentMethod)
+        {
+            return Payment(courseId, paymentMethod);
+        }
+
+        // GET: Courses/Payment
+        [Authorize]
+        public ActionResult Payment(int courseId)
+        {
+            string currentUserId = User.Identity.GetUserId();
             var course = _db.Courses.Find(courseId);
             if (course == null) return HttpNotFound();
 
-            if (_enrollmentService.IsEnrolled(studentId, courseId))
+            bool isAdmin = User.IsInRole("Admin");
+            if (course.InstructorId == currentUserId || isAdmin)
+            {
+                TempData["InfoMessage"] = isAdmin
+                    ? "As an Administrator, you have full access to the classroom."
+                    : "You are the instructor of this course. You have direct access to the classroom.";
+                return RedirectToAction("Index", "Learning", new { courseId });
+            }
+
+            if (_enrollmentService.IsEnrolled(currentUserId, courseId))
             {
                 TempData["InfoMessage"] = "You are already enrolled in this course.";
                 return RedirectToAction("Index", "Learning", new { courseId });
             }
 
-            return View(course);
-        }
-
-        // POST: Courses/Purchase
-        [HttpPost]
-        [Authorize(Roles = "Student")]
-        [ValidateAntiForgeryToken]
-        public ActionResult Purchase(int courseId, string paymentMethod)
-        {
-            string studentId = User.Identity.GetUserId();
-            bool success = _paymentService.ProcessCoursePayment(studentId, courseId, paymentMethod, out string transactionId, out string error);
-
-            if (!success)
+            if (course.Price <= 0)
             {
-                TempData["ErrorMessage"] = error;
-                return RedirectToAction("Purchase", new { courseId });
-            }
-
-            TempData["SuccessMessage"] = $"Payment successful! Transaction ID: {transactionId}. Welcome to the course!";
-            return RedirectToAction("Index", "Learning", new { courseId });
-        }
-
-        // GET: Courses/Payment
-        [Authorize(Roles = "Student")]
-        public ActionResult Payment(int courseId)
-        {
-            string studentId = User.Identity.GetUserId();
-            var course = _db.Courses.Find(courseId);
-            if (course == null) return HttpNotFound();
-
-            if (_enrollmentService.IsEnrolled(studentId, courseId))
-            {
-                TempData["InfoMessage"] = "You are already enrolled in this course.";
+                _enrollmentService.EnrollStudent(currentUserId, courseId, out string _);
+                TempData["SuccessMessage"] = "You have been enrolled in this free course! Start learning now.";
                 return RedirectToAction("Index", "Learning", new { courseId });
             }
 
@@ -126,12 +138,30 @@ namespace LMS.Controllers
 
         // POST: Courses/Payment
         [HttpPost]
-        [Authorize(Roles = "Student")]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public ActionResult Payment(int courseId, string paymentMethod)
         {
-            string studentId = User.Identity.GetUserId();
-            bool success = _paymentService.ProcessCoursePayment(studentId, courseId, paymentMethod, out string transactionId, out string error);
+            string currentUserId = User.Identity.GetUserId();
+            var course = _db.Courses.Find(courseId);
+            if (course == null) return HttpNotFound();
+
+            bool isAdmin = User.IsInRole("Admin");
+            if (course.InstructorId == currentUserId || isAdmin)
+            {
+                TempData["InfoMessage"] = isAdmin
+                    ? "As an Administrator, you have full access to the classroom."
+                    : "You are the instructor of this course. You have direct access to the classroom.";
+                return RedirectToAction("Index", "Learning", new { courseId });
+            }
+
+            if (_enrollmentService.IsEnrolled(currentUserId, courseId))
+            {
+                TempData["InfoMessage"] = "You are already enrolled in this course.";
+                return RedirectToAction("Index", "Learning", new { courseId });
+            }
+
+            bool success = _paymentService.ProcessCoursePayment(currentUserId, courseId, paymentMethod, out string transactionId, out string error);
 
             if (!success)
             {
@@ -145,7 +175,7 @@ namespace LMS.Controllers
 
         // POST: Courses/AddReview
         [HttpPost]
-        [Authorize(Roles = "Student")]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public ActionResult AddReview(CourseReviewInputModel model)
         {

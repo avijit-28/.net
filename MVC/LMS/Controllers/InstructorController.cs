@@ -17,11 +17,13 @@ namespace LMS.Controllers
         private readonly ApplicationDbContext _db = new ApplicationDbContext();
         private readonly DashboardService _dashboardService;
         private readonly AssignmentService _assignmentService;
+        private readonly PaymentService _paymentService;
 
         public InstructorController()
         {
             _dashboardService = new DashboardService(_db);
             _assignmentService = new AssignmentService(_db);
+            _paymentService = new PaymentService(_db);
         }
 
         private string CurrentUserId => User.Identity.GetUserId();
@@ -43,12 +45,16 @@ namespace LMS.Controllers
         // GET: Instructor/Courses
         public ActionResult Courses()
         {
-            var courses = _db.Courses
-                .Include(c => c.Category)
-                .Where(c => c.InstructorId == CurrentUserId || User.IsInRole("Admin"))
-                .OrderByDescending(c => c.CreatedDate)
-                .ToList();
+            bool isAdmin = User.IsInRole("Admin");
+            string currentUserId = CurrentUserId;
 
+            var query = _db.Courses.Include(c => c.Category);
+            if (!isAdmin)
+            {
+                query = query.Where(c => c.InstructorId == currentUserId);
+            }
+
+            var courses = query.OrderByDescending(c => c.CreatedDate).ToList();
             return View(courses);
         }
 
@@ -166,10 +172,68 @@ namespace LMS.Controllers
                 return RedirectToAction("Courses");
             }
 
-            _db.Courses.Remove(course);
-            _db.SaveChanges();
+            try
+            {
+                var modules = _db.Modules.Where(m => m.CourseId == id).ToList();
+                var moduleIds = modules.Select(m => m.ModuleId).ToList();
 
-            TempData["SuccessMessage"] = "Course removed successfully.";
+                var lessons = _db.Lessons.Where(l => moduleIds.Contains(l.ModuleId)).ToList();
+                var lessonIds = lessons.Select(l => l.LessonId).ToList();
+
+                if (lessonIds.Count > 0)
+                {
+                    var quizzesToDetach = _db.Quizzes.Where(q => q.LessonId.HasValue && lessonIds.Contains(q.LessonId.Value)).ToList();
+                    foreach (var q in quizzesToDetach) q.LessonId = null;
+
+                    var assignmentsToDetach = _db.Assignments.Where(a => a.LessonId.HasValue && lessonIds.Contains(a.LessonId.Value)).ToList();
+                    foreach (var a in assignmentsToDetach) a.LessonId = null;
+
+                    var progresses = _db.LessonProgresses.Where(lp => lessonIds.Contains(lp.LessonId)).ToList();
+                    _db.LessonProgresses.RemoveRange(progresses);
+
+                    _db.Lessons.RemoveRange(lessons);
+                }
+
+                var courseQuizzes = _db.Quizzes.Where(q => q.CourseId == id).ToList();
+                if (courseQuizzes.Count > 0)
+                {
+                    var quizIds = courseQuizzes.Select(q => q.QuizId).ToList();
+                    var quizAnswers = _db.QuizAnswers.Where(qa => quizIds.Contains(qa.QuizAttempt.QuizId)).ToList();
+                    _db.QuizAnswers.RemoveRange(quizAnswers);
+                    var quizAttempts = _db.QuizAttempts.Where(qa => quizIds.Contains(qa.QuizId)).ToList();
+                    _db.QuizAttempts.RemoveRange(quizAttempts);
+
+                    var options = _db.QuestionOptions.Where(qo => quizIds.Contains(qo.Question.QuizId)).ToList();
+                    _db.QuestionOptions.RemoveRange(options);
+                    var questions = _db.Questions.Where(q => quizIds.Contains(q.QuizId)).ToList();
+                    _db.Questions.RemoveRange(questions);
+
+                    _db.Quizzes.RemoveRange(courseQuizzes);
+                }
+
+                var courseAssignments = _db.Assignments.Where(a => a.CourseId == id).ToList();
+                if (courseAssignments.Count > 0)
+                {
+                    var assignIds = courseAssignments.Select(a => a.AssignmentId).ToList();
+                    var submissions = _db.Submissions.Where(s => assignIds.Contains(s.AssignmentId)).ToList();
+                    _db.Submissions.RemoveRange(submissions);
+                    _db.Assignments.RemoveRange(courseAssignments);
+                }
+
+                var reviews = _db.CourseReviews.Where(r => r.CourseId == id).ToList();
+                _db.CourseReviews.RemoveRange(reviews);
+
+                _db.Modules.RemoveRange(modules);
+                _db.Courses.Remove(course);
+                _db.SaveChanges();
+
+                TempData["SuccessMessage"] = "Course removed successfully.";
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Unable to delete course due to active student records or dependencies. Consider archiving instead.";
+            }
+
             return RedirectToAction("Courses");
         }
 
@@ -227,6 +291,31 @@ namespace LMS.Controllers
             return RedirectToAction("Modules", new { courseId = model.CourseId });
         }
 
+        // POST: Instructor/EditModule
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditModule(ModuleFormViewModel model)
+        {
+            var module = _db.Modules.Include(m => m.Course).FirstOrDefault(m => m.ModuleId == model.ModuleId);
+            if (module == null || !IsOwnerOrAdmin(module.Course)) return new HttpUnauthorizedResult();
+
+            if (ModelState.IsValid)
+            {
+                module.ModuleName = model.ModuleName;
+                module.Description = model.Description;
+                module.ModuleOrder = model.ModuleOrder;
+                _db.SaveChanges();
+
+                TempData["SuccessMessage"] = "Module updated successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Failed to update module. Please verify all required fields.";
+            }
+
+            return RedirectToAction("Modules", new { courseId = module.CourseId });
+        }
+
         // POST: Instructor/DeleteModule
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -236,10 +325,36 @@ namespace LMS.Controllers
             if (module == null || !IsOwnerOrAdmin(module.Course)) return new HttpUnauthorizedResult();
 
             int courseId = module.CourseId;
-            _db.Modules.Remove(module);
-            _db.SaveChanges();
 
-            TempData["SuccessMessage"] = "Module removed successfully.";
+            try
+            {
+                var lessons = _db.Lessons.Where(l => l.ModuleId == id).ToList();
+                var lessonIds = lessons.Select(l => l.LessonId).ToList();
+
+                if (lessonIds.Count > 0)
+                {
+                    var quizzesToDetach = _db.Quizzes.Where(q => q.LessonId.HasValue && lessonIds.Contains(q.LessonId.Value)).ToList();
+                    foreach (var q in quizzesToDetach) q.LessonId = null;
+
+                    var assignmentsToDetach = _db.Assignments.Where(a => a.LessonId.HasValue && lessonIds.Contains(a.LessonId.Value)).ToList();
+                    foreach (var a in assignmentsToDetach) a.LessonId = null;
+
+                    var progresses = _db.LessonProgresses.Where(lp => lessonIds.Contains(lp.LessonId)).ToList();
+                    _db.LessonProgresses.RemoveRange(progresses);
+
+                    _db.Lessons.RemoveRange(lessons);
+                }
+
+                _db.Modules.Remove(module);
+                _db.SaveChanges();
+
+                TempData["SuccessMessage"] = "Module and associated lessons removed successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Unable to delete module: " + ex.Message;
+            }
+
             return RedirectToAction("Modules", new { courseId });
         }
 
@@ -296,11 +411,86 @@ namespace LMS.Controllers
             if (lesson == null || !IsOwnerOrAdmin(lesson.Module.Course)) return new HttpUnauthorizedResult();
 
             int moduleId = lesson.ModuleId;
-            _db.Lessons.Remove(lesson);
-            _db.SaveChanges();
 
-            TempData["SuccessMessage"] = "Lesson removed successfully.";
+            try
+            {
+                var quizzesToDetach = _db.Quizzes.Where(q => q.LessonId == id).ToList();
+                foreach (var q in quizzesToDetach) q.LessonId = null;
+
+                var assignmentsToDetach = _db.Assignments.Where(a => a.LessonId == id).ToList();
+                foreach (var a in assignmentsToDetach) a.LessonId = null;
+
+                var progresses = _db.LessonProgresses.Where(lp => lp.LessonId == id).ToList();
+                _db.LessonProgresses.RemoveRange(progresses);
+
+                _db.Lessons.Remove(lesson);
+                _db.SaveChanges();
+
+                TempData["SuccessMessage"] = "Lesson removed successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Unable to delete lesson: " + ex.Message;
+            }
+
             return RedirectToAction("Lessons", new { moduleId });
+        }
+
+        // GET: Instructor/EditLesson/5
+        public ActionResult EditLesson(int id)
+        {
+            var lesson = _db.Lessons.Include(l => l.Module.Course).FirstOrDefault(l => l.LessonId == id);
+            if (lesson == null || !IsOwnerOrAdmin(lesson.Module.Course)) return new HttpUnauthorizedResult();
+
+            var model = new LessonFormViewModel
+            {
+                LessonId = lesson.LessonId,
+                ModuleId = lesson.ModuleId,
+                CourseId = lesson.Module.CourseId,
+                Title = lesson.Title,
+                Description = lesson.Description,
+                LessonType = lesson.LessonType,
+                VideoUrl = lesson.VideoUrl,
+                Content = lesson.Content,
+                ResourceUrl = lesson.ResourceUrl,
+                DurationInMinutes = lesson.DurationInMinutes,
+                LessonOrder = lesson.LessonOrder,
+                IsPreview = lesson.IsPreview
+            };
+
+            ViewBag.Lesson = lesson;
+            ViewBag.Module = lesson.Module;
+            return View(model);
+        }
+
+        // POST: Instructor/EditLesson
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditLesson(LessonFormViewModel model)
+        {
+            var lesson = _db.Lessons.Include(l => l.Module.Course).FirstOrDefault(l => l.LessonId == model.LessonId);
+            if (lesson == null || !IsOwnerOrAdmin(lesson.Module.Course)) return new HttpUnauthorizedResult();
+
+            if (ModelState.IsValid)
+            {
+                lesson.Title = model.Title;
+                lesson.Description = model.Description;
+                lesson.LessonType = model.LessonType;
+                lesson.VideoUrl = model.VideoUrl;
+                lesson.Content = model.Content;
+                lesson.ResourceUrl = model.ResourceUrl;
+                lesson.DurationInMinutes = model.DurationInMinutes;
+                lesson.LessonOrder = model.LessonOrder;
+                lesson.IsPreview = model.IsPreview;
+
+                _db.SaveChanges();
+                TempData["SuccessMessage"] = "Lesson updated successfully!";
+                return RedirectToAction("Lessons", new { moduleId = lesson.ModuleId });
+            }
+
+            ViewBag.Lesson = lesson;
+            ViewBag.Module = lesson.Module;
+            return View(model);
         }
 
         // GET: Instructor/Quizzes?courseId=5
@@ -542,6 +732,19 @@ namespace LMS.Controllers
                     Text = c.CategoryName
                 })
                 .ToList();
+        }
+
+        // GET: Instructor/Payments
+        public ActionResult Payments(string filter = "All")
+        {
+            var model = _paymentService.GetInstructorPayments(CurrentUserId, filter);
+            return View(model);
+        }
+
+        // GET: Instructor/Earnings
+        public ActionResult Earnings(string filter = "All")
+        {
+            return Payments(filter);
         }
 
         protected override void Dispose(bool disposing)

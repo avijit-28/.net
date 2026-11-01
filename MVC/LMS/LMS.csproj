@@ -205,6 +205,7 @@
     <Compile Include="ViewModels\AdminViewModels.cs" />
     <Compile Include="ViewModels\CourseFilterViewModel.cs" />
     <Compile Include="ViewModels\InstructorViewModels.cs" />
+    <Compile Include="ViewModels\PaymentViewModels.cs" />
     <Compile Include="ViewModels\StudentViewModels.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -263,6 +264,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Account\PendingApproval.cshtml" />
     <Content Include="Views\Account\Profile.cshtml" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Courses\Index.cshtml" />
@@ -286,6 +288,7 @@
     <Content Include="Views\Instructor\EditCourse.cshtml" />
     <Content Include="Views\Instructor\Modules.cshtml" />
     <Content Include="Views\Instructor\Lessons.cshtml" />
+    <Content Include="Views\Instructor\EditLesson.cshtml" />
     <Content Include="Views\Instructor\Quizzes.cshtml" />
     <Content Include="Views\Instructor\CreateQuiz.cshtml" />
     <Content Include="Views\Instructor\Questions.cshtml" />
@@ -294,8 +297,11 @@
     <Content Include="Views\Instructor\Submissions.cshtml" />
     <Content Include="Views\Instructor\Grade.cshtml" />
     <Content Include="Views\Instructor\Students.cshtml" />
+    <Content Include="Views\Instructor\Payments.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Admin\Users.cshtml" />
+    <Content Include="Views\Admin\PendingApprovals.cshtml" />
+    <Content Include="Views\Admin\InstructorApplications.cshtml" />
     <Content Include="Views\Admin\Categories.cshtml" />
     <Content Include="Views\Admin\CreateCategory.cshtml" />
     <Content Include="Views\Admin\EditCategory.cshtml" />

@@ -73,11 +73,14 @@ namespace LMS.Services
             }
 
             // If not found or not specified, pick first incomplete lesson or first lesson
-            var completedLessonIds = new HashSet<int>(
-                _db.LessonProgresses
-                    .Where(lp => lp.StudentId == studentId && lp.IsCompleted && allLessons.Select(al => al.LessonId).Contains(lp.LessonId))
-                    .Select(lp => lp.LessonId)
-            );
+            var allLessonIds = allLessons.Select(al => al.LessonId).ToList();
+            var completedLessonIds = allLessonIds.Count > 0
+                ? new HashSet<int>(
+                    _db.LessonProgresses
+                        .Where(lp => lp.StudentId == studentId && lp.IsCompleted && allLessonIds.Contains(lp.LessonId))
+                        .Select(lp => lp.LessonId)
+                )
+                : new HashSet<int>();
 
             if (currentLesson == null)
             {
@@ -167,7 +170,9 @@ namespace LMS.Services
             // Recalculate Course Completion
             var allLessons = _db.Lessons.Where(l => l.Module.CourseId == courseId).Select(l => l.LessonId).ToList();
             int totalLessons = allLessons.Count;
-            int completedCount = _db.LessonProgresses.Count(p => p.StudentId == studentId && p.IsCompleted && allLessons.Contains(p.LessonId));
+            int completedCount = totalLessons > 0
+                ? _db.LessonProgresses.Count(p => p.StudentId == studentId && p.IsCompleted && allLessons.Contains(p.LessonId))
+                : 0;
 
             decimal completionPercentage = totalLessons > 0 ? Math.Round((decimal)completedCount * 100m / totalLessons, 2) : 100;
 

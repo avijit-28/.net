@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using LMS.Data;
 using LMS.Models;
@@ -17,10 +18,12 @@ namespace LMS.Controllers
     {
         private readonly ApplicationDbContext _db = new ApplicationDbContext();
         private readonly DashboardService _dashboardService;
+        private readonly PaymentService _paymentService;
 
         public AdminController()
         {
             _dashboardService = new DashboardService(_db);
+            _paymentService = new PaymentService(_db);
         }
 
         // GET: Admin/Index
@@ -45,7 +48,10 @@ namespace LMS.Controllers
                 Email = u.Email,
                 Role = userRoles.FirstOrDefault(ur => ur.UserId == u.Id)?.RoleName ?? "None",
                 CreatedDate = u.CreatedDate,
-                IsActive = !u.LockoutEnabled || (u.LockoutEndDateUtc == null || u.LockoutEndDateUtc < DateTime.UtcNow)
+                IsActive = !u.LockoutEnabled || (u.LockoutEndDateUtc == null || u.LockoutEndDateUtc < DateTime.UtcNow),
+                IsApproved = u.IsApproved,
+                ApprovalStatus = u.ApprovalStatus ?? "Approved",
+                RequestedRole = u.RequestedRole
             }).ToList();
 
             if (!string.IsNullOrEmpty(roleFilter))
@@ -54,7 +60,371 @@ namespace LMS.Controllers
             }
 
             ViewBag.CurrentRoleFilter = roleFilter;
+            ViewBag.PendingCount = _db.Users.Count(u => !u.IsApproved && (u.ApprovalStatus == "Pending" || u.ApprovalStatus == null));
             return View(list);
+        }
+
+        // GET: Admin/PendingApprovals
+        public ActionResult PendingApprovals(string search = null, string roleFilter = null, string statusFilter = "Pending")
+        {
+            var query = _db.Users.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim();
+                query = query.Where(u => u.Email.Contains(search) || u.FullName.Contains(search));
+            }
+
+            if (!string.IsNullOrEmpty(roleFilter))
+            {
+                query = query.Where(u => u.RequestedRole == roleFilter);
+            }
+
+            if (!string.IsNullOrEmpty(statusFilter) && statusFilter != "All")
+            {
+                if (statusFilter == "Pending")
+                {
+                    query = query.Where(u => u.ApprovalStatus == "Pending" || (u.ApprovalStatus == null && !u.IsApproved));
+                }
+                else if (statusFilter == "Approved")
+                {
+                    query = query.Where(u => u.ApprovalStatus == "Approved" || (u.ApprovalStatus == null && u.IsApproved));
+                }
+                else
+                {
+                    query = query.Where(u => u.ApprovalStatus == statusFilter);
+                }
+            }
+
+            var users = query.OrderByDescending(u => u.RegisteredDate).ToList();
+
+            var list = users.Select(u => new PendingUserApprovalViewModel
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                Email = u.Email,
+                RequestedRole = !string.IsNullOrEmpty(u.RequestedRole) ? u.RequestedRole : "Student",
+                RegisteredDate = u.RegisteredDate != default(DateTime) ? u.RegisteredDate : u.CreatedDate,
+                ApprovalStatus = u.ApprovalStatus ?? "Pending",
+                RejectionReason = u.RejectionReason
+            }).ToList();
+
+            ViewBag.TotalPendingCount = _db.Users.Count(u => !u.IsApproved && (u.ApprovalStatus == "Pending" || u.ApprovalStatus == null));
+            ViewBag.Search = search;
+            ViewBag.RoleFilter = roleFilter;
+            ViewBag.StatusFilter = statusFilter;
+
+            return View(list);
+        }
+
+        // POST: Admin/ApproveUser
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ApproveUser(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["ErrorMessage"] = "User ID was not provided.";
+                return RedirectToAction("PendingApprovals");
+            }
+
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_db));
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found.";
+                return RedirectToAction("PendingApprovals");
+            }
+
+            if (user.IsApproved && user.ApprovalStatus == "Approved")
+            {
+                TempData["InfoMessage"] = $"Registration for {user.FullName} ({user.Email}) is already approved.";
+                return RedirectToAction("PendingApprovals");
+            }
+
+            user.IsApproved = true;
+            user.ApprovalStatus = "Approved";
+            user.RejectionReason = null;
+
+            string roleToAssign = !string.IsNullOrEmpty(user.RequestedRole) ? user.RequestedRole : "Student";
+            var currentRoles = await userManager.GetRolesAsync(user.Id);
+
+            var otherRoles = currentRoles.Where(r => r != roleToAssign && r != "Admin").ToArray();
+            if (otherRoles.Any())
+            {
+                await userManager.RemoveFromRolesAsync(user.Id, otherRoles);
+            }
+
+            if (!currentRoles.Contains(roleToAssign))
+            {
+                await userManager.AddToRoleAsync(user.Id, roleToAssign);
+            }
+
+            await userManager.UpdateAsync(user);
+
+            // Dispatch notification to user
+            _db.Notifications.Add(new Notification
+            {
+                UserId = user.Id,
+                Title = "Account Verified & Approved!",
+                Message = $"Congratulations {user.FullName}! Your {roleToAssign} account has been verified and approved by the platform administrator. You can now log in and access all features.",
+                NotificationType = "AccountApproval",
+                IsRead = false,
+                CreatedDate = DateTime.UtcNow
+            });
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"Registration for {user.FullName} ({user.Email}) has been approved as {roleToAssign}.";
+            return RedirectToAction("PendingApprovals");
+        }
+
+        // POST: Admin/DeclineUser
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeclineUser(string userId, string reason)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["ErrorMessage"] = "User ID was not provided.";
+                return RedirectToAction("PendingApprovals");
+            }
+
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_db));
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found.";
+                return RedirectToAction("PendingApprovals");
+            }
+
+            if (!user.IsApproved && user.ApprovalStatus == "Declined")
+            {
+                TempData["InfoMessage"] = $"Registration for {user.FullName} ({user.Email}) is already declined.";
+                return RedirectToAction("PendingApprovals");
+            }
+
+            var currentRoles = await userManager.GetRolesAsync(user.Id);
+            if (currentRoles.Contains("Admin"))
+            {
+                TempData["ErrorMessage"] = "Cannot decline an administrator account.";
+                return RedirectToAction("PendingApprovals");
+            }
+
+            user.IsApproved = false;
+            user.ApprovalStatus = "Declined";
+
+            string trimmedReason = string.IsNullOrWhiteSpace(reason)
+                ? "Application does not meet platform verification guidelines."
+                : reason.Trim();
+            if (trimmedReason.Length > 500)
+            {
+                trimmedReason = trimmedReason.Substring(0, 500);
+            }
+            user.RejectionReason = trimmedReason;
+
+            // Revoke any non-admin roles so unapproved user cannot access restricted portals
+            var nonAdminRoles = currentRoles.Where(r => r != "Admin").ToArray();
+            if (nonAdminRoles.Any())
+            {
+                await userManager.RemoveFromRolesAsync(user.Id, nonAdminRoles);
+            }
+
+            await userManager.UpdateSecurityStampAsync(user.Id);
+            await userManager.UpdateAsync(user);
+
+            // Dispatch notification to user
+            _db.Notifications.Add(new Notification
+            {
+                UserId = user.Id,
+                Title = "Account Application Declined",
+                Message = $"Your application for an EduPlatform account was declined. Reason: {user.RejectionReason}",
+                NotificationType = "AccountApproval",
+                IsRead = false,
+                CreatedDate = DateTime.UtcNow
+            });
+            await _db.SaveChangesAsync();
+
+            TempData["WarningMessage"] = $"Registration for {user.FullName} ({user.Email}) has been declined.";
+            return RedirectToAction("PendingApprovals");
+        }
+
+        // GET: Admin/InstructorApplications
+        public ActionResult InstructorApplications(string statusFilter = "Pending", string search = null)
+        {
+            var instructorRole = _db.Roles.FirstOrDefault(r => r.Name == "Instructor");
+            string instructorRoleId = instructorRole?.Id;
+
+            var query = _db.Users.Where(u => u.RequestedRole == "Instructor" || (instructorRoleId != null && u.Roles.Any(r => r.RoleId == instructorRoleId)));
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim();
+                query = query.Where(u => u.Email.Contains(search) || u.FullName.Contains(search) || (u.Bio != null && u.Bio.Contains(search)));
+            }
+
+            if (!string.IsNullOrEmpty(statusFilter) && statusFilter != "All")
+            {
+                if (statusFilter == "Pending")
+                {
+                    query = query.Where(u => u.ApprovalStatus == "Pending" || (u.ApprovalStatus == null && !u.IsApproved));
+                }
+                else if (statusFilter == "Approved")
+                {
+                    query = query.Where(u => u.ApprovalStatus == "Approved" || (u.ApprovalStatus == null && u.IsApproved));
+                }
+                else
+                {
+                    query = query.Where(u => u.ApprovalStatus == statusFilter);
+                }
+            }
+
+            var users = query.OrderByDescending(u => u.RegisteredDate).ToList();
+
+            var list = users.Select(u => new InstructorApplicationViewModel
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                Email = u.Email,
+                Bio = u.Bio,
+                RegisteredDate = u.RegisteredDate != default(DateTime) ? u.RegisteredDate : u.CreatedDate,
+                ApprovalStatus = u.ApprovalStatus ?? (u.IsApproved ? "Approved" : "Pending"),
+                RejectionReason = u.RejectionReason,
+                PhoneNumber = u.PhoneNumber
+            }).ToList();
+
+            ViewBag.TotalPendingCount = _db.Users.Count(u => !u.IsApproved && (u.ApprovalStatus == "Pending" || u.ApprovalStatus == null));
+            ViewBag.PendingInstructorCount = _db.Users.Count(u => (u.RequestedRole == "Instructor" || (instructorRoleId != null && u.Roles.Any(r => r.RoleId == instructorRoleId))) && !u.IsApproved && (u.ApprovalStatus == "Pending" || u.ApprovalStatus == null));
+            ViewBag.Search = search;
+            ViewBag.StatusFilter = statusFilter;
+
+            return View(list);
+        }
+
+        // POST: Admin/ApproveInstructor
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ApproveInstructor(string userId, string returnUrl = null)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["ErrorMessage"] = "User ID was not provided.";
+                return RedirectToLocalOrDefault(returnUrl, "InstructorApplications");
+            }
+
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_db));
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Applicant not found.";
+                return RedirectToLocalOrDefault(returnUrl, "InstructorApplications");
+            }
+
+            user.IsApproved = true;
+            user.ApprovalStatus = "Approved";
+            user.RejectionReason = null;
+            user.RequestedRole = "Instructor";
+
+            var currentRoles = await userManager.GetRolesAsync(user.Id);
+            var otherRoles = currentRoles.Where(r => r != "Instructor" && r != "Admin").ToArray();
+            if (otherRoles.Any())
+            {
+                await userManager.RemoveFromRolesAsync(user.Id, otherRoles);
+            }
+
+            if (!currentRoles.Contains("Instructor"))
+            {
+                await userManager.AddToRoleAsync(user.Id, "Instructor");
+            }
+
+            await userManager.UpdateSecurityStampAsync(user.Id);
+            await userManager.UpdateAsync(user);
+
+            // Dispatch notification to instructor
+            _db.Notifications.Add(new Notification
+            {
+                UserId = user.Id,
+                Title = "Instructor Application Approved!",
+                Message = $"Congratulations {user.FullName}! Your instructor account has been verified and approved by the platform administrator. You can now log in, create courses, and manage your students.",
+                NotificationType = "InstructorApproval",
+                IsRead = false,
+                CreatedDate = DateTime.UtcNow
+            });
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"Instructor application for {user.FullName} ({user.Email}) has been approved successfully.";
+            return RedirectToLocalOrDefault(returnUrl, "InstructorApplications");
+        }
+
+        // POST: Admin/DeclineInstructor
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeclineInstructor(string userId, string reason, string returnUrl = null)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                TempData["ErrorMessage"] = "User ID was not provided.";
+                return RedirectToLocalOrDefault(returnUrl, "InstructorApplications");
+            }
+
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_db));
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Applicant not found.";
+                return RedirectToLocalOrDefault(returnUrl, "InstructorApplications");
+            }
+
+            var currentRoles = await userManager.GetRolesAsync(user.Id);
+            if (currentRoles.Contains("Admin"))
+            {
+                TempData["ErrorMessage"] = "Cannot decline an administrator account.";
+                return RedirectToLocalOrDefault(returnUrl, "InstructorApplications");
+            }
+
+            user.IsApproved = false;
+            user.ApprovalStatus = "Declined";
+            string trimmedReason = string.IsNullOrWhiteSpace(reason)
+                ? "Application does not meet platform verification guidelines."
+                : reason.Trim();
+            if (trimmedReason.Length > 500)
+            {
+                trimmedReason = trimmedReason.Substring(0, 500);
+            }
+            user.RejectionReason = trimmedReason;
+
+            // Revoke any non-admin roles so unapproved user cannot access restricted portals
+            var nonAdminRoles = currentRoles.Where(r => r != "Admin").ToArray();
+            if (nonAdminRoles.Any())
+            {
+                await userManager.RemoveFromRolesAsync(user.Id, nonAdminRoles);
+            }
+
+            await userManager.UpdateSecurityStampAsync(user.Id);
+            await userManager.UpdateAsync(user);
+
+            // Dispatch notification to applicant
+            _db.Notifications.Add(new Notification
+            {
+                UserId = user.Id,
+                Title = "Instructor Application Declined",
+                Message = $"Your application for an Instructor account on EduPlatform was declined. Reason: {user.RejectionReason}",
+                NotificationType = "InstructorApproval",
+                IsRead = false,
+                CreatedDate = DateTime.UtcNow
+            });
+            await _db.SaveChangesAsync();
+
+            TempData["WarningMessage"] = $"Instructor application for {user.FullName} ({user.Email}) has been declined.";
+            return RedirectToLocalOrDefault(returnUrl, "InstructorApplications");
+        }
+
+        private ActionResult RedirectToLocalOrDefault(string returnUrl, string defaultAction)
+        {
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction(defaultAction);
         }
 
         // GET: Admin/Students
@@ -90,6 +460,16 @@ namespace LMS.Controllers
             if (!string.IsNullOrEmpty(newRole))
             {
                 userManager.AddToRole(userId, newRole);
+            }
+
+            var user = userManager.FindById(userId);
+            if (user != null && !user.IsApproved)
+            {
+                user.IsApproved = true;
+                user.ApprovalStatus = "Approved";
+                user.RejectionReason = null;
+                user.RequestedRole = newRole;
+                userManager.Update(user);
             }
 
             TempData["SuccessMessage"] = "User role updated successfully.";
@@ -130,22 +510,22 @@ namespace LMS.Controllers
                 string catName = model.CategoryName.Trim().ToLower();
                 if (_db.Categories.Any(c => c.CategoryName.ToLower() == catName))
                 {
-                    ModelState.AddModelError("CategoryName", "Category name already exists.");
+                    ModelState.AddModelError("CategoryName", "Subject/Category name already exists.");
                     return View(model);
                 }
 
                 var cat = new Category
                 {
-                    CategoryName = model.CategoryName,
-                    Description = model.Description,
-                    IsActive = model.IsActive,
+                    CategoryName = model.CategoryName.Trim(),
+                    Description = model.Description?.Trim(),
+                    IsActive = true, // Explicit requirement: always saved with IsActive = true
                     CreatedDate = DateTime.UtcNow
                 };
 
                 _db.Categories.Add(cat);
                 _db.SaveChanges();
 
-                TempData["SuccessMessage"] = "Category created successfully!";
+                TempData["SuccessMessage"] = "Subject/Category created successfully!";
                 return RedirectToAction("Categories");
             }
 
@@ -261,14 +641,10 @@ namespace LMS.Controllers
         }
 
         // GET: Admin/Payments
-        public ActionResult Payments()
+        public ActionResult Payments(string filter = "All")
         {
-            var payments = _db.Payments
-                .Include(p => p.Course)
-                .OrderByDescending(p => p.PaymentDate)
-                .ToList();
-
-            return View(payments);
+            var model = _paymentService.GetAdminPayments(filter);
+            return View(model);
         }
 
         // GET: Admin/Announcements

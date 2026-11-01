@@ -1,4 +1,5 @@
 using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -49,7 +50,8 @@ namespace LMS.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToLocal(returnUrl);
+                // Prevent infinite redirect loop when an authenticated user lacks permissions for returnUrl
+                return RedirectToLocal(null);
             }
             ViewBag.ReturnUrl = returnUrl;
             return View();
@@ -66,11 +68,31 @@ namespace LMS.Controllers
                 return View(model);
             }
 
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            string email = model.Email?.Trim();
+            var result = await SignInManager.PasswordSignInAsync(email, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
-                    var user = await UserManager.FindByEmailAsync(model.Email);
+                    var user = await UserManager.FindByEmailAsync(email) ?? await UserManager.FindByNameAsync(email);
+                    if (user != null && !user.IsApproved)
+                    {
+                        // User credentials are correct, but account is NOT yet approved by Admin!
+                        AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+
+                        if (string.Equals(user.ApprovalStatus, "Declined", StringComparison.OrdinalIgnoreCase))
+                        {
+                            TempData["ErrorMessage"] = !string.IsNullOrWhiteSpace(user.RejectionReason)
+                                ? $"Your registration application was declined by the administrator. Reason: {user.RejectionReason}"
+                                : "Your registration application was declined by the administrator. Please contact support.";
+                        }
+                        else
+                        {
+                            TempData["InfoMessage"] = "Your instructor account is currently pending administrator verification. You will be able to sign in once approved.";
+                        }
+
+                        // Always redirect unapproved accounts to PendingApproval with their email
+                        return RedirectToAction("PendingApproval", new { email = user.Email });
+                    }
                     return await RedirectToUserDashboardAsync(user, returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -102,33 +124,140 @@ namespace LMS.Controllers
         {
             if (ModelState.IsValid)
             {
+                string fullName = model.FullName?.Trim();
+                string email = model.Email?.Trim();
+                string bio = model.Bio?.Trim();
+
                 // Disallow registering as Admin
-                string chosenRole = (model.Role == "Instructor") ? "Instructor" : "Student";
+                bool isInstructor = string.Equals(model.Role, "Instructor", StringComparison.OrdinalIgnoreCase);
+                string chosenRole = isInstructor ? "Instructor" : "Student";
 
                 var user = new ApplicationUser
                 {
-                    UserName = model.Email,
-                    Email = model.Email,
-                    FullName = model.FullName,
-                    CreatedDate = DateTime.UtcNow
+                    UserName = email,
+                    Email = email,
+                    FullName = fullName,
+                    Bio = bio,
+                    CreatedDate = DateTime.UtcNow,
+                    RegisteredDate = DateTime.UtcNow,
+                    IsApproved = !isInstructor, // Students approved immediately! Instructors default to Pending
+                    ApprovalStatus = isInstructor ? "Pending" : "Approved",
+                    RequestedRole = chosenRole
                 };
 
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await UserManager.AddToRoleAsync(user.Id, chosenRole);
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-
-                    if (chosenRole == "Instructor")
+                    if (isInstructor)
                     {
-                        return RedirectToAction("Index", "Instructor");
+                        // Do NOT auto sign-in unapproved teachers!
+                        // Dispatch an administrative Notification to all Admin users
+                        await NotifyAdminsOfNewRegistrationAsync(user);
+
+                        // Set success message and immediately redirect to the dedicated waiting/approval screen
+                        TempData["SuccessMessage"] = "Your educator registration has been submitted successfully and is awaiting administrator verification.";
+                        return RedirectToAction("PendingApproval", new { email = user.Email });
                     }
-                    return RedirectToAction("Index", "Student");
+                    else
+                    {
+                        // Student is approved immediately! Assign Student role and sign in
+                        await UserManager.AddToRoleAsync(user.Id, "Student");
+                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        return RedirectToAction("Index", "Student");
+                    }
                 }
                 AddErrors(result);
             }
 
             return View(model);
+        }
+
+        // GET: /Account/PendingApproval
+        [AllowAnonymous]
+        public async Task<ActionResult> PendingApproval(string email)
+        {
+            if (string.IsNullOrEmpty(email) && User.Identity.IsAuthenticated)
+            {
+                email = User.Identity.GetUserName();
+            }
+
+            PendingApprovalViewModel model = null;
+            if (!string.IsNullOrEmpty(email))
+            {
+                email = email.Trim();
+                var user = await UserManager.FindByEmailAsync(email) ?? await UserManager.FindByNameAsync(email);
+                if (user != null)
+                {
+                    // If user was already approved and is authenticated, redirect to user dashboard
+                    if (user.IsApproved && User.Identity.IsAuthenticated)
+                    {
+                        return await RedirectToUserDashboardAsync(user, null);
+                    }
+
+                    model = new PendingApprovalViewModel
+                    {
+                        FullName = user.FullName,
+                        Email = user.Email,
+                        RequestedRole = !string.IsNullOrEmpty(user.RequestedRole) ? user.RequestedRole : "Instructor",
+                        RegisteredDate = user.RegisteredDate != default(DateTime) ? user.RegisteredDate : user.CreatedDate,
+                        ApprovalStatus = user.ApprovalStatus ?? "Pending",
+                        RejectionReason = user.RejectionReason
+                    };
+                }
+            }
+
+            if (model == null)
+            {
+                model = new PendingApprovalViewModel
+                {
+                    FullName = "Valued Educator",
+                    Email = email ?? "your-email@example.com",
+                    RequestedRole = "Instructor",
+                    RegisteredDate = DateTime.UtcNow,
+                    ApprovalStatus = "Pending"
+                };
+            }
+
+            return View(model);
+        }
+
+        private async Task NotifyAdminsOfNewRegistrationAsync(ApplicationUser newUser)
+        {
+            try
+            {
+                var adminRole = await _db.Roles.FirstOrDefaultAsync(r => r.Name == "Admin");
+                if (adminRole != null)
+                {
+                    var adminUserIds = await _db.Database.SqlQuery<string>(
+                        "SELECT UserId FROM AspNetUserRoles WHERE RoleId = @p0", adminRole.Id
+                    ).ToListAsync();
+
+                    bool isInstructor = string.Equals(newUser.RequestedRole, "Instructor", StringComparison.OrdinalIgnoreCase);
+                    string title = isInstructor ? "New Instructor Application Pending Review" : "New Registration Pending Approval";
+                    string message = isInstructor
+                        ? $"A new Instructor application has been submitted by '{newUser.FullName}' ({newUser.Email}) and is awaiting administrator verification."
+                        : $"A new {newUser.RequestedRole} '{newUser.FullName}' ({newUser.Email}) has registered and is awaiting your review and approval.";
+                    string notifType = isInstructor ? "InstructorApproval" : "AccountApproval";
+
+                    foreach (var adminId in adminUserIds)
+                    {
+                        _db.Notifications.Add(new Notification
+                        {
+                            UserId = adminId,
+                            Title = title,
+                            Message = message,
+                            NotificationType = notifType,
+                            IsRead = false,
+                            CreatedDate = DateTime.UtcNow
+                        });
+                    }
+                    await _db.SaveChangesAsync();
+                }
+            }
+            catch
+            {
+                // Suppress notification delivery error so registration flow completes safely
+            }
         }
 
         // POST: /Account/LogOff
@@ -233,6 +362,12 @@ namespace LMS.Controllers
 
             if (user != null)
             {
+                if (!user.IsApproved)
+                {
+                    AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                    return RedirectToAction("PendingApproval", new { email = user.Email });
+                }
+
                 var roles = await UserManager.GetRolesAsync(user.Id);
                 if (roles.Contains("Admin"))
                 {

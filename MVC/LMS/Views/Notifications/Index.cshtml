@@ -63,7 +63,21 @@
                                         }
                                     </h6>
                                     <p class="mb-1 text-secondary small" style="line-height: 1.6;">@n.Message</p>
-                                    <small class="text-muted"><i class="bi bi-clock me-1"></i>@n.CreatedDate.ToString("MMM dd, yyyy HH:mm")</small>
+                                    <div class="d-flex align-items-center gap-2 mt-1">
+                                        <small class="text-muted"><i class="bi bi-clock me-1"></i>@n.CreatedDate.ToString("MMM dd, yyyy HH:mm")</small>
+                                        @if (User.IsInRole("Admin") && n.NotificationType == "InstructorApproval")
+                                        {
+                                            <a href="@Url.Action("InstructorApplications", "Admin")" class="btn btn-sm btn-outline-warning text-dark rounded-pill py-0 px-2 fw-semibold" style="font-size: 11px;">
+                                                <i class="bi bi-mortarboard me-1"></i> Review Candidates
+                                            </a>
+                                        }
+                                        else if (User.IsInRole("Admin") && n.NotificationType == "AccountApproval")
+                                        {
+                                            <a href="@Url.Action("PendingApprovals", "Admin")" class="btn btn-sm btn-outline-warning text-dark rounded-pill py-0 px-2 fw-semibold" style="font-size: 11px;">
+                                                <i class="bi bi-shield-check me-1"></i> Review Approvals
+                                            </a>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                             @if (!n.IsRead)

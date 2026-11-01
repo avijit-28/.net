@@ -61,8 +61,8 @@
                         }
                         else
                         {
-                            <span class="display-6 fw-extrabold text-dark"><span class="rupee-symbol">₹</span>@Model.Course.Price.ToString("N2")</span>
-                            <div class="small text-muted mt-1">One-time payment • Lifetime access</div>
+                            <span class="display-6 fw-extrabold text-dark"><span class="rupee-symbol">&#8377;</span>@Model.Course.Price.ToString("N2")</span>
+                            <div class="small text-muted mt-1">One-time payment &bull; Lifetime access</div>
                         }
                     </div>
 
@@ -126,7 +126,7 @@
                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
                     <div>
                         <h4 class="fw-bold mb-0"><i class="bi bi-collection-play me-2 text-primary"></i> Course Curriculum</h4>
-                        <span class="small text-muted">@Model.Modules.Count Modules • @Model.Modules.Sum(m => m.Lessons.Count) Total Lessons</span>
+                        <span class="small text-muted">@Model.Modules.Count Modules &bull; @Model.Modules.Sum(m => m.Lessons.Count) Total Lessons</span>
                     </div>
                     <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" id="toggleAllModulesBtn">
                         Toggle All Modules
@@ -289,11 +289,11 @@
                         <div class="mb-3">
                             <label class="form-label fw-bold small">Your Rating</label>
                             <select name="Rating" class="form-select" required>
-                                <option value="5" @(Model.UserReview?.Rating == 5 ? "selected" : "")>⭐⭐⭐⭐⭐ (5 - Exceptional)</option>
-                                <option value="4" @(Model.UserReview?.Rating == 4 ? "selected" : "")>⭐⭐⭐⭐ (4 - Very Good)</option>
-                                <option value="3" @(Model.UserReview?.Rating == 3 ? "selected" : "")>⭐⭐⭐ (3 - Average)</option>
-                                <option value="2" @(Model.UserReview?.Rating == 2 ? "selected" : "")>⭐⭐ (2 - Below Average)</option>
-                                <option value="1" @(Model.UserReview?.Rating == 1 ? "selected" : "")>⭐ (1 - Needs Improvement)</option>
+                                <option value="5" @(Model.UserReview?.Rating == 5 ? "selected" : "")>5 Stars (5 - Exceptional)</option>
+                                <option value="4" @(Model.UserReview?.Rating == 4 ? "selected" : "")>4 Stars (4 - Very Good)</option>
+                                <option value="3" @(Model.UserReview?.Rating == 3 ? "selected" : "")>3 Stars (3 - Average)</option>
+                                <option value="2" @(Model.UserReview?.Rating == 2 ? "selected" : "")>2 Stars (2 - Below Average)</option>
+                                <option value="1" @(Model.UserReview?.Rating == 1 ? "selected" : "")>1 Star (1 - Needs Improvement)</option>
                             </select>
                         </div>
                         <div class="mb-3">

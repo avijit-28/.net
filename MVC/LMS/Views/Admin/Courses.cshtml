@@ -65,7 +65,7 @@
                             <td>@(course.Category != null ? course.Category.CategoryName : "Unassigned")</td>
                             <td><span class="badge bg-light text-dark border">@course.Level</span></td>
                             <td class="fw-bold">
-                                @if (course.Price == 0) { <span class="text-success">Free</span> } else { <span><span class="rupee-symbol">₹</span>@course.Price.ToString("N2")</span> }
+                                @if (course.Price == 0) { <span class="text-success">Free</span> } else { <span><span class="rupee-symbol">&#8377;</span>@course.Price.ToString("N2")</span> }
                             </td>
                             <td>
                                 <span class="badge bg-info-subtle text-info border border-info">@course.TotalStudents learners</span>
@@ -87,20 +87,28 @@
                                     <span class="badge bg-warning text-dark">Archived</span>
                                 }
                             </td>
-                            <td class="text-end">
-                                @using (Html.BeginForm("UpdateCourseStatus", "Admin", FormMethod.Post, new { @class = "d-inline-flex gap-1 justify-content-end" }))
-                                {
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" name="courseId" value="@course.CourseId" />
-                                    <select name="status" class="form-select form-select-sm" style="width: 120px;">
-                                        <option value="Published" @(course.Status == "Published" ? "selected" : "")>Published</option>
-                                        <option value="Draft" @(course.Status == "Draft" ? "selected" : "")>Draft</option>
-                                        <option value="Archived" @(course.Status == "Archived" ? "selected" : "")>Archived</option>
-                                    </select>
-                                    <button type="submit" class="btn btn-sm btn-outline-primary">
-                                        Update
-                                    </button>
-                                }
+                            <td class="text-end text-nowrap">
+                                <div class="d-inline-flex align-items-center gap-1 justify-content-end">
+                                    <a href="@Url.Action("Modules", "Instructor", new { courseId = course.CourseId })" class="btn btn-sm btn-primary rounded-pill px-2" title="Manage Modules & Lessons">
+                                        <i class="bi bi-diagram-3 me-1"></i>Modules
+                                    </a>
+                                    <a href="@Url.Action("EditCourse", "Instructor", new { id = course.CourseId })" class="btn btn-sm btn-outline-secondary rounded-pill px-2" title="Edit Course Details">
+                                        <i class="bi bi-pencil me-1"></i>Edit
+                                    </a>
+                                    @using (Html.BeginForm("UpdateCourseStatus", "Admin", FormMethod.Post, new { @class = "d-inline-flex gap-1" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="courseId" value="@course.CourseId" />
+                                        <select name="status" class="form-select form-select-sm" style="width: 110px;">
+                                            <option value="Published" @(course.Status == "Published" ? "selected" : "")>Published</option>
+                                            <option value="Draft" @(course.Status == "Draft" ? "selected" : "")>Draft</option>
+                                            <option value="Archived" @(course.Status == "Archived" ? "selected" : "")>Archived</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">
+                                            Update
+                                        </button>
+                                    }
+                                </div>
                             </td>
                         </tr>
                     }

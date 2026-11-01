@@ -41,12 +41,35 @@ namespace LMS.Data
                     Email = adminEmail,
                     FullName = "System Administrator",
                     EmailConfirmed = true,
-                    CreatedDate = DateTime.UtcNow
+                    CreatedDate = DateTime.UtcNow,
+                    RegisteredDate = DateTime.UtcNow,
+                    IsApproved = true,
+                    ApprovalStatus = "Approved",
+                    RequestedRole = "Admin"
                 };
                 var result = userManager.Create(adminUser, "Admin@123");
                 if (result.Succeeded)
                 {
                     userManager.AddToRole(adminUser.Id, "Admin");
+                }
+            }
+            else
+            {
+                bool updated = false;
+                if (!adminUser.IsApproved || adminUser.ApprovalStatus != "Approved")
+                {
+                    adminUser.IsApproved = true;
+                    adminUser.ApprovalStatus = "Approved";
+                    updated = true;
+                }
+                if (adminUser.RequestedRole != "Admin")
+                {
+                    adminUser.RequestedRole = "Admin";
+                    updated = true;
+                }
+                if (updated)
+                {
+                    userManager.Update(adminUser);
                 }
             }
 
@@ -62,12 +85,35 @@ namespace LMS.Data
                     FullName = "Dr. Sarah Connor",
                     Bio = "Senior Software Architect & Data Science Consultant",
                     EmailConfirmed = true,
-                    CreatedDate = DateTime.UtcNow
+                    CreatedDate = DateTime.UtcNow,
+                    RegisteredDate = DateTime.UtcNow,
+                    IsApproved = true,
+                    ApprovalStatus = "Approved",
+                    RequestedRole = "Instructor"
                 };
                 var result = userManager.Create(instructorUser, "Instructor@123");
                 if (result.Succeeded)
                 {
                     userManager.AddToRole(instructorUser.Id, "Instructor");
+                }
+            }
+            else
+            {
+                bool updated = false;
+                if (!instructorUser.IsApproved || instructorUser.ApprovalStatus != "Approved")
+                {
+                    instructorUser.IsApproved = true;
+                    instructorUser.ApprovalStatus = "Approved";
+                    updated = true;
+                }
+                if (instructorUser.RequestedRole != "Instructor")
+                {
+                    instructorUser.RequestedRole = "Instructor";
+                    updated = true;
+                }
+                if (updated)
+                {
+                    userManager.Update(instructorUser);
                 }
             }
 
@@ -83,12 +129,35 @@ namespace LMS.Data
                     FullName = "Avijit Pakhira",
                     Bio = "Passionate learner and software developer",
                     EmailConfirmed = true,
-                    CreatedDate = DateTime.UtcNow
+                    CreatedDate = DateTime.UtcNow,
+                    RegisteredDate = DateTime.UtcNow,
+                    IsApproved = true,
+                    ApprovalStatus = "Approved",
+                    RequestedRole = "Student"
                 };
                 var result = userManager.Create(studentUser, "Student@123");
                 if (result.Succeeded)
                 {
                     userManager.AddToRole(studentUser.Id, "Student");
+                }
+            }
+            else
+            {
+                bool updated = false;
+                if (!studentUser.IsApproved || studentUser.ApprovalStatus != "Approved")
+                {
+                    studentUser.IsApproved = true;
+                    studentUser.ApprovalStatus = "Approved";
+                    updated = true;
+                }
+                if (studentUser.RequestedRole != "Student")
+                {
+                    studentUser.RequestedRole = "Student";
+                    updated = true;
+                }
+                if (updated)
+                {
+                    userManager.Update(studentUser);
                 }
             }
 

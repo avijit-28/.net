@@ -59,6 +59,12 @@
 /* ==========================================================================
    Typography, Icons & Base Reset (Plus Jakarta Sans + Inter)
    ========================================================================== */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
+}
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: var(--lms-bg);
@@ -69,6 +75,12 @@ body {
     letter-spacing: -0.01em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.main-content-wrapper {
+    overflow-x: hidden;
+    width: 100%;
+    min-width: 0;
 }
 
 /* Headings with Plus Jakarta Sans */
@@ -218,58 +230,203 @@ input, select, textarea {
 }
 
 /* ==========================================================================
-   Glassmorphism Navigation
+   Master Navbar & Navigation Standardization
    ========================================================================== */
 .navbar-lms {
-    background: rgba(255, 255, 255, 0.88) !important;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+    background: #ffffff !important;
+    border-bottom: 1px solid var(--lms-border);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    min-height: 64px;
     transition: var(--lms-transition);
 }
 
 .navbar-brand-lms {
     font-weight: 800;
-    font-size: 1.35rem;
+    font-size: 1.25rem;
     color: var(--lms-dark-surface);
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.65rem;
+    gap: 0.55rem;
     letter-spacing: -0.03em;
     text-decoration: none;
+    line-height: 1;
+    height: 40px;
 }
 
 .navbar-brand-lms .badge-brand {
     background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
     color: #ffffff;
     padding: 0.35rem 0.65rem;
-    border-radius: 10px;
-    font-size: 0.85rem;
+    border-radius: 8px;
+    font-size: 0.825rem;
     font-weight: 800;
-    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+    box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
+    line-height: 1;
 }
 
-.nav-link {
-    font-weight: 600;
-    font-size: 0.925rem;
+.navbar-lms .navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.navbar-lms .nav-item {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-lms .nav-link {
+    font-weight: 500;
+    font-size: 0.875rem;
     color: #475569;
-    padding: 0.5rem 0.85rem !important;
+    height: 40px;
+    padding: 0 0.85rem !important;
     border-radius: 8px;
-    transition: var(--lms-transition);
+    border-bottom: 2px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    text-decoration: none;
+    line-height: 1;
+    transition: all 0.15s ease-in-out;
 }
 
-.nav-link:hover {
-    color: var(--lms-primary);
-    background-color: var(--lms-primary-light);
+.navbar-lms .nav-link .bi {
+    font-size: 0.95rem;
+    margin-right: 0.35rem;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: 0;
+    line-height: 1;
 }
 
-.nav-link.active {
+.navbar-lms .nav-link:hover {
     color: var(--lms-primary);
-    background-color: var(--lms-primary-light);
+    background-color: rgba(79, 70, 229, 0.05);
+    border-bottom-color: rgba(79, 70, 229, 0.25);
+}
+
+.navbar-lms .nav-link.active {
+    color: var(--lms-primary);
+    background-color: rgba(79, 70, 229, 0.08);
+    border-bottom-color: var(--lms-primary);
+    font-weight: 600;
+}
+
+.navbar-lms .nav-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0 !important;
+    border-radius: 10px;
+    border: 1px solid var(--lms-border);
+    background: #ffffff;
+    color: #475569;
+    position: relative;
+    transition: all 0.15s ease-in-out;
+    text-decoration: none;
+}
+
+.navbar-lms .nav-icon-btn:hover {
+    color: var(--lms-primary);
+    border-color: var(--lms-primary-border);
+    background: var(--lms-primary-light);
+}
+
+.navbar-lms .nav-user-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 40px;
+    padding: 0 0.85rem 0 0.4rem !important;
+    border-radius: 10px;
+    border: 1px solid var(--lms-border);
+    background: #ffffff;
+    color: var(--lms-text-main);
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: all 0.15s ease-in-out;
+}
+
+.navbar-lms .nav-user-btn:hover {
+    border-color: var(--lms-primary-border);
+    background: #f8fafc;
+    color: var(--lms-primary);
+}
+
+.navbar-lms .nav-avatar-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+    color: #ffffff;
     font-weight: 700;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-lms .dropdown-toggle::after {
+    margin-left: 0.35rem;
+    vertical-align: middle;
+    align-self: center;
+}
+
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--lms-border);
+    }
+    .navbar-lms .navbar-nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.35rem;
+        width: 100%;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+    }
+    .navbar-lms .nav-item {
+        width: 100%;
+    }
+    .navbar-lms .nav-link {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 0 1rem !important;
+        border-bottom: none;
+        border-left: 3px solid transparent;
+        border-radius: 8px;
+    }
+    .navbar-lms .nav-link.active {
+        border-left-color: var(--lms-primary);
+    }
+    .navbar-lms .nav-icon-btn {
+        width: 100%;
+        justify-content: flex-start;
+        padding: 0 1rem !important;
+        border-radius: 8px;
+    }
+    .navbar-lms .nav-user-btn {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+.max-w-7xl {
+    max-width: 80rem !important;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* ==========================================================================

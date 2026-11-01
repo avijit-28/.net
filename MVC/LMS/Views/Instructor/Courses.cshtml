@@ -47,7 +47,7 @@
                                 </td>
                                 <td><span class="badge bg-light text-dark border">@(c.Category?.CategoryName ?? "General")</span></td>
                                 <td><span class="badge bg-secondary-subtle text-secondary">@c.Level</span></td>
-                                <td class="fw-semibold">@if (c.Price == 0) { <span class="text-success fw-bold">FREE</span> } else { <span><span class="rupee-symbol">₹</span>@c.Price.ToString("N2")</span> }</td>
+                                <td class="fw-semibold">@if (c.Price == 0) { <span class="text-success fw-bold">FREE</span> } else { <span><span class="rupee-symbol">&#8377;</span>@c.Price.ToString("N2")</span> }</td>
                                 <td>
                                     <a href="@Url.Action("Students", "Instructor", new { courseId = c.CourseId })" class="text-decoration-none">
                                         @c.TotalStudents students &rarr;
@@ -61,43 +61,49 @@
                                         @c.Status
                                     </span>
                                 </td>
-                                <td class="text-end">
-                                    <div class="dropdown d-inline-block">
-                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill" type="button" data-bs-toggle="dropdown">
-                                            Manage Course
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                                            <li><a class="dropdown-item" href="@Url.Action("Modules", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-diagram-3 me-2"></i> Modules & Lessons</a></li>
-                                            <li><a class="dropdown-item" href="@Url.Action("Quizzes", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-patch-question me-2"></i> Quizzes</a></li>
-                                            <li><a class="dropdown-item" href="@Url.Action("Assignments", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-file-earmark-text me-2"></i> Assignments</a></li>
-                                            <li><a class="dropdown-item" href="@Url.Action("Students", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-people me-2"></i> Enrolled Students</a></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><a class="dropdown-item" href="@Url.Action("EditCourse", "Instructor", new { id = c.CourseId })"><i class="bi bi-pencil me-2"></i> Edit Details</a></li>
-                                            @if (c.Status != "Published")
-                                            {
-                                                <li>
-                                                    @using (Html.BeginForm("PublishCourse", "Instructor", new { id = c.CourseId }, FormMethod.Post))
-                                                    {
-                                                        @Html.AntiForgeryToken()
-                                                        <button type="submit" class="dropdown-item text-success fw-bold">
-                                                            <i class="bi bi-cloud-upload me-2"></i> Publish Course
-                                                        </button>
-                                                    }
-                                                </li>
-                                            }
-                                            @if (c.Status == "Draft")
-                                            {
-                                                <li>
-                                                    @using (Html.BeginForm("DeleteCourse", "Instructor", new { id = c.CourseId }, FormMethod.Post))
-                                                    {
-                                                        @Html.AntiForgeryToken()
-                                                        <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Delete this draft course?');">
-                                                            <i class="bi bi-trash me-2"></i> Delete Draft
-                                                        </button>
-                                                    }
-                                                </li>
-                                            }
-                                        </ul>
+                                <td class="text-end text-nowrap">
+                                    <div class="d-inline-flex align-items-center gap-1">
+                                        <a href="@Url.Action("Modules", "Instructor", new { courseId = c.CourseId })" class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold shadow-sm" title="Manage Modules and Lessons">
+                                            <i class="bi bi-diagram-3 me-1"></i> Modules
+                                        </a>
+                                        <a href="@Url.Action("EditCourse", "Instructor", new { id = c.CourseId })" class="btn btn-sm btn-outline-secondary rounded-pill px-3" title="Edit Course Details">
+                                            <i class="bi bi-pencil me-1"></i> Edit
+                                        </a>
+                                        <div class="dropdown d-inline-block">
+                                            <button class="btn btn-sm btn-light border rounded-pill px-2" type="button" data-bs-toggle="dropdown" title="More Options">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                                <li><a class="dropdown-item" href="@Url.Action("Quizzes", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-patch-question me-2"></i> Quizzes</a></li>
+                                                <li><a class="dropdown-item" href="@Url.Action("Assignments", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-file-earmark-text me-2"></i> Assignments</a></li>
+                                                <li><a class="dropdown-item" href="@Url.Action("Students", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-people me-2"></i> Enrolled Students</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                @if (c.Status != "Published")
+                                                {
+                                                    <li>
+                                                        @using (Html.BeginForm("PublishCourse", "Instructor", new { id = c.CourseId }, FormMethod.Post))
+                                                        {
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="dropdown-item text-success fw-bold">
+                                                                <i class="bi bi-cloud-upload me-2"></i> Publish Course
+                                                            </button>
+                                                        }
+                                                    </li>
+                                                }
+                                                @if (c.TotalStudents == 0 || c.Status == "Draft")
+                                                {
+                                                    <li>
+                                                        @using (Html.BeginForm("DeleteCourse", "Instructor", new { id = c.CourseId }, FormMethod.Post))
+                                                        {
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure you want to permanently delete course \'@Html.Raw(HttpUtility.JavaScriptStringEncode(c.Title))\'? This cannot be undone.');">
+                                                                <i class="bi bi-trash me-2"></i> Delete Course
+                                                            </button>
+                                                        }
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>

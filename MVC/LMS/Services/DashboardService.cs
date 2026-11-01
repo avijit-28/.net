@@ -48,6 +48,8 @@ namespace LMS.Services
             vm.TotalEnrollments = _db.Enrollments.Count(e => e.Status != "Cancelled");
             vm.TotalCertificates = _db.Certificates.Count();
             vm.TotalCategories = _db.Categories.Count();
+            vm.PendingApprovalsCount = _db.Users.Count(u => !u.IsApproved && (u.ApprovalStatus == "Pending" || u.ApprovalStatus == null));
+            vm.PendingInstructorsCount = _db.Users.Count(u => !u.IsApproved && (u.ApprovalStatus == "Pending" || u.ApprovalStatus == null) && (u.RequestedRole == "Instructor" || (instructorRoleId != null && u.Roles.Any(r => r.RoleId == instructorRoleId))));
 
             vm.TotalRevenue = _db.Payments
                 .Where(p => p.PaymentStatus == "Completed")
@@ -93,22 +95,26 @@ namespace LMS.Services
 
             var courseIds = courses.Select(c => c.CourseId).ToList();
 
-            decimal totalRevenue = _db.Payments
-                .Where(p => courseIds.Contains(p.CourseId) && p.PaymentStatus == "Completed")
-                .Select(p => (decimal?)p.Amount)
-                .Sum() ?? 0;
+            decimal totalRevenue = courseIds.Count > 0
+                ? (_db.Payments
+                    .Where(p => courseIds.Contains(p.CourseId) && p.PaymentStatus == "Completed")
+                    .Select(p => (decimal?)p.Amount)
+                    .Sum() ?? 0)
+                : 0;
 
             int totalStudents = courses.Sum(c => c.TotalStudents);
             decimal avgRating = courses.Any(c => c.Rating > 0)
                 ? (decimal)courses.Where(c => c.Rating > 0).Average(c => c.Rating)
                 : 0;
 
-            var recentEnrollments = _db.Enrollments
-                .Include(e => e.Course)
-                .Where(e => courseIds.Contains(e.CourseId))
-                .OrderByDescending(e => e.EnrollmentDate)
-                .Take(5)
-                .ToList();
+            var recentEnrollments = courseIds.Count > 0
+                ? _db.Enrollments
+                    .Include(e => e.Course)
+                    .Where(e => courseIds.Contains(e.CourseId))
+                    .OrderByDescending(e => e.EnrollmentDate)
+                    .Take(5)
+                    .ToList()
+                : new List<Enrollment>();
 
             return new InstructorDashboardViewModel
             {
@@ -142,12 +148,14 @@ namespace LMS.Services
             var completedQuizzes = _db.QuizAttempts.Count(q => q.StudentId == studentId && q.CompletedAt != null);
 
             var enrolledCourseIds = enrollments.Select(e => e.CourseId).ToList();
-            var upcomingAssignments = _db.Assignments
-                .Include(a => a.Course)
-                .Where(a => enrolledCourseIds.Contains(a.CourseId) && (a.DueDate == null || a.DueDate >= DateTime.UtcNow))
-                .OrderBy(a => a.DueDate)
-                .Take(5)
-                .ToList();
+            var upcomingAssignments = enrolledCourseIds.Count > 0
+                ? _db.Assignments
+                    .Include(a => a.Course)
+                    .Where(a => enrolledCourseIds.Contains(a.CourseId) && (a.DueDate == null || a.DueDate >= DateTime.UtcNow))
+                    .OrderBy(a => a.DueDate)
+                    .Take(5)
+                    .ToList()
+                : new List<Assignment>();
 
             var recentQuizResults = _db.QuizAttempts
                 .Include(q => q.Quiz.Course)

@@ -30,8 +30,8 @@
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
-                        @Html.LabelFor(m => m.CategoryId, new { @class = "form-label fw-semibold" })
-                        @Html.DropDownListFor(m => m.CategoryId, Model.Categories, "-- Select Category --", new { @class = "form-select" })
+                        @Html.LabelFor(m => m.CategoryId, "Subject / Category", new { @class = "form-label fw-semibold" })
+                        @Html.DropDownListFor(m => m.CategoryId, Model.Categories, "-- Select Subject / Category --", new { @class = "form-select" })
                         @Html.ValidationMessageFor(m => m.CategoryId, "", new { @class = "text-danger small" })
                     </div>
                     <div class="col-md-6">
@@ -48,7 +48,7 @@
                     <div class="col-md-6">
                         @Html.LabelFor(m => m.Price, new { @class = "form-label fw-semibold" })
                         <div class="input-group">
-                            <span class="input-group-text"><span class="rupee-symbol">₹</span></span>
+                            <span class="input-group-text"><span class="rupee-symbol">&#8377;</span></span>
                             @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
                         </div>
                     </div>

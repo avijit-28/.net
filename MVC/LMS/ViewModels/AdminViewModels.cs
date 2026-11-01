@@ -16,6 +16,8 @@ namespace LMS.ViewModels
         public decimal TotalRevenue { get; set; }
         public int TotalCertificates { get; set; }
         public int TotalCategories { get; set; }
+        public int PendingApprovalsCount { get; set; }
+        public int PendingInstructorsCount { get; set; }
 
         public List<Enrollment> RecentEnrollments { get; set; } = new List<Enrollment>();
         public List<ApplicationUser> RecentUsers { get; set; } = new List<ApplicationUser>();
@@ -37,6 +39,32 @@ namespace LMS.ViewModels
         public string Role { get; set; }
         public DateTime CreatedDate { get; set; }
         public bool IsActive { get; set; } = true;
+        public bool IsApproved { get; set; } = true;
+        public string ApprovalStatus { get; set; } = "Approved";
+        public string RequestedRole { get; set; }
+    }
+
+    public class PendingUserApprovalViewModel
+    {
+        public string Id { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string RequestedRole { get; set; }
+        public DateTime RegisteredDate { get; set; }
+        public string ApprovalStatus { get; set; }
+        public string RejectionReason { get; set; }
+    }
+
+    public class InstructorApplicationViewModel
+    {
+        public string Id { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string Bio { get; set; }
+        public DateTime RegisteredDate { get; set; }
+        public string ApprovalStatus { get; set; } // Pending, Approved, Declined
+        public string RejectionReason { get; set; }
+        public string PhoneNumber { get; set; }
     }
 
     public class CategoryViewModel

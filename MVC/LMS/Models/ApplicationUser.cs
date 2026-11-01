@@ -12,6 +12,11 @@ namespace LMS.Models
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public string ProfilePicture { get; set; }
         public string Bio { get; set; }
+        public bool IsApproved { get; set; } = false;
+        public string ApprovalStatus { get; set; } = "Pending"; // Pending, Approved, Declined
+        public string RequestedRole { get; set; }
+        public string RejectionReason { get; set; }
+        public DateTime RegisteredDate { get; set; } = DateTime.UtcNow;
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {

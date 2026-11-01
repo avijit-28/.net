@@ -23,119 +23,167 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-lms sticky-top py-2 px-lg-3">
             <div class="container-fluid max-w-7xl">
+                <!-- Left: Brand Logo -->
                 <a class="navbar-brand-lms" href="@Url.Action("Index", "Home")">
                     <span class="badge-brand"><i class="bi bi-mortarboard-fill"></i> LMS</span>
                     <span class="fw-extrabold tracking-tight">Edu<span class="text-primary">Platform</span></span>
                 </a>
 
+                <!-- Mobile Hamburger Toggle -->
                 <button class="navbar-toggler border-0 shadow-none p-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
+                <!-- Middle: Navigation Links -->
                 <div class="collapse navbar-collapse" id="navbarContent">
+                    @{
+                        string activeCtrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+                        string activeAct = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+                    }
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-1">
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" href="@Url.Action("Index", "Home")">
-                                <i class="bi bi-house-door me-1 text-secondary"></i> Home
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Courses" ? "active" : "")" href="@Url.Action("Index", "Courses")">
-                                <i class="bi bi-compass me-1 text-secondary"></i> Explore Courses
-                            </a>
-                        </li>
-
-                        @if (Request.IsAuthenticated)
+                        @if (!Request.IsAuthenticated)
                         {
-                            if (User.IsInRole("Student"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Student" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" href="@Url.Action("Index", "Student")">
-                                        <i class="bi bi-speedometer2 me-1 text-primary"></i> Dashboard
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Student" && ViewContext.RouteData.Values["action"]?.ToString() == "MyCourses" ? "active" : "")" href="@Url.Action("MyCourses", "Student")">
-                                        <i class="bi bi-journal-bookmark me-1 text-primary"></i> My Courses
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Student" && ViewContext.RouteData.Values["action"]?.ToString() == "Assignments" ? "active" : "")" href="@Url.Action("Assignments", "Student")">
-                                        <i class="bi bi-file-earmark-check me-1 text-primary"></i> Assignments
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Student" && ViewContext.RouteData.Values["action"]?.ToString() == "Quizzes" ? "active" : "")" href="@Url.Action("Quizzes", "Student")">
-                                        <i class="bi bi-patch-question me-1 text-primary"></i> Quizzes
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Student" && ViewContext.RouteData.Values["action"]?.ToString() == "Certificates" ? "active" : "")" href="@Url.Action("Certificates", "Student")">
-                                        <i class="bi bi-award me-1 text-warning"></i> Certificates
-                                    </a>
-                                </li>
-                            }
-                            else if (User.IsInRole("Instructor"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Instructor" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" href="@Url.Action("Index", "Instructor")">
-                                        <i class="bi bi-speedometer2 me-1 text-info"></i> Studio
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Instructor" && ViewContext.RouteData.Values["action"]?.ToString() == "Courses" ? "active" : "")" href="@Url.Action("Courses", "Instructor")">
-                                        <i class="bi bi-collection-play me-1 text-info"></i> My Courses
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-primary fw-bold" href="@Url.Action("CreateCourse", "Instructor")">
-                                        <i class="bi bi-plus-circle-fill me-1"></i> New Course
-                                    </a>
-                                </li>
-                            }
-                            else if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" href="@Url.Action("Index", "Admin")">
-                                        <i class="bi bi-speedometer2 me-1 text-danger"></i> Control Center
-                                    </a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="adminNav" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-gear-wide-connected me-1 text-danger"></i> Manage Platform
-                                    </a>
-                                    <ul class="dropdown-menu shadow-lg border-0 rounded-3" aria-labelledby="adminNav">
-                                        <li><h6 class="dropdown-header text-uppercase small text-muted">User Directory</h6></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Users", "Admin")"><i class="bi bi-people me-2 text-primary"></i> All Users</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Students", "Admin")"><i class="bi bi-mortarboard me-2 text-success"></i> Students</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Instructors", "Admin")"><i class="bi bi-person-badge me-2 text-info"></i> Instructors</a></li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li><h6 class="dropdown-header text-uppercase small text-muted">Curriculum & Finance</h6></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Courses", "Admin")"><i class="bi bi-journal-text me-2 text-warning"></i> All Courses</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Categories", "Admin")"><i class="bi bi-tags me-2 text-secondary"></i> Categories</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Enrollments", "Admin")"><i class="bi bi-person-lines-fill me-2 text-success"></i> Enrollments</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Payments", "Admin")"><i class="bi bi-credit-card me-2 text-danger"></i> Payments</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Announcements", "Admin")"><i class="bi bi-megaphone me-2 text-primary"></i> Announcements</a></li>
-                                        <li><a class="dropdown-item" href="@Url.Action("Reports", "Admin")"><i class="bi bi-graph-up me-2 text-dark"></i> Reports & Analytics</a></li>
-                                    </ul>
-                                </li>
-                            }
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Courses" ? "active" : "")" href="@Url.Action("Index", "Courses")">
+                                    <i class="bi bi-compass me-1"></i> Courses
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Home" && activeAct == "About" ? "active" : "")" href="@Url.Action("About", "Home")">
+                                    <i class="bi bi-info-circle me-1"></i> About
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Home" && activeAct == "Contact" ? "active" : "")" href="@Url.Action("Contact", "Home")">
+                                    <i class="bi bi-envelope me-1"></i> Contact
+                                </a>
+                            </li>
                         }
-                        <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("About", "Home")">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Contact", "Home")">Contact</a>
-                        </li>
+                        else if (User.IsInRole("Admin"))
+                        {
+                            int adminPendingApprovals = 0;
+                            try
+                            {
+                                using (var layoutDb = new LMS.Data.ApplicationDbContext())
+                                {
+                                    adminPendingApprovals = layoutDb.Users.Count(u => !u.IsApproved && (u.ApprovalStatus == "Pending" || u.ApprovalStatus == null));
+                                }
+                            }
+                            catch { }
+
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Admin" && activeAct == "Index" ? "active" : "")" href="@Url.Action("Index", "Admin")">
+                                    <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Admin" && activeAct == "Courses" ? "active" : "")" href="@Url.Action("Courses", "Admin")">
+                                    <i class="bi bi-journal-text me-1"></i> Courses
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Admin" && (activeAct == "Categories" || activeAct == "CreateCategory" || activeAct == "EditCategory") ? "active" : "")" href="@Url.Action("Categories", "Admin")">
+                                    <i class="bi bi-tags me-1"></i> Categories/Subjects
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Admin" && (activeAct == "PendingApprovals" || activeAct == "InstructorApplications") ? "active" : "")" href="@Url.Action("PendingApprovals", "Admin")">
+                                    <i class="bi bi-shield-check me-1"></i> Approvals
+                                    @if (adminPendingApprovals > 0)
+                                    {
+                                        <span class="badge bg-danger rounded-pill ms-1" style="font-size: 11px;">@adminPendingApprovals</span>
+                                    }
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Admin" && activeAct == "Payments" ? "active" : "")" href="@Url.Action("Payments", "Admin")">
+                                    <i class="bi bi-credit-card me-1"></i> Payments
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="adminMoreNav" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-grid me-1"></i> More
+                                </a>
+                                <ul class="dropdown-menu shadow-lg border-0 rounded-3 mt-2 py-2" aria-labelledby="adminMoreNav">
+                                    <li><h6 class="dropdown-header text-uppercase small text-muted">User Directory</h6></li>
+                                    <li><a class="dropdown-item py-2" href="@Url.Action("Users", "Admin")"><i class="bi bi-people me-2 text-primary"></i> All Users</a></li>
+                                    <li><a class="dropdown-item py-2" href="@Url.Action("Students", "Admin")"><i class="bi bi-mortarboard me-2 text-success"></i> Students</a></li>
+                                    <li><a class="dropdown-item py-2" href="@Url.Action("Instructors", "Admin")"><i class="bi bi-person-badge me-2 text-info"></i> Instructors</a></li>
+                                    <li><a class="dropdown-item py-2" href="@Url.Action("InstructorApplications", "Admin")"><i class="bi bi-file-earmark-person me-2 text-warning"></i> Teacher Applications</a></li>
+                                    <li><hr class="dropdown-divider my-1"></li>
+                                    <li><h6 class="dropdown-header text-uppercase small text-muted">Operations &amp; Insights</h6></li>
+                                    <li><a class="dropdown-item py-2" href="@Url.Action("Enrollments", "Admin")"><i class="bi bi-person-lines-fill me-2 text-success"></i> Enrollments</a></li>
+                                    <li><a class="dropdown-item py-2" href="@Url.Action("Announcements", "Admin")"><i class="bi bi-megaphone me-2 text-primary"></i> Announcements</a></li>
+                                    <li><a class="dropdown-item py-2" href="@Url.Action("Reports", "Admin")"><i class="bi bi-graph-up me-2 text-dark"></i> Reports &amp; Analytics</a></li>
+                                </ul>
+                            </li>
+                        }
+                        else if (User.IsInRole("Instructor"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Courses" ? "active" : "")" href="@Url.Action("Index", "Courses")">
+                                    <i class="bi bi-compass me-1"></i> Courses
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Instructor" && activeAct == "Index" ? "active" : "")" href="@Url.Action("Index", "Instructor")">
+                                    <i class="bi bi-speedometer2 me-1"></i> Studio
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Instructor" && activeAct == "Courses" ? "active" : "")" href="@Url.Action("Courses", "Instructor")">
+                                    <i class="bi bi-collection-play me-1"></i> My Courses
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Instructor" && activeAct == "CreateCourse" ? "active" : "")" href="@Url.Action("CreateCourse", "Instructor")">
+                                    <i class="bi bi-plus-circle me-1"></i> New Course
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Instructor" && (activeAct == "Payments" || activeAct == "Earnings") ? "active" : "")" href="@Url.Action("Payments", "Instructor")">
+                                    <i class="bi bi-cash-coin me-1"></i> Earnings
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Courses" ? "active" : "")" href="@Url.Action("Index", "Courses")">
+                                    <i class="bi bi-compass me-1"></i> Courses
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Student" && activeAct == "Index" ? "active" : "")" href="@Url.Action("Index", "Student")">
+                                    <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Student" && activeAct == "MyCourses" ? "active" : "")" href="@Url.Action("MyCourses", "Student")">
+                                    <i class="bi bi-journal-bookmark me-1"></i> My Courses
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Student" && activeAct == "Assignments" ? "active" : "")" href="@Url.Action("Assignments", "Student")">
+                                    <i class="bi bi-file-earmark-check me-1"></i> Assignments
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Student" && activeAct == "Quizzes" ? "active" : "")" href="@Url.Action("Quizzes", "Student")">
+                                    <i class="bi bi-patch-question me-1"></i> Quizzes
+                                </a>
+                            </li>
+                        }
                     </ul>
 
+                    <!-- Right: Notification Bell & User Dropdown -->
                     @Html.Partial("_LoginPartial")
                 </div>
             </div>
         </nav>
     </header>
 
-    <main class="flex-grow-1">
+    <main class="flex-grow-1 main-content-wrapper">
         <div class="container-fluid max-w-7xl py-3 px-3 px-lg-4">
             @if (TempData["SuccessMessage"] != null)
             {

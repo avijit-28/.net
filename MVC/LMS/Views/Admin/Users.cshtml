@@ -20,6 +20,13 @@
             <p class="text-muted small mb-0">View registered accounts, inspect privileges, and reassign user permissions across the LMS</p>
         </div>
         <div class="d-flex align-items-center gap-2">
+            <a href="@Url.Action("PendingApprovals", "Admin")" class="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3 shadow-xs">
+                <i class="bi bi-clock-history me-1"></i> Registration Approvals
+                @if (ViewBag.PendingCount != null && (int)ViewBag.PendingCount > 0)
+                {
+                    <span class="badge bg-danger rounded-pill ms-1">@ViewBag.PendingCount</span>
+                }
+            </a>
             <span class="badge bg-white text-dark border px-3 py-2 rounded-pill shadow-xs">
                 Total Accounts: <strong>@Model.Count()</strong>
             </span>
@@ -103,16 +110,34 @@
                                         <i class="bi bi-person-badge-fill me-1"></i>Instructor
                                     </span>
                                 }
-                                else
+                                else if (user.Role == "Student")
                                 {
                                     <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1">
                                         <i class="bi bi-mortarboard-fill me-1"></i>Student
                                     </span>
                                 }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-2 py-1" title="Requested: @user.RequestedRole">
+                                        <i class="bi bi-hourglass-split me-1"></i>@(user.RequestedRole ?? "Pending") (Req)
+                                    </span>
+                                }
                             </td>
                             <td><span class="small text-muted">@user.CreatedDate.ToString("MMM dd, yyyy")</span></td>
                             <td>
-                                @if (user.IsActive)
+                                @if (user.ApprovalStatus == "Pending")
+                                {
+                                    <a href="@Url.Action(user.RequestedRole == "Instructor" || user.Role == "Instructor" ? "InstructorApplications" : "PendingApprovals", "Admin")" class="badge bg-warning text-dark rounded-pill px-2 py-1 text-decoration-none" title="Awaiting admin approval">
+                                        <i class="bi bi-clock-history me-1"></i> Pending Review
+                                    </a>
+                                }
+                                else if (user.ApprovalStatus == "Declined")
+                                {
+                                    <span class="badge bg-danger text-white rounded-pill px-2 py-1">
+                                        <i class="bi bi-x-circle me-1"></i> Declined
+                                    </span>
+                                }
+                                else if (user.IsActive)
                                 {
                                     <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1">
                                         <span class="pulse-dot pulse-success"></span> Active
@@ -135,7 +160,9 @@
                                         <option value="Instructor" @(user.Role == "Instructor" ? "selected" : "")>Instructor</option>
                                         <option value="Admin" @(user.Role == "Admin" ? "selected" : "")>Admin</option>
                                     </select>
-                                    <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold" onclick="return confirm('Confirm updating role for @user.FullName?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold" 
+                                            data-fullname="@user.FullName" 
+                                            onclick="return confirm('Confirm updating role for ' + this.getAttribute('data-fullname') + '?');">
                                         Save
                                     </button>
                                 }
