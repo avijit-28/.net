@@ -1,638 +1,624 @@
 @{
-    ViewBag.Title = "jQuery DataTable & JSGrid - Stored Procedure Dashboard";
+    ViewBag.Title = "Enterprise AJAX Data Management & Routing Hub";
 }
 
-<!-- Top Header & Architecture Title Banner -->
-<div class="row pt-3 pb-2 mb-4 align-items-center bg-white rounded-3 shadow-sm mx-0 border">
-    <div class="col-lg-8">
-        <div class="d-flex align-items-center">
-            <div class="bg-primary text-white p-3 rounded-3 me-3">
-                <i class="fa-solid fa-database fs-2"></i>
+<div class="container-fluid px-4 pt-4">
+    <!-- Top Executive Header & Action Bar -->
+    <div class="row align-items-center mb-4 g-3">
+        <div class="col-lg-7">
+            <div class="d-flex align-items-center">
+                <div class="bg-primary text-white p-3 rounded-4 me-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                    <i class="fa-solid fa-database fs-4"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-1 text-slate-900 tracking-tight">Enterprise AJAX &amp; Routing Hub</h3>
+                    <p class="text-muted mb-0 small">
+                        SQL Server <code>Assignmet</code> &bull; Stored Procedures <code>sp_SearchCustomers</code> &bull; <code>usercrudoperations</code>
+                    </p>
+                </div>
             </div>
-            <div>
-                <h2 class="fw-bold mb-1 text-dark">jQuery DataTable &amp; JSGrid with Stored Procedure in AJAX</h2>
-                <p class="text-muted mb-0">
-                    Live SQL Server Database (<span class="badge bg-secondary">DBConn</span>), Stored Procedures (<code>dbo.sp_SearchCustomers</code>), ASP.NET MVC Backend, and Asynchronous UI Grids
-                </p>
+        </div>
+        <div class="col-lg-5 text-lg-end">
+            <button id="btnRefreshAll" class="btn btn-outline-primary me-2">
+                <i class="fa-solid fa-arrows-rotate me-1"></i> Sync Data
+            </button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddCustomer">
+                <i class="fa-solid fa-user-plus me-1"></i> New Customer
+            </button>
+        </div>
+    </div>
+
+    <!-- Live Metric Cards -->
+    <div class="row g-3 mb-4" id="dashboard-overview">
+        <div class="col-sm-6 col-xl-3">
+            <div class="metric-card primary">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted text-uppercase fw-bold small" style="font-size: 0.75rem;">Total Customers</span>
+                        <h2 class="fw-bold mb-0 mt-1 text-slate-900" id="statCustomerCount">20</h2>
+                        <small class="text-success fw-semibold"><i class="fa-solid fa-check me-1"></i> SQL Server DBConn</small>
+                    </div>
+                    <div class="metric-icon-wrap bg-primary bg-opacity-10 text-primary">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="metric-card success">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted text-uppercase fw-bold small" style="font-size: 0.75rem;">Countries Covered</span>
+                        <h2 class="fw-bold mb-0 mt-1 text-slate-900" id="statCountryCount">10</h2>
+                        <small class="text-success fw-semibold"><i class="fa-solid fa-earth-americas me-1"></i> Global Dataset</small>
+                    </div>
+                    <div class="metric-icon-wrap bg-success bg-opacity-10 text-success">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="metric-card warning">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted text-uppercase fw-bold small" style="font-size: 0.75rem;">Active Cities</span>
+                        <h2 class="fw-bold mb-0 mt-1 text-slate-900" id="statCityCount">16</h2>
+                        <small class="text-warning fw-semibold"><i class="fa-solid fa-location-dot me-1"></i> Regional Distribution</small>
+                    </div>
+                    <div class="metric-icon-wrap bg-warning bg-opacity-10 text-warning">
+                        <i class="fa-solid fa-city"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+            <div class="metric-card info">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted text-uppercase fw-bold small" style="font-size: 0.75rem;">AJAX Round-Trip</span>
+                        <h2 class="fw-bold mb-0 mt-1 text-info" id="statLatencyText">~8 ms</h2>
+                        <small class="text-muted fw-semibold" id="statStatusPill"><i class="fa-solid fa-bolt me-1 text-warning"></i> HTTP 200 OK</small>
+                    </div>
+                    <div class="metric-icon-wrap bg-info bg-opacity-10 text-info">
+                        <i class="fa-solid fa-gauge-high"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-        <button class="btn btn-success shadow-sm me-2" data-bs-toggle="modal" data-bs-target="#modalAddCustomer">
-            <i class="fa-solid fa-user-plus me-1"></i> Add Customer (SP)
+
+    <!-- Navigation Pills / Tabs -->
+    <div class="nav nav-pills nav-pills-modern mb-4" id="mainHubNav" role="tablist">
+        <button class="nav-link active" id="tab-datatable-link" data-bs-toggle="pill" data-bs-target="#tab-datatable" type="button" role="tab">
+            <i class="fa-solid fa-table me-2 text-primary"></i> DataTables Studio
         </button>
-        <button id="btnTriggerGlobalSync" class="btn btn-primary shadow-sm">
-            <i class="fa-solid fa-rotate me-1"></i> Trigger AJAX Call
+        <button class="nav-link" id="tab-jsgrid-link" data-bs-toggle="pill" data-bs-target="#tab-jsgrid" type="button" role="tab">
+            <i class="fa-solid fa-table-cells me-2 text-info"></i> JSGrid Workspace
+        </button>
+        <button class="nav-link" id="tab-userdetails-link" data-bs-toggle="pill" data-bs-target="#tab-userdetails" type="button" role="tab">
+            <i class="fa-solid fa-user-plus me-2 text-success"></i> User Registration (CRUD)
+        </button>
+        <button class="nav-link" id="tab-redirects-link" data-bs-toggle="pill" data-bs-target="#tab-redirects" type="button" role="tab">
+            <i class="fa-solid fa-share-from-square me-2 text-warning"></i> Redirects &amp; Routing
+        </button>
+        <button class="nav-link" id="tab-status-link" data-bs-toggle="pill" data-bs-target="#tab-status" type="button" role="tab">
+            <i class="fa-solid fa-shield-halved me-2 text-danger"></i> Status Results Lab
+        </button>
+        <button class="nav-link" id="tab-workflow-link" data-bs-toggle="pill" data-bs-target="#tab-workflow" type="button" role="tab">
+            <i class="fa-solid fa-diagram-project me-2 text-purple"></i> Architecture Workflow
         </button>
     </div>
-</div>
 
-<!-- Overview Metric Cards -->
-<div class="row g-3 mb-4" id="dashboard-overview">
-    <div class="col-sm-6 col-xl-3">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center justify-content-between">
-                <div>
-                    <span class="text-muted text-uppercase fw-semibold small">Database Records</span>
-                    <h3 class="fw-bold mb-0 mt-1" id="statCustomerCount">20</h3>
-                    <small class="text-success"><i class="fa-solid fa-table me-1"></i> SQL Server Table: dbo.Customers</small>
-                </div>
-                <div class="stat-icon bg-primary bg-opacity-10 text-primary">
-                    <i class="fa-solid fa-users"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center justify-content-between">
-                <div>
-                    <span class="text-muted text-uppercase fw-semibold small">Stored Procedure</span>
-                    <h5 class="fw-bold mb-0 mt-1 text-dark font-monospace">sp_SearchCustomers</h5>
-                    <small class="text-info"><i class="fa-solid fa-gears me-1"></i> Dynamic SQL Filter</small>
-                </div>
-                <div class="stat-icon bg-info bg-opacity-10 text-info">
-                    <i class="fa-solid fa-gears"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center justify-content-between">
-                <div>
-                    <span class="text-muted text-uppercase fw-semibold small">Connection String</span>
-                    <h5 class="fw-bold mb-0 mt-1 text-dark font-monospace">name="DBConn"</h5>
-                    <small class="text-primary"><i class="fa-solid fa-link me-1"></i> Web.config Configuration</small>
-                </div>
-                <div class="stat-icon bg-warning bg-opacity-10 text-warning">
-                    <i class="fa-solid fa-network-wired"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card stat-card p-3">
-            <div class="d-flex align-items-center justify-content-between">
-                <div>
-                    <span class="text-muted text-uppercase fw-semibold small">AJAX Transport</span>
-                    <h3 class="fw-bold mb-0 mt-1 text-success fs-4" id="statEndpointStatus">200 OK</h3>
-                    <small class="text-muted" id="statLatency"><i class="fa-solid fa-bolt me-1 text-warning"></i> ~8 ms Latency</small>
-                </div>
-                <div class="stat-icon bg-success bg-opacity-10 text-success">
-                    <i class="fa-solid fa-cloud-arrow-down"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    <!-- Tab Contents -->
+    <div class="tab-content" id="mainHubContent">
 
-<!-- End-to-End Visual Architecture Pipeline Diagram -->
-<div class="card border-0 shadow-sm rounded-3 mb-4">
-    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-        <div>
-            <h5 class="fw-bold mb-0 text-dark">
-                <i class="fa-solid fa-diagram-project text-primary me-2"></i> Stored Procedure &amp; AJAX Execution Pipeline
-            </h5>
-            <small class="text-muted">How data moves from SQL Server Stored Procedure to Web.config, Controller, AJAX, and Client UI Grids</small>
-        </div>
-        <span class="badge bg-light text-dark border">Full ADO.NET + Stored Procedure Flow</span>
-    </div>
-    <div class="card-body p-4">
-        <div class="pipeline-flow">
-            <div class="pipeline-node" id="node-1">
-                <div class="small text-muted fw-bold mb-1">1. CONFIGURATION</div>
-                <i class="fa-solid fa-file-code text-primary fs-3 mb-2"></i>
-                <div class="fw-semibold">Web.config</div>
-                <div class="small text-secondary">connectionStrings: DBConn</div>
-            </div>
-            
-            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-            
-            <div class="pipeline-node" id="node-2">
-                <div class="small text-muted fw-bold mb-1">2. STORED PROCEDURE</div>
-                <i class="fa-solid fa-database text-warning fs-3 mb-2"></i>
-                <div class="fw-semibold">sp_SearchCustomers</div>
-                <div class="small text-secondary">SQL Server dbo.Customers</div>
-            </div>
-            
-            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-            
-            <div class="pipeline-node" id="node-3">
-                <div class="small text-muted fw-bold mb-1">3. ADO.NET REPOSITORY</div>
-                <i class="fa-solid fa-microchip text-success fs-3 mb-2"></i>
-                <div class="fw-semibold">SqlCommand &amp; Reader</div>
-                <div class="small text-secondary">CommandType.StoredProcedure</div>
-            </div>
-            
-            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-            
-            <div class="pipeline-node" id="node-4">
-                <div class="small text-muted fw-bold mb-1">4. MVC CONTROLLER</div>
-                <i class="fa-solid fa-server text-info fs-3 mb-2"></i>
-                <div class="fw-semibold">HomeController</div>
-                <div class="small text-secondary">[HttpPost] AjaxMethod()</div>
-            </div>
-            
-            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-            
-            <div class="pipeline-node" id="node-5">
-                <div class="small text-muted fw-bold mb-1">5. JSON SERIALIZATION</div>
-                <i class="fa-solid fa-arrow-right-arrow-left text-danger fs-3 mb-2"></i>
-                <div class="fw-semibold">Json(customers)</div>
-                <div class="small text-secondary">HTTP 200 JSON Payload</div>
-            </div>
-            
-            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
-            
-            <div class="pipeline-node" id="node-6">
-                <div class="small text-muted fw-bold mb-1">6. UI GRID RENDER</div>
-                <i class="fa-solid fa-table-cells text-primary fs-3 mb-2"></i>
-                <div class="fw-semibold">DataTables &amp; JSGrid</div>
-                <div class="small text-secondary">Interactive Client Display</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Main Tabs Section -->
-<div class="card border-0 shadow-sm rounded-3">
-    <div class="card-header bg-white pt-3 pb-0 border-bottom">
-        <ul class="nav nav-pills card-header-pills pb-3" id="mainDashboardTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="tab-workflow-btn" data-bs-toggle="pill" data-bs-target="#interactive-workflow" type="button" role="tab">
-                    <i class="fa-solid fa-diagram-project me-1"></i> Architecture Workflow
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tab-datatable-btn" data-bs-toggle="pill" data-bs-target="#live-datatable" type="button" role="tab">
-                    <i class="fa-solid fa-table me-1"></i> Live jQuery DataTable
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tab-jsgrid-btn" data-bs-toggle="pill" data-bs-target="#live-jsgrid" type="button" role="tab">
-                    <i class="fa-solid fa-border-all me-1"></i> Live JSGrid Component
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tab-inspector-btn" data-bs-toggle="pill" data-bs-target="#ajax-inspector" type="button" role="tab">
-                    <i class="fa-solid fa-network-wired me-1"></i> Live AJAX Inspector
-                </button>
-            </li>
-        </ul>
-    </div>
-
-    <div class="card-body p-4">
-        <div class="tab-content" id="mainDashboardTabsContent">
-            
-            <!-- ========================================== -->
-            <!-- TAB 1: INTERACTIVE WORKFLOW & HOW IT WORKS -->
-            <!-- ========================================== -->
-            <div class="tab-pane fade show active" id="interactive-workflow" role="tabpanel">
-                
-                <div class="alert alert-primary d-flex align-items-center mb-4">
-                    <i class="fa-solid fa-circle-info fs-4 me-3 text-primary"></i>
+        <!-- ============================================================== -->
+        <!-- TAB 1: DATATABLES STUDIO                                        -->
+        <!-- ============================================================== -->
+        <div class="tab-pane fade show active" id="tab-datatable" role="tabpanel">
+            <div class="card card-modern mb-4">
+                <div class="card-header-modern">
                     <div>
-                        <strong class="d-block">Understanding the Stored Procedure + ADO.NET + jQuery AJAX Pipeline</strong>
-                        Here is the complete architectural guide explaining how your <code>Customers Stored Procedure.sql</code> connects to the application via <code>Web.config</code> and feeds into the interactive grids.
+                        <h5 class="mb-0 fw-bold"><i class="fa-solid fa-sliders text-primary me-2"></i> Interactive Feature Controls</h5>
+                        <small class="text-muted">Toggle properties to see how DataTables adjusts behavior in real time</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <select id="quickCountryFilter" class="form-select form-select-sm" style="width: auto;">
+                            <option value="">All Countries</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Mexico">Mexico</option>
+                            <option value="UK">UK</option>
+                            <option value="Sweden">Sweden</option>
+                            <option value="France">France</option>
+                            <option value="Spain">Spain</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Brazil">Brazil</option>
+                        </select>
+                        <button id="btnReloadDataTable" class="btn btn-sm btn-primary">
+                            <i class="fa-solid fa-rotate me-1"></i> Re-query SP
+                        </button>
                     </div>
                 </div>
-
-                <!-- Step 1: Web.config Connection String -->
-                <div class="workflow-step-card">
-                    <div class="workflow-step-header">
-                        <div class="d-flex align-items-center">
-                            <span class="workflow-badge me-3">Step 1</span>
-                            <h5 class="fw-bold mb-0">Connection String in Web.config &amp; Stored Procedure Definition</h5>
+                <div class="card-body bg-light bg-opacity-50 py-3">
+                    <div class="d-flex flex-wrap gap-4 align-items-center">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="chkFilter" checked>
+                            <label class="form-check-label small fw-semibold" for="chkFilter">bFilter (Search Box)</label>
                         </div>
-                        <span class="text-muted small"><i class="fa-solid fa-gear me-1"></i> Database Configuration Layer</span>
-                    </div>
-                    <div class="card-body p-4">
-                        <p class="text-muted">
-                            The connection string is registered in <code>Web.config</code> under the <code>&lt;connectionStrings&gt;</code> section with the key <code>DBConn</code>.
-                            The SQL script creates the table and the stored procedure <code>dbo.sp_SearchCustomers</code>.
-                        </p>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <h6 class="fw-bold text-dark"><i class="fa-solid fa-code text-primary me-1"></i> Web.config Configuration</h6>
-                                <pre class="code-block"><code>&lt;configuration&gt;
-  &lt;connectionStrings&gt;
-    &lt;add name="DBConn" 
-         connectionString="Data Source=.;Initial Catalog=Assignmet;User ID=sa;Password=mcc#1234" 
-         providerName="System.Data.SqlClient" /&gt;
-  &lt;/connectionStrings&gt;
-&lt;/configuration&gt;</code></pre>
-                            </div>
-                            <div class="col-lg-6">
-                                <h6 class="fw-bold text-dark"><i class="fa-solid fa-database text-warning me-1"></i> Stored Procedure (dbo.sp_SearchCustomers)</h6>
-                                <pre class="code-block"><code>CREATE OR ALTER PROCEDURE dbo.sp_SearchCustomers
-    @@SearchTerm NVARCHAR(50) = NULL
-AS
-BEGIN
-    SET NOCOUNT ON;
-    SELECT CustomerID, ContactName, City, Country, Email, Phone
-    FROM dbo.Customers
-    WHERE (@@SearchTerm IS NULL OR @@SearchTerm = '')
-       OR ContactName LIKE '%' + @@SearchTerm + '%'
-       OR City LIKE '%' + @@SearchTerm + '%'
-       OR Country LIKE '%' + @@SearchTerm + '%'
-    ORDER BY CustomerID ASC;
-END;</code></pre>
-                            </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="chkLength" checked>
+                            <label class="form-check-label small fw-semibold" for="chkLength">bLengthChange (Records Per Page)</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="chkSort" checked>
+                            <label class="form-check-label small fw-semibold" for="chkSort">bSort (Column Sorting)</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="chkPaginate" checked>
+                            <label class="form-check-label small fw-semibold" for="chkPaginate">bPaginate (Page Navigation)</label>
                         </div>
                     </div>
                 </div>
-
-                <!-- Step 2: ADO.NET Stored Procedure Execution -->
-                <div class="workflow-step-card">
-                    <div class="workflow-step-header">
-                        <div class="d-flex align-items-center">
-                            <span class="workflow-badge me-3">Step 2</span>
-                            <h5 class="fw-bold mb-0">Executing Stored Procedure via ADO.NET in C#</h5>
-                        </div>
-                        <span class="text-muted small"><i class="fa-solid fa-server me-1"></i> Data Access Layer</span>
-                    </div>
-                    <div class="card-body p-4">
-                        <p class="text-muted">
-                            Instead of writing inline SQL queries, the application retrieves <code>DBConn</code> from <code>ConfigurationManager</code> and invokes <code>dbo.sp_SearchCustomers</code> using <code>SqlCommand</code> with <code>CommandType.StoredProcedure</code>:
-                        </p>
-
-                        <div class="row">
-                            <div class="col-lg-7">
-                                <h6 class="fw-bold text-dark"><i class="fa-solid fa-code text-primary me-1"></i> ADO.NET Stored Procedure Invocation</h6>
-                                <pre class="code-block"><code>string constr = ConfigurationManager.ConnectionStrings["DBConn"].ConnectionString;
-List&lt;Customer&gt; customers = new List&lt;Customer&gt;();
-
-using (SqlConnection conn = new SqlConnection(constr))
-{
-    using (SqlCommand cmd = new SqlCommand("dbo.sp_SearchCustomers", conn))
-    {
-        cmd.CommandType = CommandType.StoredProcedure;
-        
-        // Pass optional filter parameter
-        if (!string.IsNullOrEmpty(searchTerm))
-            cmd.Parameters.Add("@@SearchTerm", SqlDbType.NVarChar, 50).Value = searchTerm;
-        else
-            cmd.Parameters.Add("@@SearchTerm", SqlDbType.NVarChar, 50).Value = DBNull.Value;
-
-        conn.Open();
-        using (SqlDataReader reader = cmd.ExecuteReader())
-        {
-            while (reader.Read())
-            {
-                customers.Add(new Customer {
-                    CustomerID = Convert.ToInt32(reader["CustomerID"]),
-                    ContactName = reader["ContactName"].ToString(),
-                    City = reader["City"].ToString(),
-                    Country = reader["Country"].ToString()
-                });
-            }
-        }
-    }
-}</code></pre>
-                            </div>
-                            <div class="col-lg-5">
-                                <h6 class="fw-bold text-dark">Why Stored Procedures?</h6>
-                                <div class="bg-light p-3 rounded-2 border small">
-                                    <ul class="list-unstyled mb-0">
-                                        <li class="mb-2"><i class="fa-solid fa-shield-halved text-success me-2"></i><strong>SQL Injection Prevention:</strong> Parameterized stored procedures prevent malicious input execution.</li>
-                                        <li class="mb-2"><i class="fa-solid fa-gauge-high text-primary me-2"></i><strong>Pre-compiled Performance:</strong> SQL Server caches execution plans for stored procedures, minimizing overhead.</li>
-                                        <li class="mb-2"><i class="fa-solid fa-network-wired text-info me-2"></i><strong>Reduced Network Traffic:</strong> Only the procedure name and parameters are transmitted over the wire.</li>
-                                        <li><i class="fa-solid fa-arrows-split-up-and-left text-warning me-2"></i><strong>Clean Separation of Concerns:</strong> Business logic and schema are managed cleanly inside the database tier.</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table id="tblCustomers" class="table table-striped table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Customer Id</th>
+                                    <th>Name</th>
+                                    <th>City</th>
+                                    <th>Country</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
-
-                <!-- Step 3: Controller Action Methods -->
-                <div class="workflow-step-card">
-                    <div class="workflow-step-header">
-                        <div class="d-flex align-items-center">
-                            <span class="workflow-badge me-3">Step 3</span>
-                            <h5 class="fw-bold mb-0">Controller Action Returning JsonResult</h5>
-                        </div>
-                        <span class="text-muted small"><i class="fa-solid fa-server me-1"></i> Controller Layer</span>
-                    </div>
-                    <div class="card-body p-4">
-                        <h6 class="fw-bold text-dark"><i class="fa-solid fa-code text-primary me-1"></i> HomeController.cs</h6>
-                        <pre class="code-block"><code>public class HomeController : Controller
-{
-    // GET: Home - Returns the Razor HTML view
-    public ActionResult Index()
-    {
-        return View();
-    }
-
-    // Handles the jQuery AJAX operation - Returns JSON from Stored Procedure
-    [HttpPost]
-    public JsonResult AjaxMethod(string searchTerm = null)
-    {
-        // Calls the stored procedure dbo.sp_SearchCustomers via CustomerRepository
-        List&lt;Customer&gt; customers = CustomerRepository.GetCustomers(searchTerm);
-        
-        return Json(customers);
-    }
-}</code></pre>
-                    </div>
-                </div>
-
-                <!-- Step 4: HTML Table Structure & AJAX Call -->
-                <div class="workflow-step-card">
-                    <div class="workflow-step-header">
-                        <div class="d-flex align-items-center">
-                            <span class="workflow-badge me-3">Step 4</span>
-                            <h5 class="fw-bold mb-0">HTML Table Skeleton &amp; jQuery AJAX POST Call</h5>
-                        </div>
-                        <span class="text-muted small"><i class="fa-solid fa-table me-1"></i> View &amp; Transport Layer</span>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <h6 class="fw-bold text-dark"><i class="fa-solid fa-file-lines text-primary me-1"></i> Table Skeleton (&lt;thead&gt; &amp; &lt;tbody&gt;)</h6>
-                                <pre class="code-block"><code>&lt;table id="tblCustomers" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse"&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;Customer Id&lt;/th&gt;
-            &lt;th&gt;Name&lt;/th&gt;
-            &lt;th&gt;City&lt;/th&gt;
-            &lt;th&gt;Country&lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;&lt;/tbody&gt;
-&lt;/table&gt;</code></pre>
-                            </div>
-                            <div class="col-lg-6">
-                                <h6 class="fw-bold text-dark"><i class="fa-solid fa-satellite-dish text-info me-1"></i> jQuery AJAX Call</h6>
-                                <pre class="code-block"><code>$(function () {
-    $.ajax({
-        type: "POST",
-        url: "/Home/AjaxMethod",
-        data: '{}',
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: OnSuccess,
-        failure: function (response) { alert(response.d); },
-        error: function (response) { alert(response.d); }
-    });
-});</code></pre>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 5: DataTables Plugin Configuration -->
-                <div class="workflow-step-card">
-                    <div class="workflow-step-header">
-                        <div class="d-flex align-items-center">
-                            <span class="workflow-badge me-3">Step 5</span>
-                            <h5 class="fw-bold mb-0">Success Event Handler &amp; DataTables Initialization</h5>
-                        </div>
-                        <span class="text-muted small"><i class="fa-solid fa-sliders me-1"></i> UI Rendering Engine</span>
-                    </div>
-                    <div class="card-body p-4">
-                        <pre class="code-block"><code>function OnSuccess(response) {
-    $("#tblCustomers").DataTable({
-        bLengthChange: true,
-        lengthMenu: [[5, 10, -1], [5, 10, "All"]],
-        bFilter: true,
-        bSort: true,
-        bPaginate: true,
-        data: response,
-        columns: [
-            { 'data': 'CustomerID' },
-            { 'data': 'ContactName' },
-            { 'data': 'City' },
-            { 'data': 'Country' }
-        ]
-    });
-}</code></pre>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- ========================================== -->
-            <!-- TAB 2: LIVE JQUERY DATATABLE               -->
-            <!-- ========================================== -->
-            <div class="tab-pane fade" id="live-datatable" role="tabpanel">
-                
-                <!-- Live Interactive Control Toolbar -->
-                <div class="card bg-light border p-3 mb-4 rounded-3">
-                    <div class="row align-items-center g-3">
-                        <div class="col-md-4">
-                            <h6 class="fw-bold mb-1 text-dark"><i class="fa-solid fa-sliders text-primary me-2"></i> Interactive Feature Controls</h6>
-                            <small class="text-muted">Toggle options below to test DataTables properties live:</small>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="d-flex flex-wrap gap-3 align-items-center justify-content-md-end">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="chkFilter" checked>
-                                    <label class="form-check-label small fw-semibold" for="chkFilter">bFilter (Search)</label>
-                                </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="chkLength" checked>
-                                    <label class="form-check-label small fw-semibold" for="chkLength">bLengthChange (Page Sizer)</label>
-                                </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="chkSort" checked>
-                                    <label class="form-check-label small fw-semibold" for="chkSort">bSort (Sorting)</label>
-                                </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="chkPaginate" checked>
-                                    <label class="form-check-label small fw-semibold" for="chkPaginate">bPaginate (Paging)</label>
-                                </div>
-                                <button id="btnReloadTable" class="btn btn-sm btn-primary">
-                                    <i class="fa-solid fa-arrows-rotate me-1"></i> Re-fetch via SP
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Live Status Bar -->
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <span class="badge bg-primary me-2"><i class="fa-solid fa-database me-1"></i> Stored Procedure</span>
-                        <code class="text-dark">EXEC dbo.sp_SearchCustomers via DBConn</code>
-                    </div>
-                    <div id="tableStatusFeedback" class="small text-muted">
-                        <i class="fa-solid fa-circle-check text-success me-1"></i> Loaded 20 records via Stored Procedure
-                    </div>
-                </div>
-
-                <!-- The Exact HTML Table as specified in presentation -->
-                <div class="table-responsive p-3 bg-white border rounded-3 shadow-sm">
-                    <table id="tblCustomers" class="table table-striped table-hover table-bordered" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Customer Id</th>
-                                <th>Name</th>
-                                <th>City</th>
-                                <th>Country</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-
-                <div class="mt-4 p-3 bg-light rounded-3 border">
-                    <h6 class="fw-bold mb-2 text-dark"><i class="fa-solid fa-code text-primary me-1"></i> Active Initialization Script</h6>
-                    <pre class="code-block mb-0" id="liveConfigDisplay"><code>// Dynamically synced with your toggle controls above</code></pre>
+                <div class="card-footer bg-light p-3 border-top">
+                    <h6 class="fw-bold small mb-2 text-dark"><i class="fa-solid fa-code text-primary me-1"></i> Dynamically Synced JavaScript Configuration:</h6>
+                    <pre class="code-block mb-0" id="liveConfigDisplay"><code>// DataTables initialization script updates dynamically</code></pre>
                 </div>
             </div>
+        </div>
 
-            <!-- ========================================== -->
-            <!-- TAB 3: LIVE JSGRID COMPONENT              -->
-            <!-- ========================================== -->
-            <div class="tab-pane fade" id="live-jsgrid" role="tabpanel">
-                <div class="alert alert-info d-flex align-items-center mb-4">
-                    <i class="fa-solid fa-circle-info fs-4 me-3 text-info"></i>
+        <!-- ============================================================== -->
+        <!-- TAB 2: JSGRID WORKSPACE                                        -->
+        <!-- ============================================================== -->
+        <div class="tab-pane fade" id="tab-jsgrid" role="tabpanel">
+            <div class="card card-modern mb-4">
+                <div class="card-header-modern">
                     <div>
-                        <strong class="d-block">JSGrid in AJAX with Stored Procedure</strong>
-                        JSGrid queries <code>/Home/GetJsGridData</code>, passing filter terms directly to <code>dbo.sp_SearchCustomers &#64;SearchTerm</code>.
+                        <h5 class="mb-0 fw-bold"><i class="fa-solid fa-table-cells text-info me-2"></i> JSGrid Interactive Workspace</h5>
+                        <small class="text-muted">Lightweight grid with inline editing, row adding, column filtering, and paging</small>
+                    </div>
+                    <button id="btnReloadJsGrid" class="btn btn-sm btn-outline-info">
+                        <i class="fa-solid fa-rotate me-1"></i> Refresh Grid Data
+                    </button>
+                </div>
+                <div class="card-body p-4">
+                    <div id="jsGridContainer"></div>
+                </div>
+                <div class="card-footer bg-light p-3 border-top">
+                    <div class="row g-3 text-muted small">
+                        <div class="col-md-6">
+                            <i class="fa-solid fa-circle-check text-success me-1"></i> <strong>Inline Editing:</strong> Click the pencil button on any row to edit values directly in-place.
+                        </div>
+                        <div class="col-md-6">
+                            <i class="fa-solid fa-circle-check text-success me-1"></i> <strong>Header Filtering:</strong> Type in the top filter inputs to filter column by column.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 3: USER DETAILS CRUD (usercrudoperations)                   -->
+        <!-- ============================================================== -->
+        <div class="tab-pane fade" id="tab-userdetails" role="tabpanel">
+            <div class="row g-4">
+                <!-- User Form Card -->
+                <div class="col-lg-4">
+                    <div class="card card-modern h-100">
+                        <div class="card-header-modern bg-white">
+                            <h5 class="mb-0 fw-bold"><i class="fa-solid fa-user-plus text-success me-2"></i> Register New User</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="small text-muted mb-3">
+                                Inserts into <code>Assignmet.dbo.userdetails</code> using stored procedure <code>usercrudoperations (&#64;status='INSERT')</code>.
+                            </p>
+                            <form id="formAddUserAjax">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">User Name *</label>
+                                    <input type="text" class="form-control" id="txtUserName" required placeholder="e.g. John Doe">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Education *</label>
+                                    <input type="text" class="form-control" id="txtEducation" required placeholder="e.g. B.Tech / MBA / Graduate">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Location *</label>
+                                    <input type="text" class="form-control" id="txtLocation" required placeholder="e.g. London, UK">
+                                </div>
+                                <div class="d-grid mt-4">
+                                    <button type="submit" id="btnSubmitUserAjax" class="btn btn-success">
+                                        <i class="fa-solid fa-check me-1"></i> Register User (Instant AJAX)
+                                    </button>
+                                </div>
+                            </form>
+                            <hr class="my-4">
+                            <div class="text-center">
+                                <a href="@Url.Action("InsertUserDetails", "User")" class="btn btn-outline-secondary btn-sm w-100">
+                                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Open Classic Form View
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- JSGrid Action Bar -->
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge bg-success"><i class="fa-solid fa-database me-1"></i> SP Connected</span>
-                        <span class="small text-muted">Endpoint: <code>POST /Home/GetJsGridData</code> (Stored Procedure)</span>
+                <!-- User Table Card -->
+                <div class="col-lg-8">
+                    <div class="card card-modern h-100">
+                        <div class="card-header-modern bg-white">
+                            <div>
+                                <h5 class="mb-0 fw-bold"><i class="fa-solid fa-users text-primary me-2"></i> Registered Users Directory</h5>
+                                <small class="text-muted">Live query via <code>usercrudoperations (&#64;status='GET')</code></small>
+                            </div>
+                            <button id="btnRefreshUsers" class="btn btn-sm btn-outline-primary">
+                                <i class="fa-solid fa-rotate me-1"></i> Refresh Table
+                            </button>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+                                <table id="tblUserDetailsLive" class="table table-striped table-hover mb-0 align-middle">
+                                    <thead class="table-dark sticky-top">
+                                        <tr>
+                                            <th style="width: 80px;">User Id</th>
+                                            <th>User Name</th>
+                                            <th>Education</th>
+                                            <th>Location</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblUserDetailsLiveBody">
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4 text-muted">
+                                                <i class="fa-solid fa-spinner fa-spin me-2"></i> Loading users...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <button id="btnReloadJsGrid" class="btn btn-sm btn-outline-primary">
-                            <i class="fa-solid fa-rotate me-1"></i> Refresh JSGrid Data
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 4: REDIRECTS & ROUTING CENTER                               -->
+        <!-- ============================================================== -->
+        <div class="tab-pane fade" id="tab-redirects" role="tabpanel">
+            <div class="row g-4 mb-4">
+                <!-- 1. jQuery window.location.href -->
+                <div class="col-md-6 col-xl-3">
+                    <div class="action-card">
+                        <div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-3 me-2">
+                                    <i class="fa-brands fa-js fs-4"></i>
+                                </div>
+                                <h6 class="fw-bold mb-0 text-slate-900">jQuery Client Redirect</h6>
+                            </div>
+                            <p class="small text-muted">
+                                Uses <code>window.location.href = "&#64;Url.Action(...)"</code> on a DOM button click to redirect the browser to another action.
+                            </p>
+                        </div>
+                        <button id="btnClientRedirectDemo" class="btn btn-outline-primary w-100 mt-3">
+                            <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Trigger jQuery Redirect
                         </button>
                     </div>
                 </div>
 
-                <!-- JSGrid Container -->
-                <div class="p-3 bg-white border rounded-3 shadow-sm mb-4">
-                    <div id="jsGridContainer"></div>
+                <!-- 2. RedirectToAction -->
+                <div class="col-md-6 col-xl-3">
+                    <div class="action-card">
+                        <div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success bg-opacity-10 text-success p-2 rounded-3 me-2">
+                                    <i class="fa-solid fa-arrow-right-arrow-left fs-4"></i>
+                                </div>
+                                <h6 class="fw-bold mb-0 text-slate-900">RedirectToAction</h6>
+                            </div>
+                            <p class="small text-muted">
+                                Server returns HTTP 302 Redirect specifying target controller and action: <code>RedirectToAction("InsertUserDetails", "User")</code>.
+                            </p>
+                        </div>
+                        <a href="@Url.Action("RedirectToActionDemo", "Home")" class="btn btn-outline-success w-100 mt-3">
+                            <i class="fa-solid fa-arrow-right me-1"></i> Test RedirectToAction
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 3. RedirectToRoute -->
+                <div class="col-md-6 col-xl-3">
+                    <div class="action-card">
+                        <div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-info bg-opacity-10 text-info p-2 rounded-3 me-2">
+                                    <i class="fa-solid fa-route fs-4"></i>
+                                </div>
+                                <h6 class="fw-bold mb-0 text-slate-900">RedirectToRoute</h6>
+                            </div>
+                            <p class="small text-muted">
+                                Redirects using a route value dictionary: <code>RedirectToRoute(new { controller = "Home", action = "About" })</code>.
+                            </p>
+                        </div>
+                        <a href="@Url.Action("RedirectToRouteDemo", "Home")" class="btn btn-outline-info w-100 mt-3">
+                            <i class="fa-solid fa-route me-1"></i> Test RedirectToRoute
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 4. Redirect (External URL) -->
+                <div class="col-md-6 col-xl-3">
+                    <div class="action-card">
+                        <div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-warning bg-opacity-10 text-warning p-2 rounded-3 me-2">
+                                    <i class="fa-solid fa-globe fs-4"></i>
+                                </div>
+                                <h6 class="fw-bold mb-0 text-slate-900">Redirect(url) External</h6>
+                            </div>
+                            <p class="small text-muted">
+                                Redirects outside the application to a specific URL: <code>Redirect("https://mccit.net")</code>.
+                            </p>
+                        </div>
+                        <a href="@Url.Action("RedirectExternal", "Home")" class="btn btn-outline-warning w-100 mt-3" target="_blank">
+                            <i class="fa-solid fa-globe me-1"></i> Test External Redirect
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <!-- ========================================== -->
-            <!-- TAB 4: LIVE AJAX INSPECTOR & MONITOR       -->
-            <!-- ========================================== -->
-            <div class="tab-pane fade" id="ajax-inspector" role="tabpanel">
-                <div class="row g-4">
-                    <div class="col-lg-5">
-                        <div class="card border rounded-3 h-100 shadow-sm">
-                            <div class="card-header bg-white py-3 border-bottom">
-                                <h6 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-play text-primary me-2"></i> Stored Procedure AJAX Tester</h6>
-                            </div>
-                            <div class="card-body">
-                                <p class="small text-muted mb-3">
-                                    Send an HTTP POST request to test the stored procedure execution and review the JSON payload returned.
-                                </p>
+            <!-- Redirection Technical Summary Card -->
+            <div class="card card-modern">
+                <div class="card-header-modern bg-white">
+                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-book-open text-primary me-2"></i> Redirection Methods Comparison</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered mb-0 small">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Method</th>
+                                    <th>Return Type</th>
+                                    <th>Parameters</th>
+                                    <th>Primary Use Case</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-bold text-primary">Redirect(url)</td>
+                                    <td><code>RedirectResult</code></td>
+                                    <td>URL string (e.g. <code>https://mccit.net</code>)</td>
+                                    <td>Redirecting to external websites outside your application.</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-success">RedirectToAction(action, controller)</td>
+                                    <td><code>RedirectToRouteResult</code></td>
+                                    <td>Action Name, Optional Controller Name</td>
+                                    <td>Most convenient way to redirect between controllers within the same MVC app.</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-info">RedirectToRoute(routeValues)</td>
+                                    <td><code>RedirectToRouteResult</code></td>
+                                    <td>Anonymous object with route keys (<code>controller</code>, <code>action</code>, <code>id</code>)</td>
+                                    <td>Redirecting based on defined routes in <code>RouteConfig.cs</code>.</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-warning">jQuery window.location.href</td>
+                                    <td>Client-side JavaScript</td>
+                                    <td>URL generated by <code>&#64;Url.Action(...)</code></td>
+                                    <td>Client-side redirect after AJAX completion or button click without full postback.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 5: STATUS RESULTS LAB                                      -->
+        <!-- ============================================================== -->
+        <div class="tab-pane fade" id="tab-status" role="tabpanel">
+            <div class="row g-4">
+                <div class="col-lg-5">
+                    <div class="card card-modern h-100">
+                        <div class="card-header-modern bg-white">
+                            <h5 class="mb-0 fw-bold"><i class="fa-solid fa-flask-vial text-danger me-2"></i> Status Results Interactive Tester</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="small text-muted mb-3">
+                                Status Action Results return HTTP status codes and custom descriptions to the browser. Click below to inspect each result live:
+                            </p>
+                            
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-danger btn-test-status text-start" data-url="/Home/UnauthorizedStatusCode">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fa-solid fa-lock me-2"></i> HttpStatusCodeResult (401)</span>
+                                        <span class="badge bg-danger">Unauthorized</span>
+                                    </div>
+                                </button>
                                 
-                                <div class="mb-3">
-                                    <label class="form-label small fw-bold">Stored Procedure Parameter (&#64;SearchTerm):</label>
-                                    <input type="text" class="form-control form-control-sm" id="testSearchTerm" placeholder="Leave empty for all, or enter e.g. London, Germany">
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label small fw-bold">Target Action URL:</label>
-                                    <input type="text" class="form-control form-control-sm" value="/Home/AjaxMethod" readonly>
-                                </div>
-
-                                <button id="btnSendTestAjax" class="btn btn-primary w-100">
-                                    <i class="fa-solid fa-paper-plane me-1"></i> Execute Stored Procedure via AJAX
+                                <button class="btn btn-outline-danger btn-test-status text-start" data-url="/Home/BadGateway">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fa-solid fa-server me-2"></i> HttpStatusCodeResult (502)</span>
+                                        <span class="badge bg-danger">Bad Gateway</span>
+                                    </div>
                                 </button>
 
-                                <hr class="my-4">
+                                <button class="btn btn-outline-secondary btn-test-status text-start" data-url="/Home/UnauthorizedResult">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fa-solid fa-user-slash me-2"></i> HttpUnauthorizedResult</span>
+                                        <span class="badge bg-secondary">401 Shorthand</span>
+                                    </div>
+                                </button>
 
-                                <h6 class="fw-bold text-dark small mb-2"><i class="fa-solid fa-gauge-high text-info me-1"></i> Diagnostics</h6>
-                                <div class="bg-light p-3 rounded-2 border small">
-                                    <div class="d-flex justify-content-between py-1 border-bottom">
-                                        <span class="text-muted">Connection String:</span>
-                                        <span class="fw-bold text-dark font-monospace">name="DBConn"</span>
+                                <button class="btn btn-outline-dark btn-test-status text-start" data-url="/Home/NotFound">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="fa-solid fa-magnifying-glass me-2"></i> HttpNotFoundResult</span>
+                                        <span class="badge bg-dark">404 Helper</span>
                                     </div>
-                                    <div class="d-flex justify-content-between py-1 border-bottom">
-                                        <span class="text-muted">Database Routine:</span>
-                                        <span class="fw-bold text-primary font-monospace">dbo.sp_SearchCustomers</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between py-1 border-bottom">
-                                        <span class="text-muted">HTTP Status:</span>
-                                        <span class="fw-bold text-success" id="diagStatus">200 OK</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between py-1 border-bottom">
-                                        <span class="text-muted">Round-trip Time:</span>
-                                        <span class="fw-bold text-dark" id="diagDuration">~6 ms</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between py-1">
-                                        <span class="text-muted">Records Returned:</span>
-                                        <span class="fw-bold text-primary" id="diagRecordCount">20 Customer Objects</span>
-                                    </div>
-                                </div>
+                                </button>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="col-lg-7">
-                        <div class="card border rounded-3 h-100 shadow-sm">
-                            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-                                <h6 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-code text-success me-2"></i> Raw JSON Response Payload</h6>
-                                <span class="badge bg-dark" id="jsonByteSize">Received JSON</span>
+                <div class="col-lg-7">
+                    <div class="card card-modern h-100">
+                        <div class="card-header-modern bg-white">
+                            <h5 class="mb-0 fw-bold"><i class="fa-solid fa-terminal text-primary me-2"></i> Live HTTP Diagnostics Inspector</h5>
+                            <span class="badge bg-success" id="diagStatusCodePill">Ready</span>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="bg-light p-3 rounded-3 border mb-3 small">
+                                <div class="d-flex justify-content-between py-1 border-bottom">
+                                    <span class="text-muted">Target Endpoint:</span>
+                                    <span class="fw-bold font-monospace text-primary" id="diagTargetEndpoint">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-1 border-bottom">
+                                    <span class="text-muted">HTTP Status Code:</span>
+                                    <span class="fw-bold font-monospace" id="diagCodeDisplay">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-1 border-bottom">
+                                    <span class="text-muted">Status Description:</span>
+                                    <span class="fw-bold font-monospace" id="diagDescriptionDisplay">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between py-1">
+                                    <span class="text-muted">Action Result Type:</span>
+                                    <span class="fw-bold font-monospace text-dark" id="diagResultType">-</span>
+                                </div>
                             </div>
-                            <div class="card-body p-0">
-                                <pre id="jsonResponseViewer" class="m-0 rounded-0 border-0" style="min-height: 400px;">// Click "Execute Stored Procedure via AJAX" to fetch JSON.</pre>
+
+                            <h6 class="fw-bold small text-dark mb-2">Raw Server Response Body / HTML:</h6>
+                            <pre class="code-block mb-3" style="max-height: 220px;" id="diagResponseBody"><code>// Click any test button on the left to run an inspection</code></pre>
+
+                            <div class="d-flex justify-content-end">
+                                <a id="btnOpenRawTab" href="#" target="_blank" class="btn btn-sm btn-outline-secondary disabled">
+                                    <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Open in New Browser Tab
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
+
+        <!-- ============================================================== -->
+        <!-- TAB 6: ARCHITECTURE WORKFLOW                                   -->
+        <!-- ============================================================== -->
+        <div class="tab-pane fade" id="tab-workflow" role="tabpanel">
+            <div class="card card-modern mb-4">
+                <div class="card-header-modern bg-white">
+                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-diagram-project text-primary me-2"></i> End-to-End Request/Response Cycle</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="pipeline-flow">
+                        <div class="pipeline-node active-node">
+                            <div class="small text-muted fw-bold mb-1">1. DOM READY</div>
+                            <i class="fa-brands fa-html5 text-danger fs-3 mb-2"></i>
+                            <div class="fw-semibold">HTML Table</div>
+                            <div class="small text-secondary">&lt;thead&gt; &amp; &lt;tbody&gt;</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="pipeline-node active-node">
+                            <div class="small text-muted fw-bold mb-1">2. AJAX POST</div>
+                            <i class="fa-solid fa-arrow-right-arrow-left text-primary fs-3 mb-2"></i>
+                            <div class="fw-semibold">jQuery $.ajax()</div>
+                            <div class="small text-secondary">/Home/AjaxMethod</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="pipeline-node active-node">
+                            <div class="small text-muted fw-bold mb-1">3. CONTROLLER</div>
+                            <i class="fa-solid fa-server text-success fs-3 mb-2"></i>
+                            <div class="fw-semibold">HomeController</div>
+                            <div class="small text-secondary">JsonResult</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="pipeline-node active-node">
+                            <div class="small text-muted fw-bold mb-1">4. SQL SERVER</div>
+                            <i class="fa-solid fa-database text-warning fs-3 mb-2"></i>
+                            <div class="fw-semibold">dbo.sp_SearchCustomers</div>
+                            <div class="small text-secondary">Connection: DBConn</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="pipeline-node active-node">
+                            <div class="small text-muted fw-bold mb-1">5. SERIALIZATION</div>
+                            <i class="fa-solid fa-file-code text-info fs-3 mb-2"></i>
+                            <div class="fw-semibold">Json(customers)</div>
+                            <div class="small text-secondary">HTTP 200 Payload</div>
+                        </div>
+                        <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="pipeline-node active-node">
+                            <div class="small text-muted fw-bold mb-1">6. UI RENDER</div>
+                            <i class="fa-solid fa-table-list text-primary fs-3 mb-2"></i>
+                            <div class="fw-semibold">DataTables / JSGrid</div>
+                            <div class="small text-secondary">Search, Sort, Paging</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<!-- Modal: Add Customer via Stored Procedure dbo.sp_InsertCustomer -->
-<div class="modal fade" id="modalAddCustomer" tabindex="-1" aria-labelledby="modalAddCustomerLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-light">
-                <h5 class="modal-title fw-bold" id="modalAddCustomerLabel">
-                    <i class="fa-solid fa-user-plus text-success me-2"></i> Add Customer (dbo.sp_InsertCustomer)
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- ============================================================== -->
+<!-- MODAL: ADD NEW CUSTOMER (dbo.sp_InsertCustomer)                -->
+<!-- ============================================================== -->
+<div class="modal fade" id="modalAddCustomer" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: var(--radius-md);">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold"><i class="fa-solid fa-user-plus me-2"></i> Add New Customer</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form id="formAddCustomer">
+            <form id="formAddCustomer">
+                <div class="modal-body p-4">
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Contact Name *</label>
-                        <input type="text" class="form-control" id="newContactName" required placeholder="e.g. John Doe">
+                        <input type="text" class="form-control" id="custName" required placeholder="e.g. John Doe">
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
                             <label class="form-label small fw-bold">City *</label>
-                            <input type="text" class="form-control" id="newCity" required placeholder="e.g. New York">
+                            <input type="text" class="form-control" id="custCity" required placeholder="e.g. London">
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-6">
                             <label class="form-label small fw-bold">Country *</label>
-                            <input type="text" class="form-control" id="newCountry" required placeholder="e.g. USA">
+                            <input type="text" class="form-control" id="custCountry" required placeholder="e.g. UK">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Email</label>
-                        <input type="email" class="form-control" id="newEmail" placeholder="e.g. john@example.com">
+                        <input type="email" class="form-control" id="custEmail" placeholder="e.g. john&#64;example.com">
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Phone</label>
-                        <input type="text" class="form-control" id="newPhone" placeholder="e.g. 555-1234">
+                        <input type="text" class="form-control" id="custPhone" placeholder="e.g. +44 171 555 1234">
                     </div>
-                    <div id="addCustomerAlert" class="alert alert-danger py-2 px-3 small d-none"></div>
-                </form>
-            </div>
-            <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success" id="btnSubmitAddCustomer">
-                    <i class="fa-solid fa-floppy-disk me-1"></i> Save via Stored Procedure
-                </button>
-            </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" id="btnSaveCustomer" class="btn btn-primary">
+                        <i class="fa-solid fa-save me-1"></i> Save to SQL Server
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -643,117 +629,259 @@ using (SqlConnection conn = new SqlConnection(constr))
     var cachedCustomerData = null;
 
     $(function () {
-        // Initial AJAX call to execute stored procedure
+        // Initialize URL Hash navigation
+        var hash = window.location.hash;
+        if (hash) {
+            $('#mainHubNav button[data-bs-target="' + hash + '"]').tab('show');
+        }
+
+        // 1. Initial Load of DataTables & JSGrid
         fetchCustomerDataAndInitTable();
-
-        // Initialize JSGrid
         initJsGrid();
+        loadUserDetailsLive();
 
-        // Feature control switches
+        // 2. Control Switches
         $("#chkFilter, #chkLength, #chkSort, #chkPaginate").on("change", function () {
             rebuildDataTableWithCurrentSettings();
         });
 
-        // Reload buttons
-        $("#btnReloadTable, #btnTriggerGlobalSync").on("click", function () {
+        // 3. Quick Country Filter
+        $("#quickCountryFilter").on("change", function () {
+            var selectedCountry = $(this).val();
+            if (customerDataTable) {
+                customerDataTable.column(3).search(selectedCountry).draw();
+            }
+        });
+
+        // 4. Reload Buttons
+        $("#btnReloadDataTable, #btnRefreshAll").on("click", function () {
             fetchCustomerDataAndInitTable();
+            loadUserDetailsLive();
         });
 
         $("#btnReloadJsGrid").on("click", function () {
             $("#jsGridContainer").jsGrid("loadData");
         });
 
-        // Inspector AJAX button
-        $("#btnSendTestAjax").on("click", function () {
-            var searchTerm = $("#testSearchTerm").val();
-            executeAjaxTestCall(searchTerm);
+        $("#btnRefreshUsers").on("click", function () {
+            loadUserDetailsLive();
         });
 
-        // Add Customer Form Submit
-        $("#btnSubmitAddCustomer").on("click", function () {
-            submitNewCustomer();
+        // 5. Add Customer Modal Form Submission (dbo.sp_InsertCustomer)
+        $("#formAddCustomer").on("submit", function (e) {
+            e.preventDefault();
+            var newCustomer = {
+                ContactName: $("#custName").val(),
+                City: $("#custCity").val(),
+                Country: $("#custCountry").val(),
+                Email: $("#custEmail").val(),
+                Phone: $("#custPhone").val()
+            };
+
+            $("#btnSaveCustomer").prop("disabled", true).html('<i class="fa-solid fa-spinner fa-spin me-1"></i> Saving...');
+
+            $.ajax({
+                type: "POST",
+                url: "/Home/AddCustomer",
+                data: JSON.stringify(newCustomer),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (res) {
+                    $("#btnSaveCustomer").prop("disabled", false).html('<i class="fa-solid fa-save me-1"></i> Save to SQL Server');
+                    if (res.success) {
+                        $("#modalAddCustomer").modal("hide");
+                        $("#formAddCustomer")[0].reset();
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Customer Added!',
+                            text: 'Saved with CustomerID: ' + res.customerId + ' via dbo.sp_InsertCustomer',
+                            timer: 2500,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end'
+                        });
+
+                        fetchCustomerDataAndInitTable();
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Error', text: res.message });
+                    }
+                },
+                error: function (xhr) {
+                    $("#btnSaveCustomer").prop("disabled", false).html('<i class="fa-solid fa-save me-1"></i> Save to SQL Server');
+                    Swal.fire({ icon: 'error', title: 'Server Error', text: xhr.statusText });
+                }
+            });
+        });
+
+        // 6. Add User AJAX Form Submission (usercrudoperations)
+        $("#formAddUserAjax").on("submit", function (e) {
+            e.preventDefault();
+            var user = {
+                UserName: $("#txtUserName").val(),
+                Education: $("#txtEducation").val(),
+                Location: $("#txtLocation").val()
+            };
+
+            $("#btnSubmitUserAjax").prop("disabled", true).html('<i class="fa-solid fa-spinner fa-spin me-1"></i> Registering...');
+
+            $.ajax({
+                type: "POST",
+                url: "/User/InsertUserAjax",
+                data: JSON.stringify(user),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (res) {
+                    $("#btnSubmitUserAjax").prop("disabled", false).html('<i class="fa-solid fa-check me-1"></i> Register User (Instant AJAX)');
+                    if (res.success) {
+                        $("#formAddUserAjax")[0].reset();
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'User Registered!',
+                            text: res.message,
+                            timer: 2500,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end'
+                        });
+
+                        loadUserDetailsLive();
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Registration Failed', text: res.message });
+                    }
+                },
+                error: function (xhr) {
+                    $("#btnSubmitUserAjax").prop("disabled", false).html('<i class="fa-solid fa-check me-1"></i> Register User (Instant AJAX)');
+                    Swal.fire({ icon: 'error', title: 'Error', text: xhr.statusText });
+                }
+            });
+        });
+
+        // 7. Client-side jQuery Redirect Demo
+        $("#btnClientRedirectDemo").on("click", function () {
+            Swal.fire({
+                title: 'Executing jQuery Redirect',
+                text: 'window.location.href = "/User/InsertUserDetails"',
+                icon: 'info',
+                timer: 1500,
+                showConfirmButton: false
+            }).then(function () {
+                window.location.href = "@Url.Action("InsertUserDetails", "User")";
+            });
+        });
+
+        // 8. Live Status Results Inspector
+        $(".btn-test-status").on("click", function () {
+            var url = $(this).data("url");
+            inspectStatusEndpoint(url);
         });
     });
 
-    function fetchCustomerDataAndInitTable(searchTerm) {
-        highlightPipelineNode(2);
-        var startTime = performance.now();
-
+    /**
+     * DataTables AJAX Fetch & Bind
+     */
+    function fetchCustomerDataAndInitTable() {
+        var start = performance.now();
         $.ajax({
             type: "POST",
             url: "/Home/AjaxMethod",
-            data: JSON.stringify({ searchTerm: searchTerm || "" }),
+            data: '{}',
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                var duration = Math.round(performance.now() - startTime);
-                highlightPipelineNode(6);
-                
+                var elapsed = Math.round(performance.now() - start);
                 cachedCustomerData = response;
-                updateMetricsUI(response, duration);
-                OnSuccess(response);
 
-                $("#jsonResponseViewer").text(JSON.stringify(response, null, 2));
-                $("#jsonByteSize").text(JSON.stringify(response).length + " bytes");
-                $("#tableStatusFeedback").html('<i class="fa-solid fa-circle-check text-success me-1"></i> Loaded ' + response.length + ' records via Stored Procedure (' + duration + ' ms)');
+                // Update Metrics
+                $("#statCustomerCount").text(response.length);
+                var countries = {}, cities = {};
+                $.each(response, function (i, item) {
+                    if (item.Country) countries[item.Country] = true;
+                    if (item.City) cities[item.City] = true;
+                });
+                $("#statCountryCount").text(Object.keys(countries).length);
+                $("#statCityCount").text(Object.keys(cities).length);
+                $("#statLatencyText").text(elapsed + " ms");
+                $("#statStatusPill").html('<i class="fa-solid fa-bolt me-1 text-warning"></i> HTTP 200 OK (' + response.length + ' rows)');
+
+                OnSuccess(response);
             },
-            failure: function (response) {
-                alert("Failure: " + (response.d || response.statusText));
-            },
-            error: function (response) {
-                alert("Error: " + (response.d || response.statusText));
+            error: function (xhr) {
+                Swal.fire({ icon: 'error', title: 'DataTables Fetch Error', text: xhr.statusText });
             }
         });
     }
 
+    /**
+     * Initializes DataTables on #tblCustomers
+     */
     function OnSuccess(response) {
         if ($.fn.DataTable.isDataTable('#tblCustomers')) {
             $('#tblCustomers').DataTable().destroy();
             $('#tblCustomers tbody').empty();
         }
 
-        var filterEnabled = $("#chkFilter").is(":checked");
-        var lengthEnabled = $("#chkLength").is(":checked");
-        var sortEnabled = $("#chkSort").is(":checked");
-        var paginateEnabled = $("#chkPaginate").is(":checked");
+        var filter = $("#chkFilter").is(":checked");
+        var length = $("#chkLength").is(":checked");
+        var sort = $("#chkSort").is(":checked");
+        var paginate = $("#chkPaginate").is(":checked");
 
         customerDataTable = $("#tblCustomers").DataTable({
-            bLengthChange: lengthEnabled,
+            bLengthChange: length,
             lengthMenu: [[5, 10, -1], [5, 10, "All"]],
-            bFilter: filterEnabled,
-            bSort: sortEnabled,
-            bPaginate: paginateEnabled,
+            bFilter: filter,
+            bSort: sort,
+            bPaginate: paginate,
             data: response,
             columns: [
-                { 
-                    'data': 'CustomerID',
-                    'render': function (data) {
-                        return '<span class="badge bg-secondary badge-customer">' + data + '</span>';
+                {
+                    data: 'CustomerID',
+                    render: function (data) {
+                        return '<span class="badge bg-secondary badge-code">' + data + '</span>';
                     }
                 },
-                { 
-                    'data': 'ContactName',
-                    'render': function (data) {
-                        return '<strong>' + data + '</strong>';
+                {
+                    data: 'ContactName',
+                    render: function (data) {
+                        return '<strong class="text-slate-900">' + data + '</strong>';
                     }
                 },
-                { 'data': 'City' },
-                { 
-                    'data': 'Country',
-                    'render': function (data) {
+                { data: 'City' },
+                {
+                    data: 'Country',
+                    render: function (data) {
                         return '<span class="badge bg-light text-dark border">' + data + '</span>';
+                    }
+                },
+                {
+                    data: 'Email',
+                    render: function (data) {
+                        return data ? '<span class="text-muted small">' + data + '</span>' : '<span class="text-muted fst-italic">None</span>';
+                    }
+                },
+                {
+                    data: 'Phone',
+                    render: function (data) {
+                        return data ? '<span class="badge-code text-secondary">' + data + '</span>' : '<span class="text-muted fst-italic">None</span>';
                     }
                 }
             ],
             pageLength: 5,
             responsive: true,
+            dom: '<"d-flex justify-content-between align-items-center mb-3"Bf>rt<"d-flex justify-content-between align-items-center mt-3"lip>',
+            buttons: [
+                { extend: 'copy', className: 'btn btn-sm btn-outline-secondary' },
+                { extend: 'csv', className: 'btn btn-sm btn-outline-secondary' },
+                { extend: 'print', className: 'btn btn-sm btn-outline-secondary' }
+            ],
             language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search customers..."
+                search: "",
+                searchPlaceholder: "Search any column..."
             }
         });
 
-        updateCodePreview(filterEnabled, lengthEnabled, sortEnabled, paginateEnabled);
+        updateCodePreview(filter, length, sort, paginate);
     }
 
     function rebuildDataTableWithCurrentSettings() {
@@ -765,46 +893,35 @@ using (SqlConnection conn = new SqlConnection(constr))
     }
 
     function updateCodePreview(filter, length, sort, paginate) {
-        var code = 'function OnSuccess(response) {\n' +
-            '    $("#tblCustomers").DataTable({\n' +
-            '        bLengthChange: ' + length + ',\n' +
-            '        lengthMenu: [[5, 10, -1], [5, 10, "All"]],\n' +
-            '        bFilter: ' + filter + ',\n' +
-            '        bSort: ' + sort + ',\n' +
-            '        bPaginate: ' + paginate + ',\n' +
-            '        data: response,\n' +
-            '        columns: [\n' +
-            '            { \'data\': \'CustomerID\' },\n' +
-            '            { \'data\': \'ContactName\' },\n' +
-            '            { \'data\': \'City\' },\n' +
-            '            { \'data\': \'Country\' }\n' +
-            '        ]\n' +
-            '    });\n' +
-            '};';
+        var code = '$("#tblCustomers").DataTable({\n' +
+            '    bLengthChange: ' + length + ',\n' +
+            '    lengthMenu: [[5, 10, -1], [5, 10, "All"]],\n' +
+            '    bFilter: ' + filter + ',\n' +
+            '    bSort: ' + sort + ',\n' +
+            '    bPaginate: ' + paginate + ',\n' +
+            '    data: response,\n' +
+            '    columns: [\n' +
+            '        { \'data\': \'CustomerID\' },\n' +
+            '        { \'data\': \'ContactName\' },\n' +
+            '        { \'data\': \'City\' },\n' +
+            '        { \'data\': \'Country\' }\n' +
+            '    ]\n' +
+            '});';
         $("#liveConfigDisplay code").text(code);
     }
 
-    function updateMetricsUI(data, latency) {
-        if (!data || !data.length) return;
-        $("#statCustomerCount").text(data.length);
-        $("#statLatency").html('<i class="fa-solid fa-bolt me-1 text-warning"></i> ~' + latency + ' ms Latency');
-    }
-
-    function highlightPipelineNode(stepIndex) {
-        $(".pipeline-node").removeClass("active-node");
-        $("#node-" + stepIndex).addClass("active-node");
-    }
-
+    /**
+     * JSGrid Initialization
+     */
     function initJsGrid() {
         $("#jsGridContainer").jsGrid({
             width: "100%",
-            height: "420px",
+            height: "440px",
             filtering: true,
-            editing: false,
+            editing: true,
             sorting: true,
             paging: true,
             pageSize: 6,
-            pageButtonCount: 5,
             autoload: true,
             controller: {
                 loadData: function (filter) {
@@ -818,104 +935,85 @@ using (SqlConnection conn = new SqlConnection(constr))
                         }),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
-                        success: function (response) {
-                            d.resolve(response);
-                        },
-                        error: function (e) {
-                            d.reject(e);
-                        }
+                        success: function (res) { d.resolve(res); },
+                        error: function (e) { d.reject(e); }
                     });
                     return d.promise();
                 }
             },
             fields: [
-                { name: "CustomerID", title: "Customer ID", type: "number", width: 80, readOnly: true },
-                { name: "ContactName", title: "Contact Name", type: "text", width: 140 },
-                { name: "City", title: "City", type: "text", width: 120 },
-                { name: "Country", title: "Country", type: "text", width: 120 },
+                { name: "CustomerID", title: "ID", type: "number", width: 60, readOnly: true },
+                { name: "ContactName", title: "Name", type: "text", width: 140 },
+                { name: "City", title: "City", type: "text", width: 110 },
+                { name: "Country", title: "Country", type: "text", width: 110 },
                 { name: "Email", title: "Email", type: "text", width: 170 },
-                { name: "Phone", title: "Phone", type: "text", width: 120 }
+                { type: "control", editButton: true, deleteButton: false }
             ]
         });
     }
 
-    function executeAjaxTestCall(searchTerm) {
-        var start = performance.now();
-        $("#btnSendTestAjax").prop("disabled", true).html('<i class="fa-solid fa-spinner fa-spin me-1"></i> Running SP...');
-
+    /**
+     * User Details Live Table Loader
+     */
+    function loadUserDetailsLive() {
         $.ajax({
-            type: "POST",
-            url: "/Home/AjaxMethod",
-            data: JSON.stringify({ searchTerm: searchTerm || "" }),
-            contentType: "application/json; charset=utf-8",
+            type: "GET",
+            url: "/User/GetUsersJson",
             dataType: "json",
-            success: function (response) {
-                var elapsed = Math.round(performance.now() - start);
-                $("#diagStatus").text("200 OK").removeClass("text-danger").addClass("text-success");
-                $("#diagDuration").text(elapsed + " ms");
-                $("#diagRecordCount").text(response.length + " Customer Records");
-                $("#jsonResponseViewer").text(JSON.stringify(response, null, 2));
-                $("#jsonByteSize").text(JSON.stringify(response).length + " bytes");
-                $("#btnSendTestAjax").prop("disabled", false).html('<i class="fa-solid fa-paper-plane me-1"></i> Execute Stored Procedure via AJAX');
+            success: function (list) {
+                var html = '';
+                if (!list || list.length === 0) {
+                    html = '<tr><td colspan="4" class="text-center py-4 text-muted">No users found.</td></tr>';
+                } else {
+                    $.each(list, function (i, u) {
+                        html += '<tr>' +
+                            '<td><span class="badge bg-secondary badge-code">' + u.UserId + '</span></td>' +
+                            '<td class="fw-bold">' + u.UserName + '</td>' +
+                            '<td>' + (u.Education || 'N/A') + '</td>' +
+                            '<td><span class="badge bg-light text-dark border">' + (u.Location || 'N/A') + '</span></td>' +
+                            '</tr>';
+                    });
+                }
+                $("#tblUserDetailsLiveBody").html(html);
             },
-            error: function (xhr) {
-                var elapsed = Math.round(performance.now() - start);
-                $("#diagStatus").text(xhr.status + " " + xhr.statusText).removeClass("text-success").addClass("text-danger");
-                $("#diagDuration").text(elapsed + " ms");
-                $("#jsonResponseViewer").text("Error: " + xhr.responseText);
-                $("#btnSendTestAjax").prop("disabled", false).html('<i class="fa-solid fa-paper-plane me-1"></i> Execute Stored Procedure via AJAX');
+            error: function () {
+                $("#tblUserDetailsLiveBody").html('<tr><td colspan="4" class="text-center py-4 text-danger">Failed to load user records.</td></tr>');
             }
         });
     }
 
-    function submitNewCustomer() {
-        var name = $("#newContactName").val().trim();
-        var city = $("#newCity").val().trim();
-        var country = $("#newCountry").val().trim();
-        var email = $("#newEmail").val().trim();
-        var phone = $("#newPhone").val().trim();
+    /**
+     * Live Status Endpoint Inspector
+     */
+    function inspectStatusEndpoint(url) {
+        $("#diagTargetEndpoint").text(url);
+        $("#btnOpenRawTab").attr("href", url).removeClass("disabled");
 
-        if (!name || !city || !country) {
-            $("#addCustomerAlert").text("Please fill in Name, City, and Country.").removeClass("d-none");
-            return;
-        }
+        fetch(url, { method: 'GET' })
+            .then(function (response) {
+                $("#diagCodeDisplay").text(response.status + " " + response.statusText);
+                $("#diagDescriptionDisplay").text(response.statusText);
+                $("#diagStatusCodePill").text(response.status).removeClass().addClass("badge " + (response.status >= 400 ? "bg-danger" : "bg-success"));
 
-        $("#btnSubmitAddCustomer").prop("disabled", true).html('<i class="fa-solid fa-spinner fa-spin me-1"></i> Saving...');
-
-        $.ajax({
-            type: "POST",
-            url: "/Home/AddCustomer",
-            data: JSON.stringify({
-                customer: {
-                    ContactName: name,
-                    City: city,
-                    Country: country,
-                    Email: email,
-                    Phone: phone
-                }
-            }),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (res) {
-                $("#btnSubmitAddCustomer").prop("disabled", false).html('<i class="fa-solid fa-floppy-disk me-1"></i> Save via Stored Procedure');
-                if (res.success) {
-                    var modalEl = document.getElementById('modalAddCustomer');
-                    var modalInstance = bootstrap.Modal.getInstance(modalEl);
-                    if (modalInstance) modalInstance.hide();
-                    $("#formAddCustomer")[0].reset();
-                    $("#addCustomerAlert").addClass("d-none");
-                    // Refresh both grids
-                    fetchCustomerDataAndInitTable();
-                    $("#jsGridContainer").jsGrid("loadData");
+                if (url.indexOf("Unauthorized") >= 0) {
+                    $("#diagResultType").text("HttpUnauthorizedResult / HttpStatusCodeResult");
+                } else if (url.indexOf("NotFound") >= 0) {
+                    $("#diagResultType").text("HttpNotFoundResult");
+                } else if (url.indexOf("BadGateway") >= 0) {
+                    $("#diagResultType").text("HttpStatusCodeResult (502)");
                 } else {
-                    $("#addCustomerAlert").text(res.message || "Failed to insert customer.").removeClass("d-none");
+                    $("#diagResultType").text("HttpStatusCodeResult");
                 }
-            },
-            error: function () {
-                $("#btnSubmitAddCustomer").prop("disabled", false).html('<i class="fa-solid fa-floppy-disk me-1"></i> Save via Stored Procedure');
-                $("#addCustomerAlert").text("An error occurred while calling sp_InsertCustomer.").removeClass("d-none");
-            }
-        });
+
+                return response.text();
+            })
+            .then(function (html) {
+                $("#diagResponseBody").text(html.substring(0, 1500) + (html.length > 1500 ? "\n... [truncated]" : ""));
+            })
+            .catch(function (err) {
+                $("#diagCodeDisplay").text("Error");
+                $("#diagResponseBody").text(err.toString());
+            });
     }
 </script>
 }
