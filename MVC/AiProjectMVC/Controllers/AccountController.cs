@@ -12,28 +12,20 @@ namespace AiProjectMVC.Controllers
     public class AccountController : Controller
     {
         private readonly EmployeeUserRepo _userRepo = new EmployeeUserRepo();
+        private readonly Repository _authRepo = new Repository();
 
         // GET: /Account/Login
+        [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
-
-            // Load top demo accounts for quick testing
-            try
-            {
-                var users = _userRepo.GetAllUsers();
-                ViewBag.DemoUsers = users.Take(4).ToList();
-            }
-            catch
-            {
-                ViewBag.DemoUsers = new List<EmployeeUser>();
-            }
-
+            LoadDemoUsers();
             return View(new LoginViewModel());
         }
 
         // POST: /Account/Login
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginViewModel model, string returnUrl)
         {
@@ -45,29 +37,102 @@ namespace AiProjectMVC.Controllers
 
             try
             {
-                var user = _userRepo.AuthenticateUser(model.UserNameOrEmail, model.Password);
+                string inputIdentifier = (model.UserNameOrEmail ?? "").Trim();
+                string inputPassword = (model.Password ?? "").Trim();
 
-                if (user != null)
+                // 1. Check in USERS table (PDF custom authentication / role demo accounts)
+                USER pdfUser = null;
+                try
                 {
-                    // Store user details in session
-                    Session["CurrentUser"] = user;
-                    Session["UserId"] = user.ID;
-                    Session["UserName"] = user.UserName;
-                    Session["FullName"] = user.Name;
-                    Session["UserRole"] = user.Role;
-                    Session["Email"] = user.Email;
+                    pdfUser = _authRepo.GetUserDetails(inputIdentifier, inputPassword);
+                }
+                catch
+                {
+                    // Continue to EmployeeUser if query fails
+                }
 
-                    // Set authentication cookie
-                    FormsAuthentication.SetAuthCookie(user.UserName, model.RememberMe);
+                if (pdfUser != null)
+                {
+                    // Issue FormsAuthenticationTicket with Roles in UserData (Slides 18-19, 21)
+                    FormsAuthentication.SetAuthCookie(pdfUser.UserName, model.RememberMe);
+                    var authTicket = new FormsAuthenticationTicket(
+                        1,
+                        pdfUser.UserName,
+                        DateTime.Now,
+                        DateTime.Now.AddMinutes(30),
+                        model.RememberMe,
+                        pdfUser.Roles ?? "USER"
+                    );
+                    string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+                    var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+                    if (model.RememberMe)
+                    {
+                        authCookie.Expires = authTicket.Expiration;
+                    }
+                    Response.Cookies.Add(authCookie);
 
-                    TempData["SuccessMessage"] = $"Welcome back, {user.Name}! Logged in as {user.Role}.";
+                    // Set Session variables
+                    Session["CurrentUser"] = new EmployeeUser
+                    {
+                        ID = (int)pdfUser.UserID,
+                        UserName = pdfUser.UserName,
+                        Name = pdfUser.UserName.Contains("@") ? pdfUser.UserName.Split('@')[0] : pdfUser.UserName,
+                        Role = pdfUser.Roles,
+                        Email = pdfUser.UserName.Contains("@") ? pdfUser.UserName : ""
+                    };
+                    Session["UserId"] = pdfUser.UserID;
+                    Session["UserName"] = pdfUser.UserName;
+                    Session["FullName"] = pdfUser.UserName;
+                    Session["UserRole"] = pdfUser.Roles;
+                    Session["Email"] = pdfUser.UserName;
+
+                    TempData["SuccessMessage"] = $"Logged in successfully as {pdfUser.UserName} (Roles: {pdfUser.Roles})!";
 
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
                         return Redirect(returnUrl);
                     }
 
-                    // Direct to Employee Dashboard
+                    return RedirectToAction("Index", "Home");
+                }
+
+                // 2. Check in EmployeeUser table (Employee management accounts)
+                var empUser = _userRepo.AuthenticateUser(inputIdentifier, inputPassword);
+                if (empUser != null)
+                {
+                    // Issue FormsAuthenticationTicket with Role in UserData
+                    FormsAuthentication.SetAuthCookie(empUser.UserName, model.RememberMe);
+                    var authTicket = new FormsAuthenticationTicket(
+                        1,
+                        empUser.UserName,
+                        DateTime.Now,
+                        DateTime.Now.AddMinutes(30),
+                        model.RememberMe,
+                        empUser.Role ?? "Employee"
+                    );
+                    string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+                    var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+                    if (model.RememberMe)
+                    {
+                        authCookie.Expires = authTicket.Expiration;
+                    }
+                    Response.Cookies.Add(authCookie);
+
+                    // Store user details in session
+                    Session["CurrentUser"] = empUser;
+                    Session["UserId"] = empUser.ID;
+                    Session["UserName"] = empUser.UserName;
+                    Session["FullName"] = empUser.Name;
+                    Session["UserRole"] = empUser.Role;
+                    Session["Email"] = empUser.Email;
+
+                    TempData["SuccessMessage"] = $"Welcome back, {empUser.Name}! Logged in as {empUser.Role}.";
+
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+
                     return RedirectToAction("Dashboard", "Employee");
                 }
 
@@ -82,7 +147,15 @@ namespace AiProjectMVC.Controllers
             return View(model);
         }
 
+        // GET: /Account/AccessDenied
+        [AllowAnonymous]
+        public ActionResult AccessDenied()
+        {
+            return View();
+        }
+
         // GET: /Account/Register
+        [AllowAnonymous]
         public ActionResult Register()
         {
             return View(new RegisterViewModel());
@@ -90,6 +163,7 @@ namespace AiProjectMVC.Controllers
 
         // POST: /Account/Register
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public ActionResult Register(RegisterViewModel model)
         {
@@ -155,12 +229,38 @@ namespace AiProjectMVC.Controllers
             Session.Abandon();
             FormsAuthentication.SignOut();
 
+            if (Request.Cookies[FormsAuthentication.FormsCookieName] != null)
+            {
+                var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, "")
+                {
+                    Expires = DateTime.Now.AddDays(-1)
+                };
+                Response.Cookies.Add(cookie);
+            }
+
             TempData["SuccessMessage"] = "You have been logged out successfully.";
             return RedirectToAction("Login");
         }
 
+        // POST: /Account/LogOff
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult LogOff()
+        {
+            return Logout();
+        }
+
         private void LoadDemoUsers()
         {
+            try
+            {
+                ViewBag.PdfUsers = _authRepo.GetAllUsers();
+            }
+            catch
+            {
+                ViewBag.PdfUsers = new List<USER>();
+            }
+
             try
             {
                 var users = _userRepo.GetAllUsers();
