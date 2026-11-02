@@ -77,3 +77,5 @@ D:\avi\C#\MVC\FirstMVCProject\obj\Debug\FirstMVCProject.csproj.CoreCompileInputs
 D:\avi\C#\MVC\FirstMVCProject\obj\Debug\FirstMVC.03338DF8.Up2Date
 D:\avi\C#\MVC\FirstMVCProject\obj\Debug\FirstMVCProject.dll
 D:\avi\C#\MVC\FirstMVCProject\obj\Debug\FirstMVCProject.pdb
+D:\avi\C#\MVC\FirstMVCProject\bin\EntityFramework.dll
+D:\avi\C#\MVC\FirstMVCProject\bin\EntityFramework.xml
