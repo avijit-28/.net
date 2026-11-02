@@ -1560,49 +1560,150 @@ body.focus-mode-active .footer-lms {
     background-size: 20px 20px;
 }
 
+/* ==========================================================================
+   PAGE-SPECIFIC ATMOSPHERES & PALETTE GRADIENT SYSTEM
+   Colors:
+     Darkest:  #041822
+     Dark:     #062330
+     Medium:   #0B3445
+     Medium+:  #0D3B4F
+     Light:    #12495C
+     Accent:   #FF7A18
+   ========================================================================== */
+
+/* Universal Dark Card & Typography Standard for Upgraded Atmospheric Pages */
+body.page-courses,
+body.page-course-details,
+body.page-my-courses,
+body.page-student-dashboard,
+body.page-assignment,
+body.page-quiz,
+body.page-quiz-result,
+body.page-certificate,
+body.page-certificate-verify,
+body.page-instructor-dashboard,
+body.page-instructor-management,
+body.page-admin-dashboard,
+body.page-admin-management,
+body.page-login,
+body.page-register,
+body.page-profile,
+body.page-notifications,
+body.page-about,
+body.page-contact,
+body.page-instructors {
+    color: #E2E8F0;
+}
+
+body.page-courses h1, body.page-courses h2, body.page-courses h3, body.page-courses h4, body.page-courses h5, body.page-courses h6,
+body.page-course-details h1, body.page-course-details h2, body.page-course-details h3, body.page-course-details h4, body.page-course-details h5, body.page-course-details h6,
+body.page-my-courses h1, body.page-my-courses h2, body.page-my-courses h3, body.page-my-courses h4, body.page-my-courses h5, body.page-my-courses h6,
+body.page-student-dashboard h1, body.page-student-dashboard h2, body.page-student-dashboard h3, body.page-student-dashboard h4, body.page-student-dashboard h5, body.page-student-dashboard h6,
+body.page-assignment h1, body.page-assignment h2, body.page-assignment h3, body.page-assignment h4, body.page-assignment h5, body.page-assignment h6,
+body.page-profile h1, body.page-profile h2, body.page-profile h3, body.page-profile h4, body.page-profile h5, body.page-profile h6,
+body.page-notifications h1, body.page-notifications h2, body.page-notifications h3, body.page-notifications h4, body.page-notifications h5, body.page-notifications h6,
+body.page-about h1, body.page-about h2, body.page-about h3, body.page-about h4, body.page-about h5, body.page-about h6,
+body.page-contact h1, body.page-contact h2, body.page-contact h3, body.page-contact h4, body.page-contact h5, body.page-contact h6,
+body.page-instructors h1, body.page-instructors h2, body.page-instructors h3, body.page-instructors h4, body.page-instructors h5, body.page-instructors h6,
+body.page-courses .text-dark, body.page-my-courses .text-dark, body.page-student-dashboard .text-dark,
+body.page-assignment .text-dark, body.page-profile .text-dark, body.page-notifications .text-dark,
+body.page-about .text-dark, body.page-contact .text-dark, body.page-instructors .text-dark {
+    color: #FFFFFF !important;
+}
+
+body.page-courses .text-muted, body.page-my-courses .text-muted, body.page-student-dashboard .text-muted,
+body.page-assignment .text-muted, body.page-profile .text-muted, body.page-notifications .text-muted,
+body.page-about .text-muted, body.page-contact .text-muted, body.page-instructors .text-muted {
+    color: #94A3B8 !important;
+}
+
+/* Transform White Surfaces into Sleek Dark Glass on Upgraded Pages */
+body.page-courses .card.bg-white, body.page-courses .card-custom.bg-white,
+body.page-my-courses .card.bg-white, body.page-my-courses .card-custom.bg-white,
+body.page-student-dashboard .card.bg-white, body.page-student-dashboard .card-custom.bg-white,
+body.page-assignment .card.bg-white, body.page-assignment .card-custom.bg-white,
+body.page-profile .card.bg-white, body.page-profile .card-custom.bg-white,
+body.page-notifications .card.bg-white, body.page-notifications .card-custom.bg-white,
+body.page-about .card.bg-white, body.page-about .card-custom.bg-white,
+body.page-contact .card.bg-white, body.page-contact .card-custom.bg-white,
+body.page-instructors .card.bg-white, body.page-instructors .card-custom.bg-white {
+    background: rgba(6, 35, 48, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
 /* --------------------------------------------------------------------------
    1. Home Page: Deep Navy + Orange + Cyan Marketing Experience
    -------------------------------------------------------------------------- */
 body.page-home {
-    background-color: #041620;
-}
-
-/* --------------------------------------------------------------------------
-   2. Courses Page: Clean Academic / Discovery Environment
-   -------------------------------------------------------------------------- */
-body.page-courses {
-    background-color: #F4F7FB;
+    background-color: #041822;
     background-image:
-        radial-gradient(circle at 10% 12%, rgba(39, 184, 214, 0.12), transparent 38%),
-        radial-gradient(circle at 90% 18%, rgba(91, 63, 228, 0.08), transparent 32%),
-        radial-gradient(circle at 50% 90%, rgba(255, 122, 24, 0.06), transparent 35%),
-        radial-gradient(#CBD5E1 0.75px, transparent 0.75px),
-        linear-gradient(to right, rgba(226, 232, 240, 0.35) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(226, 232, 240, 0.35) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 20px 20px, 48px 48px, 48px 48px;
+        radial-gradient(circle at 80% 20%, #0D3B4F 0%, transparent 45%),
+        radial-gradient(circle at 15% 65%, #0B3445 0%, transparent 40%),
+        linear-gradient(180deg, #041822 0%, #062330 45%, #041822 100%);
     background-attachment: fixed;
 }
-body.page-courses .course-card {
-    background: #FFFFFF !important;
-    border: 1px solid rgba(226, 232, 240, 0.9) !important;
-    box-shadow: 0 4px 20px rgba(16, 35, 63, 0.06) !important;
+body.page-home .bg-white {
+    background: rgba(6, 35, 48, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #FFFFFF !important;
+}
+body.page-home .bg-light {
+    background: rgba(11, 52, 69, 0.5) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 /* --------------------------------------------------------------------------
-   3. Course Details Page: Dark-to-Light Educational Journey
+   2. Courses Catalog Page: Deep Slate & Cyan Nebula Discovery
+   -------------------------------------------------------------------------- */
+body.page-courses {
+    background-color: #041822 !important;
+    background-image:
+        radial-gradient(circle at 10% 12%, #0D3B4F 0%, transparent 40%),
+        radial-gradient(circle at 90% 25%, #0B3445 0%, transparent 35%),
+        radial-gradient(circle at 50% 85%, rgba(255, 122, 24, 0.09) 0%, transparent 35%),
+        linear-gradient(180deg, #062330 0%, #041822 100%) !important;
+    background-attachment: fixed;
+}
+body.page-courses .course-catalog-item .card {
+    background: rgba(6, 35, 48, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
+}
+body.page-courses .card.p-4 {
+    background: rgba(6, 35, 48, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
+}
+body.page-courses .category-chip-btn {
+    background: rgba(11, 52, 69, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #E2E8F0 !important;
+}
+body.page-courses .category-chip-btn.active {
+    background: #FF7A18 !important;
+    border-color: #FF7A18 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 14px rgba(255, 122, 24, 0.35) !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. Course Details Page: Deep Slate Gradient Atmosphere
    -------------------------------------------------------------------------- */
 body.page-course-details {
-    background-color: #F8FAFD;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 80% 20%, rgba(39, 184, 214, 0.09), transparent 32%),
-        radial-gradient(circle at 20% 60%, rgba(91, 63, 228, 0.06), transparent 35%);
+        radial-gradient(circle at 80% 20%, #0D3B4F 0%, transparent 40%),
+        radial-gradient(circle at 20% 60%, #0B3445 0%, transparent 45%),
+        linear-gradient(180deg, #062330 0%, #041822 100%) !important;
     background-attachment: fixed;
 }
 body.page-course-details .card-gradient-top {
-    background: linear-gradient(135deg, #062330 0%, #073347 55%, #051924 100%) !important;
+    background: linear-gradient(135deg, #062330 0%, #0B3445 55%, #041822 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     color: #FFFFFF !important;
-    box-shadow: 0 15px 40px rgba(6, 35, 48, 0.25) !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4) !important;
 }
 body.page-course-details .card-gradient-top h1,
 body.page-course-details .card-gradient-top .text-dark,
@@ -1613,59 +1714,103 @@ body.page-course-details .card-gradient-top .text-secondary,
 body.page-course-details .card-gradient-top .lead {
     color: #CBD5E1 !important;
 }
+body.page-course-details .col-lg-4 .card {
+    background: #062330 !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    color: #FFFFFF !important;
+}
+body.page-course-details .col-lg-4 .card .display-6,
+body.page-course-details .col-lg-4 .card .text-dark,
+body.page-course-details .col-lg-4 .card strong {
+    color: #FFFFFF !important;
+}
+body.page-course-details .col-lg-4 .card .text-muted,
+body.page-course-details .col-lg-4 .card .text-secondary {
+    color: #94A3B8 !important;
+}
+body.page-course-details .accordion-item {
+    background: rgba(6, 35, 48, 0.8) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
+}
+body.page-course-details .accordion-button {
+    background: rgba(11, 52, 69, 0.6) !important;
+    color: #FFFFFF !important;
+}
+body.page-course-details .accordion-button:not(.collapsed) {
+    background: #0B3445 !important;
+    color: #FF7A18 !important;
+}
+body.page-course-details .list-group-item {
+    background: transparent !important;
+    color: #E2E8F0 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
 
 /* --------------------------------------------------------------------------
-   4. My Courses Page: Personal Learning Workspace
+   4. My Courses Page: Personal Workspace Gradient
    -------------------------------------------------------------------------- */
 body.page-my-courses {
-    background-color: #F0F6F8;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 15% 15%, rgba(6, 78, 99, 0.12), transparent 35%),
-        radial-gradient(circle at 85% 12%, rgba(255, 122, 24, 0.09), transparent 30%),
-        linear-gradient(180deg, rgba(6, 55, 69, 0.04) 0%, rgba(248, 250, 252, 0) 380px);
+        radial-gradient(circle at 15% 15%, #0D3B4F 0%, transparent 40%),
+        radial-gradient(circle at 85% 12%, rgba(255, 122, 24, 0.1) 0%, transparent 35%),
+        linear-gradient(180deg, #062330 0%, #041822 100%) !important;
     background-attachment: fixed;
+}
+body.page-my-courses .card.card-custom {
+    background: rgba(6, 35, 48, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
 }
 
 /* --------------------------------------------------------------------------
    5. Student Dashboard: Personal Productivity Hub
    -------------------------------------------------------------------------- */
 body.page-student-dashboard {
-    background-color: #F5F8FC;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 12% 15%, rgba(39, 184, 214, 0.11), transparent 34%),
-        radial-gradient(circle at 88% 22%, rgba(91, 63, 228, 0.09), transparent 30%),
-        radial-gradient(circle at 50% 85%, rgba(53, 201, 138, 0.07), transparent 35%),
-        linear-gradient(to right, rgba(226, 232, 240, 0.3) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(226, 232, 240, 0.3) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+        radial-gradient(circle at 12% 15%, #0D3B4F 0%, transparent 38%),
+        radial-gradient(circle at 88% 22%, #0B3445 0%, transparent 38%),
+        radial-gradient(circle at 50% 85%, rgba(39, 184, 214, 0.08) 0%, transparent 35%),
+        linear-gradient(180deg, #062330 0%, #041822 100%) !important;
     background-attachment: fixed;
 }
 body.page-student-dashboard .stat-card-courses {
-    background: #EFF6FF !important;
-    border: 1px solid #BFDBFE !important;
+    background: rgba(11, 52, 69, 0.7) !important;
+    border: 1px solid rgba(39, 184, 214, 0.3) !important;
+    color: #FFFFFF !important;
 }
 body.page-student-dashboard .stat-card-completed {
-    background: #ECFDF5 !important;
-    border: 1px solid #A7F3D0 !important;
+    background: rgba(11, 52, 69, 0.7) !important;
+    border: 1px solid rgba(53, 201, 138, 0.3) !important;
+    color: #FFFFFF !important;
 }
 body.page-student-dashboard .stat-card-progress {
-    background: #FAF5FF !important;
-    border: 1px solid #E9D5FF !important;
+    background: rgba(11, 52, 69, 0.7) !important;
+    border: 1px solid rgba(91, 63, 228, 0.3) !important;
+    color: #FFFFFF !important;
 }
 body.page-student-dashboard .stat-card-certificates {
-    background: #FFF7ED !important;
-    border: 1px solid #FFEDD5 !important;
+    background: rgba(11, 52, 69, 0.7) !important;
+    border: 1px solid rgba(255, 122, 24, 0.3) !important;
+    color: #FFFFFF !important;
+}
+body.page-student-dashboard .card.card-custom {
+    background: rgba(6, 35, 48, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
 }
 
 /* --------------------------------------------------------------------------
    6. Learning Page: Focused Immersive Study Room
    -------------------------------------------------------------------------- */
 body.page-learning {
-    background-color: #041620 !important;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 20% 20%, rgba(91, 63, 228, 0.25), transparent 38%),
-        radial-gradient(circle at 80% 65%, rgba(39, 184, 214, 0.18), transparent 32%),
-        radial-gradient(circle at 50% 90%, rgba(255, 122, 24, 0.10), transparent 35%);
+        radial-gradient(circle at 20% 20%, #0D3B4F 0%, transparent 40%),
+        radial-gradient(circle at 80% 65%, #0B3445 0%, transparent 38%),
+        linear-gradient(180deg, #062330 0%, #041822 100%) !important;
     background-attachment: fixed;
 }
 
