@@ -3,93 +3,139 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - jQuery DataTables & JSGrid AJAX Dashboard</title>
+    <title>@ViewBag.Title - Enterprise MVC Data Hub</title>
     
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap 5 CSS -->
     @Styles.Render("~/Content/css")
     
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Font Awesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     
-    <!-- jQuery DataTables CSS -->
+    <!-- jQuery DataTables + Bootstrap 5 Theme + Responsive + Buttons -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" />
     
     <!-- JSGrid CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
     
-    <!-- Core jQuery (Loaded early in head for smooth execution) -->
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
+    
+    <!-- Core jQuery (Pre-loaded in head for early scripts) -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+    <!-- Top Navigation Header -->
+    <header class="app-header navbar navbar-expand-xl navbar-dark sticky-top shadow-sm py-2">
         <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center" href="@Url.Action("Index", "Home")">
-                <i class="fa-solid fa-table-cells text-primary me-2 fs-4"></i>
-                <span class="fw-bold">AJAX Grid Hub</span>
-                <span class="badge bg-primary ms-2 rounded-pill fs-7">ASP.NET MVC</span>
+            <a class="navbar-brand d-flex align-items-center me-4" href="@Url.Action("Index", "Home")">
+                <div class="bg-primary text-white p-2 rounded-3 me-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div>
+                    <span class="fw-bold tracking-tight text-white">Enterprise Data Hub</span>
+                    <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25 ms-1 small">ASP.NET MVC</span>
+                </div>
             </a>
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
-                    aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAppHub"
+                    aria-controls="navbarAppHub" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <div class="collapse navbar-collapse" id="navbarAppHub">
+                <ul class="navbar-nav me-auto mb-2 mb-xl-0 gap-1">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#dashboard-overview"><i class="fa-solid fa-chart-pie me-1"></i> Dashboard</a>
+                        <a class="nav-link text-light" href="@Url.Action("Index", "Home")#tab-datatable">
+                            <i class="fa-solid fa-table me-1 text-primary"></i> DataTables Studio
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#interactive-workflow"><i class="fa-solid fa-diagram-project me-1"></i> Architecture Workflow</a>
+                        <a class="nav-link text-light" href="@Url.Action("Index", "Home")#tab-jsgrid">
+                            <i class="fa-solid fa-table-cells me-1 text-info"></i> JSGrid Workspace
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#live-datatable"><i class="fa-solid fa-table me-1"></i> jQuery DataTable</a>
+                        <a class="nav-link text-light" href="@Url.Action("InsertUserDetails", "User")">
+                            <i class="fa-solid fa-user-plus me-1 text-success"></i> User Details CRUD
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#live-jsgrid"><i class="fa-solid fa-grip me-1"></i> JSGrid Component</a>
+                        <a class="nav-link text-light" href="@Url.Action("Index", "Home")#tab-redirects">
+                            <i class="fa-solid fa-share-from-square me-1 text-warning"></i> Redirects &amp; Routing
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#ajax-inspector"><i class="fa-solid fa-terminal me-1"></i> AJAX Inspector</a>
+                        <a class="nav-link text-light" href="@Url.Action("Index", "Home")#tab-status">
+                            <i class="fa-solid fa-shield-halved me-1 text-danger"></i> Status Results Lab
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-warning fw-semibold" href="@Url.Action("InsertUserDetails", "User")">
-                            <i class="fa-solid fa-arrows-split-up-and-left me-1"></i> Redirects &amp; Status
+                        <a class="nav-link text-light" href="@Url.Action("Index", "Home")#tab-workflow">
+                            <i class="fa-solid fa-diagram-project me-1 text-purple"></i> Architecture Workflow
                         </a>
                     </li>
                 </ul>
-                <div class="d-flex align-items-center text-white">
-                    <span class="badge bg-success me-2"><i class="fa-solid fa-circle-check me-1"></i> Backend Online</span>
-                    <span class="small text-secondary">ASP.NET MVC + jQuery AJAX</span>
+
+                <!-- Top Right Live Status Pill -->
+                <div class="d-flex align-items-center gap-3 mt-3 mt-xl-0">
+                    <div class="d-flex align-items-center bg-dark bg-opacity-50 px-3 py-1 rounded-pill border border-secondary border-opacity-25 text-white small">
+                        <span class="spinner-grow spinner-grow-sm text-success me-2" role="status" style="width: 8px; height: 8px;"></span>
+                        <span class="fw-semibold text-slate-300">SQL Server (Assignmet)</span>
+                        <span class="mx-2 text-muted">|</span>
+                        <span class="text-success fw-bold">Live</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <div class="container-fluid px-4 body-content">
+    <!-- Main Content Container -->
+    <main role="main" class="pb-5">
         @RenderBody()
-        
-        <footer class="mt-5 pt-4 pb-3 border-top text-muted small text-center">
-            <p class="mb-1">&copy; @DateTime.Now.Year - ASP.NET MVC with jQuery DataTables & JSGrid Integration</p>
-            <p class="text-secondary mb-0">End-to-End Client/Server Architecture with Entity Framework &amp; JsonResult</p>
-        </footer>
-    </div>
+    </main>
+
+    <!-- App Footer -->
+    <footer class="bg-white border-top py-4 mt-auto">
+        <div class="container-fluid px-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center small text-muted">
+                <div>
+                    <strong>ASP.NET MVC 5</strong> &bull; jQuery DataTables &bull; JSGrid &bull; SQL Server Stored Procedures
+                </div>
+                <div class="mt-2 mt-md-0">
+                    <span class="badge bg-light text-dark border me-2">Connection: DBConn</span>
+                    <span class="badge bg-light text-dark border">Procedures: sp_SearchCustomers &bull; usercrudoperations</span>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- Bootstrap Bundle JS -->
     @Scripts.Render("~/bundles/bootstrap")
     
-    <!-- jQuery DataTables JS -->
+    <!-- DataTables JS & Extensions -->
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
     
+    <!-- DataTables Export Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    
     <!-- JSGrid JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
     
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     @RenderSection("scripts", required: false)
 </body>
 </html>
