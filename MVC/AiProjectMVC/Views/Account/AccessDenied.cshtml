@@ -1,0 +1,51 @@
+@{
+    ViewBag.Title = "Unauthorized Access";
+    var currentUser = Session["CurrentUser"] as AiProjectMVC.Models.EmployeeUser;
+    var currentRole = Session["UserRole"] as string ?? "Guest";
+}
+
+<div class="row justify-content-center py-5">
+    <div class="col-lg-6 col-md-8">
+        <div class="custom-card text-center p-4 border-danger border-opacity-25 shadow-lg">
+            <div class="mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10 text-danger p-4 mb-2" style="width: 90px; height: 90px;">
+                    <i class="bi bi-shield-lock-fill fs-1"></i>
+                </div>
+                <h2 class="fw-bold text-danger mt-3 mb-1">Unauthorized Access</h2>
+                <p class="text-muted">You do not have permission to view or execute this resource.</p>
+            </div>
+
+            <div class="alert alert-warning text-start d-flex align-items-start gap-3 p-3 rounded-3 mb-4">
+                <i class="bi bi-exclamation-triangle-fill fs-4 text-warning flex-shrink-0 mt-1"></i>
+                <div class="small">
+                    <strong>Role Restriction Enforced:</strong> This action method is decorated with an authorization filter attribute (e.g. <code>[AuthorizeRole]</code>) requiring specific role privileges.
+                    <div class="mt-2 text-secondary">
+                        Current User: <strong>@(currentUser != null ? currentUser.Name : (User.Identity.IsAuthenticated ? User.Identity.Name : "Anonymous"))</strong> &bull;
+                        Assigned Role: <span class="badge bg-secondary">@currentRole</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-light border-0 p-3 mb-4 text-start">
+                <div class="fw-semibold text-dark small mb-2"><i class="bi bi-info-circle me-1 text-primary"></i> Required Permissions Guide:</div>
+                <ul class="list-unstyled small text-muted mb-0">
+                    <li class="mb-1"><span class="badge bg-danger me-1">SUPERADMIN</span> Full access to all administrative routes including <code>/Home/About</code>.</li>
+                    <li class="mb-1"><span class="badge bg-primary me-1">ADMIN</span> Access to management routes, employee modifications, and <code>/Home/Contact</code>.</li>
+                    <li class="mb-1"><span class="badge bg-success me-1">USER</span> Access to general member routes including <code>/Home/UserPage</code>.</li>
+                </ul>
+            </div>
+
+            <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary">
+                    <i class="bi bi-house me-1"></i> Return Home
+                </a>
+                <a href="@Url.Action("Dashboard", "Employee")" class="btn btn-primary-gradient">
+                    <i class="bi bi-speedometer2 me-1"></i> My Dashboard
+                </a>
+                <a href="@Url.Action("Login", "Account")" class="btn btn-outline-danger">
+                    <i class="bi bi-person-switch me-1"></i> Switch Account
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
