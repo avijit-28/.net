@@ -1,13 +1,71 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Error</title>
-</head>
-<body>
-    <hgroup>
-        <h1>Error.</h1>
-        <h2>An error occurred while processing your request.</h2>
-    </hgroup>
-</body>
-</html>
+@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    ViewBag.Title = "Application Error";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center py-5">
+    <div class="col-lg-7 col-md-9">
+        <div class="custom-card shadow-lg border-danger border-opacity-25 overflow-hidden">
+            <div class="p-4 text-center text-white" style="background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 50%, #dc2626 100%);">
+                <div class="d-inline-flex p-3 rounded-circle bg-white bg-opacity-10 text-white mb-2 shadow-sm">
+                    <i class="bi bi-exclamation-octagon-fill fs-1"></i>
+                </div>
+                <h3 class="fw-bold mb-1">System Exception Handled</h3>
+                <p class="text-white-50 small mb-0">Captured and logged by <code>EmployeeExceptionFilter</code></p>
+            </div>
+
+            <div class="custom-card-body p-4">
+                <div class="alert alert-danger d-flex align-items-start gap-3 p-3 rounded-3 mb-4">
+                    <i class="bi bi-bug-fill fs-4 text-danger flex-shrink-0 mt-1"></i>
+                    <div>
+                        <h6 class="alert-heading fw-bold mb-1">An unexpected error occurred while processing your request.</h6>
+                        <p class="mb-0 small text-danger-emphasis">
+                            The error details have been recorded to the diagnostic log file at <code>~/Log/Log.txt</code>.
+                        </p>
+                    </div>
+                </div>
+
+                @if (Model != null)
+                {
+                    <div class="card bg-light border-0 p-3 mb-4">
+                        <div class="fw-bold text-dark small text-uppercase mb-2">
+                            <i class="bi bi-file-earmark-code text-primary me-1"></i> Exception Context
+                        </div>
+                        <div class="row g-2 small">
+                            <div class="col-sm-4 text-muted">Controller:</div>
+                            <div class="col-sm-8 fw-semibold text-dark">@Model.ControllerName</div>
+
+                            <div class="col-sm-4 text-muted">Action Method:</div>
+                            <div class="col-sm-8 fw-semibold text-dark">@Model.ActionName</div>
+
+                            @if (Model.Exception != null)
+                            {
+                                <div class="col-sm-4 text-muted">Exception Message:</div>
+                                <div class="col-sm-8 text-danger fw-semibold">@Model.Exception.Message</div>
+
+                                <div class="col-sm-4 text-muted">Exception Type:</div>
+                                <div class="col-sm-8 font-monospace text-secondary">@Model.Exception.GetType().FullName</div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="d-flex justify-content-between align-items-center pt-2">
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Go Back
+                    </a>
+                    <div class="d-flex gap-2">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary">
+                            <i class="bi bi-house me-1"></i> Home
+                        </a>
+                        <a href="@Url.Action("Dashboard", "Employee")" class="btn btn-primary-gradient">
+                            <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
