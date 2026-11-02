@@ -17,6 +17,8 @@ namespace LMS
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            System.Web.Helpers.AntiForgeryConfig.UniqueClaimTypeIdentifier = System.Security.Claims.ClaimTypes.NameIdentifier;
+
             try
             {
                 using (var db = new LMS.Data.ApplicationDbContext())
