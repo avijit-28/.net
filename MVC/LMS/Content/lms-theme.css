@@ -2036,35 +2036,44 @@ body.page-quiz-result .bg-light {
 }
 
 /* --------------------------------------------------------------------------
-   9. Assignments: Warm Cream Professional Productivity Workspace
+   9. Assignments: Professional Dark Focus Workspace
    -------------------------------------------------------------------------- */
 body.page-assignment {
-    background-color: #F8F6F2;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 10% 15%, rgba(255, 122, 24, 0.08), transparent 32%),
-        radial-gradient(circle at 90% 85%, rgba(6, 43, 58, 0.06), transparent 30%),
-        linear-gradient(to right, rgba(235, 230, 222, 0.5) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(235, 230, 222, 0.5) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+        radial-gradient(circle at 12% 15%, rgba(39, 184, 214, 0.14), transparent 40%),
+        radial-gradient(circle at 88% 20%, rgba(255, 122, 24, 0.12), transparent 35%),
+        radial-gradient(circle at 50% 85%, rgba(18, 73, 92, 0.25), transparent 45%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%);
     background-attachment: fixed;
+    color: #E2E8F0 !important;
 }
-body.page-assignment .card-custom {
-    background: #FFFFFF;
-    border: 1px solid #E8E3DA;
-    box-shadow: 0 4px 16px rgba(16, 35, 63, 0.04);
+body.page-assignment .card-custom,
+body.page-assignment .card {
+    background: rgba(6, 35, 48, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+    backdrop-filter: blur(8px);
+}
+body.page-assignment h1, body.page-assignment h2, body.page-assignment h3,
+body.page-assignment h4, body.page-assignment h5, body.page-assignment h6,
+body.page-assignment .text-dark {
+    color: #FFFFFF !important;
+}
+body.page-assignment .text-muted {
+    color: rgba(255, 255, 255, 0.65) !important;
 }
 
 /* --------------------------------------------------------------------------
    10. Certificates: Royal Deep Navy + Gold Honor Platform
    -------------------------------------------------------------------------- */
 body.page-certificate {
-    background-color: #051824 !important;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 50% 18%, rgba(245, 158, 11, 0.28), transparent 45%),
-        radial-gradient(circle at 15% 75%, rgba(255, 122, 24, 0.16), transparent 35%),
+        radial-gradient(circle at 50% 18%, rgba(255, 122, 24, 0.25), transparent 45%),
+        radial-gradient(circle at 15% 75%, rgba(39, 184, 214, 0.16), transparent 35%),
         radial-gradient(circle at 85% 80%, rgba(91, 63, 228, 0.18), transparent 35%),
-        radial-gradient(rgba(245, 158, 11, 0.08) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px;
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%);
     background-attachment: fixed;
     color: #FFFFFF !important;
 }
@@ -2073,26 +2082,31 @@ body.page-certificate {
    11. Certificate Verification: Trust & Authenticity
    -------------------------------------------------------------------------- */
 body.page-certificate-verify {
-    background-color: #F0FDF4;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 20% 15%, rgba(53, 201, 138, 0.14), transparent 35%),
-        radial-gradient(circle at 80% 25%, rgba(39, 184, 214, 0.10), transparent 35%),
-        linear-gradient(180deg, #F0FDF4 0%, #F8FAFC 450px, #FFFFFF 100%);
+        radial-gradient(circle at 20% 15%, rgba(53, 201, 138, 0.18), transparent 40%),
+        radial-gradient(circle at 80% 25%, rgba(39, 184, 214, 0.15), transparent 40%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%);
     background-attachment: fixed;
+    color: #E2E8F0 !important;
+}
+body.page-certificate-verify .card-custom,
+body.page-certificate-verify .card {
+    background: rgba(6, 35, 48, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
 }
 
 /* --------------------------------------------------------------------------
    12. Instructor Dashboard: Creator Studio
    -------------------------------------------------------------------------- */
 body.page-instructor-dashboard {
-    background-color: #061D28 !important;
+    background-color: #041822 !important;
     background-image:
         radial-gradient(circle at 15% 15%, rgba(39, 184, 214, 0.22), transparent 35%),
         radial-gradient(circle at 85% 20%, rgba(255, 122, 24, 0.18), transparent 30%),
         radial-gradient(circle at 50% 85%, rgba(53, 201, 138, 0.14), transparent 38%),
-        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%);
     background-attachment: fixed;
     color: #E2E8F0 !important;
 }
@@ -2114,28 +2128,50 @@ body.page-instructor-dashboard .text-muted {
    13. Instructor Management: Content Studio Blueprint
    -------------------------------------------------------------------------- */
 body.page-instructor-management {
-    background-color: #F3F6FA;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 10% 15%, rgba(39, 184, 214, 0.08), transparent 30%),
-        radial-gradient(circle at 90% 10%, rgba(91, 63, 228, 0.06), transparent 30%),
-        linear-gradient(to right, rgba(226, 232, 240, 0.45) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(226, 232, 240, 0.45) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+        radial-gradient(circle at 10% 15%, rgba(39, 184, 214, 0.16), transparent 35%),
+        radial-gradient(circle at 90% 10%, rgba(255, 122, 24, 0.14), transparent 35%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%);
     background-attachment: fixed;
+    color: #E2E8F0 !important;
+}
+body.page-instructor-management .card-custom,
+body.page-instructor-management .card {
+    background: rgba(6, 35, 48, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+body.page-instructor-management h1, body.page-instructor-management h2, body.page-instructor-management h3,
+body.page-instructor-management h4, body.page-instructor-management h5, body.page-instructor-management h6,
+body.page-instructor-management .text-dark {
+    color: #FFFFFF !important;
+}
+body.page-instructor-management .text-muted {
+    color: rgba(255, 255, 255, 0.65) !important;
+}
+body.page-instructor-management .table {
+    color: #E2E8F0 !important;
+}
+body.page-instructor-management .table td,
+body.page-instructor-management .table th {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #E2E8F0 !important;
+}
+body.page-instructor-management .table th {
+    background: #0B3445 !important;
 }
 
 /* --------------------------------------------------------------------------
    14. Admin Dashboard: Enterprise Command Center
    -------------------------------------------------------------------------- */
 body.page-admin-dashboard {
-    background-color: #071923 !important;
+    background-color: #041822 !important;
     background-image:
         radial-gradient(circle at 15% 15%, rgba(39, 184, 214, 0.24), transparent 35%),
         radial-gradient(circle at 85% 20%, rgba(255, 122, 24, 0.18), transparent 30%),
-        radial-gradient(circle at 50% 80%, rgba(91, 63, 228, 0.20), transparent 40%),
-        linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+        radial-gradient(circle at 50% 80%, rgba(18, 73, 92, 0.25), transparent 40%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%);
     background-attachment: fixed;
     color: #F1F5F9 !important;
 }
@@ -2170,33 +2206,60 @@ body.page-admin-dashboard .table-custom td {
    15. Admin Management: Enterprise SaaS Management
    -------------------------------------------------------------------------- */
 body.page-admin-management {
-    background-color: #F3F6F9;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 15% 10%, rgba(39, 184, 214, 0.08), transparent 30%),
-        radial-gradient(circle at 85% 85%, rgba(6, 43, 58, 0.05), transparent 30%),
-        linear-gradient(180deg, #F1F5F9 0%, #F8FAFC 400px, #FFFFFF 100%);
+        radial-gradient(circle at 15% 10%, rgba(39, 184, 214, 0.16), transparent 35%),
+        radial-gradient(circle at 85% 85%, rgba(255, 122, 24, 0.12), transparent 35%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%);
     background-attachment: fixed;
+    color: #E2E8F0 !important;
+}
+body.page-admin-management .card-custom,
+body.page-admin-management .card {
+    background: rgba(6, 35, 48, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+body.page-admin-management h1, body.page-admin-management h2, body.page-admin-management h3,
+body.page-admin-management h4, body.page-admin-management h5, body.page-admin-management h6,
+body.page-admin-management .text-dark {
+    color: #FFFFFF !important;
+}
+body.page-admin-management .text-muted {
+    color: rgba(255, 255, 255, 0.65) !important;
+}
+body.page-admin-management .table {
+    color: #E2E8F0 !important;
+}
+body.page-admin-management .table td,
+body.page-admin-management .table th {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #E2E8F0 !important;
+}
+body.page-admin-management .table th {
+    background: #0B3445 !important;
 }
 
 /* --------------------------------------------------------------------------
    16. Authentication (Login): Gateway to Learning Split Screen
    -------------------------------------------------------------------------- */
 body.page-login {
-    background-color: #062330 !important;
+    background-color: #041822 !important;
     background-image:
         radial-gradient(circle at 25% 30%, rgba(255, 122, 24, 0.20), transparent 45%),
         radial-gradient(circle at 75% 70%, rgba(39, 184, 214, 0.18), transparent 40%),
-        #041620 !important;
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%) !important;
     background-attachment: fixed;
 }
 body.page-login .login-split-card {
-    background: #FFFFFF;
+    background: #062330;
     border-radius: 24px;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
 }
 body.page-login .login-hero-side {
-    background: linear-gradient(135deg, #062330 0%, #073448 60%, #041620 100%);
+    background: linear-gradient(135deg, #041822 0%, #062330 60%, #0B3445 100%);
     color: #FFFFFF;
     padding: 3rem;
     position: relative;
@@ -2207,61 +2270,192 @@ body.page-login .login-hero-side {
    17. Authentication (Register): Start Your Learning Journey
    -------------------------------------------------------------------------- */
 body.page-register {
-    background-color: #FFFDF9;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 85% 15%, rgba(255, 122, 24, 0.14), transparent 35%),
-        radial-gradient(circle at 15% 80%, rgba(255, 154, 69, 0.10), transparent 35%),
-        linear-gradient(135deg, #FFFDFB 0%, #FFF7ED 50%, #FAF5FF 100%);
+        radial-gradient(circle at 85% 15%, rgba(255, 122, 24, 0.18), transparent 35%),
+        radial-gradient(circle at 15% 80%, rgba(39, 184, 214, 0.15), transparent 35%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%);
     background-attachment: fixed;
+    color: #FFFFFF !important;
+}
+body.page-register .login-split-card {
+    background: #062330;
+    border-radius: 24px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+body.page-register .card-custom {
+    background: #062330 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+body.page-register h1, body.page-register h2, body.page-register h3,
+body.page-register h4, body.page-register h5, body.page-register h6,
+body.page-register .text-dark {
+    color: #FFFFFF !important;
+}
+body.page-register .form-label {
+    color: #FFFFFF !important;
+}
+body.page-register .text-muted {
+    color: rgba(255, 255, 255, 0.65) !important;
 }
 
 /* --------------------------------------------------------------------------
    18. Profile: Personal Identity Hub
    -------------------------------------------------------------------------- */
 body.page-profile {
-    background-color: #F6F4FF;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 15% 15%, rgba(91, 63, 228, 0.12), transparent 35%),
-        radial-gradient(circle at 85% 25%, rgba(39, 184, 214, 0.08), transparent 30%),
-        linear-gradient(180deg, #F6F4FF 0%, #F8FAFC 350px, #FFFFFF 100%);
+        radial-gradient(circle at 15% 15%, rgba(91, 63, 228, 0.15), transparent 35%),
+        radial-gradient(circle at 85% 25%, rgba(39, 184, 214, 0.14), transparent 30%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%);
     background-attachment: fixed;
+    color: #E2E8F0 !important;
+}
+body.page-profile .card-custom,
+body.page-profile .card {
+    background: rgba(6, 35, 48, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+body.page-profile h1, body.page-profile h2, body.page-profile h3,
+body.page-profile h4, body.page-profile h5, body.page-profile h6,
+body.page-profile .text-dark {
+    color: #FFFFFF !important;
+}
+body.page-profile .text-muted {
+    color: rgba(255, 255, 255, 0.65) !important;
 }
 
 /* --------------------------------------------------------------------------
    19. Notifications: Communication Center
    -------------------------------------------------------------------------- */
 body.page-notifications {
-    background-color: #F4F8FB;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 18% 15%, rgba(39, 184, 214, 0.12), transparent 35%),
-        radial-gradient(circle at 82% 70%, rgba(91, 63, 228, 0.07), transparent 30%),
-        #F4F8FB;
+        radial-gradient(circle at 18% 15%, rgba(39, 184, 214, 0.16), transparent 35%),
+        radial-gradient(circle at 82% 70%, rgba(255, 122, 24, 0.12), transparent 30%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%);
     background-attachment: fixed;
+    color: #E2E8F0 !important;
+}
+body.page-notifications .card-custom,
+body.page-notifications .card {
+    background: rgba(6, 35, 48, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+body.page-notifications h1, body.page-notifications h2, body.page-notifications h3,
+body.page-notifications h4, body.page-notifications h5, body.page-notifications h6,
+body.page-notifications .text-dark {
+    color: #FFFFFF !important;
+}
+body.page-notifications .text-muted {
+    color: rgba(255, 255, 255, 0.65) !important;
 }
 
 /* --------------------------------------------------------------------------
    20. About Page: Brand Story
    -------------------------------------------------------------------------- */
 body.page-about {
-    background-color: #FBF9F5;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 15% 20%, rgba(6, 43, 58, 0.08), transparent 35%),
-        radial-gradient(circle at 85% 15%, rgba(255, 122, 24, 0.09), transparent 30%),
-        #FBF9F5;
+        radial-gradient(circle at 15% 20%, rgba(39, 184, 214, 0.15), transparent 35%),
+        radial-gradient(circle at 85% 15%, rgba(255, 122, 24, 0.15), transparent 30%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%);
     background-attachment: fixed;
+    color: #E2E8F0 !important;
+}
+body.page-about .card-custom,
+body.page-about .card {
+    background: rgba(6, 35, 48, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+body.page-about h1, body.page-about h2, body.page-about h3,
+body.page-about h4, body.page-about h5, body.page-about h6,
+body.page-about .text-dark {
+    color: #FFFFFF !important;
+}
+body.page-about .text-muted {
+    color: rgba(255, 255, 255, 0.65) !important;
 }
 
 /* --------------------------------------------------------------------------
    21. Contact Page: Human Connection
    -------------------------------------------------------------------------- */
 body.page-contact {
-    background-color: #F2F9FC;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 20% 20%, rgba(39, 184, 214, 0.14), transparent 35%),
-        radial-gradient(circle at 80% 30%, rgba(53, 201, 138, 0.08), transparent 30%),
-        #F2F9FC;
+        radial-gradient(circle at 20% 20%, rgba(39, 184, 214, 0.16), transparent 35%),
+        radial-gradient(circle at 80% 30%, rgba(255, 122, 24, 0.12), transparent 30%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%);
     background-attachment: fixed;
+    color: #E2E8F0 !important;
 }
+body.page-contact .card-custom,
+body.page-contact .card {
+    background: rgba(6, 35, 48, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+body.page-contact h1, body.page-contact h2, body.page-contact h3,
+body.page-contact h4, body.page-contact h5, body.page-contact h6,
+body.page-contact .text-dark {
+    color: #FFFFFF !important;
+}
+body.page-contact .text-muted {
+    color: rgba(255, 255, 255, 0.65) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Global UI Safeguards: Buttons, Role Selectors & Learning Classroom
+   -------------------------------------------------------------------------- */
+.btn-warning {
+    background-color: #FF7A18 !important;
+    border-color: #FF7A18 !important;
+    color: #FFFFFF !important;
+}
+.btn-warning:hover, .btn-warning:focus, .btn-warning:active {
+    background-color: #E6660A !important;
+    border-color: #E6660A !important;
+    color: #FFFFFF !important;
+}
+
+.role-selector-card {
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 1rem;
+    padding: 1.25rem;
+    background: rgba(6, 35, 48, 0.6) !important;
+    transition: all 0.25s ease;
+    position: relative;
+}
+.role-selector-card:hover {
+    border-color: rgba(255, 122, 24, 0.5) !important;
+    background: rgba(6, 35, 48, 0.85) !important;
+}
+.role-selector-card.is-selected {
+    border-color: #FF7A18 !important;
+    background: rgba(255, 122, 24, 0.12) !important;
+    box-shadow: 0 0 20px rgba(255, 122, 24, 0.25), inset 0 0 12px rgba(255, 122, 24, 0.1) !important;
+}
+
+body.page-learning .lesson-resource-box {
+    background: rgba(6, 35, 48, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+body.page-learning .lesson-resource-box .resource-title {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+}
+body.page-learning .lesson-resource-box .resource-subtitle {
+    color: rgba(255, 255, 255, 0.72) !important;
+}
+
 
 
 /* --------------------------------------------------------------------------
