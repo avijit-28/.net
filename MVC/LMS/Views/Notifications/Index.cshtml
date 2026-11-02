@@ -1,0 +1,99 @@
+@model IEnumerable<LMS.Models.Notification>
+@{
+    ViewBag.Title = "Notifications Center";
+    var unreadCount = Model.Count(n => !n.IsRead);
+}
+
+<div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <span class="badge badge-primary-subtle px-3 py-1 rounded-pill mb-2 fw-semibold">
+                <span class="pulse-dot pulse-primary"></span> Activity Feed
+            </span>
+            <h2 class="fw-extrabold mb-1 tracking-tight">Notifications Center</h2>
+            <p class="text-muted small mb-0">Stay updated on curriculum announcements, quiz assessments, and project grades</p>
+        </div>
+        @if (unreadCount > 0)
+        {
+            using (Html.BeginForm("MarkAllAsRead", "Notifications", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-semibold shadow-xs">
+                    <i class="bi bi-check2-all me-1"></i> Mark All as Read (@unreadCount)
+                </button>
+            }
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card card-custom border-0 shadow-sm text-center py-5 bg-white">
+            <div class="card-body">
+                <div class="rounded-circle bg-light p-4 d-inline-flex mx-auto mb-3">
+                    <i class="bi bi-bell-slash text-muted fs-1"></i>
+                </div>
+                <h4 class="fw-bold">All caught up!</h4>
+                <p class="text-muted small">You do not have any unread notifications right now.</p>
+                <a href="@Url.Action("Index", "Courses")" class="btn btn-primary rounded-pill px-4 fw-semibold mt-2">
+                    Browse Courses
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card card-custom border-0 shadow-sm overflow-hidden bg-white">
+            <div class="list-group list-group-flush">
+                @foreach (var n in Model)
+                {
+                    <div class="list-group-item p-3 @(n.IsRead ? "bg-white" : "bg-light border-start border-4 border-primary")">
+                        <div class="d-flex justify-content-between align-items-start gap-3">
+                            <div class="d-flex gap-3">
+                                <div class="mt-1">
+                                    <div class="rounded-circle @(n.IsRead ? "bg-light text-muted" : "bg-primary text-white") p-2 d-flex align-items-center justify-content-center shadow-xs" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-bell-fill fs-6"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1 text-dark">
+                                        @n.Title
+                                        @if (!n.IsRead)
+                                        {
+                                            <span class="badge bg-primary ms-1 rounded-pill" style="font-size: 10px;">New</span>
+                                        }
+                                    </h6>
+                                    <p class="mb-1 text-secondary small" style="line-height: 1.6;">@n.Message</p>
+                                    <div class="d-flex align-items-center gap-2 mt-1">
+                                        <small class="text-muted"><i class="bi bi-clock me-1"></i>@n.CreatedDate.ToString("MMM dd, yyyy HH:mm")</small>
+                                        @if (User.IsInRole("Admin") && n.NotificationType == "InstructorApproval")
+                                        {
+                                            <a href="@Url.Action("InstructorApplications", "Admin")" class="btn btn-sm btn-outline-warning text-dark rounded-pill py-0 px-2 fw-semibold" style="font-size: 11px;">
+                                                <i class="bi bi-mortarboard me-1"></i> Review Candidates
+                                            </a>
+                                        }
+                                        else if (User.IsInRole("Admin") && n.NotificationType == "AccountApproval")
+                                        {
+                                            <a href="@Url.Action("PendingApprovals", "Admin")" class="btn btn-sm btn-outline-warning text-dark rounded-pill py-0 px-2 fw-semibold" style="font-size: 11px;">
+                                                <i class="bi bi-shield-check me-1"></i> Review Approvals
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            @if (!n.IsRead)
+                            {
+                                using (Html.BeginForm("MarkAsRead", "Notifications", new { id = n.NotificationId }, FormMethod.Post, new { @class = "ms-3" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill" title="Mark as read">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

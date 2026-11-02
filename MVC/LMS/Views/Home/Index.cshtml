@@ -1,0 +1,287 @@
+@model IEnumerable<LMS.Models.Course>
+@{
+    ViewBag.Title = "Master In-Demand Software & Tech Skills";
+    var categories = ViewBag.Categories as IEnumerable<LMS.Models.Category> ?? Enumerable.Empty<LMS.Models.Category>();
+}
+
+<!-- Hero Section with Distinctive Ambient Mesh -->
+<section class="hero-glow-bg p-4 p-md-5 my-3 position-relative overflow-hidden shadow-sm">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-7">
+            <div class="d-inline-flex align-items-center gap-2 mb-3">
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-semibold">
+                    <span class="pulse-dot pulse-primary"></span> Next-Gen Interactive Learning
+                </span>
+                <span class="feature-pill d-none d-sm-inline-flex">
+                    <i class="bi bi-shield-check text-success"></i> Verifiable Certifications
+                </span>
+            </div>
+
+            <h1 class="display-4 fw-extrabold text-dark tracking-tight mb-3" style="line-height: 1.15;">
+                Master High-Impact Skills with <span class="text-primary">Curated Industry Curriculums</span>
+            </h1>
+
+            <p class="lead text-secondary mb-4" style="line-height: 1.6; max-width: 600px;">
+                Accelerate your career through structured video modules, hands-on project assignments, timed assessments, and officially recognized certificates.
+            </p>
+
+            <!-- Interactive Search Box -->
+            @using (Html.BeginForm("Index", "Courses", FormMethod.Get, new { @class = "mb-4" }))
+            {
+                <div class="input-group input-group-lg shadow-sm rounded-pill overflow-hidden border bg-white p-1">
+                    <span class="input-group-text bg-white border-0 ps-3">
+                        <i class="bi bi-search text-primary"></i>
+                    </span>
+                    <input type="text" name="search" class="form-control border-0 ps-2 fs-6" placeholder="What competency do you want to master today? (e.g. ASP.NET, Python, SQL)..." />
+                    <button class="btn btn-primary px-4 fw-semibold rounded-pill" type="submit">
+                        Explore Catalog <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            }
+
+            <!-- Quick Filter Chips -->
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+                <span class="small text-muted fw-bold me-1 text-uppercase" style="font-size: 11px;">Trending Tracks:</span>
+                @foreach (var cat in categories.Take(5))
+                {
+                    <a href="@Url.Action("Index", "Courses", new { categoryId = cat.CategoryId })" class="badge bg-white text-secondary text-decoration-none border px-3 py-2 rounded-pill shadow-xs card-hover">
+                        <i class="bi bi-tag-fill text-primary me-1" style="font-size: 10px;"></i> @cat.CategoryName
+                    </a>
+                }
+            </div>
+        </div>
+
+        <!-- Live Platform Telemetry & Interactive Preview Card -->
+        <div class="col-lg-5">
+            <div class="card card-custom p-4 shadow bg-white border-0 position-relative card-gradient-top">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill small fw-semibold">
+                        <span class="pulse-dot pulse-success"></span> Live Database Telemetry
+                    </span>
+                    <span class="small text-muted font-monospace"><i class="bi bi-cpu text-primary me-1"></i> EF6 & SQL Server</span>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <div class="fs-3 fw-extrabold text-primary mb-1">@ViewBag.TotalCourses</div>
+                            <div class="small text-muted fw-semibold">Active Curriculums</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <div class="fs-3 fw-extrabold text-success mb-1">@ViewBag.TotalStudents</div>
+                            <div class="small text-muted fw-semibold">Enrolled Students</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <div class="fs-3 fw-extrabold text-warning mb-1">@ViewBag.TotalCertificates</div>
+                            <div class="small text-muted fw-semibold">Certificates Issued</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <div class="fs-3 fw-extrabold text-info mb-1">100%</div>
+                            <div class="small text-muted fw-semibold">Self-Paced Access</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Showcase Preview Badge -->
+                <div class="p-3 rounded-3 border bg-gradient text-dark d-flex align-items-center gap-3" style="background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);">
+                    <div class="rounded-circle bg-warning text-white p-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                        <i class="bi bi-award-fill fs-3"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0 fw-bold">Accredited Credentials</h6>
+                        <small class="text-secondary">Official verifiable completion certificates ready for LinkedIn profile showcase.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Learning Pillars Section -->
+<section class="py-5">
+    <div class="text-center max-w-2xl mx-auto mb-5">
+        <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 rounded-pill mb-2">Built for Mastery</span>
+        <h2 class="fw-bold mb-2">How EduPlatform Elevates Your Learning</h2>
+        <p class="text-muted">A comprehensive pedagogical workflow combining modern theory, applied code, timed assessments, and instructor feedback.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card card-custom p-4 h-100 card-hover">
+                <div class="rounded-circle bg-primary-subtle text-primary p-3 d-inline-flex mb-3" style="width: 56px; height: 56px; align-items: center; justify-content: center;">
+                    <i class="bi bi-display-fill fs-4"></i>
+                </div>
+                <h5 class="fw-bold mb-2">Dedicated Classroom Player</h5>
+                <p class="text-muted small mb-0">Immersive theater mode with module progress tracking, instant lesson completion triggers, and browser-persisted scratchpad notes.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-custom p-4 h-100 card-hover">
+                <div class="rounded-circle bg-warning-subtle text-warning p-3 d-inline-flex mb-3" style="width: 56px; height: 56px; align-items: center; justify-content: center;">
+                    <i class="bi bi-stopwatch-fill fs-4"></i>
+                </div>
+                <h5 class="fw-bold mb-2">Live Timed Assessments</h5>
+                <p class="text-muted small mb-0">Interactive quizzes featuring question navigation palettes, question flagging, dynamic timer thresholds, and instant scoring analytics.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-custom p-4 h-100 card-hover">
+                <div class="rounded-circle bg-success-subtle text-success p-3 d-inline-flex mb-3" style="width: 56px; height: 56px; align-items: center; justify-content: center;">
+                    <i class="bi bi-patch-check-fill fs-4"></i>
+                </div>
+                <h5 class="fw-bold mb-2">Official Verifiable Certificates</h5>
+                <p class="text-muted small mb-0">Automated issuance upon 100% course completion with cryptographic ID verification, print formatting, and direct LinkedIn sharing.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Courses Section -->
+<section class="py-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-3">
+        <div>
+            <span class="text-primary fw-bold small text-uppercase tracking-wider">Curated Curriculums</span>
+            <h2 class="fw-bold mb-0">Featured Learning Tracks</h2>
+        </div>
+        <a href="@Url.Action("Index", "Courses")" class="btn btn-outline-primary rounded-pill px-4 fw-semibold align-self-start align-self-md-auto">
+            View All Courses <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card card-custom p-5 text-center">
+            <i class="bi bi-journal-x fs-1 text-muted mb-3"></i>
+            <h5>No published courses found.</h5>
+            <p class="text-muted">Instructors are publishing new curriculums right now. Check back soon!</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var course in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card card-custom card-hover h-100 overflow-hidden d-flex flex-column">
+                        <!-- Card Header Media Banner -->
+                        @if (!string.IsNullOrWhiteSpace(course.Thumbnail))
+                        {
+                            <div class="position-relative overflow-hidden bg-dark" style="height: 160px;">
+                                <img src="@course.Thumbnail" alt="@course.Title" class="w-100 h-100" style="object-fit: cover;" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'bg-light text-center py-4 h-100 d-flex align-items-center justify-content-center\'><i class=\'bi bi-mortarboard-fill display-4 text-primary opacity-25\'></i></div>';" />
+                                <span class="position-absolute top-0 end-0 m-3 badge bg-dark bg-opacity-75 rounded-pill px-3 py-1">
+                                    @course.Level
+                                </span>
+                                <span class="position-absolute bottom-0 start-0 m-3 badge bg-white text-dark shadow-sm border small">
+                                    <i class="bi bi-clock me-1 text-primary"></i> @course.DurationInHours hrs
+                                </span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="position-relative bg-light text-center py-4 border-bottom" style="height: 160px; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #f1f5f9 0%, #e2e8f0 100%);">
+                                <i class="bi bi-code-slash display-3 text-secondary opacity-25"></i>
+                                <span class="position-absolute top-0 end-0 m-3 badge bg-dark bg-opacity-75 rounded-pill px-3 py-1">
+                                    @course.Level
+                                </span>
+                                <span class="position-absolute bottom-0 start-0 m-3 badge bg-white text-dark shadow-sm border small">
+                                    <i class="bi bi-clock me-1 text-primary"></i> @course.DurationInHours hrs
+                                </span>
+                            </div>
+                        }
+
+                        <div class="card-body d-flex flex-column p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge badge-primary-subtle small">
+                                    @(course.Category?.CategoryName ?? "General")
+                                </span>
+                                <div class="rating-stars small">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="fw-bold text-dark ms-1">@course.Rating.ToString("0.0")</span>
+                                    <span class="text-muted">(@course.TotalStudents students)</span>
+                                </div>
+                            </div>
+
+                            <!-- Instructor Tag -->
+                            <div class="d-flex align-items-center gap-1 text-muted small mb-2">
+                                <i class="bi bi-person-circle text-primary"></i>
+                                <span class="fw-semibold text-truncate" style="max-width: 200px;">
+                                    @(course.Instructor != null && !string.IsNullOrEmpty(course.Instructor.FullName) ? course.Instructor.FullName : (course.Instructor != null ? course.Instructor.UserName : "Faculty Instructor"))
+                                </span>
+                            </div>
+
+                            <h5 class="card-title fw-bold mb-2">@course.Title</h5>
+                            <p class="card-text text-secondary small flex-grow-1" style="line-height: 1.6;">
+                                @(string.IsNullOrEmpty(course.Description) ? "Comprehensive course curriculum designed for practical industry mastery." : (course.Description.Length > 115 ? course.Description.Substring(0, 112) + "..." : course.Description))
+                            </p>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-3">
+                                <div>
+                                    @if (course.Price == 0)
+                                    {
+                                        <span class="badge bg-success-subtle text-success fs-6 fw-bold">FREE</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fs-5 fw-extrabold text-dark"><span class="rupee-symbol">&#8377;</span>@course.Price.ToString("N2")</span>
+                                    }
+                                </div>
+                                <a href="@Url.Action("Details", "Courses", new { id = course.CourseId })" class="btn btn-sm btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+                                    Course Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</section>
+
+<!-- Subject Categories Section -->
+<section class="py-5 border-top">
+    <div class="text-center mb-5">
+        <span class="badge bg-secondary-subtle text-secondary fw-semibold px-3 py-1 rounded-pill mb-2">Subject Directory</span>
+        <h3 class="fw-bold">Explore by Specialization</h3>
+        <p class="text-muted">Select an area of focus to dive into dedicated learning pathways.</p>
+    </div>
+
+    <div class="row g-3 justify-content-center">
+        @foreach (var cat in categories)
+        {
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="@Url.Action("Index", "Courses", new { categoryId = cat.CategoryId })" class="text-decoration-none">
+                    <div class="card-custom p-4 text-center card-hover h-100 bg-white">
+                        <div class="rounded-circle bg-light p-3 d-inline-flex mb-2">
+                            <i class="bi bi-stack fs-3 text-primary"></i>
+                        </div>
+                        <h6 class="fw-bold text-dark mb-1">@cat.CategoryName</h6>
+                        <small class="text-primary fw-semibold">View Tracks &rarr;</small>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Bottom CTA Banner -->
+<section class="my-5 p-5 rounded-4 text-center text-white position-relative overflow-hidden shadow" style="background: linear-gradient(135deg, #090d16 0%, #1e1b4b 100%);">
+    <div class="position-relative z-1 max-w-2xl mx-auto">
+        <span class="badge bg-primary px-3 py-1 rounded-pill mb-3 fw-semibold">Join Our Community</span>
+        <h2 class="display-6 fw-extrabold mb-3">Ready to Accelerate Your Career?</h2>
+        <p class="text-light opacity-75 mb-4">Enroll in free or premium tracks, complete projects, pass assessments, and verify your credentials.</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="@Url.Action("Index", "Courses")" class="btn btn-light px-4 py-2 rounded-pill fw-bold text-dark">
+                Explore All Courses
+            </a>
+            <a href="@Url.Action("Register", "Account")" class="btn btn-outline-light px-4 py-2 rounded-pill fw-semibold">
+                Create Free Account
+            </a>
+        </div>
+    </div>
+</section>
