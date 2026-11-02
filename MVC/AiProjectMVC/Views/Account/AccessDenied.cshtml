@@ -1,50 +1,108 @@
 @{
-    ViewBag.Title = "Unauthorized Access";
+    ViewBag.Title = "Access Denied (403 Forbidden)";
     var currentUser = Session["CurrentUser"] as AiProjectMVC.Models.EmployeeUser;
     var currentRole = Session["UserRole"] as string ?? "Guest";
+    string requiredRole = ViewBag.RequiredRole as string;
+    string attemptedUrl = ViewBag.AttemptedUrl as string;
+    if (string.IsNullOrWhiteSpace(attemptedUrl))
+    {
+        attemptedUrl = Request.QueryString["url"];
+    }
+    if (string.IsNullOrWhiteSpace(requiredRole))
+    {
+        requiredRole = Request.QueryString["required"];
+    }
+    if (string.IsNullOrWhiteSpace(requiredRole))
+    {
+        requiredRole = "Higher Role Privilege";
+    }
 }
 
 <div class="row justify-content-center py-5">
-    <div class="col-lg-6 col-md-8">
-        <div class="custom-card text-center p-4 border-danger border-opacity-25 shadow-lg">
-            <div class="mb-4">
-                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10 text-danger p-4 mb-2" style="width: 90px; height: 90px;">
-                    <i class="bi bi-shield-lock-fill fs-1"></i>
+    <div class="col-lg-7 col-md-9">
+        <div class="custom-card shadow-lg border-danger border-opacity-50 overflow-hidden text-center">
+            <!-- Red Header Banner -->
+            <div class="p-4 text-white" style="background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 50%, #dc2626 100%);">
+                <div class="d-inline-flex p-3 rounded-circle bg-white bg-opacity-20 text-white mb-2 shadow-sm">
+                    <i class="bi bi-shield-x fs-1"></i>
                 </div>
-                <h2 class="fw-bold text-danger mt-3 mb-1">Unauthorized Access</h2>
-                <p class="text-muted">You do not have permission to view or execute this resource.</p>
+                <h2 class="fw-bold mb-1">403 - Access Denied</h2>
+                <p class="text-white-50 mb-0">Role Authorization Restriction Enforced</p>
             </div>
 
-            <div class="alert alert-warning text-start d-flex align-items-start gap-3 p-3 rounded-3 mb-4">
-                <i class="bi bi-exclamation-triangle-fill fs-4 text-warning flex-shrink-0 mt-1"></i>
-                <div class="small">
-                    <strong>Role Restriction Enforced:</strong> This action method is decorated with an authorization filter attribute (e.g. <code>[AuthorizeRole]</code>) requiring specific role privileges.
-                    <div class="mt-2 text-secondary">
-                        Current User: <strong>@(currentUser != null ? currentUser.Name : (User.Identity.IsAuthenticated ? User.Identity.Name : "Anonymous"))</strong> &bull;
-                        Assigned Role: <span class="badge bg-secondary">@currentRole</span>
+            <div class="custom-card-body p-4 text-start">
+                <!-- Clear explanation box -->
+                <div class="alert alert-danger d-flex align-items-start gap-3 p-3 rounded-3 mb-4">
+                    <i class="bi bi-exclamation-octagon-fill fs-3 text-danger flex-shrink-0 mt-1"></i>
+                    <div>
+                        <h5 class="alert-heading fw-bold mb-1">You do not have permission to view this page</h5>
+                        <p class="mb-0 small">
+                            The security filter <code>[AuthorizeRole]</code> intercepted your request because your currently active role does not meet the minimum privileges required for this route.
+                        </p>
                     </div>
                 </div>
-            </div>
 
-            <div class="card bg-light border-0 p-3 mb-4 text-start">
-                <div class="fw-semibold text-dark small mb-2"><i class="bi bi-info-circle me-1 text-primary"></i> Required Permissions Guide:</div>
-                <ul class="list-unstyled small text-muted mb-0">
-                    <li class="mb-1"><span class="badge bg-danger me-1">SUPERADMIN</span> Full access to all administrative routes including <code>/Home/About</code>.</li>
-                    <li class="mb-1"><span class="badge bg-primary me-1">ADMIN</span> Access to management routes, employee modifications, and <code>/Home/Contact</code>.</li>
-                    <li class="mb-1"><span class="badge bg-success me-1">USER</span> Access to general member routes including <code>/Home/UserPage</code>.</li>
-                </ul>
-            </div>
+                <!-- Comparison Matrix Details -->
+                <div class="card bg-light border-0 p-3 mb-4">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="small text-muted text-uppercase fw-semibold mb-1">Attempted Page:</div>
+                            <div class="fw-bold text-dark font-monospace">
+                                @(!string.IsNullOrEmpty(attemptedUrl) ? attemptedUrl : "/Home/About")
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-muted text-uppercase fw-semibold mb-1">Required Role:</div>
+                            <span class="badge bg-danger fs-6 px-3 py-1">
+                                <i class="bi bi-lock-fill me-1"></i> @requiredRole
+                            </span>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-muted text-uppercase fw-semibold mb-1">Logged In As:</div>
+                            <div class="fw-bold text-dark">
+                                @(currentUser != null ? currentUser.Name : (User.Identity.IsAuthenticated ? User.Identity.Name : "Anonymous Visitor"))
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small text-muted text-uppercase fw-semibold mb-1">Your Active Role:</div>
+                            <span class="badge bg-secondary fs-6 px-3 py-1">
+                                <i class="bi bi-person-badge me-1"></i> @currentRole
+                            </span>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
-                <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary">
-                    <i class="bi bi-house me-1"></i> Return Home
-                </a>
-                <a href="@Url.Action("Dashboard", "Employee")" class="btn btn-primary-gradient">
-                    <i class="bi bi-speedometer2 me-1"></i> My Dashboard
-                </a>
-                <a href="@Url.Action("Login", "Account")" class="btn btn-outline-danger">
-                    <i class="bi bi-person-switch me-1"></i> Switch Account
-                </a>
+                <!-- 1-Click Role Swapping to Resolve -->
+                <div class="mb-4">
+                    <div class="small text-muted fw-bold text-uppercase mb-2">
+                        <i class="bi bi-lightning-charge-fill text-warning me-1"></i> 1-Click Resolution (Switch Role to Access):
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="@Url.Action("QuickSwitch", "Account", new { role = "SuperAdmin", returnUrl = attemptedUrl })" 
+                           class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-award-fill me-1"></i> Switch to SuperAdmin & Retry
+                        </a>
+                        <a href="@Url.Action("QuickSwitch", "Account", new { role = "Admin", returnUrl = attemptedUrl })" 
+                           class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-shield-lock-fill me-1"></i> Switch to Admin & Retry
+                        </a>
+                    </div>
+                </div>
+
+                <hr class="my-3 text-muted" />
+
+                <!-- Action Buttons -->
+                <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-primary-gradient">
+                        <i class="bi bi-table me-1"></i> Back to Permission Matrix
+                    </a>
+                    <a href="@Url.Action("Dashboard", "Employee")" class="btn btn-outline-secondary">
+                        <i class="bi bi-speedometer2 me-1"></i> Employee Dashboard
+                    </a>
+                    <a href="@Url.Action("Login", "Account")" class="btn btn-outline-dark">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Sign In as Different User
+                    </a>
+                </div>
             </div>
         </div>
     </div>
