@@ -34,10 +34,10 @@ namespace AiProjectMVC.Controllers
         }
 
         /// <summary>
-        /// Main Hub / Demo Index: Accessible by authenticated users with SUPERADMIN, ADMIN, or USER roles.
-        /// Displays an interactive security test center comparing role permissions.
+        /// Main Hub / Demo Index: Open to everyone so guests and all roles can view the
+        /// real-time Permission Matrix and use the 1-Click Role Switcher.
         /// </summary>
-        [AuthorizeRole(Role.SUPERADMIN, Role.ADMIN, Role.USER, Role.HR, Role.MANAGER, Role.EMPLOYEE)]
+        [AllowAnonymous]
         public ActionResult Index()
         {
             return View();
