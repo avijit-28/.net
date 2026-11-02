@@ -1,22 +1,49 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using AiProjectMVC.Models;
 
 namespace AiProjectMVC.Controllers
 {
     /// <summary>
-    /// Demonstrates Authorization Filter, Custom Role Authorization Filter,
-    /// and Custom Authentication Filter as outlined in the MVC architecture.
+    /// Demonstrates Authorization, Custom Role Filters, and Authentication Filters
+    /// with an easy-to-understand, interactive workflow.
     /// </summary>
     [Authorize]
     public class HomeController : Controller
     {
         /// <summary>
-        /// NonSecureMethod: Marked with [AllowAnonymous].
-        /// Accessible by everyone (both authenticated and unauthenticated guests).
+        /// Security & Filters Center: Clear visual dashboard of all filters.
+        /// Accessible to all authenticated users.
+        /// </summary>
+        public ActionResult Index()
+        {
+            try
+            {
+                string logPath = Server.MapPath("~/Log/Log.txt");
+                if (System.IO.File.Exists(logPath))
+                {
+                    var lines = System.IO.File.ReadAllLines(logPath);
+                    ViewBag.RecentLogs = lines.Reverse().Take(8).Reverse().ToList();
+                }
+                else
+                {
+                    ViewBag.RecentLogs = new List<string> { "Audit log file initialized. Click any action to see live entries." };
+                }
+            }
+            catch
+            {
+                ViewBag.RecentLogs = new List<string>();
+            }
+
+            return View();
+        }
+
+        /// <summary>
+        /// 1. Public / Non-Secure Endpoint: Decorated with [AllowAnonymous].
+        /// Accessible by anyone (even guests not logged in).
         /// </summary>
         [AllowAnonymous]
         public ActionResult NonSecureMethod()
@@ -25,8 +52,8 @@ namespace AiProjectMVC.Controllers
         }
 
         /// <summary>
-        /// SecureMethod: Requires authentication.
-        /// Unauthenticated visitors are automatically redirected to Login.
+        /// 2. Protected / Secure Endpoint: Decorated with [Authorize].
+        /// Requires login. Unauthenticated visitors are automatically redirected to Login.
         /// </summary>
         public ActionResult SecureMethod()
         {
@@ -34,55 +61,34 @@ namespace AiProjectMVC.Controllers
         }
 
         /// <summary>
-        /// Main Hub / Demo Index: Open to everyone so guests and all roles can view the
-        /// real-time Permission Matrix and use the 1-Click Role Switcher.
+        /// 3. Role-Based Endpoint: Restricted to USER / Employee role.
         /// </summary>
-        [AllowAnonymous]
-        public ActionResult Index()
+        [AuthorizeRole(Role.USER, Role.EMPLOYEE, Role.SUPERADMIN)]
+        public ActionResult UserPage()
         {
+            ViewBag.Message = "User & Employee Exclusive Workspace";
             return View();
         }
 
         /// <summary>
-        /// About: Restricted exclusively to SUPERADMIN.
-        /// Regular ADMIN or USER accounts attempting to access this will be routed to AccessDenied.
+        /// 4. Admin Role Endpoint: Restricted to ADMIN.
+        /// Non-admin accounts will be intercepted and sent to AccessDenied.
+        /// </summary>
+        [AuthorizeRole(Role.ADMIN, Role.SUPERADMIN)]
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Administrator Operations & Support Channel";
+            return View();
+        }
+
+        /// <summary>
+        /// 5. SuperAdmin Role Endpoint: Restricted exclusively to SUPERADMIN.
+        /// Standard Admin and Users are redirected to AccessDenied.
         /// </summary>
         [AuthorizeRole(Role.SUPERADMIN)]
         public ActionResult About()
         {
-            ViewBag.Message = "Super Administrator Exclusive Portal & System Description";
-            return View();
-        }
-
-        /// <summary>
-        /// Contact: Restricted exclusively to ADMIN.
-        /// Non-admin accounts will be routed to AccessDenied.
-        /// </summary>
-        [AuthorizeRole(Role.ADMIN)]
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Administrator Contact & Operations Channel";
-            return View();
-        }
-
-        /// <summary>
-        /// UserPage: Restricted to USER role.
-        /// Demonstrates role-specific access for standard users.
-        /// </summary>
-        [AuthorizeRole(Role.USER)]
-        public ActionResult UserPage()
-        {
-            ViewBag.Message = "Standard User Exclusive Workspace";
-            return View();
-        }
-
-        /// <summary>
-        /// CodeReference: Dedicated full source code reference page.
-        /// Open to all visitors so they can inspect the complete code of filters, helpers, and controllers.
-        /// </summary>
-        [AllowAnonymous]
-        public ActionResult CodeReference()
-        {
+            ViewBag.Message = "SuperAdmin Exclusive Master Control Panel";
             return View();
         }
     }
