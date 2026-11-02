@@ -75,5 +75,15 @@ namespace AiProjectMVC.Controllers
             ViewBag.Message = "Standard User Exclusive Workspace";
             return View();
         }
+
+        /// <summary>
+        /// CodeReference: Dedicated full source code reference page.
+        /// Open to all visitors so they can inspect the complete code of filters, helpers, and controllers.
+        /// </summary>
+        [AllowAnonymous]
+        public ActionResult CodeReference()
+        {
+            return View();
+        }
     }
 }
