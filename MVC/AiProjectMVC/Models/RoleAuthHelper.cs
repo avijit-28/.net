@@ -20,10 +20,19 @@ namespace AiProjectMVC.Models
                 return false;
             }
 
-            var cleanRole = role.Trim();
-            return string.Equals(cleanRole, "Admin", StringComparison.OrdinalIgnoreCase) ||
-                   string.Equals(cleanRole, "HR", StringComparison.OrdinalIgnoreCase) ||
-                   string.Equals(cleanRole, "Manager", StringComparison.OrdinalIgnoreCase);
+            var parts = role.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var p in parts)
+            {
+                var clean = p.Trim();
+                if (string.Equals(clean, "SuperAdmin", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(clean, "Admin", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(clean, "HR", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(clean, "Manager", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>
