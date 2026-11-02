@@ -218,7 +218,7 @@
                                 <pre class="code-block"><code>&lt;configuration&gt;
   &lt;connectionStrings&gt;
     &lt;add name="DBConn" 
-         connectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CustomerDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;" 
+         connectionString="Data Source=.;Initial Catalog=Assignmet;User ID=sa;Password=mcc#1234" 
          providerName="System.Data.SqlClient" /&gt;
   &lt;/connectionStrings&gt;
 &lt;/configuration&gt;</code></pre>
@@ -226,16 +226,16 @@
                             <div class="col-lg-6">
                                 <h6 class="fw-bold text-dark"><i class="fa-solid fa-database text-warning me-1"></i> Stored Procedure (dbo.sp_SearchCustomers)</h6>
                                 <pre class="code-block"><code>CREATE OR ALTER PROCEDURE dbo.sp_SearchCustomers
-    @SearchTerm NVARCHAR(50) = NULL
+    @@SearchTerm NVARCHAR(50) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
     SELECT CustomerID, ContactName, City, Country, Email, Phone
     FROM dbo.Customers
-    WHERE (@SearchTerm IS NULL OR @SearchTerm = '')
-       OR ContactName LIKE '%' + @SearchTerm + '%'
-       OR City LIKE '%' + @SearchTerm + '%'
-       OR Country LIKE '%' + @SearchTerm + '%'
+    WHERE (@@SearchTerm IS NULL OR @@SearchTerm = '')
+       OR ContactName LIKE '%' + @@SearchTerm + '%'
+       OR City LIKE '%' + @@SearchTerm + '%'
+       OR Country LIKE '%' + @@SearchTerm + '%'
     ORDER BY CustomerID ASC;
 END;</code></pre>
                             </div>
