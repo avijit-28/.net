@@ -1,19 +1,83 @@
-﻿@{
-    ViewBag.Title = "Contact";
+@{
+    ViewBag.Title = "Contact - Admin Exclusive";
+    var currentRole = Session["UserRole"] as string ?? (User.Identity.IsAuthenticated ? "Authenticated" : "Guest");
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
 
-    <address>
-        One Microsoft Way<br />
-        Redmond, WA 98052-6399<br />
-        <abbr title="Phone">P:</abbr>
-        425.555.0100
-    </address>
+<div class="row justify-content-center py-4">
+    <div class="col-lg-8">
+        <!-- Breadcrumb navigation -->
+        <div class="mb-3">
+            <a href="@Url.Action("Index", "Home")" class="text-decoration-none text-muted small fw-semibold">
+                <i class="bi bi-arrow-left me-1"></i> Back to Authorization Center
+            </a>
+        </div>
 
-    <address>
-        <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-        <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-    </address>
-</main>
+        <div class="custom-card shadow-sm border-0 overflow-hidden">
+            <!-- Header -->
+            <div class="p-4 bg-light border-bottom d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1 mb-2">
+                        <i class="bi bi-shield-fill me-1"></i> Administrative Privilege &bull; [AuthorizeRole(Role.ADMIN)]
+                    </span>
+                    <h3 class="fw-bold mb-1 text-dark">Administrator Contact Portal</h3>
+                    <p class="text-muted small mb-0">@ViewBag.Message</p>
+                </div>
+                <div class="d-none d-sm-block text-primary fs-1">
+                    <i class="bi bi-envelope-shield"></i>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="custom-card-body p-4">
+                <div class="alert alert-primary d-flex align-items-center gap-3 p-3 rounded-3 mb-4">
+                    <i class="bi bi-check-circle-fill fs-3 text-primary flex-shrink-0"></i>
+                    <div>
+                        <h5 class="alert-heading fw-bold mb-1">Admin Access Granted!</h5>
+                        <p class="mb-0 small text-primary-emphasis">
+                            Your account is verified with the <strong>ADMIN</strong> role required to access this communication channel.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card bg-light border-0 p-3 mb-4">
+                    <h6 class="fw-bold text-dark small text-uppercase mb-2">
+                        <i class="bi bi-shield-lock text-primary me-1"></i> Authorization Filter Code
+                    </h6>
+                    <pre class="bg-dark text-white p-3 rounded-3 small mb-0"><code>[AuthorizeRole(Role.ADMIN)]
+public ActionResult Contact()
+{
+    ViewBag.Message = "Your contact page.";
+    return View();
+}</code></pre>
+                </div>
+
+                <div class="card bg-light border-0 p-3 mb-4">
+                    <h6 class="fw-bold text-dark small text-uppercase mb-2">
+                        <i class="bi bi-person-check text-primary me-1"></i> Session Verification
+                    </h6>
+                    <div class="row g-2 small">
+                        <div class="col-sm-4 text-muted">User Account:</div>
+                        <div class="col-sm-8 fw-semibold text-dark">@(User.Identity.IsAuthenticated ? User.Identity.Name : "Session User")</div>
+
+                        <div class="col-sm-4 text-muted">Role Permissions:</div>
+                        <div class="col-sm-8"><span class="badge bg-primary">@currentRole</span></div>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center pt-2">
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-house me-1"></i> Authorization Center
+                    </a>
+                    <div class="d-flex gap-2">
+                        <a href="@Url.Action("UserPage", "Home")" class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-person-badge me-1"></i> Test User Page
+                        </a>
+                        <a href="@Url.Action("About", "Home")" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-shield-fill me-1"></i> Test SuperAdmin About
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
