@@ -271,9 +271,9 @@ using (SqlConnection conn = new SqlConnection(constr))
         
         // Pass optional filter parameter
         if (!string.IsNullOrEmpty(searchTerm))
-            cmd.Parameters.Add("@SearchTerm", SqlDbType.NVarChar, 50).Value = searchTerm;
+            cmd.Parameters.Add("@@SearchTerm", SqlDbType.NVarChar, 50).Value = searchTerm;
         else
-            cmd.Parameters.Add("@SearchTerm", SqlDbType.NVarChar, 50).Value = DBNull.Value;
+            cmd.Parameters.Add("@@SearchTerm", SqlDbType.NVarChar, 50).Value = DBNull.Value;
 
         conn.Open();
         using (SqlDataReader reader = cmd.ExecuteReader())
