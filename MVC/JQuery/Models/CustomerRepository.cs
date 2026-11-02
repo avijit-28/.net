@@ -164,11 +164,11 @@ namespace JQuery.Models
         }
 
         /// <summary>
-        /// Fallback method ensuring consistent data if database connectivity is unavailable.
+        /// Retrieves customers from SQL Server via dbo.sp_SearchCustomers.
         /// </summary>
-        public static List<Customer> GetCustomers()
+        public static List<Customer> GetCustomers(string searchTerm = null)
         {
-            return GetCustomersFromDatabase();
+            return GetCustomersFromDatabase(searchTerm);
         }
 
         private static List<Customer> GetFallbackCustomers()
