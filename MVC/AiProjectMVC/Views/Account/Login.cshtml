@@ -69,12 +69,31 @@
                     </button>
                 }
 
-                <!-- Quick Test Logins Section -->
-                @if (demoUsers.Any())
+                <!-- Quick Test Logins Section (Role-based Authentication from USERS table) -->
+                @if (pdfUsers.Any())
                 {
                     <div class="mt-4 pt-3 border-top">
                         <div class="text-muted small fw-semibold mb-2 text-uppercase">
-                            <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick Test Accounts (Click to Fill)
+                            <i class="bi bi-shield-check text-primary me-1"></i> Role Demo Accounts (USERS Table)
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var u in pdfUsers)
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-1 px-2 demo-chip"
+                                        data-user="@u.UserName" data-pass="@u.Password">
+                                    <span class="fw-bold">@u.UserName</span>
+                                    <span class="badge bg-primary ms-1">@u.Roles</span>
+                                </button>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @if (demoUsers.Any())
+                {
+                    <div class="mt-3 pt-2">
+                        <div class="text-muted small fw-semibold mb-2 text-uppercase">
+                            <i class="bi bi-person-badge text-secondary me-1"></i> Employee Portal Accounts
                         </div>
                         <div class="d-flex flex-wrap gap-2">
                             @foreach (var user in demoUsers)
