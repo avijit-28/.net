@@ -351,13 +351,13 @@
                                 <div>
                                     @if (Model.HasPassedFinalExam)
                                     {
-                                        <a href="@Url.Action("Certificates", "Student")" class="btn btn-warning fw-bold text-dark rounded-pill px-4 shadow-sm">
+                                        <a href="@Url.Action("Certificates", "Student")" class="btn btn-primary fw-bold text-white rounded-pill px-4 shadow-sm">
                                             <i class="bi bi-award-fill me-1"></i> View Certificate
                                         </a>
                                     }
                                     else if (Model.IsFinalExamUnlocked)
                                     {
-                                        <a href="@Url.Action("Take", "Quiz", new { id = Model.FinalExam.QuizId })" class="btn btn-warning text-dark rounded-pill fw-bold px-4 shadow-sm">
+                                        <a href="@Url.Action("Take", "Quiz", new { id = Model.FinalExam.QuizId })" class="btn btn-primary text-white rounded-pill fw-bold px-4 shadow-sm">
                                             <i class="bi bi-lightning-charge-fill me-1"></i> Take Final Exam Now
                                         </a>
                                     }
