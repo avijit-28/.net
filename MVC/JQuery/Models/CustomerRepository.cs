@@ -7,59 +7,70 @@ using System.Data.SqlClient;
 namespace JQuery.Models
 {
     /// <summary>
-    /// Data Access Repository utilizing ADO.NET and SQL Server Stored Procedures.
-    /// Reads connection string "DBConn" from Web.config and calls dbo.sp_SearchCustomers.
+    /// Data access repository communicating with SQL Server using ADO.NET and Stored Procedures.
+    /// Reads connection string "DBConn" from Web.config.
     /// </summary>
     public static class CustomerRepository
     {
-        private static readonly string ConnectionString = ConfigurationManager.ConnectionStrings["DBConn"]?.ConnectionString;
+        // Connection string name configured in Web.config
+        private const string ConnectionStringName = "DBConn";
+
+        private static string GetConnectionString()
+        {
+            var connSetting = ConfigurationManager.ConnectionStrings[ConnectionStringName];
+            if (connSetting == null || string.IsNullOrWhiteSpace(connSetting.ConnectionString))
+            {
+                throw new InvalidOperationException($"Connection string '{ConnectionStringName}' was not found in Web.config.");
+            }
+            return connSetting.ConnectionString;
+        }
 
         /// <summary>
-        /// Calls the stored procedure dbo.sp_SearchCustomers to retrieve customer records.
-        /// When searchTerm is null or empty, the stored procedure returns all customers.
+        /// Fetches customers from SQL Server by executing dbo.sp_SearchCustomers.
+        /// When searchTerm is null or empty, returns all customer records.
         /// </summary>
-        /// <param name="searchTerm">Optional search filter for ContactName, City, or Country</param>
-        /// <returns>List of Customer objects populated from SqlDataReader</returns>
-        public static List<Customer> GetCustomers(string searchTerm = null)
+        /// <param name="searchTerm">Optional search keyword for ContactName, City, or Country</param>
+        /// <returns>List of Customer entity objects</returns>
+        public static List<Customer> GetCustomersFromDatabase(string searchTerm = null)
         {
-            List<Customer> customers = new List<Customer>();
+            var customers = new List<Customer>();
+            string connString = GetConnectionString();
 
             try
             {
-                if (!string.IsNullOrWhiteSpace(ConnectionString))
+                using (var conn = new SqlConnection(connString))
                 {
-                    using (SqlConnection conn = new SqlConnection(ConnectionString))
+                    using (var cmd = new SqlCommand("dbo.sp_SearchCustomers", conn))
                     {
-                        using (SqlCommand cmd = new SqlCommand("dbo.sp_SearchCustomers", conn))
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        // Add @SearchTerm parameter
+                        if (string.IsNullOrWhiteSpace(searchTerm))
                         {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            
-                            // Pass @SearchTerm to the stored procedure (or DBNull if null/empty)
-                            if (!string.IsNullOrWhiteSpace(searchTerm))
-                            {
-                                cmd.Parameters.Add("@SearchTerm", SqlDbType.NVarChar, 50).Value = searchTerm.Trim();
-                            }
-                            else
-                            {
-                                cmd.Parameters.Add("@SearchTerm", SqlDbType.NVarChar, 50).Value = DBNull.Value;
-                            }
+                            cmd.Parameters.Add("@SearchTerm", SqlDbType.NVarChar, 50).Value = DBNull.Value;
+                        }
+                        else
+                        {
+                            cmd.Parameters.Add("@SearchTerm", SqlDbType.NVarChar, 50).Value = searchTerm.Trim();
+                        }
 
-                            conn.Open();
+                        conn.Open();
 
-                            using (SqlDataReader reader = cmd.ExecuteReader())
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
                             {
-                                while (reader.Read())
+                                var customer = new Customer
                                 {
-                                    customers.Add(new Customer
-                                    {
-                                        CustomerID = reader["CustomerID"] != DBNull.Value ? Convert.ToInt32(reader["CustomerID"]) : 0,
-                                        ContactName = reader["ContactName"] != DBNull.Value ? reader["ContactName"].ToString() : string.Empty,
-                                        City = reader["City"] != DBNull.Value ? reader["City"].ToString() : string.Empty,
-                                        Country = reader["Country"] != DBNull.Value ? reader["Country"].ToString() : string.Empty,
-                                        Email = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : string.Empty,
-                                        Phone = reader["Phone"] != DBNull.Value ? reader["Phone"].ToString() : string.Empty
-                                    });
-                                }
+                                    CustomerID = reader["CustomerID"] != DBNull.Value ? Convert.ToInt32(reader["CustomerID"]) : 0,
+                                    ContactName = reader["ContactName"] != DBNull.Value ? reader["ContactName"].ToString() : string.Empty,
+                                    City = reader["City"] != DBNull.Value ? reader["City"].ToString() : string.Empty,
+                                    Country = reader["Country"] != DBNull.Value ? reader["Country"].ToString() : string.Empty,
+                                    Email = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : string.Empty,
+                                    Phone = reader["Phone"] != DBNull.Value ? reader["Phone"].ToString() : string.Empty
+                                };
+
+                                customers.Add(customer);
                             }
                         }
                     }
@@ -67,49 +78,45 @@ namespace JQuery.Models
             }
             catch (Exception ex)
             {
-                // Fallback to in-memory seed records if the SQL Server is temporarily unavailable
-                System.Diagnostics.Debug.WriteLine("Database query via Stored Procedure failed: " + ex.Message);
-                if (customers.Count == 0)
-                {
-                    customers = GetFallbackCustomers();
-                }
+                // In case of SQL connection or execution issue, log and fall back to in-memory data
+                System.Diagnostics.Trace.TraceError($"SQL Error fetching customers: {ex.Message}");
+                return GetFallbackCustomers();
             }
 
             return customers;
         }
 
         /// <summary>
-        /// Calls stored procedure dbo.sp_GetCustomerById to retrieve a single customer by ID.
+        /// Retrieves a single customer by ID using dbo.sp_GetCustomerById.
         /// </summary>
         public static Customer GetCustomerById(int customerId)
         {
+            string connString = GetConnectionString();
+
             try
             {
-                if (!string.IsNullOrWhiteSpace(ConnectionString))
+                using (var conn = new SqlConnection(connString))
                 {
-                    using (SqlConnection conn = new SqlConnection(ConnectionString))
+                    using (var cmd = new SqlCommand("dbo.sp_GetCustomerById", conn))
                     {
-                        using (SqlCommand cmd = new SqlCommand("dbo.sp_GetCustomerById", conn))
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add("@CustomerID", SqlDbType.Int).Value = customerId;
+
+                        conn.Open();
+
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            cmd.Parameters.Add("@CustomerID", SqlDbType.Int).Value = customerId;
-
-                            conn.Open();
-
-                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            if (reader.Read())
                             {
-                                if (reader.Read())
+                                return new Customer
                                 {
-                                    return new Customer
-                                    {
-                                        CustomerID = Convert.ToInt32(reader["CustomerID"]),
-                                        ContactName = reader["ContactName"]?.ToString(),
-                                        City = reader["City"]?.ToString(),
-                                        Country = reader["Country"]?.ToString(),
-                                        Email = reader["Email"]?.ToString(),
-                                        Phone = reader["Phone"]?.ToString()
-                                    };
-                                }
+                                    CustomerID = Convert.ToInt32(reader["CustomerID"]),
+                                    ContactName = reader["ContactName"].ToString(),
+                                    City = reader["City"].ToString(),
+                                    Country = reader["Country"].ToString(),
+                                    Email = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : string.Empty,
+                                    Phone = reader["Phone"] != DBNull.Value ? reader["Phone"].ToString() : string.Empty
+                                };
                             }
                         }
                     }
@@ -117,52 +124,51 @@ namespace JQuery.Models
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Error in sp_GetCustomerById: " + ex.Message);
+                System.Diagnostics.Trace.TraceError($"SQL Error fetching customer by ID: {ex.Message}");
             }
 
             return null;
         }
 
         /// <summary>
-        /// Calls stored procedure dbo.sp_InsertCustomer to insert a new customer into the database.
+        /// Inserts a new customer using dbo.sp_InsertCustomer.
         /// </summary>
         public static int InsertCustomer(Customer customer)
         {
-            try
+            string connString = GetConnectionString();
+
+            using (var conn = new SqlConnection(connString))
             {
-                if (!string.IsNullOrWhiteSpace(ConnectionString))
+                using (var cmd = new SqlCommand("dbo.sp_InsertCustomer", conn))
                 {
-                    using (SqlConnection conn = new SqlConnection(ConnectionString))
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@ContactName", SqlDbType.NVarChar, 100).Value = customer.ContactName ?? string.Empty;
+                    cmd.Parameters.Add("@City", SqlDbType.NVarChar, 50).Value = customer.City ?? string.Empty;
+                    cmd.Parameters.Add("@Country", SqlDbType.NVarChar, 50).Value = customer.Country ?? string.Empty;
+                    cmd.Parameters.Add("@Email", SqlDbType.NVarChar, 100).Value = (object)customer.Email ?? DBNull.Value;
+                    cmd.Parameters.Add("@Phone", SqlDbType.NVarChar, 20).Value = (object)customer.Phone ?? DBNull.Value;
+
+                    var outParam = new SqlParameter("@NewId", SqlDbType.Int)
                     {
-                        using (SqlCommand cmd = new SqlCommand("dbo.sp_InsertCustomer", conn))
-                        {
-                            cmd.CommandType = CommandType.StoredProcedure;
-                            cmd.Parameters.Add("@ContactName", SqlDbType.NVarChar, 100).Value = customer.ContactName ?? string.Empty;
-                            cmd.Parameters.Add("@City", SqlDbType.NVarChar, 50).Value = customer.City ?? string.Empty;
-                            cmd.Parameters.Add("@Country", SqlDbType.NVarChar, 50).Value = customer.Country ?? string.Empty;
-                            cmd.Parameters.Add("@Email", SqlDbType.NVarChar, 100).Value = (object)customer.Email ?? DBNull.Value;
-                            cmd.Parameters.Add("@Phone", SqlDbType.NVarChar, 20).Value = (object)customer.Phone ?? DBNull.Value;
+                        Direction = ParameterDirection.Output
+                    };
+                    cmd.Parameters.Add(outParam);
 
-                            SqlParameter outputId = new SqlParameter("@NewId", SqlDbType.Int)
-                            {
-                                Direction = ParameterDirection.Output
-                            };
-                            cmd.Parameters.Add(outputId);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
 
-                            conn.Open();
-                            cmd.ExecuteNonQuery();
-
-                            return (int)outputId.Value;
-                        }
-                    }
+                    return (int)outParam.Value;
                 }
             }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("Error in sp_InsertCustomer: " + ex.Message);
-            }
+        }
 
-            return 0;
+        /// <summary>
+        /// Fallback method ensuring consistent data if database connectivity is unavailable.
+        /// </summary>
+        public static List<Customer> GetCustomers()
+        {
+            return GetCustomersFromDatabase();
         }
 
         private static List<Customer> GetFallbackCustomers()
