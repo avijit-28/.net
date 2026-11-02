@@ -2,20 +2,18 @@
 
 @{
     ViewBag.Title = "User Login";
-    var demoUsers = ViewBag.DemoUsers as List<AiProjectMVC.Models.EmployeeUser> ?? new List<AiProjectMVC.Models.EmployeeUser>();
-    var pdfUsers = ViewBag.PdfUsers as List<AiProjectMVC.Models.USER> ?? new List<AiProjectMVC.Models.USER>();
 }
 
 <div class="row justify-content-center py-4">
     <div class="col-md-8 col-lg-5">
         <div class="custom-card shadow-lg border-0 overflow-hidden">
-            <!-- Top Branding Header -->
+            <!-- Top Header -->
             <div class="p-4 text-center text-white" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #4338ca 100%);">
                 <div class="d-inline-flex p-3 rounded-circle bg-white bg-opacity-10 text-white mb-2 shadow-sm">
                     <i class="bi bi-shield-lock-fill fs-2"></i>
                 </div>
                 <h3 class="fw-bold mb-1">Employee Portal Login</h3>
-                <p class="text-white-50 small mb-0">Sign in with your registered username or email</p>
+                <p class="text-white-50 small mb-0">Sign in with your username or registered email</p>
             </div>
 
             <!-- Login Form Body -->
@@ -34,7 +32,7 @@
 
                     <!-- Username / Email Field -->
                     <div class="mb-3">
-                        @Html.LabelFor(m => m.UserNameOrEmail, new { @class = "form-label" })
+                        @Html.LabelFor(m => m.UserNameOrEmail, new { @class = "form-label fw-semibold" })
                         <div class="input-group">
                             <span class="input-group-text bg-light"><i class="bi bi-person text-muted"></i></span>
                             @Html.TextBoxFor(m => m.UserNameOrEmail, new { @class = "form-control", placeholder = "Username or Email (e.g. avijit28)", required = "required", id = "usernameInput" })
@@ -44,10 +42,10 @@
 
                     <!-- Password Field -->
                     <div class="mb-3">
-                        @Html.LabelFor(m => m.Password, new { @class = "form-label" })
+                        @Html.LabelFor(m => m.Password, new { @class = "form-label fw-semibold" })
                         <div class="input-group">
                             <span class="input-group-text bg-light"><i class="bi bi-key text-muted"></i></span>
-                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Enter your password", required = "required", id = "passwordInput" })
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Enter password", required = "required", id = "passwordInput" })
                             <button class="btn btn-outline-secondary" type="button" id="togglePasswordBtn" title="Toggle visibility">
                                 <i class="bi bi-eye"></i>
                             </button>
@@ -56,10 +54,10 @@
                     </div>
 
                     <!-- Remember Me -->
-                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                    <div class="mb-3 d-flex justify-content-between align-items-center">
                         <div class="form-check">
                             @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-check-input" })
-                            @Html.LabelFor(m => m.RememberMe, new { @class = "form-check-label small" })
+                            @Html.LabelFor(m => m.RememberMe, new { @class = "form-check-label small text-muted" })
                         </div>
                     </div>
 
@@ -69,47 +67,49 @@
                     </button>
                 }
 
-                <!-- Quick Test Logins Section (Role-based Authentication from USERS table) -->
-                @if (pdfUsers.Any())
-                {
-                    <div class="mt-4 pt-3 border-top">
-                        <div class="text-muted small fw-semibold mb-2 text-uppercase">
-                            <i class="bi bi-shield-check text-primary me-1"></i> Role Demo Accounts (USERS Table)
+                <!-- Quick Test Role Selector -->
+                <div class="mt-4 pt-3 border-top">
+                    <div class="text-muted small fw-bold mb-2 text-uppercase text-center">
+                        <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick 1-Click Role Login
+                    </div>
+                    <div class="row g-2">
+                        <!-- Admin -->
+                        <div class="col-4">
+                            <button type="button" class="btn btn-outline-danger w-100 py-2 demo-chip d-flex flex-column align-items-center"
+                                    data-user="avijit28" data-pass="Avijit@123">
+                                <i class="bi bi-shield-fill-check fs-5 mb-1 text-danger"></i>
+                                <span class="fw-bold small text-dark">Admin</span>
+                                <span class="text-muted text-nowrap" style="font-size: 11px;">Full Access</span>
+                            </button>
                         </div>
-                        <div class="d-flex flex-wrap gap-2">
-                            @foreach (var u in pdfUsers)
-                            {
-                                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill py-1 px-2 demo-chip"
-                                        data-user="@u.UserName" data-pass="@u.Password">
-                                    <span class="fw-bold">@u.UserName</span>
-                                    <span class="badge bg-primary ms-1">@u.Roles</span>
-                                </button>
-                            }
+                        <!-- Manager / HR -->
+                        <div class="col-4">
+                            <button type="button" class="btn btn-outline-primary w-100 py-2 demo-chip d-flex flex-column align-items-center"
+                                    data-user="amit103" data-pass="Amit@123">
+                                <i class="bi bi-briefcase-fill fs-5 mb-1 text-primary"></i>
+                                <span class="fw-bold small text-dark">Manager/HR</span>
+                                <span class="text-muted text-nowrap" style="font-size: 11px;">Manage Staff</span>
+                            </button>
+                        </div>
+                        <!-- Employee -->
+                        <div class="col-4">
+                            <button type="button" class="btn btn-outline-success w-100 py-2 demo-chip d-flex flex-column align-items-center"
+                                    data-user="rahul101" data-pass="Rahul@123">
+                                <i class="bi bi-person-fill fs-5 mb-1 text-success"></i>
+                                <span class="fw-bold small text-dark">Employee</span>
+                                <span class="text-muted text-nowrap" style="font-size: 11px;">View Portal</span>
+                            </button>
                         </div>
                     </div>
-                }
-
-                @if (demoUsers.Any())
-                {
-                    <div class="mt-3 pt-2">
-                        <div class="text-muted small fw-semibold mb-2 text-uppercase">
-                            <i class="bi bi-person-badge text-secondary me-1"></i> Employee Portal Accounts
-                        </div>
-                        <div class="d-flex flex-wrap gap-2">
-                            @foreach (var user in demoUsers)
-                            {
-                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill py-1 px-2 demo-chip"
-                                        data-user="@user.UserName" data-pass="@user.Password">
-                                    <span class="fw-bold">@user.UserName</span>
-                                    <span class="badge bg-light text-dark ms-1">@user.Role</span>
-                                </button>
-                            }
-                        </div>
+                    <div class="text-center mt-2">
+                        <span class="text-muted" style="font-size: 11px;">
+                            <i class="bi bi-info-circle me-1"></i> Also supports <code>admin@gmail.com</code> / <code>user@gmail.com</code>
+                        </span>
                     </div>
-                }
+                </div>
 
                 <!-- Register Footer Link -->
-                <div class="text-center mt-4 pt-2">
+                <div class="text-center mt-3 pt-2">
                     <p class="text-muted small mb-0">
                         Don't have an account? 
                         <a href="@Url.Action("Register", "Account")" class="fw-bold text-primary text-decoration-none ms-1">
@@ -139,7 +139,7 @@
                 }
             });
 
-            // Quick demo login filler
+            // Quick demo login chip click
             $('.demo-chip').on('click', function () {
                 var user = $(this).data('user');
                 var pass = $(this).data('pass');
