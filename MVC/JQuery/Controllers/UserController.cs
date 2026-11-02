@@ -25,8 +25,85 @@ namespace JQuery.Controllers
         public ActionResult InsertUserDetails()
         {
             UserDetails objuser = new UserDetails();
-            DataSet ds = new DataSet();
+            objuser.usersinfo = GetUsersFromDatabase();
+            return View(objuser);
+        }
+
+        // POST: User/InsertUserDetails (Synchronous Form Submission)
+        [HttpPost]
+        public ActionResult InsertUserDetails(UserDetails user)
+        {
+            int rowsAffected = 0;
+            using (SqlConnection con = new SqlConnection(GetConnectionString()))
+            {
+                using (SqlCommand cmd = new SqlCommand("usercrudoperations", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@name", (object)user.UserName ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@education", (object)user.Education ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@location", (object)user.Location ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@status", "INSERT");
+
+                    con.Open();
+                    rowsAffected = cmd.ExecuteNonQuery();
+                    con.Close();
+                }
+            }
+
+            ViewData["result"] = rowsAffected > 0 ? "1" : "0";
+
+            UserDetails objuser = new UserDetails();
+            objuser.usersinfo = GetUsersFromDatabase();
+            return View(objuser);
+        }
+
+        // AJAX POST: User/InsertUserAjax
+        [HttpPost]
+        public JsonResult InsertUserAjax(UserDetails user)
+        {
+            if (user == null || string.IsNullOrWhiteSpace(user.UserName))
+            {
+                return Json(new { success = false, message = "User Name is required." });
+            }
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(GetConnectionString()))
+                {
+                    using (SqlCommand cmd = new SqlCommand("usercrudoperations", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@name", user.UserName.Trim());
+                        cmd.Parameters.AddWithValue("@education", (object)user.Education ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@location", (object)user.Location ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue("@status", "INSERT");
+
+                        con.Open();
+                        int rows = cmd.ExecuteNonQuery();
+                        con.Close();
+
+                        return Json(new { success = rows > 0, message = "User inserted successfully via usercrudoperations!" });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // AJAX GET: User/GetUsersJson
+        [HttpGet]
+        public JsonResult GetUsersJson()
+        {
+            var list = GetUsersFromDatabase();
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
+        private List<UserDetails> GetUsersFromDatabase()
+        {
             List<UserDetails> userlist = new List<UserDetails>();
+            DataSet ds = new DataSet();
 
             using (SqlConnection con = new SqlConnection(GetConnectionString()))
             {
@@ -45,9 +122,9 @@ namespace JQuery.Controllers
                         {
                             UserDetails uobj = new UserDetails();
                             uobj.UserId = Convert.ToInt32(ds.Tables[0].Rows[i]["userid"].ToString());
-                            uobj.UserName = ds.Tables[0].Rows[i]["username"].ToString();
-                            uobj.Education = ds.Tables[0].Rows[i]["education"].ToString();
-                            uobj.Location = ds.Tables[0].Rows[i]["location"].ToString();
+                            uobj.UserName = ds.Tables[0].Rows[i]["username"] != DBNull.Value ? ds.Tables[0].Rows[i]["username"].ToString() : string.Empty;
+                            uobj.Education = ds.Tables[0].Rows[i]["education"] != DBNull.Value ? ds.Tables[0].Rows[i]["education"].ToString() : string.Empty;
+                            uobj.Location = ds.Tables[0].Rows[i]["location"] != DBNull.Value ? ds.Tables[0].Rows[i]["location"].ToString() : string.Empty;
                             userlist.Add(uobj);
                         }
                     }
@@ -55,32 +132,7 @@ namespace JQuery.Controllers
                 con.Close();
             }
 
-            objuser.usersinfo = userlist;
-            return View(objuser);
-        }
-
-        // POST: User/InsertUserDetails
-        [HttpPost]
-        public ActionResult InsertUserDetails(UserDetails user)
-        {
-            using (SqlConnection con = new SqlConnection(GetConnectionString()))
-            {
-                using (SqlCommand cmd = new SqlCommand("usercrudoperations", con))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@name", user.UserName ?? (object)DBNull.Value);
-                    cmd.Parameters.AddWithValue("@education", user.Education ?? (object)DBNull.Value);
-                    cmd.Parameters.AddWithValue("@location", user.Location ?? (object)DBNull.Value);
-                    cmd.Parameters.AddWithValue("@status", "INSERT");
-
-                    con.Open();
-                    ViewData["result"] = cmd.ExecuteNonQuery();
-                    con.Close();
-                }
-            }
-
-            // Reload user list for display
-            return InsertUserDetails();
+            return userlist;
         }
 
         // ================================================================
@@ -109,25 +161,25 @@ namespace JQuery.Controllers
         // STATUS RESULTS (HttpStatusCodeResult, HttpUnauthorizedResult, HttpNotFoundResult)
         // ================================================================
 
-        // 1. HttpStatusCodeResult with Unauthorized status
+        // 1. HttpStatusCodeResult with Unauthorized status (401)
         public HttpStatusCodeResult UnauthorizedStatusCode()
         {
             return new HttpStatusCodeResult(HttpStatusCode.Unauthorized, "You are not authorized to access this controller action.");
         }
 
-        // 2. HttpStatusCodeResult with BadGateway status
+        // 2. HttpStatusCodeResult with BadGateway status (502)
         public HttpStatusCodeResult BadGateway()
         {
             return new HttpStatusCodeResult(HttpStatusCode.BadGateway, "I have no idea what this error means.");
         }
 
-        // 3. HttpUnauthorizedResult
+        // 3. HttpUnauthorizedResult (401)
         public HttpStatusCodeResult UnauthorizedResult()
         {
             return new HttpUnauthorizedResult("You are not authorized to access this controller action.");
         }
 
-        // 4. HttpNotFoundResult
+        // 4. HttpNotFoundResult (404)
         public HttpNotFoundResult NotFoundAction()
         {
             return HttpNotFound("We didn't find that action, sorry!");
