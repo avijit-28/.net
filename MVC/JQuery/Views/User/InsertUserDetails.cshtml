@@ -1,54 +1,54 @@
 @model JQuery.Models.UserDetails
 @{
-    ViewBag.Title = "User Details - Redirect & Status Results Demo";
+    ViewBag.Title = "User Details Management & Routing";
 }
 
-<div class="container py-4">
-    <!-- Header Banner -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="p-4 bg-white rounded-3 shadow-sm border">
-                <h2 class="fw-bold text-dark mb-1">
-                    <i class="fa-solid fa-arrows-split-up-and-left text-primary me-2"></i>
-                    Redirect, RedirectToRoute, RedirectToAction &amp; Status Results
-                </h2>
-                <p class="text-muted mb-0">
-                    Basic level implementation in ASP.NET MVC with SQL Server Stored Procedure (<code>usercrudoperations</code>).
-                </p>
+<div class="container-fluid px-4 pt-4">
+    <!-- Top Executive Header -->
+    <div class="row align-items-center mb-4 g-3">
+        <div class="col-lg-7">
+            <div class="d-flex align-items-center">
+                <div class="bg-success text-white p-3 rounded-4 me-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 52px; height: 52px;">
+                    <i class="fa-solid fa-users-gear fs-4"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-1 text-slate-900 tracking-tight">User Management &amp; Redirection Hub</h3>
+                    <p class="text-muted mb-0 small">
+                        SQL Server <code>Assignmet.dbo.userdetails</code> &bull; Stored Procedure <code>usercrudoperations</code>
+                    </p>
+                </div>
             </div>
+        </div>
+        <div class="col-lg-5 text-lg-end">
+            <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary me-2">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+            </a>
+            <button id="btnClientRedirectDemo" class="btn btn-primary">
+                <i class="fa-brands fa-js me-1"></i> jQuery window.location.href
+            </button>
         </div>
     </div>
 
-    <!-- Quick Action / Demonstration Toolbars -->
+    <!-- Quick Action / Routing Toolbars -->
     <div class="row g-3 mb-4">
-        <!-- Redirect Demonstrations Card -->
+        <!-- Redirections Card -->
         <div class="col-lg-6">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-primary text-white py-3">
-                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-share-from-square me-2"></i> Redirect Demonstrations</h5>
+            <div class="card card-modern h-100">
+                <div class="card-header-modern bg-white">
+                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-share-from-square text-primary me-2"></i> Server Redirection ActionResults</h5>
                 </div>
                 <div class="card-body">
                     <p class="small text-muted mb-3">
-                        Test different types of redirects in ASP.NET MVC and jQuery:
+                        Test standard ASP.NET MVC redirection methods:
                     </p>
                     <div class="d-flex flex-wrap gap-2">
-                        <!-- 1. jQuery window.location.href -->
-                        <button id="btnRedirect" class="btn btn-outline-primary btn-sm">
-                            <i class="fa-brands fa-js me-1"></i> jQuery window.location.href
-                        </button>
-
-                        <!-- 2. Controller RedirectToAction -->
-                        <a href="@Url.Action("RedirectToActionDemo", "User")" class="btn btn-outline-success btn-sm">
+                        <a href="@Url.Action("RedirectToActionDemo", "User")" class="btn btn-sm btn-outline-success">
                             <i class="fa-solid fa-arrow-right me-1"></i> RedirectToAction
                         </a>
-
-                        <!-- 3. Controller RedirectToRoute -->
-                        <a href="@Url.Action("RedirectToRouteDemo", "User")" class="btn btn-outline-info btn-sm">
+                        <a href="@Url.Action("RedirectToRouteDemo", "User")" class="btn btn-sm btn-outline-info">
                             <i class="fa-solid fa-route me-1"></i> RedirectToRoute
                         </a>
-
-                        <!-- 4. Controller Redirect (External URL) -->
-                        <a href="@Url.Action("RedirectToExternal", "User")" class="btn btn-outline-warning btn-sm" target="_blank">
+                        <a href="@Url.Action("RedirectToExternal", "User")" class="btn btn-sm btn-outline-warning" target="_blank">
                             <i class="fa-solid fa-globe me-1"></i> Redirect("https://mccit.net")
                         </a>
                     </div>
@@ -58,32 +58,25 @@
 
         <!-- Status Results Card -->
         <div class="col-lg-6">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-danger text-white py-3">
-                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-triangle-exclamation me-2"></i> Status Results (HTTP Error Codes)</h5>
+            <div class="card card-modern h-100">
+                <div class="card-header-modern bg-white">
+                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-shield-halved text-danger me-2"></i> HTTP Status Results</h5>
                 </div>
                 <div class="card-body">
                     <p class="small text-muted mb-3">
-                        Test ActionResult types that return standard HTTP status codes:
+                        Test ActionResult types returning HTTP status codes:
                     </p>
                     <div class="d-flex flex-wrap gap-2">
-                        <!-- 1. HttpStatusCodeResult Unauthorized -->
-                        <a href="@Url.Action("UnauthorizedStatusCode", "User")" class="btn btn-outline-danger btn-sm" target="_blank">
+                        <a href="@Url.Action("UnauthorizedStatusCode", "User")" class="btn btn-sm btn-outline-danger" target="_blank">
                             <i class="fa-solid fa-lock me-1"></i> 401 Unauthorized
                         </a>
-
-                        <!-- 2. HttpStatusCodeResult BadGateway -->
-                        <a href="@Url.Action("BadGateway", "User")" class="btn btn-outline-danger btn-sm" target="_blank">
+                        <a href="@Url.Action("BadGateway", "User")" class="btn btn-sm btn-outline-danger" target="_blank">
                             <i class="fa-solid fa-server me-1"></i> 502 Bad Gateway
                         </a>
-
-                        <!-- 3. HttpUnauthorizedResult -->
-                        <a href="@Url.Action("UnauthorizedResult", "User")" class="btn btn-outline-secondary btn-sm" target="_blank">
+                        <a href="@Url.Action("UnauthorizedResult", "User")" class="btn btn-sm btn-outline-secondary" target="_blank">
                             <i class="fa-solid fa-user-slash me-1"></i> HttpUnauthorizedResult
                         </a>
-
-                        <!-- 4. HttpNotFoundResult -->
-                        <a href="@Url.Action("NotFoundAction", "User")" class="btn btn-outline-dark btn-sm" target="_blank">
+                        <a href="@Url.Action("NotFoundAction", "User")" class="btn btn-sm btn-outline-dark" target="_blank">
                             <i class="fa-solid fa-magnifying-glass me-1"></i> HttpNotFoundResult (404)
                         </a>
                     </div>
@@ -92,57 +85,61 @@
         </div>
     </div>
 
-    <!-- User Details Form & List Grid -->
+    <!-- Registration Form & User Table -->
     <div class="row g-4">
-        <!-- Form for InsertUserDetails -->
+        <!-- User Registration Form -->
         <div class="col-lg-4">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white py-3 border-bottom">
-                    <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-user-plus text-primary me-2"></i> Register User</h5>
-                    <small class="text-muted">Stored Procedure: <code>usercrudoperations (&#64;status='INSERT')</code></small>
+            <div class="card card-modern h-100">
+                <div class="card-header-modern bg-white">
+                    <div>
+                        <h5 class="mb-0 fw-bold"><i class="fa-solid fa-user-plus text-success me-2"></i> User Registration Form</h5>
+                        <small class="text-muted"><code>usercrudoperations (&#64;status='INSERT')</code></small>
+                    </div>
                 </div>
                 <div class="card-body p-4">
-                    @using (Html.BeginForm("InsertUserDetails", "User", FormMethod.Post))
+                    @using (Html.BeginForm("InsertUserDetails", "User", FormMethod.Post, new { id = "formClassicRegister" }))
                     {
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">User Name:</label>
-                            @Html.TextBoxFor(u => u.UserName, new { @class = "form-control", placeholder = "Enter name", required = "required" })
+                            <label class="form-label small fw-bold">User Name *</label>
+                            @Html.TextBoxFor(u => u.UserName, new { @class = "form-control", placeholder = "Enter full name", required = "required" })
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Education:</label>
-                            @Html.TextBoxFor(u => u.Education, new { @class = "form-control", placeholder = "Enter education", required = "required" })
+                            <label class="form-label small fw-bold">Education *</label>
+                            @Html.TextBoxFor(u => u.Education, new { @class = "form-control", placeholder = "Enter degree/qualification", required = "required" })
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Location:</label>
-                            @Html.TextBoxFor(u => u.Location, new { @class = "form-control", placeholder = "Enter location", required = "required" })
+                            <label class="form-label small fw-bold">Location *</label>
+                            @Html.TextBoxFor(u => u.Location, new { @class = "form-control", placeholder = "Enter city or country", required = "required" })
                         </div>
                         <div class="d-grid mt-4">
-                            <input type="submit" value="Register" class="btn btn-primary" />
+                            <input type="submit" value="Register User" class="btn btn-success" />
                         </div>
                     }
                 </div>
             </div>
         </div>
 
-        <!-- Table displaying registered User Details -->
+        <!-- Registered User List Table -->
         <div class="col-lg-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <div class="card card-modern h-100">
+                <div class="card-header-modern bg-white">
                     <div>
-                        <h5 class="mb-0 fw-bold text-dark"><i class="fa-solid fa-users text-primary me-2"></i> User Details</h5>
-                        <small class="text-muted">Stored Procedure: <code>usercrudoperations (&#64;status='GET')</code></small>
+                        <h5 class="mb-0 fw-bold"><i class="fa-solid fa-users text-primary me-2"></i> Registered Users</h5>
+                        <small class="text-muted"><code>usercrudoperations (&#64;status='GET')</code></small>
                     </div>
-                    <span class="badge bg-primary">Total: @(Model != null && Model.usersinfo != null ? Model.usersinfo.Count : 0)</span>
+                    <span class="badge bg-primary rounded-pill">
+                        Total: @(Model != null && Model.usersinfo != null ? Model.usersinfo.Count : 0)
+                    </span>
                 </div>
                 <div class="card-body p-0">
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 520px; overflow-y: auto;">
                         @if (Model != null && Model.usersinfo != null && Model.usersinfo.Count > 0)
                         {
                             <table class="table table-striped table-hover mb-0 align-middle">
-                                <thead class="table-dark">
+                                <thead class="table-dark sticky-top">
                                     <tr>
-                                        <th style="width: 90px;">UserId</th>
-                                        <th>UserName</th>
+                                        <th style="width: 85px;">User Id</th>
+                                        <th>User Name</th>
                                         <th>Education</th>
                                         <th>Location</th>
                                     </tr>
@@ -151,10 +148,10 @@
                                     @foreach (var item in Model.usersinfo)
                                     {
                                         <tr>
-                                            <td><span class="badge bg-secondary">@Html.DisplayFor(modelitem => item.UserId)</span></td>
-                                            <td class="fw-bold">@Html.DisplayFor(modelitem => item.UserName)</td>
-                                            <td>@Html.DisplayFor(modelitem => item.Education)</td>
-                                            <td><span class="badge bg-light text-dark border">@Html.DisplayFor(modelitem => item.Location)</span></td>
+                                            <td><span class="badge bg-secondary badge-code">@Html.DisplayFor(m => item.UserId)</span></td>
+                                            <td class="fw-bold text-slate-900">@Html.DisplayFor(m => item.UserName)</td>
+                                            <td>@Html.DisplayFor(m => item.Education)</td>
+                                            <td><span class="badge bg-light text-dark border">@Html.DisplayFor(m => item.Location)</span></td>
                                         </tr>
                                     }
                                 </tbody>
@@ -162,7 +159,8 @@
                         }
                         else
                         {
-                            <div class="p-4 text-center text-muted">
+                            <div class="p-5 text-center text-muted">
+                                <i class="fa-solid fa-user-slash fs-1 text-secondary mb-3 d-block"></i>
                                 <b>No Details Found.</b>
                             </div>
                         }
@@ -177,15 +175,22 @@
 <script type="text/javascript">
     $(function () {
         // jQuery client-side redirect on button click
-        $("#btnRedirect").click(function () {
+        $("#btnClientRedirectDemo").on("click", function () {
             window.location.href = "@Url.Action("InsertUserDetails", "User")";
         });
 
-        // Check if insertion was successful, alert, and redirect
+        // Feedback alert and client-side redirect on successful form post
         var msg = '@ViewData["result"]';
-        if (msg == '1') {
-            alert("User Details Inserted Successfully");
-            window.location.href = "@Url.Action("InsertUserDetails", "User")";
+        if (msg === '1') {
+            Swal.fire({
+                icon: 'success',
+                title: 'User Details Inserted Successfully!',
+                text: 'Registered and refreshed via stored procedure usercrudoperations.',
+                timer: 2000,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
         }
     });
 </script>
