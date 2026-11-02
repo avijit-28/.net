@@ -330,6 +330,7 @@
     <Content Include="Views\Admin\ReportPdf.cshtml" />
     <Content Include="Views\Notifications\Index.cshtml" />
     <Content Include="packages.config" />
+    <None Include="Properties\launchSettings.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
