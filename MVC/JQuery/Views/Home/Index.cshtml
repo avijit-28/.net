@@ -1,33 +1,1010 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+@{
+    ViewBag.Title = "jQuery DataTable & JSGrid in AJAX Dashboard";
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
-
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+<!-- Top Header & Architecture Title Banner -->
+<div class="row pt-3 pb-2 mb-4 align-items-center bg-white rounded-3 shadow-sm mx-0 border">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center">
+            <div class="bg-primary text-white p-3 rounded-3 me-3">
+                <i class="fa-solid fa-network-wired fs-2"></i>
+            </div>
+            <div>
+                <h2 class="fw-bold mb-1 text-dark">jQuery DataTable and JSGrid in AJAX</h2>
+                <p class="text-muted mb-0">
+                    Comprehensive Interactive Dashboard: ASP.NET MVC Backend, Entity Framework, Asynchronous JSON Serialization, and Client-Side Grid Rendering
+                </p>
+            </div>
+        </div>
     </div>
-</main>
+    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+        <button id="btnTriggerGlobalSync" class="btn btn-primary shadow-sm me-2">
+            <i class="fa-solid fa-rotate me-1"></i> Trigger AJAX Call
+        </button>
+        <a href="#interactive-workflow" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-book-open me-1"></i> Workflow Guide
+        </a>
+    </div>
+</div>
+
+<!-- Overview Metric Cards -->
+<div class="row g-3 mb-4" id="dashboard-overview">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted text-uppercase fw-semibold small">Total Customers</span>
+                    <h3 class="fw-bold mb-0 mt-1" id="statCustomerCount">25</h3>
+                    <small class="text-success"><i class="fa-solid fa-database me-1"></i> Entity Framework List</small>
+                </div>
+                <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted text-uppercase fw-semibold small">Countries Covered</span>
+                    <h3 class="fw-bold mb-0 mt-1" id="statCountryCount">10</h3>
+                    <small class="text-info"><i class="fa-solid fa-earth-americas me-1"></i> Global Coverage</small>
+                </div>
+                <div class="stat-icon bg-info bg-opacity-10 text-info">
+                    <i class="fa-solid fa-globe"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted text-uppercase fw-semibold small">Active Cities</span>
+                    <h3 class="fw-bold mb-0 mt-1" id="statCityCount">18</h3>
+                    <small class="text-primary"><i class="fa-solid fa-city me-1"></i> Customer Regions</small>
+                </div>
+                <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted text-uppercase fw-semibold small">AJAX Endpoint Status</span>
+                    <h3 class="fw-bold mb-0 mt-1 text-success fs-4" id="statEndpointStatus">200 OK</h3>
+                    <small class="text-muted" id="statLatency"><i class="fa-solid fa-bolt me-1 text-warning"></i> ~8 ms Latency</small>
+                </div>
+                <div class="stat-icon bg-success bg-opacity-10 text-success">
+                    <i class="fa-solid fa-cloud-arrow-down"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- End-to-End Visual Architecture Pipeline Diagram -->
+<div class="card border-0 shadow-sm rounded-3 mb-4">
+    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="fw-bold mb-0 text-dark">
+                <i class="fa-solid fa-diagram-project text-primary me-2"></i> End-to-End AJAX Architecture Workflow
+            </h5>
+            <small class="text-muted">How data seamlessly flows from Database to Controller to jQuery AJAX to DataTable / JSGrid</small>
+        </div>
+        <span class="badge bg-light text-dark border">Bidirectional Flow</span>
+    </div>
+    <div class="card-body p-4">
+        <div class="pipeline-flow">
+            <div class="pipeline-node" id="node-1">
+                <div class="small text-muted fw-bold mb-1">CLIENT INITIALIZATION</div>
+                <i class="fa-brands fa-html5 text-danger fs-3 mb-2"></i>
+                <div class="fw-semibold">DOM Ready Event</div>
+                <div class="small text-secondary">HTML Table Skeleton</div>
+            </div>
+            
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            
+            <div class="pipeline-node" id="node-2">
+                <div class="small text-muted fw-bold mb-1">ASYNC TRANSPORT</div>
+                <i class="fa-solid fa-arrow-right-arrow-left text-primary fs-3 mb-2"></i>
+                <div class="fw-semibold">jQuery $.ajax()</div>
+                <div class="small text-secondary">HTTP POST to /Home/AjaxMethod</div>
+            </div>
+            
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            
+            <div class="pipeline-node" id="node-3">
+                <div class="small text-muted fw-bold mb-1">MVC CONTROLLER</div>
+                <i class="fa-solid fa-server text-success fs-3 mb-2"></i>
+                <div class="fw-semibold">HomeController</div>
+                <div class="small text-secondary">[HttpPost] JsonResult AjaxMethod()</div>
+            </div>
+            
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            
+            <div class="pipeline-node" id="node-4">
+                <div class="small text-muted fw-bold mb-1">ORM / DATABASE</div>
+                <i class="fa-solid fa-database text-warning fs-3 mb-2"></i>
+                <div class="fw-semibold">Entity Framework</div>
+                <div class="small text-secondary">LINQ Query on Customers Table</div>
+            </div>
+            
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            
+            <div class="pipeline-node" id="node-5">
+                <div class="small text-muted fw-bold mb-1">SERIALIZATION</div>
+                <i class="fa-solid fa-file-code text-info fs-3 mb-2"></i>
+                <div class="fw-semibold">Json(customers)</div>
+                <div class="small text-secondary">HTTP 200 JSON Response</div>
+            </div>
+            
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            
+            <div class="pipeline-node" id="node-6">
+                <div class="small text-muted fw-bold mb-1">UI GRID RENDER</div>
+                <i class="fa-solid fa-table-list text-primary fs-3 mb-2"></i>
+                <div class="fw-semibold">DataTables &amp; JSGrid</div>
+                <div class="small text-secondary">Sorting, Paging, Search</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Tabs Section -->
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="card-header bg-white pt-3 pb-0 border-bottom">
+        <ul class="nav nav-pills card-header-pills pb-3" id="mainDashboardTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-workflow-btn" data-bs-toggle="pill" data-bs-target="#interactive-workflow" type="button" role="tab">
+                    <i class="fa-solid fa-graduation-cap me-1"></i> Architecture Workflow
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-datatable-btn" data-bs-toggle="pill" data-bs-target="#live-datatable" type="button" role="tab">
+                    <i class="fa-solid fa-table me-1"></i> Live jQuery DataTable
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-jsgrid-btn" data-bs-toggle="pill" data-bs-target="#live-jsgrid" type="button" role="tab">
+                    <i class="fa-solid fa-border-all me-1"></i> Live JSGrid Component
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-inspector-btn" data-bs-toggle="pill" data-bs-target="#ajax-inspector" type="button" role="tab">
+                    <i class="fa-solid fa-network-wired me-1"></i> Live AJAX Inspector
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card-body p-4">
+        <div class="tab-content" id="mainDashboardTabsContent">
+            
+            <!-- ========================================== -->
+            <!-- TAB 1: INTERACTIVE WORKFLOW & HOW IT WORKS -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade show active" id="interactive-workflow" role="tabpanel">
+                
+                <div class="alert alert-primary d-flex align-items-center mb-4">
+                    <i class="fa-solid fa-circle-info fs-4 me-3 text-primary"></i>
+                    <div>
+                        <strong class="d-block">Understanding the jQuery DataTables &amp; AJAX Paradigm in ASP.NET MVC</strong>
+                        Follow this step-by-step technical breakdown to master how data moves from SQL Server/Entity Framework all the way to an interactive browser table with instant search, sorting, and pagination.
+                    </div>
+                </div>
+
+                <!-- Step 1: Model & Database Connection -->
+                <div class="workflow-step-card">
+                    <div class="workflow-step-header">
+                        <div class="d-flex align-items-center">
+                            <span class="workflow-badge me-3">Step 1</span>
+                            <h5 class="fw-bold mb-0">Create ASP.NET MVC Application &amp; Connect to Database using Entity Framework</h5>
+                        </div>
+                        <span class="text-muted small"><i class="fa-solid fa-layer-group me-1"></i> Data Model Layer</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <p class="text-muted">
+                            The very first step is to establish the data structure. The Entity Framework DbContext (e.g. <code>BikeStoresEntities</code>) maps to the database <code>Customers</code> table.
+                            Each row is mapped to an instance of the <code>Customer</code> entity model with properties representing each column.
+                        </p>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h6 class="fw-bold text-dark"><i class="fa-solid fa-code text-primary me-1"></i> Customer Model (Customer.cs)</h6>
+                                <pre class="code-block"><code>public class Customer
+{
+    public int CustomerID { get; set; }
+    public string ContactName { get; set; }
+    public string City { get; set; }
+    public string Country { get; set; }
+}</code></pre>
+                            </div>
+                            <div class="col-lg-6">
+                                <h6 class="fw-bold text-dark"><i class="fa-solid fa-database text-warning me-1"></i> Entity Framework Query Execution</h6>
+                                <div class="bg-light p-3 rounded-2 border">
+                                    <ul class="list-unstyled mb-0 small">
+                                        <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i><strong>Entity Framework Context:</strong> <code>BikeStoresEntities entities = new BikeStoresEntities();</code></li>
+                                        <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i><strong>LINQ Query:</strong> <code>(from customer in entities.Customers select customer).ToList();</code></li>
+                                        <li><i class="fa-solid fa-check text-success me-2"></i><strong>Output:</strong> Converted into a strongly-typed <code>List&lt;Customer&gt;</code> generic collection in server memory.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Controller Action Methods -->
+                <div class="workflow-step-card">
+                    <div class="workflow-step-header">
+                        <div class="d-flex align-items-center">
+                            <span class="workflow-badge me-3">Step 2</span>
+                            <h5 class="fw-bold mb-0">Controller Implementation with Two Action Methods</h5>
+                        </div>
+                        <span class="text-muted small"><i class="fa-solid fa-server me-1"></i> Controller Layer</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <p class="text-muted">
+                            The Controller contains two distinct action methods:
+                        </p>
+                        <ol class="text-muted">
+                            <li><strong>GET Action Method (<code>Index</code>):</strong> Handles the standard HTTP GET request and simply returns the View with the HTML skeleton.</li>
+                            <li><strong>AJAX Action Method (<code>AjaxMethod</code>):</strong> Decorated with <code>[HttpPost]</code>. It receives the asynchronous request from jQuery, queries the database, and returns the records as a <code>JsonResult</code>.</li>
+                        </ol>
+
+                        <h6 class="fw-bold text-dark"><i class="fa-solid fa-code text-primary me-1"></i> HomeController.cs</h6>
+                        <pre class="code-block"><code>public class HomeController : Controller
+{
+    // GET: Home - Returns the Razor HTML view containing the table structure
+    public ActionResult Index()
+    {
+        return View();
+    }
+
+    // Handles the jQuery AJAX operation - Returns JSON object to the View
+    [HttpPost]
+    public JsonResult AjaxMethod()
+    {
+        BikeStoresEntities entities = new BikeStoresEntities();
+        List&lt;Customer&gt; customers = (from customer in entities.Customers
+                                    select customer).ToList();
+        return Json(customers);
+    }
+}</code></pre>
+
+                        <div class="alert alert-info py-2 px-3 mb-0 small">
+                            <i class="fa-solid fa-lightbulb me-1 text-primary"></i>
+                            <strong>Key Concept:</strong> The return type is set to <code>JsonResult</code> because this method serves an AJAX call. The <code>Json(customers)</code> helper serializes the C# <code>List&lt;Customer&gt;</code> into a standard JSON array of objects.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: View & HTML Table Structure -->
+                <div class="workflow-step-card">
+                    <div class="workflow-step-header">
+                        <div class="d-flex align-items-center">
+                            <span class="workflow-badge me-3">Step 3</span>
+                            <h5 class="fw-bold mb-0">HTML Table Structure in the View</h5>
+                        </div>
+                        <span class="text-muted small"><i class="fa-solid fa-table me-1"></i> Presentation Layer</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="alert alert-warning py-2 px-3 mb-3 small">
+                            <i class="fa-solid fa-triangle-exclamation me-1 text-danger"></i>
+                            <strong>Mandatory DataTable Requirement:</strong> In order to use the jQuery DataTables plugin, it is <strong>required</strong> to include both <code>&lt;thead&gt;</code> and <code>&lt;tbody&gt;</code> tags in the HTML table. DataTables requires <code>&lt;thead&gt;</code> to compute column indices and headers, and targets <code>&lt;tbody&gt;</code> for dynamic row injection.
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h6 class="fw-bold text-dark"><i class="fa-solid fa-file-lines text-primary me-1"></i> HTML Table Definition</h6>
+                                <pre class="code-block"><code>&lt;table id="tblCustomers" cellpadding="0" cellspacing="0" border="1" style="border-collapse:collapse"&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Customer Id&lt;/th&gt;
+            &lt;th&gt;Name&lt;/th&gt;
+            &lt;th&gt;City&lt;/th&gt;
+            &lt;th&gt;Country&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;&lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+                            </div>
+                            <div class="col-lg-6">
+                                <h6 class="fw-bold text-dark"><i class="fa-solid fa-link text-info me-1"></i> Required Scripts &amp; Stylesheets</h6>
+                                <pre class="code-block"><code>&lt;!-- 1. jQuery Core --&gt;
+&lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- 2. DataTables Script --&gt;
+&lt;script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"&gt;&lt;/script&gt;
+
+&lt;!-- 3. DataTables Stylesheet --&gt;
+&lt;link href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css" rel="stylesheet" type="text/css"/&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: jQuery AJAX Request -->
+                <div class="workflow-step-card">
+                    <div class="workflow-step-header">
+                        <div class="d-flex align-items-center">
+                            <span class="workflow-badge me-3">Step 4</span>
+                            <h5 class="fw-bold mb-0">Client-Side jQuery AJAX Request</h5>
+                        </div>
+                        <span class="text-muted small"><i class="fa-solid fa-satellite-dish me-1"></i> AJAX Communication Layer</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <p class="text-muted">
+                            Inside the jQuery <code>document ready</code> event handler (<code>$(function () { ... })</code>), an asynchronous <code>$.ajax</code> POST call is made to the Controller's <code>/Home/AjaxMethod</code>.
+                        </p>
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <pre class="code-block"><code>&lt;script type="text/javascript"&gt;
+$(function () {
+    $.ajax({
+        type: "POST",
+        url: "/Home/AjaxMethod",
+        data: '{}',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: OnSuccess,
+        failure: function (response) {
+            alert(response.d);
+        },
+        error: function (response) {
+            alert(response.d);
+        }
+    });
+});
+&lt;/script&gt;</code></pre>
+                            </div>
+                            <div class="col-lg-5">
+                                <h6 class="fw-bold text-dark">Parameters Explained:</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered small">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Parameter</th>
+                                                <th>Purpose</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><code>type: "POST"</code></td>
+                                                <td>HTTP verb matching the <code>[HttpPost]</code> controller attribute.</td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>url</code></td>
+                                                <td>Relative path pointing to <code>/Home/AjaxMethod</code>.</td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>data: '{}'</code></td>
+                                                <td>Empty JSON payload sent with the POST body.</td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>contentType</code></td>
+                                                <td>Tells the server we are sending <code>application/json; charset=utf-8</code>.</td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>dataType: "json"</code></td>
+                                                <td>Expects the response from the server to be parsed as JSON.</td>
+                                            </tr>
+                                            <tr>
+                                                <td><code>success: OnSuccess</code></td>
+                                                <td>Callback function executed when HTTP 200 is received with data.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: DataTables Plugin Configuration & Properties -->
+                <div class="workflow-step-card">
+                    <div class="workflow-step-header">
+                        <div class="d-flex align-items-center">
+                            <span class="workflow-badge me-3">Step 5</span>
+                            <h5 class="fw-bold mb-0">Success Event Handler &amp; DataTable Plugin Initialization</h5>
+                        </div>
+                        <span class="text-muted small"><i class="fa-solid fa-sliders me-1"></i> DataTables Engine</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <p class="text-muted">
+                            Inside the <code>OnSuccess</code> callback, the HTML table is initialized with the <code>.DataTable({...})</code> plugin.
+                            The JSON data array returned by the Controller is passed directly into the <code>data</code> property, and each column is mapped to its matching property.
+                        </p>
+
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <pre class="code-block"><code>function OnSuccess(response) {
+    $("#tblCustomers").DataTable({
+        bLengthChange: true,
+        lengthMenu: [[5, 10, -1], [5, 10, "All"]],
+        bFilter: true,
+        bSort: true,
+        bPaginate: true,
+        data: response,
+        columns: [
+            { 'data': 'CustomerID' },
+            { 'data': 'ContactName' },
+            { 'data': 'City' },
+            { 'data': 'Country' }
+        ]
+    });
+}</code></pre>
+                            </div>
+                            <div class="col-lg-5">
+                                <h6 class="fw-bold text-dark">DataTables Properties Breakdown:</h6>
+                                <div class="accordion" id="accordionProperties">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button py-2 small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#propLength">
+                                                bLengthChange &amp; lengthMenu
+                                            </button>
+                                        </h2>
+                                        <div id="propLength" class="accordion-collapse collapse show">
+                                            <div class="accordion-body small text-muted">
+                                                <strong>bLengthChange:</strong> The Records per Page DropDownList will be shown if set to <code>true</code> and hidden if set to <code>false</code>. Default is <code>true</code>.<br />
+                                                <strong>lengthMenu:</strong> A multi-dimensional array. The first set is the numeric values (<code>[5, 10, -1]</code>) while the second set is the display labels (<code>[5, 10, "All"]</code>). <code>-1</code> shows all records.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed py-2 small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#propFilter">
+                                                bFilter (Instant Search Box)
+                                            </button>
+                                        </h2>
+                                        <div id="propFilter" class="accordion-collapse collapse">
+                                            <div class="accordion-body small text-muted">
+                                                The Search Box will be displayed if set to <code>true</code> and hidden if set to <code>false</code>. Enables instantaneous multi-column client-side searching.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed py-2 small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#propSort">
+                                                bSort (Column Sorting)
+                                            </button>
+                                        </h2>
+                                        <div id="propSort" class="accordion-collapse collapse">
+                                            <div class="accordion-body small text-muted">
+                                                The Sorting feature will be enabled if set to <code>true</code> and disabled if set to <code>false</code>. Allows users to click any header to sort ascending or descending.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed py-2 small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#propPaginate">
+                                                bPaginate (Paging Navigation)
+                                            </button>
+                                        </h2>
+                                        <div id="propPaginate" class="accordion-collapse collapse">
+                                            <div class="accordion-body small text-muted">
+                                                The Paging feature will be enabled if set to <code>true</code> and disabled if set to <code>false</code>. Creates previous, next, and page number buttons to segment data cleanly.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed py-2 small fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#propColumns">
+                                                columns (Field Mapping)
+                                            </button>
+                                        </h2>
+                                        <div id="propColumns" class="accordion-collapse collapse">
+                                            <div class="accordion-body small text-muted">
+                                                An array mapping JSON property keys (<code>CustomerID</code>, <code>ContactName</code>, <code>City</code>, <code>Country</code>) directly to the corresponding table column headers in order.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB 2: LIVE JQUERY DATATABLE               -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade" id="live-datatable" role="tabpanel">
+                
+                <!-- Live Interactive Control Toolbar -->
+                <div class="card bg-light border p-3 mb-4 rounded-3">
+                    <div class="row align-items-center g-3">
+                        <div class="col-md-4">
+                            <h6 class="fw-bold mb-1 text-dark"><i class="fa-solid fa-sliders text-primary me-2"></i> Interactive Feature Controls</h6>
+                            <small class="text-muted">Toggle options below to test how DataTables configuration affects the UI live:</small>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="d-flex flex-wrap gap-3 align-items-center justify-content-md-end">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="chkFilter" checked>
+                                    <label class="form-check-label small fw-semibold" for="chkFilter">bFilter (Search)</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="chkLength" checked>
+                                    <label class="form-check-label small fw-semibold" for="chkLength">bLengthChange (Page Sizer)</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="chkSort" checked>
+                                    <label class="form-check-label small fw-semibold" for="chkSort">bSort (Sorting)</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="chkPaginate" checked>
+                                    <label class="form-check-label small fw-semibold" for="chkPaginate">bPaginate (Paging)</label>
+                                </div>
+                                <button id="btnReloadTable" class="btn btn-sm btn-primary">
+                                    <i class="fa-solid fa-arrows-rotate me-1"></i> Re-fetch via AJAX
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Status Bar -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <span class="badge bg-primary me-2"><i class="fa-solid fa-bolt me-1"></i> Live Endpoint</span>
+                        <code class="text-dark">POST /Home/AjaxMethod</code>
+                    </div>
+                    <div id="tableStatusFeedback" class="small text-muted">
+                        <i class="fa-solid fa-circle-check text-success me-1"></i> Loaded 25 records from Entity Framework
+                    </div>
+                </div>
+
+                <!-- The Exact HTML Table as shown in the presentation -->
+                <div class="table-responsive p-3 bg-white border rounded-3 shadow-sm">
+                    <table id="tblCustomers" class="table table-striped table-hover table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Customer Id</th>
+                                <th>Name</th>
+                                <th>City</th>
+                                <th>Country</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 p-3 bg-light rounded-3 border">
+                    <h6 class="fw-bold mb-2 text-dark"><i class="fa-solid fa-code text-primary me-1"></i> Active Initialization Script</h6>
+                    <small class="text-muted d-block mb-2">This is the exact JavaScript code currently executing in your browser to power the table above:</small>
+                    <pre class="code-block mb-0" id="liveConfigDisplay"><code>// Dynamically synced with your toggle controls above</code></pre>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB 3: LIVE JSGRID COMPONENT              -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade" id="live-jsgrid" role="tabpanel">
+                <div class="alert alert-info d-flex align-items-center mb-4">
+                    <i class="fa-solid fa-circle-info fs-4 me-3 text-info"></i>
+                    <div>
+                        <strong class="d-block">JSGrid in AJAX Component</strong>
+                        Complementing jQuery DataTables, <strong>JSGrid</strong> is a lightweight client-side data grid control based on jQuery.
+                        It natively supports asynchronous AJAX data fetching, client-side/server-side filtering, sorting, pagination, and direct inline data editing.
+                    </div>
+                </div>
+
+                <!-- JSGrid Action Bar -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-success"><i class="fa-solid fa-plug me-1"></i> AJAX Connected</span>
+                        <span class="small text-muted">Endpoint: <code>POST /Home/GetJsGridData</code></span>
+                    </div>
+                    <div>
+                        <button id="btnReloadJsGrid" class="btn btn-sm btn-outline-primary">
+                            <i class="fa-solid fa-rotate me-1"></i> Refresh JSGrid Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- JSGrid Container -->
+                <div class="p-3 bg-white border rounded-3 shadow-sm mb-4">
+                    <div id="jsGridContainer"></div>
+                </div>
+
+                <!-- Comparative Architectural Summary -->
+                <div class="card border bg-light">
+                    <div class="card-body">
+                        <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-scale-balanced text-primary me-2"></i> Architectural Comparison: jQuery DataTable vs. JSGrid</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm small bg-white mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Feature</th>
+                                        <th>jQuery DataTable</th>
+                                        <th>JSGrid</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold">DOM Requirement</td>
+                                        <td>Requires standard HTML <code>&lt;table&gt;</code> with <code>&lt;thead&gt;</code> and <code>&lt;tbody&gt;</code></td>
+                                        <td>Renders dynamically into a plain <code>&lt;div&gt;</code> container</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Data Source</td>
+                                        <td>Accepts JSON array via <code>data: response</code> or AJAX URL config</td>
+                                        <td>Uses <code>controller.loadData</code> callback returning a jQuery Promise</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Inline Editing</td>
+                                        <td>Requires additional plugins (Editor / Buttons)</td>
+                                        <td>Built-in inline editing, inserting, and deleting</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Searching / Filtering</td>
+                                        <td>Global search input (<code>bFilter</code>) across all columns</td>
+                                        <td>Dedicated filter row with column-by-column inputs</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Use Case</td>
+                                        <td>Best for rich reporting, responsive tables, export to PDF/Excel</td>
+                                        <td>Best for lightweight CRUD interfaces and quick inline data management</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB 4: LIVE AJAX INSPECTOR & MONITOR       -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade" id="ajax-inspector" role="tabpanel">
+                <div class="row g-4">
+                    <div class="col-lg-5">
+                        <div class="card border rounded-3 h-100 shadow-sm">
+                            <div class="card-header bg-white py-3 border-bottom">
+                                <h6 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-play text-primary me-2"></i> Interactive AJAX Request Tester</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="small text-muted mb-3">
+                                    Click below to send an actual live HTTP POST request to the backend ASP.NET MVC controller and inspect the round-trip response in real time.
+                                </p>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Target Action URL:</label>
+                                    <input type="text" class="form-control form-control-sm" value="/Home/AjaxMethod" readonly id="targetUrl">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">HTTP Request Method:</label>
+                                    <input type="text" class="form-control form-control-sm" value="POST" readonly>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">Content-Type Header:</label>
+                                    <input type="text" class="form-control form-control-sm" value="application/json; charset=utf-8" readonly>
+                                </div>
+
+                                <button id="btnSendTestAjax" class="btn btn-primary w-100">
+                                    <i class="fa-solid fa-paper-plane me-1"></i> Send AJAX POST Request
+                                </button>
+
+                                <hr class="my-4">
+
+                                <h6 class="fw-bold text-dark small mb-2"><i class="fa-solid fa-gauge-high text-info me-1"></i> Live Diagnostics</h6>
+                                <div class="bg-light p-3 rounded-2 border small">
+                                    <div class="d-flex justify-content-between py-1 border-bottom">
+                                        <span class="text-muted">HTTP Status:</span>
+                                        <span class="fw-bold text-success" id="diagStatus">200 OK</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-1 border-bottom">
+                                        <span class="text-muted">Round-trip Time:</span>
+                                        <span class="fw-bold text-dark" id="diagDuration">~6 ms</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-1 border-bottom">
+                                        <span class="text-muted">Payload Item Count:</span>
+                                        <span class="fw-bold text-primary" id="diagRecordCount">25 Customer Objects</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-1">
+                                        <span class="text-muted">Serialization Format:</span>
+                                        <span class="fw-bold text-dark">JSON (Generic List&lt;Customer&gt;)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-7">
+                        <div class="card border rounded-3 h-100 shadow-sm">
+                            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                                <h6 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-code text-success me-2"></i> Raw JSON Response Payload</h6>
+                                <span class="badge bg-dark" id="jsonByteSize">Received JSON</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <pre id="jsonResponseViewer" class="m-0 rounded-0 border-0" style="min-height: 400px;">// Waiting for AJAX call... Click "Send AJAX POST Request" to fetch JSON.</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts {
+<script type="text/javascript">
+    // Variable to hold the DataTable instance
+    var customerDataTable = null;
+    var cachedCustomerData = null;
+
+    // Document Ready Event Handler
+    $(function () {
+        // Step 1: Initial AJAX call to populate the DataTable exactly as detailed in the presentation
+        fetchCustomerDataAndInitTable();
+
+        // Step 2: Initialize the JSGrid component
+        initJsGrid();
+
+        // Step 3: Wire up interactive control toggles
+        $("#chkFilter, #chkLength, #chkSort, #chkPaginate").on("change", function () {
+            rebuildDataTableWithCurrentSettings();
+        });
+
+        // Step 4: Wire up reload buttons
+        $("#btnReloadTable, #btnTriggerGlobalSync").on("click", function () {
+            fetchCustomerDataAndInitTable();
+        });
+
+        $("#btnReloadJsGrid").on("click", function () {
+            $("#jsGridContainer").jsGrid("loadData");
+        });
+
+        // Step 5: Wire up AJAX Inspector Tester
+        $("#btnSendTestAjax").on("click", function () {
+            executeAjaxTestCall();
+        });
+    });
+
+    /**
+     * Executes the jQuery AJAX call to /Home/AjaxMethod as specified in the presentation
+     */
+    function fetchCustomerDataAndInitTable() {
+        highlightPipelineNode(2);
+        var startTime = performance.now();
+
+        $.ajax({
+            type: "POST",
+            url: "/Home/AjaxMethod",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var duration = Math.round(performance.now() - startTime);
+                highlightPipelineNode(6);
+                
+                // Cache data for toggle switches
+                cachedCustomerData = response;
+
+                // Update summary stats
+                updateMetricsUI(response, duration);
+
+                // Initialize or re-populate DataTable
+                OnSuccess(response);
+
+                // Update Inspector display
+                $("#jsonResponseViewer").text(JSON.stringify(response, null, 2));
+                $("#jsonByteSize").text(JSON.stringify(response).length + " bytes");
+                $("#tableStatusFeedback").html('<i class="fa-solid fa-circle-check text-success me-1"></i> Loaded ' + response.length + ' records via AJAX (' + duration + ' ms)');
+            },
+            failure: function (response) {
+                alert("Failure: " + (response.d || response.statusText));
+            },
+            error: function (response) {
+                alert("Error: " + (response.d || response.statusText));
+            }
+        });
+    }
+
+    /**
+     * The Success event handler from the presentation
+     * Initializes the DataTable on #tblCustomers with configuration properties
+     */
+    function OnSuccess(response) {
+        // Destroy existing instance if already created to allow clean re-initialization
+        if ($.fn.DataTable.isDataTable('#tblCustomers')) {
+            $('#tblCustomers').DataTable().destroy();
+            $('#tblCustomers tbody').empty();
+        }
+
+        var filterEnabled = $("#chkFilter").is(":checked");
+        var lengthEnabled = $("#chkLength").is(":checked");
+        var sortEnabled = $("#chkSort").is(":checked");
+        var paginateEnabled = $("#chkPaginate").is(":checked");
+
+        // The core DataTable call with properties matching the presentation
+        customerDataTable = $("#tblCustomers").DataTable({
+            bLengthChange: lengthEnabled,
+            lengthMenu: [[5, 10, -1], [5, 10, "All"]],
+            bFilter: filterEnabled,
+            bSort: sortEnabled,
+            bPaginate: paginateEnabled,
+            data: response,
+            columns: [
+                { 
+                    'data': 'CustomerID',
+                    'render': function (data) {
+                        return '<span class="badge bg-secondary badge-customer">' + data + '</span>';
+                    }
+                },
+                { 
+                    'data': 'ContactName',
+                    'render': function (data) {
+                        return '<strong>' + data + '</strong>';
+                    }
+                },
+                { 'data': 'City' },
+                { 
+                    'data': 'Country',
+                    'render': function (data) {
+                        return '<span class="badge bg-light text-dark border">' + data + '</span>';
+                    }
+                }
+            ],
+            pageLength: 5,
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search customers..."
+            }
+        });
+
+        // Update active code snippet preview
+        updateCodePreview(filterEnabled, lengthEnabled, sortEnabled, paginateEnabled);
+    }
+
+    /**
+     * Rebuilds the DataTable using currently toggled options
+     */
+    function rebuildDataTableWithCurrentSettings() {
+        if (cachedCustomerData) {
+            OnSuccess(cachedCustomerData);
+        } else {
+            fetchCustomerDataAndInitTable();
+        }
+    }
+
+    /**
+     * Updates the active configuration code block in real-time
+     */
+    function updateCodePreview(filter, length, sort, paginate) {
+        var code = 'function OnSuccess(response) {\n' +
+            '    $("#tblCustomers").DataTable({\n' +
+            '        bLengthChange: ' + length + ',\n' +
+            '        lengthMenu: [[5, 10, -1], [5, 10, "All"]],\n' +
+            '        bFilter: ' + filter + ',\n' +
+            '        bSort: ' + sort + ',\n' +
+            '        bPaginate: ' + paginate + ',\n' +
+            '        data: response,\n' +
+            '        columns: [\n' +
+            '            { \'data\': \'CustomerID\' },\n' +
+            '            { \'data\': \'ContactName\' },\n' +
+            '            { \'data\': \'City\' },\n' +
+            '            { \'data\': \'Country\' }\n' +
+            '        ]\n' +
+            '    });\n' +
+            '};';
+        $("#liveConfigDisplay code").text(code);
+    }
+
+    /**
+     * Updates top overview metric cards
+     */
+    function updateMetricsUI(data, latency) {
+        if (!data || !data.length) return;
+
+        $("#statCustomerCount").text(data.length);
+        
+        var countries = {};
+        var cities = {};
+        $.each(data, function (i, item) {
+            if (item.Country) countries[item.Country] = true;
+            if (item.City) cities[item.City] = true;
+        });
+
+        $("#statCountryCount").text(Object.keys(countries).length);
+        $("#statCityCount").text(Object.keys(cities).length);
+        $("#statLatency").html('<i class="fa-solid fa-bolt me-1 text-warning"></i> ~' + latency + ' ms Latency');
+    }
+
+    /**
+     * Highlights pipeline nodes during AJAX operations
+     */
+    function highlightPipelineNode(stepIndex) {
+        $(".pipeline-node").removeClass("active-node");
+        $("#node-" + stepIndex).addClass("active-node");
+    }
+
+    /**
+     * Initializes JSGrid with AJAX loading
+     */
+    function initJsGrid() {
+        $("#jsGridContainer").jsGrid({
+            width: "100%",
+            height: "420px",
+            filtering: true,
+            editing: true,
+            sorting: true,
+            paging: true,
+            pageSize: 6,
+            pageButtonCount: 5,
+            autoload: true,
+            controller: {
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: "POST",
+                        url: "/Home/GetJsGridData",
+                        data: JSON.stringify({
+                            filterName: filter.ContactName || "",
+                            filterCountry: filter.Country || ""
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            d.resolve(response);
+                        },
+                        error: function (e) {
+                            d.reject(e);
+                        }
+                    });
+                    return d.promise();
+                }
+            },
+            fields: [
+                { name: "CustomerID", title: "Customer ID", type: "number", width: 80, readOnly: true },
+                { name: "ContactName", title: "Contact Name", type: "text", width: 140 },
+                { name: "City", title: "City", type: "text", width: 120 },
+                { name: "Country", title: "Country", type: "text", width: 120 },
+                { name: "Email", title: "Email", type: "text", width: 170 },
+                { type: "control", editButton: true, deleteButton: false }
+            ]
+        });
+    }
+
+    /**
+     * Executes standalone test AJAX call for the Inspector
+     */
+    function executeAjaxTestCall() {
+        var start = performance.now();
+        $("#btnSendTestAjax").prop("disabled", true).html('<i class="fa-solid fa-spinner fa-spin me-1"></i> Sending...');
+
+        $.ajax({
+            type: "POST",
+            url: "/Home/AjaxMethod",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                var elapsed = Math.round(performance.now() - start);
+                $("#diagStatus").text("200 OK").removeClass("text-danger").addClass("text-success");
+                $("#diagDuration").text(elapsed + " ms");
+                $("#diagRecordCount").text(response.length + " Customer Records");
+                $("#jsonResponseViewer").text(JSON.stringify(response, null, 2));
+                $("#jsonByteSize").text(JSON.stringify(response).length + " bytes");
+                $("#btnSendTestAjax").prop("disabled", false).html('<i class="fa-solid fa-paper-plane me-1"></i> Send AJAX POST Request');
+            },
+            error: function (xhr) {
+                var elapsed = Math.round(performance.now() - start);
+                $("#diagStatus").text(xhr.status + " " + xhr.statusText).removeClass("text-success").addClass("text-danger");
+                $("#diagDuration").text(elapsed + " ms");
+                $("#jsonResponseViewer").text("Error: " + xhr.responseText);
+                $("#btnSendTestAjax").prop("disabled", false).html('<i class="fa-solid fa-paper-plane me-1"></i> Send AJAX POST Request');
+            }
+        });
+    }
+</script>
+}
