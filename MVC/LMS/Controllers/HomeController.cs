@@ -34,6 +34,25 @@ namespace LMS.Controllers
             return View(featuredCourses);
         }
 
+        public ActionResult Instructors()
+        {
+            var instructorRoleId = _db.Roles.FirstOrDefault(r => r.Name == "Instructor")?.Id;
+            var instructors = _db.Users
+                .Where(u => u.Roles.Any(r => r.RoleId == instructorRoleId))
+                .ToList();
+
+            var instructorData = instructors.Select(ins => new LMS.ViewModels.InstructorShowcaseViewModel
+            {
+                Instructor = ins,
+                CourseCount = _db.Courses.Count(c => c.InstructorId == ins.Id && c.Status == "Published"),
+                TotalStudents = _db.Courses.Where(c => c.InstructorId == ins.Id && c.Status == "Published").Sum(c => (int?)c.TotalStudents) ?? 0,
+                AverageRating = _db.Courses.Where(c => c.InstructorId == ins.Id && c.Status == "Published").Average(c => (double?)c.Rating) ?? 5.0,
+                Courses = _db.Courses.Where(c => c.InstructorId == ins.Id && c.Status == "Published").Take(3).ToList()
+            }).OrderByDescending(i => i.CourseCount).ThenByDescending(i => i.TotalStudents).ToList();
+
+            return View(instructorData);
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Empowering learners worldwide through modern interactive education.";
