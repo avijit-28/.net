@@ -4,33 +4,38 @@
 }
 
 <div class="py-4">
-    <!-- Welcome Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <div>
-            <span class="badge badge-primary-subtle px-3 py-1 rounded-pill mb-2 fw-semibold">
-                <span class="pulse-dot pulse-primary"></span> Student Learning Hub
-            </span>
-            <h2 class="fw-extrabold mb-1 tracking-tight">Welcome Back, @(Model.StudentFirstName ?? "Learner")!</h2>
-            <p class="text-muted small mb-0">Track your curriculum progress, upcoming assignments, and earned credentials</p>
+    <!-- Visually Distinct Personal Productivity Header -->
+    <div class="card border-0 p-4 p-md-5 mb-4 rounded-4 shadow-sm text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #062330 0%, #073549 60%, #084B66 100%);">
+        <div class="position-absolute top-0 end-0 p-4 opacity-15 d-none d-md-block pointer-events-none">
+            <i class="bi bi-mortarboard display-1 text-white"></i>
         </div>
-        <div class="d-flex gap-2">
-            <a href="@Url.Action("MyCourses", "Student")" class="btn btn-outline-primary rounded-pill px-3 fw-semibold">
-                <i class="bi bi-journal-bookmark me-1"></i> My Courses
-            </a>
-            <a href="@Url.Action("Index", "Courses")" class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm">
-                <i class="bi bi-compass me-1"></i> Browse Catalog
-            </a>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center position-relative z-1 gap-3">
+            <div>
+                <span class="badge bg-white bg-opacity-15 text-orange px-3 py-1 rounded-pill mb-2 fw-semibold">
+                    <span class="pulse-dot pulse-primary"></span> Personal Productivity Dashboard
+                </span>
+                <h2 class="fw-extrabold mb-1 tracking-tight text-white">Good Morning, @(Model.StudentFirstName ?? "Student") 👋</h2>
+                <p class="text-light text-opacity-75 small mb-0">Ready to continue learning and level up your skills today?</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="@Url.Action("MyCourses", "Student")" class="btn btn-outline-light rounded-pill px-3 fw-semibold">
+                    <i class="bi bi-journal-bookmark me-1"></i> My Courses
+                </a>
+                <a href="@Url.Action("Index", "Courses")" class="btn btn-warning text-dark rounded-pill px-4 fw-bold shadow-sm">
+                    <i class="bi bi-compass me-1"></i> Browse Catalog
+                </a>
+            </div>
         </div>
     </div>
 
-    <!-- 4 KPI Stat Cards -->
+    <!-- 4 Distinctly Tinted KPI Stat Cards -->
     <div class="row g-3 mb-4">
         <div class="col-sm-6 col-lg-3">
-            <div class="card card-custom p-4 shadow-sm h-100 card-hover" style="border-left: 4px solid var(--lms-orange);">
+            <div class="card card-custom stat-card-courses p-4 shadow-sm h-100 card-hover" style="border-left: 4px solid var(--lms-cyan) !important;">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="small text-muted fw-bold text-uppercase" style="font-size: 11px;">Active Tracks</div>
-                        <div class="fs-2 fw-extrabold text-orange mt-1">@Model.ActiveCourses</div>
+                        <div class="fs-2 fw-extrabold text-primary mt-1">@Model.ActiveCourses</div>
                         <small class="text-muted">In-progress courses</small>
                     </div>
                     <div class="rounded-circle bg-primary-subtle text-primary p-3 shadow-xs">
@@ -41,7 +46,7 @@
         </div>
 
         <div class="col-sm-6 col-lg-3">
-            <div class="card card-custom p-4 shadow-sm h-100 card-hover" style="border-left: 4px solid #10b981;">
+            <div class="card card-custom stat-card-completed p-4 shadow-sm h-100 card-hover" style="border-left: 4px solid #10b981 !important;">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="small text-muted fw-bold text-uppercase" style="font-size: 11px;">Completed</div>
@@ -56,7 +61,7 @@
         </div>
 
         <div class="col-sm-6 col-lg-3">
-            <div class="card card-custom p-4 shadow-sm h-100 card-hover" style="border-left: 4px solid #f59e0b;">
+            <div class="card card-custom stat-card-certificates p-4 shadow-sm h-100 card-hover" style="border-left: 4px solid #f59e0b !important;">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="small text-muted fw-bold text-uppercase" style="font-size: 11px;">Certificates</div>
@@ -71,14 +76,14 @@
         </div>
 
         <div class="col-sm-6 col-lg-3">
-            <div class="card card-custom p-4 shadow-sm h-100 card-hover" style="border-left: 4px solid var(--lms-purple);">
+            <div class="card card-custom stat-card-progress p-4 shadow-sm h-100 card-hover" style="border-left: 4px solid var(--lms-purple) !important;">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <div class="small text-muted fw-bold text-uppercase" style="font-size: 11px;">Quizzes Taken</div>
                         <div class="fs-2 fw-extrabold mt-1" style="color: var(--lms-purple);">@Model.CompletedQuizzes</div>
                         <small class="text-muted">Knowledge evaluations</small>
                     </div>
-                    <div class="rounded-circle p-3 shadow-xs" style="background: var(--lms-purple-light); color: var(--lms-purple);">
+                    <div class="rounded-circle p-3 shadow-xs" style="background: #F3E8FF; color: var(--lms-purple);">
                         <i class="bi bi-lightning-charge-fill fs-3"></i>
                     </div>
                 </div>

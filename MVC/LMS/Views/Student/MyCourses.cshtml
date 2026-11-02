@@ -4,18 +4,33 @@
 }
 
 <div class="py-4">
-    <!-- Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <div>
-            <span class="badge badge-primary-subtle px-3 py-1 rounded-pill mb-2 fw-semibold">
-                <span class="pulse-dot pulse-primary"></span> Personal Learning Portfolio
-            </span>
-            <h2 class="fw-extrabold mb-1 tracking-tight">My Enrolled Courses</h2>
-            <p class="text-muted small mb-0">Continue where you left off across all your active learning curriculums</p>
+    <!-- Personal Learning Workspace Hero (Deep Teal / Navy + Soft Orange Curve) -->
+    <div class="card border-0 p-4 p-md-5 mb-5 rounded-4 shadow-sm text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #053745 0%, #062330 65%, #041620 100%);">
+        <div class="position-absolute top-0 end-0 p-4 opacity-15 d-none d-md-block pointer-events-none">
+            <i class="bi bi-laptop display-1 text-white"></i>
         </div>
-        <a href="@Url.Action("Index", "Courses")" class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm">
-            <i class="bi bi-compass me-1"></i> Explore More Courses
-        </a>
+        <div class="position-absolute bottom-0 end-0 me-5 mb-2 opacity-10 d-none d-lg-block pointer-events-none">
+            <i class="bi bi-book-half display-3 text-warning"></i>
+        </div>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center position-relative z-1 gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-white bg-opacity-15 text-orange px-3 py-1 rounded-pill fw-semibold">
+                        <i class="bi bi-laptop me-1"></i> Personal Workspace
+                    </span>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fw-semibold small">
+                        <i class="bi bi-check-circle-fill me-1"></i> Active Session
+                    </span>
+                </div>
+                <h2 class="fw-extrabold mb-1 tracking-tight text-white display-6">My Enrolled Courses</h2>
+                <p class="text-light text-opacity-75 small mb-0">Continue where you left off across your active technical curriculums and projects</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="@Url.Action("Index", "Courses")" class="btn btn-warning text-dark rounded-pill px-4 fw-bold shadow-sm">
+                    <i class="bi bi-compass me-1"></i> Explore More Courses
+                </a>
+            </div>
+        </div>
     </div>
 
     @if (!Model.Any())

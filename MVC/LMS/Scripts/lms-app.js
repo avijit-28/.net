@@ -267,30 +267,6 @@
                 });
             }
         }
-
-        // Keyboard Shortcuts (Alt+N = Next, Alt+P = Prev, Alt+C = Complete, Alt+F = Focus)
-        $(document).on('keydown', function (e) {
-            if ($(e.target).is('input, textarea, select')) return;
-
-            if (e.altKey && (e.key === 'n' || e.key === 'N')) {
-                var $next = $('#btnNextLesson');
-                if ($next.length && $next.attr('href')) {
-                    window.location.href = $next.attr('href');
-                }
-            } else if (e.altKey && (e.key === 'p' || e.key === 'P')) {
-                var $prev = $('#btnPrevLesson');
-                if ($prev.length && $prev.attr('href')) {
-                    window.location.href = $prev.attr('href');
-                }
-            } else if (e.altKey && (e.key === 'c' || e.key === 'C')) {
-                var $btn = $('#btnMarkComplete');
-                if ($btn.length && !$btn.prop('disabled')) {
-                    $btn.click();
-                }
-            } else if (e.altKey && (e.key === 'f' || e.key === 'F')) {
-                $('#btnToggleTheater').click();
-            }
-        });
     };
 
     /* ==========================================================================
@@ -517,80 +493,18 @@
     };
 
     /* ==========================================================================
-       7. Fast Non-Blocking Route Navigation Progress Engine (Instant Page Display)
+       7. Navigation Engine (No loaders on redirects or route changes)
        ========================================================================== */
     LMS.initGlobalLoader = function () {
-        // Immediately remove any lingering preloader overlay so pages show instantly
+        // Ensure no lingering preloader or progress bars exist
         var oldPreloader = document.getElementById('globalPreloader');
-        if (oldPreloader) {
+        if (oldPreloader && sessionStorage.getItem('lms_preloader_shown')) {
             oldPreloader.remove();
         }
+        $('#routeProgressBar, #routeLoadingPill').remove();
 
-        var $progressBar = $('#routeProgressBar');
-        var $loadingPill = $('#routeLoadingPill');
-        var progressTimer;
-
-        // Route Progress Bar Controller
-        LMS.startLoading = function () {
-            if (!$progressBar.length) return;
-            clearInterval(progressTimer);
-            $progressBar.removeClass('running').css({ width: '0%', opacity: 1 }).addClass('running');
-            if ($loadingPill.length) $loadingPill.css('display', 'flex');
-
-            var current = 25;
-            $progressBar.css('width', current + '%');
-
-            progressTimer = setInterval(function () {
-                if (current < 85) {
-                    current += Math.random() * 15 + 8;
-                    $progressBar.css('width', current + '%');
-                }
-            }, 200);
-        };
-
-        LMS.finishLoading = function () {
-            if (!$progressBar.length) return;
-            clearInterval(progressTimer);
-            $progressBar.css('width', '100%');
-            setTimeout(function () {
-                $progressBar.css('opacity', '0');
-                if ($loadingPill.length) $loadingPill.fadeOut(150);
-                setTimeout(function () {
-                    $progressBar.css('width', '0%').removeClass('running');
-                }, 200);
-            }, 150);
-        };
-
-        // Finish any ongoing progress on DOM ready
-        LMS.finishLoading();
-
-        // Intercept standard navigation link clicks to show responsive loading progress
-        $(document).on('click', 'a[href]', function (e) {
-            var href = $(this).attr('href');
-            var target = $(this).attr('target');
-            var isDownload = $(this).attr('download') !== undefined || $(this).hasClass('no-loader');
-
-            if (!href || href === '#' || href.indexOf('javascript:') === 0 || href.indexOf('#') === 0 || target === '_blank' || isDownload || e.ctrlKey || e.metaKey || e.shiftKey) {
-                return;
-            }
-
-            // Internal application route transition
-            LMS.startLoading();
-        });
-
-        // Intercept form submissions
-        $(document).on('submit', 'form:not([data-ajax="true"]):not(.no-loader)', function () {
-            if ($(this).valid && !$(this).valid()) return;
-            LMS.startLoading();
-        });
-
-        // Global jQuery AJAX Listeners
-        $(document).ajaxStart(function () {
-            LMS.startLoading();
-        });
-        $(document).ajaxStop(function () {
-            LMS.finishLoading();
-        });
+        LMS.startLoading = function () { };
+        LMS.finishLoading = function () { };
     };
 
     /* ==========================================================================

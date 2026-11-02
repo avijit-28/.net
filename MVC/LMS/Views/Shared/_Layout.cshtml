@@ -1,3 +1,37 @@
+@{
+    string activeCtrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    string activeAct = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    bool isHome = (activeCtrl == "Home" && (activeAct == "Index" || string.IsNullOrEmpty(activeAct)));
+
+    string pageClass = ViewBag.PageClass as string;
+    if (string.IsNullOrEmpty(pageClass))
+    {
+        if (isHome) { pageClass = "page-home"; }
+        else if (activeCtrl == "Home" && activeAct == "About") { pageClass = "page-about"; }
+        else if (activeCtrl == "Home" && activeAct == "Contact") { pageClass = "page-contact"; }
+        else if (activeCtrl == "Courses" && activeAct == "Index") { pageClass = "page-courses"; }
+        else if (activeCtrl == "Courses" && activeAct == "Details") { pageClass = "page-course-details"; }
+        else if (activeCtrl == "Student" && activeAct == "Index") { pageClass = "page-student-dashboard"; }
+        else if (activeCtrl == "Student" && activeAct == "MyCourses") { pageClass = "page-my-courses"; }
+        else if (activeCtrl == "Student" && (activeAct == "Assignments" || activeAct == "AssignmentDetails")) { pageClass = "page-assignment"; }
+        else if (activeCtrl == "Student" && activeAct == "Certificates") { pageClass = "page-certificate"; }
+        else if (activeCtrl == "Learning") { pageClass = "page-learning"; }
+        else if (activeCtrl == "Quiz" && activeAct == "Take") { pageClass = "page-quiz"; }
+        else if (activeCtrl == "Quiz" && (activeAct == "Result" || activeAct == "Results")) { pageClass = "page-quiz-result"; }
+        else if (activeCtrl == "Certificate" && activeAct == "ViewCertificate") { pageClass = "page-certificate"; }
+        else if (activeCtrl == "Certificate" && (activeAct == "Verify" || activeAct == "VerifyCertificate")) { pageClass = "page-certificate-verify"; }
+        else if (activeCtrl == "Instructor" && activeAct == "Index") { pageClass = "page-instructor-dashboard"; }
+        else if (activeCtrl == "Instructor" && (activeAct == "Courses" || activeAct == "CreateCourse" || activeAct == "EditCourse" || activeAct == "Modules" || activeAct == "Lessons" || activeAct == "EditLesson" || activeAct == "Earnings" || activeAct == "Payments")) { pageClass = "page-instructor-management"; }
+        else if (activeCtrl == "Instructor" && (activeAct == "Assignments" || activeAct == "Grade" || activeAct == "Submissions")) { pageClass = "page-assignment"; }
+        else if (activeCtrl == "Admin" && activeAct == "Index") { pageClass = "page-admin-dashboard"; }
+        else if (activeCtrl == "Admin") { pageClass = "page-admin-management"; }
+        else if (activeCtrl == "Account" && activeAct == "Login") { pageClass = "page-login"; }
+        else if (activeCtrl == "Account" && activeAct == "Register") { pageClass = "page-register"; }
+        else if (activeCtrl == "Account" && activeAct == "Profile") { pageClass = "page-profile"; }
+        else if (activeCtrl == "Notifications") { pageClass = "page-notifications"; }
+        else { pageClass = "page-" + activeCtrl.ToLower(); }
+    }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,8 +58,15 @@
     
     @RenderSection("Styles", required: false)
 </head>
-<body>
-    <!-- Global Brand Preloader (Automatically displays until page is fully loaded and on transitions) -->
+<body class="@pageClass">
+    <!-- Global Brand Preloader (ONLY displays on the first time the website is opened in a session) -->
+    <script>
+        try {
+            if (sessionStorage.getItem('lms_preloader_shown')) {
+                document.write('<style>#globalPreloader { display: none !important; }</style>');
+            }
+        } catch (e) { }
+    </script>
     <div id="globalPreloader" aria-hidden="true">
         <div class="preloader-card">
             <div class="preloader-logo-wrap">
@@ -44,11 +85,19 @@
             var preloader = document.getElementById('globalPreloader');
             if (!preloader) return;
 
+            try {
+                if (sessionStorage.getItem('lms_preloader_shown')) {
+                    preloader.remove();
+                    return;
+                }
+                sessionStorage.setItem('lms_preloader_shown', 'true');
+            } catch (e) { }
+
             function dismiss() {
                 if (preloader && !preloader.classList.contains('fade-out')) {
                     preloader.classList.add('fade-out');
                     setTimeout(function () {
-                        preloader.style.display = 'none';
+                        if (preloader.parentNode) preloader.remove();
                     }, 400);
                 }
             }
@@ -61,46 +110,8 @@
                 });
                 setTimeout(dismiss, 1200);
             }
-
-            document.addEventListener('click', function (e) {
-                var a = e.target.closest('a');
-                if (!a) return;
-                var href = a.getAttribute('href');
-                var target = a.getAttribute('target');
-                var isDownload = a.hasAttribute('download') || a.classList.contains('no-loader');
-
-                if (!href || href === '#' || href.indexOf('javascript:') === 0 || href.indexOf('#') === 0 || target === '_blank' || isDownload || e.ctrlKey || e.metaKey || e.shiftKey) {
-                    return;
-                }
-
-                if (a.hostname === window.location.hostname) {
-                    preloader.style.display = 'flex';
-                    preloader.classList.remove('fade-out');
-                }
-            }, true);
-
-            document.addEventListener('submit', function (e) {
-                var form = e.target;
-                if (form && !form.classList.contains('no-loader')) {
-                    preloader.style.display = 'flex';
-                    preloader.classList.remove('fade-out');
-                }
-            }, true);
-
-            window.addEventListener('pageshow', function (e) {
-                if (e.persisted) {
-                    dismiss();
-                }
-            });
         })();
     </script>
-
-    <!-- Top Route Progress Bar (Sleek, instantaneous loading feedback like GitHub/YouTube) -->
-    <div id="routeProgressBar"></div>
-    <div id="routeLoadingPill" class="route-loading-pill shadow-sm">
-        <span class="spinner-border spinner-border-sm text-warning" style="width: 0.95rem; height: 0.95rem;" role="status"></span>
-        <span class="small fw-semibold text-dark">Loading...</span>
-    </div>
 
     <header>
         <nav class="navbar navbar-expand-lg navbar-lms sticky-top py-2 px-lg-4">
@@ -121,11 +132,6 @@
 
                 <!-- Middle: Navigation Links -->
                 <div class="collapse navbar-collapse" id="navbarContent">
-                    @{
-                        string activeCtrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
-                        string activeAct = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
-                        bool isHome = (activeCtrl == "Home" && (activeAct == "Index" || string.IsNullOrEmpty(activeAct)));
-                    }
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 gap-1">
                         @if (!Request.IsAuthenticated)
                         {
@@ -291,7 +297,7 @@
         </nav>
     </header>
 
-    <main class="flex-grow-1 main-content-wrapper">
+    <main class="flex-grow-1 main-content-wrapper @pageClass">
         @if (isHome)
         {
             @RenderBody()

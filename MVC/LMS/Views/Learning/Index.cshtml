@@ -372,7 +372,7 @@
                     else if (Model.CurrentLesson.LessonType == "Quiz")
                     {
                         var quiz = Model.Course.Quizzes.FirstOrDefault(q => q.LessonId == Model.CurrentLesson.LessonId) ?? Model.Course.Quizzes.FirstOrDefault();
-                        <div class="card card-custom p-5 bg-light border-warning text-center my-3 shadow-sm">
+                        <div class="lesson-quiz-box card card-custom p-5 text-center my-3 shadow-sm">
                             <div class="rounded-circle bg-warning-subtle text-warning p-4 d-inline-flex mx-auto mb-3">
                                 <i class="bi bi-patch-question-fill display-4"></i>
                             </div>
@@ -411,9 +411,9 @@
                     <!-- Article / Text Content -->
                     @if (!string.IsNullOrEmpty(Model.CurrentLesson.Content))
                     {
-                        <div class="lesson-notes-box p-4 bg-light rounded-3 border mb-4">
-                            <h6 class="fw-bold text-dark mb-3"><i class="bi bi-book-half me-2 text-primary"></i> Lesson Explanation & Notes</h6>
-                            <div class="text-secondary" style="line-height: 1.85;">
+                        <div class="lesson-notes-box p-4 rounded-3 border mb-4">
+                            <h6 class="fw-bold mb-3"><i class="bi bi-book-half me-2 text-primary"></i> Lesson Explanation &amp; Notes</h6>
+                            <div class="lesson-notes-body" style="line-height: 1.85;">
                                 @Html.Raw(Model.CurrentLesson.Content.Replace("\n", "<br/>"))
                             </div>
                         </div>
@@ -421,22 +421,22 @@
 
                     @if (!string.IsNullOrEmpty(Model.CurrentLesson.Description))
                     {
-                        <div class="mb-4">
-                            <h6 class="fw-bold text-dark mb-2">Lesson Overview</h6>
-                            <p class="text-secondary" style="line-height: 1.6;">@Model.CurrentLesson.Description</p>
+                        <div class="lesson-overview-box mb-4">
+                            <h6 class="fw-bold mb-2">Lesson Overview</h6>
+                            <p class="lesson-overview-text" style="line-height: 1.6;">@Model.CurrentLesson.Description</p>
                         </div>
                     }
 
                     @if (!string.IsNullOrEmpty(Model.CurrentLesson.ResourceUrl))
                     {
-                        <div class="p-3 border rounded-3 d-flex justify-content-between align-items-center bg-white shadow-sm mb-4">
+                        <div class="lesson-resource-box p-3 border rounded-3 d-flex justify-content-between align-items-center shadow-sm mb-4">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="rounded-circle bg-primary-subtle text-primary p-2">
                                     <i class="bi bi-download fs-5"></i>
                                 </div>
                                 <div>
-                                    <div class="fw-bold small">Supplemental Material & Assets</div>
-                                    <small class="text-muted">Downloadable guide or source code repository</small>
+                                    <div class="fw-bold small resource-title">Supplemental Material &amp; Assets</div>
+                                    <small class="text-muted resource-subtitle">Downloadable guide or source code repository</small>
                                 </div>
                             </div>
                             <a href="@Model.CurrentLesson.ResourceUrl" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3">
@@ -446,7 +446,7 @@
                     }
 
                     <!-- Student Interactive Scratchpad (Persisted in LocalStorage) -->
-                    <div class="scratchpad-card card border-0 shadow-sm p-4 mt-4" style="border: 1.5px solid #E2E8F0 !important;">
+                    <div class="scratchpad-card card border-0 shadow-sm p-4 mt-4">
                         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
                             <div class="d-flex align-items-center gap-2">
                                 <div class="rounded-circle d-flex align-items-center justify-content-center bg-white shadow-xs border" style="width: 36px; height: 36px;">
@@ -473,7 +473,7 @@
                         <div class="position-relative">
                             <textarea id="lessonScratchpad" class="scratchpad-textarea form-control shadow-none" 
                                       placeholder="Write your study notes, key takeaways, formulas, or code snippets here... Notes automatically save in real-time per lesson." 
-                                      rows="5"></textarea>
+                                      rows="5" style="min-height: 140px; resize: vertical;"></textarea>
                             <div class="d-flex justify-content-between align-items-center mt-2 px-1 text-muted small" style="font-size: 11px;">
                                 <span><i class="bi bi-shield-check text-success me-1"></i> Private to your browser session</span>
                                 <span id="scratchpadCharCount">0 characters</span>
@@ -482,7 +482,7 @@
                     </div>
                 </div>
 
-                <!-- Navigation Controls Footer with Keyboard Shortcut Hints -->
+                <!-- Navigation Controls Footer -->
                 <div class="pt-3 border-top mt-auto d-flex flex-wrap justify-content-between align-items-center gap-2">
                     <div>
                         @if (Model.PreviousLessonId.HasValue)

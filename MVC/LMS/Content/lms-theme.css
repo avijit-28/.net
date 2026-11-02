@@ -1140,15 +1140,78 @@ body.focus-mode-active .footer-lms {
     background: #000000 !important;
 }
 
+/* In Focus Mode: Dark Surfaces & High-Contrast Typography for all sub-components */
+.classroom-container.focus-mode .lesson-notes-box {
+    background: #062330 !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    color: #E2E8F0 !important;
+}
+
+.classroom-container.focus-mode .lesson-notes-box h6 {
+    color: #FFFFFF !important;
+}
+
+.classroom-container.focus-mode .lesson-notes-body {
+    color: #CBD5E1 !important;
+}
+
+.classroom-container.focus-mode .lesson-overview-box h6 {
+    color: #FFFFFF !important;
+}
+
+.classroom-container.focus-mode .lesson-overview-text {
+    color: #CBD5E1 !important;
+}
+
+.classroom-container.focus-mode .lesson-resource-box {
+    background: #062330 !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+.classroom-container.focus-mode .lesson-resource-box .resource-title {
+    color: #FFFFFF !important;
+}
+
+.classroom-container.focus-mode .lesson-resource-box .resource-subtitle {
+    color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.classroom-container.focus-mode .lesson-quiz-box {
+    background: #062330 !important;
+    border: 1.5px solid rgba(255, 122, 24, 0.45) !important;
+    color: #FFFFFF !important;
+}
+
+.classroom-container.focus-mode .lesson-quiz-box h4 {
+    color: #FFFFFF !important;
+}
+
+.classroom-container.focus-mode .lesson-quiz-box p {
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+
 .classroom-container.focus-mode .scratchpad-card {
     background: #062330 !important;
-    border-color: rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.classroom-container.focus-mode .scratchpad-card h6 {
+    color: #FFFFFF !important;
+}
+
+.classroom-container.focus-mode .scratchpad-card .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.classroom-container.focus-mode .scratchpad-card .bg-white {
+    background: #041620 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
 .classroom-container.focus-mode .scratchpad-textarea {
     background: #041620 !important;
     color: #FFFFFF !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.22) !important;
 }
 
 /* ==========================================================================
@@ -1163,6 +1226,44 @@ body.focus-mode-active .footer-lms {
 
 .scratchpad-card:hover {
     border-color: #CBD5E1;
+}
+
+/* Classroom Lesson Sub-components (Normal Mode) */
+.lesson-notes-box {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0 !important;
+    color: #1E293B;
+}
+
+.lesson-notes-box h6 {
+    color: #0F172A;
+}
+
+.lesson-notes-body {
+    color: #334155;
+}
+
+.lesson-resource-box {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0 !important;
+}
+
+.lesson-resource-box .resource-title {
+    color: #0F172A;
+}
+
+.lesson-resource-box .resource-subtitle {
+    color: #64748B;
+}
+
+.lesson-quiz-box {
+    background: #FFFBEB;
+    border: 1.5px solid #FDE68A !important;
+    color: #1E293B;
+}
+
+.lesson-quiz-box h4 {
+    color: #0F172A;
 }
 
 .scratchpad-textarea {
@@ -1414,4 +1515,672 @@ body.focus-mode-active .footer-lms {
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
     }
+}
+
+
+/* ==========================================================================
+   Multi-Atmosphere Page Background System (Unique Visual Atmosphere per Page)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Reusable Ambient Decorative Elements
+   -------------------------------------------------------------------------- */
+.lms-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(75px);
+    pointer-events: none;
+    z-index: 0;
+}
+.lms-orb-cyan {
+    background: radial-gradient(circle, rgba(39, 184, 214, 0.35) 0%, rgba(39, 184, 214, 0) 70%);
+}
+.lms-orb-orange {
+    background: radial-gradient(circle, rgba(255, 122, 24, 0.30) 0%, rgba(255, 122, 24, 0) 70%);
+}
+.lms-orb-purple {
+    background: radial-gradient(circle, rgba(91, 63, 228, 0.28) 0%, rgba(91, 63, 228, 0) 70%);
+}
+.lms-orb-gold {
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.32) 0%, rgba(245, 158, 11, 0) 70%);
+}
+.lms-orb-green {
+    background: radial-gradient(circle, rgba(53, 201, 138, 0.28) 0%, rgba(53, 201, 138, 0) 70%);
+}
+
+.lms-grid-pattern {
+    background-image: 
+        linear-gradient(to right, rgba(226, 232, 240, 0.4) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.4) 1px, transparent 1px);
+    background-size: 32px 32px;
+}
+
+.lms-dots-pattern {
+    background-image: radial-gradient(#CBD5E1 0.85px, transparent 0.85px);
+    background-size: 20px 20px;
+}
+
+/* --------------------------------------------------------------------------
+   1. Home Page: Deep Navy + Orange + Cyan Marketing Experience
+   -------------------------------------------------------------------------- */
+body.page-home {
+    background-color: #041620;
+}
+
+/* --------------------------------------------------------------------------
+   2. Courses Page: Clean Academic / Discovery Environment
+   -------------------------------------------------------------------------- */
+body.page-courses {
+    background-color: #F4F7FB;
+    background-image:
+        radial-gradient(circle at 10% 12%, rgba(39, 184, 214, 0.12), transparent 38%),
+        radial-gradient(circle at 90% 18%, rgba(91, 63, 228, 0.08), transparent 32%),
+        radial-gradient(circle at 50% 90%, rgba(255, 122, 24, 0.06), transparent 35%),
+        radial-gradient(#CBD5E1 0.75px, transparent 0.75px),
+        linear-gradient(to right, rgba(226, 232, 240, 0.35) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.35) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 20px 20px, 48px 48px, 48px 48px;
+    background-attachment: fixed;
+}
+body.page-courses .course-card {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    box-shadow: 0 4px 20px rgba(16, 35, 63, 0.06) !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. Course Details Page: Dark-to-Light Educational Journey
+   -------------------------------------------------------------------------- */
+body.page-course-details {
+    background-color: #F8FAFD;
+    background-image:
+        radial-gradient(circle at 80% 20%, rgba(39, 184, 214, 0.09), transparent 32%),
+        radial-gradient(circle at 20% 60%, rgba(91, 63, 228, 0.06), transparent 35%);
+    background-attachment: fixed;
+}
+body.page-course-details .card-gradient-top {
+    background: linear-gradient(135deg, #062330 0%, #073347 55%, #051924 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 15px 40px rgba(6, 35, 48, 0.25) !important;
+}
+body.page-course-details .card-gradient-top h1,
+body.page-course-details .card-gradient-top .text-dark,
+body.page-course-details .card-gradient-top strong {
+    color: #FFFFFF !important;
+}
+body.page-course-details .card-gradient-top .text-secondary,
+body.page-course-details .card-gradient-top .lead {
+    color: #CBD5E1 !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. My Courses Page: Personal Learning Workspace
+   -------------------------------------------------------------------------- */
+body.page-my-courses {
+    background-color: #F0F6F8;
+    background-image:
+        radial-gradient(circle at 15% 15%, rgba(6, 78, 99, 0.12), transparent 35%),
+        radial-gradient(circle at 85% 12%, rgba(255, 122, 24, 0.09), transparent 30%),
+        linear-gradient(180deg, rgba(6, 55, 69, 0.04) 0%, rgba(248, 250, 252, 0) 380px);
+    background-attachment: fixed;
+}
+
+/* --------------------------------------------------------------------------
+   5. Student Dashboard: Personal Productivity Hub
+   -------------------------------------------------------------------------- */
+body.page-student-dashboard {
+    background-color: #F5F8FC;
+    background-image:
+        radial-gradient(circle at 12% 15%, rgba(39, 184, 214, 0.11), transparent 34%),
+        radial-gradient(circle at 88% 22%, rgba(91, 63, 228, 0.09), transparent 30%),
+        radial-gradient(circle at 50% 85%, rgba(53, 201, 138, 0.07), transparent 35%),
+        linear-gradient(to right, rgba(226, 232, 240, 0.3) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.3) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+    background-attachment: fixed;
+}
+body.page-student-dashboard .stat-card-courses {
+    background: #EFF6FF !important;
+    border: 1px solid #BFDBFE !important;
+}
+body.page-student-dashboard .stat-card-completed {
+    background: #ECFDF5 !important;
+    border: 1px solid #A7F3D0 !important;
+}
+body.page-student-dashboard .stat-card-progress {
+    background: #FAF5FF !important;
+    border: 1px solid #E9D5FF !important;
+}
+body.page-student-dashboard .stat-card-certificates {
+    background: #FFF7ED !important;
+    border: 1px solid #FFEDD5 !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. Learning Page: Focused Immersive Study Room
+   -------------------------------------------------------------------------- */
+body.page-learning {
+    background-color: #041620 !important;
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(91, 63, 228, 0.25), transparent 38%),
+        radial-gradient(circle at 80% 65%, rgba(39, 184, 214, 0.18), transparent 32%),
+        radial-gradient(circle at 50% 90%, rgba(255, 122, 24, 0.10), transparent 35%);
+    background-attachment: fixed;
+}
+
+/* Learning Page - Normal Classroom Stage: Crisp White Surface with Dark High-Contrast Typography */
+body.page-learning:not(.focus-mode-active) .classroom-stage,
+body.page-learning:not(.focus-mode-active) .classroom-stage.bg-white {
+    background-color: #FFFFFF !important;
+    background: #FFFFFF !important;
+    color: #1E293B !important;
+}
+body.page-learning:not(.focus-mode-active) .classroom-stage h1,
+body.page-learning:not(.focus-mode-active) .classroom-stage h2,
+body.page-learning:not(.focus-mode-active) .classroom-stage h3,
+body.page-learning:not(.focus-mode-active) .classroom-stage h4,
+body.page-learning:not(.focus-mode-active) .classroom-stage h5,
+body.page-learning:not(.focus-mode-active) .classroom-stage h6,
+body.page-learning:not(.focus-mode-active) .classroom-stage strong,
+body.page-learning:not(.focus-mode-active) .classroom-stage .text-dark {
+    color: #0F172A !important;
+}
+body.page-learning:not(.focus-mode-active) .classroom-stage p,
+body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-notes-body,
+body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-overview-text {
+    color: #334155 !important;
+}
+body.page-learning:not(.focus-mode-active) .classroom-stage .text-muted,
+body.page-learning:not(.focus-mode-active) .classroom-stage .text-secondary {
+    color: #64748B !important;
+}
+body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-notes-box {
+    background: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #1E293B !important;
+}
+body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-notes-box h6 {
+    color: #0F172A !important;
+}
+body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-resource-box {
+    background: #F8FAFC !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #0F172A !important;
+}
+body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-resource-box .resource-title {
+    color: #0F172A !important;
+}
+body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-resource-box .resource-subtitle {
+    color: #64748B !important;
+}
+body.page-learning:not(.focus-mode-active) .classroom-stage .scratchpad-card {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #0F172A !important;
+}
+body.page-learning:not(.focus-mode-active) .classroom-stage .scratchpad-card h6 {
+    color: #0F172A !important;
+}
+body.page-learning:not(.focus-mode-active) .classroom-stage .scratchpad-card .text-muted {
+    color: #64748B !important;
+}
+body.page-learning:not(.focus-mode-active) .classroom-stage .scratchpad-textarea {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    border: 1px solid #CBD5E1 !important;
+    min-height: 140px !important;
+}
+
+/* Learning Page - Focus Mode: Full Dark Theater with Crisp Light Typography */
+.classroom-container.focus-mode .classroom-stage,
+.classroom-container.focus-mode .classroom-stage.bg-white,
+body.focus-mode-active .classroom-stage,
+body.focus-mode-active .classroom-stage.bg-white {
+    background-color: #041620 !important;
+    background: #041620 !important;
+    color: #F8FAFC !important;
+}
+.classroom-container.focus-mode .classroom-stage h1,
+.classroom-container.focus-mode .classroom-stage h2,
+.classroom-container.focus-mode .classroom-stage h3,
+.classroom-container.focus-mode .classroom-stage h4,
+.classroom-container.focus-mode .classroom-stage h5,
+.classroom-container.focus-mode .classroom-stage h6,
+.classroom-container.focus-mode .classroom-stage strong,
+.classroom-container.focus-mode .classroom-stage .text-dark,
+body.focus-mode-active .classroom-stage h1,
+body.focus-mode-active .classroom-stage h2,
+body.focus-mode-active .classroom-stage h3,
+body.focus-mode-active .classroom-stage h4,
+body.focus-mode-active .classroom-stage h5,
+body.focus-mode-active .classroom-stage h6,
+body.focus-mode-active .classroom-stage strong,
+body.focus-mode-active .classroom-stage .text-dark {
+    color: #FFFFFF !important;
+}
+.classroom-container.focus-mode .classroom-stage p,
+.classroom-container.focus-mode .classroom-stage .lesson-notes-body,
+.classroom-container.focus-mode .classroom-stage .lesson-overview-text,
+body.focus-mode-active .classroom-stage p,
+body.focus-mode-active .classroom-stage .lesson-notes-body,
+body.focus-mode-active .classroom-stage .lesson-overview-text {
+    color: #CBD5E1 !important;
+}
+.classroom-container.focus-mode .classroom-stage .text-muted,
+.classroom-container.focus-mode .classroom-stage .text-secondary,
+body.focus-mode-active .classroom-stage .text-muted,
+body.focus-mode-active .classroom-stage .text-secondary {
+    color: rgba(255, 255, 255, 0.72) !important;
+}
+.classroom-container.focus-mode .lesson-notes-box,
+body.focus-mode-active .lesson-notes-box {
+    background: #062330 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #E2E8F0 !important;
+}
+.classroom-container.focus-mode .lesson-notes-box h6,
+body.focus-mode-active .lesson-notes-box h6 {
+    color: #FFFFFF !important;
+}
+.classroom-container.focus-mode .lesson-resource-box,
+body.focus-mode-active .lesson-resource-box {
+    background: #062330 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+.classroom-container.focus-mode .lesson-resource-box .resource-title,
+body.focus-mode-active .lesson-resource-box .resource-title {
+    color: #FFFFFF !important;
+}
+.classroom-container.focus-mode .lesson-resource-box .resource-subtitle,
+body.focus-mode-active .lesson-resource-box .resource-subtitle {
+    color: rgba(255, 255, 255, 0.72) !important;
+}
+.classroom-container.focus-mode .scratchpad-card,
+body.focus-mode-active .scratchpad-card {
+    background: #062330 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+.classroom-container.focus-mode .scratchpad-card h6,
+body.focus-mode-active .scratchpad-card h6 {
+    color: #FFFFFF !important;
+}
+.classroom-container.focus-mode .scratchpad-card .text-muted,
+body.focus-mode-active .scratchpad-card .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+.classroom-container.focus-mode .scratchpad-card .bg-white,
+body.focus-mode-active .scratchpad-card .bg-white {
+    background: #041620 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+.classroom-container.focus-mode .scratchpad-textarea,
+body.focus-mode-active .scratchpad-textarea {
+    background: #041620 !important;
+    color: #FFFFFF !important;
+    border-color: rgba(255, 255, 255, 0.22) !important;
+    min-height: 140px !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. Quiz Assessment: Electric Indigo / Purple Challenge Mode
+   -------------------------------------------------------------------------- */
+body.page-quiz {
+    background-color: #0A0E27 !important;
+    background-image:
+        radial-gradient(circle at 25% 15%, rgba(91, 63, 228, 0.40), transparent 45%),
+        radial-gradient(circle at 80% 60%, rgba(39, 184, 214, 0.22), transparent 38%),
+        radial-gradient(circle at 50% 95%, rgba(255, 122, 24, 0.14), transparent 40%),
+        radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px;
+    background-attachment: fixed;
+    color: #F8FAFC !important;
+}
+body.page-quiz .card-custom {
+    background: #111638 !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45) !important;
+}
+body.page-quiz h1, body.page-quiz h2, body.page-quiz h3, body.page-quiz h4, body.page-quiz h5, body.page-quiz h6,
+body.page-quiz .text-dark {
+    color: #FFFFFF !important;
+}
+body.page-quiz .text-secondary, body.page-quiz .text-muted {
+    color: #94A3B8 !important;
+}
+body.page-quiz .quiz-question-box {
+    background: #181F4B !important;
+    border: 1px solid rgba(91, 63, 228, 0.4) !important;
+}
+body.page-quiz .form-check-label {
+    color: #E2E8F0 !important;
+}
+body.page-quiz .bg-light {
+    background: #181F4B !important;
+    color: #FFFFFF !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. Quiz Result Page: Radiant Achievement Environment
+   -------------------------------------------------------------------------- */
+body.page-quiz-result {
+    background-color: #041926 !important;
+    background-image:
+        radial-gradient(circle at 50% 25%, rgba(255, 122, 24, 0.25), transparent 42%),
+        radial-gradient(circle at 20% 65%, rgba(53, 201, 138, 0.22), transparent 38%),
+        radial-gradient(circle at 80% 80%, rgba(91, 63, 228, 0.20), transparent 38%);
+    background-attachment: fixed;
+    color: #FFFFFF !important;
+}
+body.page-quiz-result .card-custom {
+    background: #082535 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5) !important;
+}
+body.page-quiz-result .card-custom h3,
+body.page-quiz-result .card-custom .text-dark {
+    color: #FFFFFF !important;
+}
+body.page-quiz-result .bg-light {
+    background: #041620 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+/* --------------------------------------------------------------------------
+   9. Assignments: Warm Cream Professional Productivity Workspace
+   -------------------------------------------------------------------------- */
+body.page-assignment {
+    background-color: #F8F6F2;
+    background-image:
+        radial-gradient(circle at 10% 15%, rgba(255, 122, 24, 0.08), transparent 32%),
+        radial-gradient(circle at 90% 85%, rgba(6, 43, 58, 0.06), transparent 30%),
+        linear-gradient(to right, rgba(235, 230, 222, 0.5) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(235, 230, 222, 0.5) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+    background-attachment: fixed;
+}
+body.page-assignment .card-custom {
+    background: #FFFFFF;
+    border: 1px solid #E8E3DA;
+    box-shadow: 0 4px 16px rgba(16, 35, 63, 0.04);
+}
+
+/* --------------------------------------------------------------------------
+   10. Certificates: Royal Deep Navy + Gold Honor Platform
+   -------------------------------------------------------------------------- */
+body.page-certificate {
+    background-color: #051824 !important;
+    background-image:
+        radial-gradient(circle at 50% 18%, rgba(245, 158, 11, 0.28), transparent 45%),
+        radial-gradient(circle at 15% 75%, rgba(255, 122, 24, 0.16), transparent 35%),
+        radial-gradient(circle at 85% 80%, rgba(91, 63, 228, 0.18), transparent 35%),
+        radial-gradient(rgba(245, 158, 11, 0.08) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px;
+    background-attachment: fixed;
+    color: #FFFFFF !important;
+}
+
+/* --------------------------------------------------------------------------
+   11. Certificate Verification: Trust & Authenticity
+   -------------------------------------------------------------------------- */
+body.page-certificate-verify {
+    background-color: #F0FDF4;
+    background-image:
+        radial-gradient(circle at 20% 15%, rgba(53, 201, 138, 0.14), transparent 35%),
+        radial-gradient(circle at 80% 25%, rgba(39, 184, 214, 0.10), transparent 35%),
+        linear-gradient(180deg, #F0FDF4 0%, #F8FAFC 450px, #FFFFFF 100%);
+    background-attachment: fixed;
+}
+
+/* --------------------------------------------------------------------------
+   12. Instructor Dashboard: Creator Studio
+   -------------------------------------------------------------------------- */
+body.page-instructor-dashboard {
+    background-color: #061D28 !important;
+    background-image:
+        radial-gradient(circle at 15% 15%, rgba(39, 184, 214, 0.22), transparent 35%),
+        radial-gradient(circle at 85% 20%, rgba(255, 122, 24, 0.18), transparent 30%),
+        radial-gradient(circle at 50% 85%, rgba(53, 201, 138, 0.14), transparent 38%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+    background-attachment: fixed;
+    color: #E2E8F0 !important;
+}
+body.page-instructor-dashboard .card-custom {
+    background: #082635 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+body.page-instructor-dashboard h1, body.page-instructor-dashboard h2, body.page-instructor-dashboard h3,
+body.page-instructor-dashboard h4, body.page-instructor-dashboard h5, body.page-instructor-dashboard h6,
+body.page-instructor-dashboard .text-dark {
+    color: #FFFFFF !important;
+}
+body.page-instructor-dashboard .text-muted {
+    color: #94A3B8 !important;
+}
+
+/* --------------------------------------------------------------------------
+   13. Instructor Management: Content Studio Blueprint
+   -------------------------------------------------------------------------- */
+body.page-instructor-management {
+    background-color: #F3F6FA;
+    background-image:
+        radial-gradient(circle at 10% 15%, rgba(39, 184, 214, 0.08), transparent 30%),
+        radial-gradient(circle at 90% 10%, rgba(91, 63, 228, 0.06), transparent 30%),
+        linear-gradient(to right, rgba(226, 232, 240, 0.45) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.45) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+    background-attachment: fixed;
+}
+
+/* --------------------------------------------------------------------------
+   14. Admin Dashboard: Enterprise Command Center
+   -------------------------------------------------------------------------- */
+body.page-admin-dashboard {
+    background-color: #071923 !important;
+    background-image:
+        radial-gradient(circle at 15% 15%, rgba(39, 184, 214, 0.24), transparent 35%),
+        radial-gradient(circle at 85% 20%, rgba(255, 122, 24, 0.18), transparent 30%),
+        radial-gradient(circle at 50% 80%, rgba(91, 63, 228, 0.20), transparent 40%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+    background-attachment: fixed;
+    color: #F1F5F9 !important;
+}
+body.page-admin-dashboard .card-custom {
+    background: #09212E !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+body.page-admin-dashboard h1, body.page-admin-dashboard h2, body.page-admin-dashboard h3,
+body.page-admin-dashboard h4, body.page-admin-dashboard h5, body.page-admin-dashboard h6,
+body.page-admin-dashboard .text-dark {
+    color: #FFFFFF !important;
+}
+body.page-admin-dashboard .text-muted {
+    color: #94A3B8 !important;
+}
+body.page-admin-dashboard .table-custom {
+    background: #09212E !important;
+    color: #FFFFFF !important;
+}
+body.page-admin-dashboard .table-custom th {
+    background: #05141D !important;
+    color: #CBD5E1 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+body.page-admin-dashboard .table-custom td {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #E2E8F0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   15. Admin Management: Enterprise SaaS Management
+   -------------------------------------------------------------------------- */
+body.page-admin-management {
+    background-color: #F3F6F9;
+    background-image:
+        radial-gradient(circle at 15% 10%, rgba(39, 184, 214, 0.08), transparent 30%),
+        radial-gradient(circle at 85% 85%, rgba(6, 43, 58, 0.05), transparent 30%),
+        linear-gradient(180deg, #F1F5F9 0%, #F8FAFC 400px, #FFFFFF 100%);
+    background-attachment: fixed;
+}
+
+/* --------------------------------------------------------------------------
+   16. Authentication (Login): Gateway to Learning Split Screen
+   -------------------------------------------------------------------------- */
+body.page-login {
+    background-color: #062330 !important;
+    background-image:
+        radial-gradient(circle at 25% 30%, rgba(255, 122, 24, 0.20), transparent 45%),
+        radial-gradient(circle at 75% 70%, rgba(39, 184, 214, 0.18), transparent 40%),
+        #041620 !important;
+    background-attachment: fixed;
+}
+body.page-login .login-split-card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+}
+body.page-login .login-hero-side {
+    background: linear-gradient(135deg, #062330 0%, #073448 60%, #041620 100%);
+    color: #FFFFFF;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   17. Authentication (Register): Start Your Learning Journey
+   -------------------------------------------------------------------------- */
+body.page-register {
+    background-color: #FFFDF9;
+    background-image:
+        radial-gradient(circle at 85% 15%, rgba(255, 122, 24, 0.14), transparent 35%),
+        radial-gradient(circle at 15% 80%, rgba(255, 154, 69, 0.10), transparent 35%),
+        linear-gradient(135deg, #FFFDFB 0%, #FFF7ED 50%, #FAF5FF 100%);
+    background-attachment: fixed;
+}
+
+/* --------------------------------------------------------------------------
+   18. Profile: Personal Identity Hub
+   -------------------------------------------------------------------------- */
+body.page-profile {
+    background-color: #F6F4FF;
+    background-image:
+        radial-gradient(circle at 15% 15%, rgba(91, 63, 228, 0.12), transparent 35%),
+        radial-gradient(circle at 85% 25%, rgba(39, 184, 214, 0.08), transparent 30%),
+        linear-gradient(180deg, #F6F4FF 0%, #F8FAFC 350px, #FFFFFF 100%);
+    background-attachment: fixed;
+}
+
+/* --------------------------------------------------------------------------
+   19. Notifications: Communication Center
+   -------------------------------------------------------------------------- */
+body.page-notifications {
+    background-color: #F4F8FB;
+    background-image:
+        radial-gradient(circle at 18% 15%, rgba(39, 184, 214, 0.12), transparent 35%),
+        radial-gradient(circle at 82% 70%, rgba(91, 63, 228, 0.07), transparent 30%),
+        #F4F8FB;
+    background-attachment: fixed;
+}
+
+/* --------------------------------------------------------------------------
+   20. About Page: Brand Story
+   -------------------------------------------------------------------------- */
+body.page-about {
+    background-color: #FBF9F5;
+    background-image:
+        radial-gradient(circle at 15% 20%, rgba(6, 43, 58, 0.08), transparent 35%),
+        radial-gradient(circle at 85% 15%, rgba(255, 122, 24, 0.09), transparent 30%),
+        #FBF9F5;
+    background-attachment: fixed;
+}
+
+/* --------------------------------------------------------------------------
+   21. Contact Page: Human Connection
+   -------------------------------------------------------------------------- */
+body.page-contact {
+    background-color: #F2F9FC;
+    background-image:
+        radial-gradient(circle at 20% 20%, rgba(39, 184, 214, 0.14), transparent 35%),
+        radial-gradient(circle at 80% 30%, rgba(53, 201, 138, 0.08), transparent 30%),
+        #F2F9FC;
+    background-attachment: fixed;
+}
+
+
+/* --------------------------------------------------------------------------
+   Contrast & Readability Refinements for Specialized Atmosphere Pages
+   -------------------------------------------------------------------------- */
+body.page-course-details .card-gradient-top .col-lg-4 .card {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
+body.page-course-details .card-gradient-top .col-lg-4 .card .display-6,
+body.page-course-details .card-gradient-top .col-lg-4 .card .text-dark,
+body.page-course-details .card-gradient-top .col-lg-4 .card strong {
+    color: #062330 !important;
+}
+body.page-course-details .card-gradient-top .col-lg-4 .card .text-muted,
+body.page-course-details .card-gradient-top .col-lg-4 .card .text-secondary {
+    color: #64748B !important;
+}
+
+body.page-instructor-dashboard .card-custom.bg-white,
+body.page-instructor-dashboard .card.bg-white {
+    background: #082635 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+body.page-instructor-dashboard .table {
+    color: #E2E8F0 !important;
+}
+body.page-instructor-dashboard .table td,
+body.page-instructor-dashboard .table th {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #E2E8F0 !important;
+}
+body.page-instructor-dashboard .table strong,
+body.page-instructor-dashboard .table a {
+    color: #FFFFFF !important;
+}
+body.page-instructor-dashboard .table .badge-primary-subtle,
+body.page-instructor-dashboard .badge.badge-primary-subtle {
+    background: rgba(39, 184, 214, 0.15) !important;
+    color: #38BDF8 !important;
+    border: 1px solid rgba(56, 189, 248, 0.3) !important;
+}
+
+body.page-admin-dashboard .card-custom.bg-white,
+body.page-admin-dashboard .card.bg-white {
+    background: #09212E !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+body.page-admin-dashboard .table {
+    color: #CBD5E1 !important;
+}
+body.page-admin-dashboard .table td {
+    color: #CBD5E1 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+body.page-admin-dashboard .table td strong,
+body.page-admin-dashboard .table td a {
+    color: #FFFFFF !important;
+}
+body.page-admin-dashboard .table th {
+    background: #05141D !important;
+    color: #FFFFFF !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
 }
