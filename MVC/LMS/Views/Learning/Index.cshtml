@@ -49,12 +49,12 @@
     <!-- Classroom Body: Split Layout -->
     <div class="row g-0">
         <!-- Curriculum Sidebar -->
-        <div class="col-lg-4 col-xl-3 border-end classroom-sidebar bg-light" style="max-height: 85vh; overflow-y: auto;">
-            <div class="p-3 border-bottom bg-white sticky-top d-flex justify-content-between align-items-center">
-                <h6 class="fw-bold text-uppercase small text-muted mb-0">
-                    <i class="bi bi-list-check me-1 text-primary"></i> Syllabus Outline
+        <div class="col-lg-4 col-xl-3 border-end classroom-sidebar" style="max-height: 85vh; overflow-y: auto; background: #041822; border-color: rgba(255, 255, 255, 0.1) !important;">
+            <div class="p-3 border-bottom sticky-top d-flex justify-content-between align-items-center" style="background: #062330; border-color: rgba(255, 255, 255, 0.1) !important;">
+                <h6 class="fw-bold text-uppercase small mb-0 text-white">
+                    <i class="bi bi-list-check me-1 text-cyan"></i> Syllabus Outline
                 </h6>
-                <span class="badge bg-light text-dark border small">@Model.Modules.Sum(m => m.Lessons.Count) Lessons</span>
+                <span class="badge rounded-pill px-3 py-1 small" style="background: rgba(39, 184, 214, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.25);">@Model.Modules.Sum(m => m.Lessons.Count) Lessons</span>
             </div>
 
             <div class="accordion accordion-flush" id="learningAccordion">
@@ -87,7 +87,7 @@
                                         bool isCurrent = Model.CurrentLesson != null && lesson.LessonId == Model.CurrentLesson.LessonId;
                                         bool isDone = Model.CompletedLessonIds.Contains(lesson.LessonId);
                                         <a href="@Url.Action("Index", "Learning", new { courseId = Model.Course.CourseId, lessonId = lesson.LessonId })"
-                                           class="list-group-item list-group-item-action py-3 px-3 d-flex align-items-center justify-content-between @(isCurrent ? "active-lesson bg-white border-start border-4 border-primary fw-bold" : "")">
+                                           class="list-group-item list-group-item-action py-3 px-3 d-flex align-items-center justify-content-between @(isCurrent ? "active-lesson border-start border-4 border-warning fw-bold text-white" : "")">
                                             <div class="d-flex align-items-center gap-2 overflow-hidden pe-2">
                                                 @if (isDone)
                                                 {
@@ -259,13 +259,13 @@
         </div>
 
         <!-- Main Lesson Stage -->
-        <div class="col-lg-8 col-xl-9 classroom-stage bg-white p-4 p-md-5 d-flex flex-column" style="min-height: 85vh;">
+        <div class="col-lg-8 col-xl-9 classroom-stage p-4 p-md-5 d-flex flex-column" style="min-height: 85vh; background: linear-gradient(180deg, #062330 0%, #041822 100%); color: #FFFFFF;">
             @if (Model.CurrentLesson == null)
             {
                 <div class="text-center my-auto py-5">
-                    <i class="bi bi-journal-check display-1 text-muted mb-3"></i>
-                    <h4 class="fw-bold">Welcome to the Classroom</h4>
-                    <p class="text-muted">Select a lesson from the curriculum sidebar on the left to begin learning.</p>
+                    <i class="bi bi-journal-check display-1 text-white-50 mb-3"></i>
+                    <h4 class="fw-bold text-white">Welcome to the Classroom</h4>
+                    <p class="text-white-50">Select a lesson from the curriculum sidebar on the left to begin learning.</p>
                 </div>
             }
             else
@@ -301,15 +301,15 @@
                     </div>
                 }
 
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom" style="border-color: rgba(255, 255, 255, 0.1) !important;">
                     <div>
                         <div class="d-flex align-items-center gap-2 mb-1">
-                            <span class="badge badge-primary-subtle small">
+                            <span class="badge rounded-pill px-3 py-1" style="background: rgba(255, 122, 24, 0.15); color: #FF7A18; border: 1px solid rgba(255, 122, 24, 0.3);">
                                 @Model.CurrentLesson.LessonType Lesson
                             </span>
-                            <span class="small text-muted"><i class="bi bi-clock me-1"></i> @Model.CurrentLesson.DurationInMinutes minutes</span>
+                            <span class="small" style="color: rgba(255, 255, 255, 0.7);"><i class="bi bi-clock me-1 text-orange"></i> @Model.CurrentLesson.DurationInMinutes minutes</span>
                         </div>
-                        <h3 class="fw-bold mb-0">@Model.CurrentLesson.Title</h3>
+                        <h3 class="fw-extrabold mb-0 text-white">@Model.CurrentLesson.Title</h3>
                     </div>
 
                     <div class="mt-2 mt-md-0" id="completionStatusContainer">

@@ -52,7 +52,7 @@
             @foreach (var item in Model)
             {
                 <div class="col-md-6 col-lg-4">
-                    <div class="card card-custom card-hover h-100 overflow-hidden shadow-sm d-flex flex-column bg-white">
+                    <div class="card card-custom card-hover h-100 overflow-hidden shadow-sm d-flex flex-column border-0 rounded-4" style="background: rgba(6, 35, 48, 0.9); border: 1px solid rgba(255, 255, 255, 0.12); color: #FFFFFF;">
                         @if (!string.IsNullOrWhiteSpace(item.Course?.Thumbnail))
                         {
                             <div class="position-relative overflow-hidden bg-dark" style="height: 160px;">
@@ -81,20 +81,20 @@
                             <span class="badge badge-primary-subtle small align-self-start mb-2">
                                 @(item.Course?.Category?.CategoryName ?? "General")
                             </span>
-                            <h5 class="card-title fw-bold mb-2 text-dark">@item.Course.Title</h5>
+                            <h5 class="card-title fw-bold mb-2 text-white">@item.Course.Title</h5>
 
                             <div class="mb-3 mt-2">
-                                <div class="d-flex justify-content-between align-items-center small text-muted mb-1">
+                                <div class="d-flex justify-content-between align-items-center small mb-1" style="color: rgba(255, 255, 255, 0.7);">
                                     <span>Curriculum Completion</span>
-                                    <strong class="text-dark">@item.CompletionPercentage%</strong>
+                                    <strong class="text-white">@item.CompletionPercentage%</strong>
                                 </div>
-                                <div class="progress" style="height: 8px;">
+                                <div class="progress" style="height: 8px; background: rgba(255, 255, 255, 0.1);">
                                     <div class="progress-bar @(item.Status == "Completed" ? "bg-success" : "bg-primary")" role="progressbar" style="width: @item.CompletionPercentage%;"></div>
                                 </div>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
-                                <small class="text-muted"><i class="bi bi-calendar-check me-1"></i> @item.EnrollmentDate.ToString("MMM dd")</small>
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto" style="border-color: rgba(255, 255, 255, 0.1) !important;">
+                                <small style="color: rgba(255, 255, 255, 0.6);"><i class="bi bi-calendar-check me-1 text-orange"></i> @item.EnrollmentDate.ToString("MMM dd")</small>
                                 <a href="@Url.Action("Index", "Learning", new { courseId = item.CourseId })" class="btn btn-sm btn-primary rounded-pill px-4 fw-semibold shadow-xs">
                                     <i class="bi bi-play-circle-fill me-1"></i> Continue
                                 </a>

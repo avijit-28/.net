@@ -1871,70 +1871,138 @@ body.page-student-dashboard .card.card-custom {
 body.page-learning {
     background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 20% 20%, #0D3B4F 0%, transparent 40%),
-        radial-gradient(circle at 80% 65%, #0B3445 0%, transparent 38%),
-        linear-gradient(180deg, #062330 0%, #041822 100%) !important;
+        radial-gradient(circle at 18% 15%, rgba(39, 184, 214, 0.18), transparent 45%),
+        radial-gradient(circle at 82% 20%, rgba(255, 122, 24, 0.15), transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(18, 73, 92, 0.25), transparent 45%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%) !important;
     background-attachment: fixed;
-}
-
-/* Learning Page - Normal Classroom Stage: Crisp White Surface with Dark High-Contrast Typography */
-body.page-learning:not(.focus-mode-active) .classroom-stage,
-body.page-learning:not(.focus-mode-active) .classroom-stage.bg-white {
-    background-color: #FFFFFF !important;
-    background: #FFFFFF !important;
-    color: #1E293B !important;
-}
-body.page-learning:not(.focus-mode-active) .classroom-stage h1,
-body.page-learning:not(.focus-mode-active) .classroom-stage h2,
-body.page-learning:not(.focus-mode-active) .classroom-stage h3,
-body.page-learning:not(.focus-mode-active) .classroom-stage h4,
-body.page-learning:not(.focus-mode-active) .classroom-stage h5,
-body.page-learning:not(.focus-mode-active) .classroom-stage h6,
-body.page-learning:not(.focus-mode-active) .classroom-stage strong,
-body.page-learning:not(.focus-mode-active) .classroom-stage .text-dark {
-    color: #0F172A !important;
-}
-body.page-learning:not(.focus-mode-active) .classroom-stage p,
-body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-notes-body,
-body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-overview-text {
-    color: #334155 !important;
-}
-body.page-learning:not(.focus-mode-active) .classroom-stage .text-muted,
-body.page-learning:not(.focus-mode-active) .classroom-stage .text-secondary {
-    color: #64748B !important;
-}
-body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-notes-box {
-    background: #F8FAFC !important;
-    border: 1px solid #E2E8F0 !important;
-    color: #1E293B !important;
-}
-body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-notes-box h6 {
     color: #FFFFFF !important;
 }
-body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-resource-box {
+
+/* Learning Page - Master Classroom Container & Elements */
+body.page-learning .classroom-container {
+    background: #062330 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45) !important;
+    border-radius: var(--lms-radius-lg);
+    overflow: hidden;
+}
+
+body.page-learning .classroom-sidebar {
+    background: #041822 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-learning .classroom-sidebar .border-bottom.bg-white,
+body.page-learning .classroom-sidebar .bg-white {
+    background: #062330 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-learning .classroom-sidebar h6,
+body.page-learning .classroom-sidebar .fw-bold,
+body.page-learning .classroom-sidebar .text-dark {
+    color: #FFFFFF !important;
+}
+
+body.page-learning .classroom-sidebar .text-muted {
+    color: rgba(255, 255, 255, 0.65) !important;
+}
+
+body.page-learning .classroom-sidebar .accordion-button {
+    background: transparent !important;
+    color: #FFFFFF !important;
+}
+
+body.page-learning .classroom-sidebar .list-group-item {
+    background: rgba(6, 35, 48, 0.75) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.page-learning .classroom-sidebar .list-group-item:hover {
+    background: rgba(18, 73, 92, 0.6) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-learning .classroom-sidebar .list-group-item.active-lesson {
+    background: #0B3445 !important;
+    border-left: 4px solid #FF7A18 !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+}
+
+body.page-learning .classroom-stage,
+body.page-learning:not(.focus-mode-active) .classroom-stage,
+body.page-learning:not(.focus-mode-active) .classroom-stage.bg-white {
+    background: linear-gradient(180deg, #062330 0%, #041822 100%) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-learning .classroom-stage h1,
+body.page-learning .classroom-stage h2,
+body.page-learning .classroom-stage h3,
+body.page-learning .classroom-stage h4,
+body.page-learning .classroom-stage h5,
+body.page-learning .classroom-stage h6,
+body.page-learning .classroom-stage strong,
+body.page-learning .classroom-stage .text-dark {
+    color: #FFFFFF !important;
+}
+
+body.page-learning .classroom-stage p,
+body.page-learning .classroom-stage .lesson-notes-body,
+body.page-learning .classroom-stage .lesson-overview-text {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+body.page-learning .classroom-stage .text-muted,
+body.page-learning .classroom-stage .text-secondary {
+    color: rgba(255, 255, 255, 0.65) !important;
+}
+
+body.page-learning .classroom-stage .lesson-notes-box {
+    background: rgba(11, 52, 69, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-learning .classroom-stage .lesson-notes-box h6 {
+    color: #FFFFFF !important;
+}
+
+body.page-learning .classroom-stage .lesson-resource-box {
     background: linear-gradient(135deg, #062330 0%, #0B3445 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     color: #FFFFFF !important;
 }
-body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-resource-box .resource-title {
+
+body.page-learning .classroom-stage .lesson-resource-box .resource-title {
     color: #FFFFFF !important;
     font-weight: 700 !important;
 }
-body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-resource-box .resource-subtitle {
+
+body.page-learning .classroom-stage .lesson-resource-box .resource-subtitle {
     color: rgba(255, 255, 255, 0.72) !important;
 }
-body.page-learning:not(.focus-mode-active) .classroom-stage .scratchpad-card {
+
+body.page-learning .classroom-stage .scratchpad-card {
     background: rgba(6, 35, 48, 0.95) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
     color: #FFFFFF !important;
 }
-body.page-learning:not(.focus-mode-active) .classroom-stage .scratchpad-card h6 {
+
+body.page-learning .classroom-stage .scratchpad-card h6 {
     color: #FFFFFF !important;
 }
-body.page-learning:not(.focus-mode-active) .classroom-stage .scratchpad-card .text-muted {
+
+body.page-learning .classroom-stage .scratchpad-card .text-muted {
     color: rgba(255, 255, 255, 0.65) !important;
 }
-body.page-learning:not(.focus-mode-active) .classroom-stage .scratchpad-textarea {
+
+body.page-learning .classroom-stage .scratchpad-textarea {
     background: #041822 !important;
     color: #FFFFFF !important;
     border: 1px solid rgba(255, 255, 255, 0.18) !important;
@@ -2034,41 +2102,69 @@ body.focus-mode-active .scratchpad-textarea {
 }
 
 /* --------------------------------------------------------------------------
-   7. Quiz Assessment: Electric Indigo / Purple Challenge Mode
+   7. Quiz Assessment: Enterprise Dark Navy / Teal Focus Environment
    -------------------------------------------------------------------------- */
 body.page-quiz {
-    background-color: #0A0E27 !important;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 25% 15%, rgba(91, 63, 228, 0.40), transparent 45%),
-        radial-gradient(circle at 80% 60%, rgba(39, 184, 214, 0.22), transparent 38%),
-        radial-gradient(circle at 50% 95%, rgba(255, 122, 24, 0.14), transparent 40%),
-        radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px;
+        radial-gradient(circle at 18% 15%, rgba(39, 184, 214, 0.18), transparent 45%),
+        radial-gradient(circle at 82% 20%, rgba(255, 122, 24, 0.15), transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(18, 73, 92, 0.25), transparent 45%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%) !important;
     background-attachment: fixed;
     color: #F8FAFC !important;
 }
 body.page-quiz .card-custom {
-    background: #111638 !important;
-    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    background: rgba(6, 35, 48, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
     color: #FFFFFF !important;
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45) !important;
+    backdrop-filter: blur(8px);
 }
 body.page-quiz h1, body.page-quiz h2, body.page-quiz h3, body.page-quiz h4, body.page-quiz h5, body.page-quiz h6,
 body.page-quiz .text-dark {
     color: #FFFFFF !important;
 }
 body.page-quiz .text-secondary, body.page-quiz .text-muted {
-    color: #94A3B8 !important;
+    color: rgba(255, 255, 255, 0.7) !important;
 }
-body.page-quiz .quiz-question-box {
-    background: #181F4B !important;
-    border: 1px solid rgba(91, 63, 228, 0.4) !important;
+body.page-quiz .quiz-question-box,
+body.page-quiz .question-card {
+    background: rgba(6, 35, 48, 0.88) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-left: 3px solid #27B8D6 !important;
 }
 body.page-quiz .form-check-label {
-    color: #E2E8F0 !important;
+    color: #FFFFFF !important;
 }
-body.page-quiz .bg-light {
-    background: #181F4B !important;
+body.page-quiz .bg-light,
+body.page-quiz .quiz-option-container {
+    background: rgba(11, 52, 69, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+    transition: all 0.2s ease;
+}
+body.page-quiz .quiz-option-container:hover {
+    background: rgba(18, 73, 92, 0.7) !important;
+    border-color: rgba(255, 122, 24, 0.4) !important;
+}
+body.page-quiz .quiz-option-container:has(input:checked) {
+    background: rgba(255, 122, 24, 0.15) !important;
+    border: 1.5px solid #FF7A18 !important;
+}
+body.page-quiz .quiz-palette-btn {
+    background: rgba(11, 52, 69, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+body.page-quiz .quiz-palette-btn.palette-answered {
+    background: #10B981 !important;
+    border-color: #10B981 !important;
+    color: #FFFFFF !important;
+}
+body.page-quiz .quiz-palette-btn.palette-flagged {
+    background: #FF7A18 !important;
+    border-color: #FF7A18 !important;
     color: #FFFFFF !important;
 }
 
@@ -2076,17 +2172,18 @@ body.page-quiz .bg-light {
    8. Quiz Result Page: Radiant Achievement Environment
    -------------------------------------------------------------------------- */
 body.page-quiz-result {
-    background-color: #041926 !important;
+    background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 50% 25%, rgba(255, 122, 24, 0.25), transparent 42%),
-        radial-gradient(circle at 20% 65%, rgba(53, 201, 138, 0.22), transparent 38%),
-        radial-gradient(circle at 80% 80%, rgba(91, 63, 228, 0.20), transparent 38%);
+        radial-gradient(circle at 18% 15%, rgba(39, 184, 214, 0.18), transparent 45%),
+        radial-gradient(circle at 82% 20%, rgba(255, 122, 24, 0.15), transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(18, 73, 92, 0.25), transparent 45%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%) !important;
     background-attachment: fixed;
     color: #FFFFFF !important;
 }
 body.page-quiz-result .card-custom {
-    background: #082535 !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    background: rgba(6, 35, 48, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
     color: #FFFFFF !important;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5) !important;
 }
@@ -2095,7 +2192,7 @@ body.page-quiz-result .card-custom .text-dark {
     color: #FFFFFF !important;
 }
 body.page-quiz-result .bg-light {
-    background: #041620 !important;
+    background: rgba(11, 52, 69, 0.7) !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 
