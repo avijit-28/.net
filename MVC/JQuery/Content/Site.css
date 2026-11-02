@@ -1,111 +1,269 @@
-/* Modern Dashboard & DataTables Styling */
+/* ==========================================================================
+   ENTERPRISE MVC & AJAX HUB - MODERN DESIGN SYSTEM
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 :root {
-    --primary-gradient: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
-    --secondary-gradient: linear-gradient(135deg, #198754 0%, #157347 100%);
-    --card-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
-    --card-shadow-hover: 0 0.5rem 1.25rem rgba(0, 0, 0, 0.1);
-    --border-color: #e9ecef;
+    --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+    
+    /* Color Palette */
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --primary-light: #eef2ff;
+    --primary-border: #c7d2fe;
+    
+    --success: #10b981;
+    --success-light: #ecfdf5;
+    
+    --warning: #f59e0b;
+    --warning-light: #fffbeb;
+    
+    --danger: #ef4444;
+    --danger-light: #fef2f2;
+    
+    --info: #06b6d4;
+    --info-light: #ecfeff;
+    
+    --slate-900: #0f172a;
+    --slate-800: #1e293b;
+    --slate-700: #334155;
+    --slate-600: #475569;
+    --slate-500: #64748b;
+    --slate-400: #94a3b8;
+    --slate-300: #cbd5e1;
+    --slate-200: #e2e8f0;
+    --slate-100: #f1f5f9;
+    --slate-50:  #f8fafc;
+    
+    --body-bg: #f8fafc;
+    --card-bg: #ffffff;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
 }
 
 body {
-    background-color: #f8f9fa;
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
-    color: #333;
+    background-color: var(--body-bg);
+    font-family: var(--font-main);
+    color: var(--slate-800);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
 
-.body-content {
-    margin-top: 20px;
-    padding-bottom: 40px;
+/* Navbar / App Header */
+.app-header {
+    background-color: var(--slate-900) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+}
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-size: 1.15rem;
+}
+.nav-link {
+    font-weight: 500;
+    font-size: 0.92rem;
+    padding: 0.5rem 0.85rem !important;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+.nav-link:hover {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+.nav-link.active {
+    color: #ffffff !important;
+    background-color: var(--primary) !important;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
 }
 
-/* Fix default ASP.NET MVC input restriction inside DataTables and JSGrid */
+/* Breadcrumb & Subnav Banner */
+.sub-banner {
+    background: #ffffff;
+    border-bottom: 1px solid var(--slate-200);
+    padding: 1.25rem 0;
+    margin-bottom: 1.75rem;
+}
+
+/* Modern Card Design */
+.card-modern {
+    background-color: var(--card-bg);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+.card-modern:hover {
+    box-shadow: var(--shadow-md);
+}
+.card-header-modern {
+    background-color: transparent;
+    border-bottom: 1px solid var(--slate-100);
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    color: var(--slate-900);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Metric / Stat Cards */
+.metric-card {
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    background: #ffffff;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+.metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--slate-200);
+    transition: background 0.2s ease;
+}
+.metric-card.primary::before { background: var(--primary); }
+.metric-card.success::before { background: var(--success); }
+.metric-card.warning::before { background: var(--warning); }
+.metric-card.info::before    { background: var(--info); }
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+.metric-icon-wrap {
+    width: 46px;
+    height: 46px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+/* Modern Tabs */
+.nav-pills-modern {
+    background: #ffffff;
+    padding: 0.4rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--slate-200);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+.nav-pills-modern .nav-link {
+    color: var(--slate-600);
+    font-weight: 600;
+    padding: 0.6rem 1.1rem !important;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+}
+.nav-pills-modern .nav-link:hover {
+    color: var(--slate-900);
+    background: var(--slate-100);
+}
+.nav-pills-modern .nav-link.active {
+    background: var(--primary) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+}
+
+/* DataTables Styling Enhancement */
+.dataTables_wrapper {
+    padding: 0.5rem 0;
+}
 .dataTables_wrapper input,
 .dataTables_wrapper select,
 .jsgrid input,
 .jsgrid select {
     max-width: none !important;
+    border-radius: var(--radius-sm) !important;
+    border: 1px solid var(--slate-300) !important;
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.875rem !important;
+}
+.dataTables_wrapper input:focus,
+.dataTables_wrapper select:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important;
+    outline: none !important;
 }
 
-/* Metric / Stat Cards */
-.stat-card {
-    border: none;
-    border-radius: 12px;
-    box-shadow: var(--card-shadow);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    background: #fff;
+table.dataTable {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    border: 1px solid var(--slate-200) !important;
+    border-radius: var(--radius-sm) !important;
+    overflow: hidden !important;
 }
-.stat-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--card-shadow-hover);
+table.dataTable thead th {
+    background-color: var(--slate-900) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: 0.85rem 1rem !important;
+    border-bottom: none !important;
 }
-.stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4rem;
+table.dataTable tbody tr {
+    transition: background-color 0.15s ease;
 }
-
-/* Tab Navigation Styling */
-.nav-pills .nav-link {
-    border-radius: 8px;
-    font-weight: 500;
-    color: #495057;
-    padding: 0.65rem 1.25rem;
-    margin-right: 0.5rem;
-    transition: all 0.2s ease;
+table.dataTable tbody tr:hover {
+    background-color: var(--slate-100) !important;
 }
-.nav-pills .nav-link.active {
-    background: var(--primary-gradient);
-    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
-    color: #fff;
-}
-.nav-pills .nav-link:hover:not(.active) {
-    background-color: #e9ecef;
+table.dataTable tbody td {
+    padding: 0.85rem 1rem !important;
+    font-size: 0.9rem !important;
+    color: var(--slate-700);
+    border-bottom: 1px solid var(--slate-200) !important;
 }
 
-/* Workflow Step Cards */
-.workflow-step-card {
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    background: #fff;
-    box-shadow: var(--card-shadow);
-    margin-bottom: 1.5rem;
+/* JSGrid Customization */
+.jsgrid {
+    border-radius: var(--radius-sm);
     overflow: hidden;
-    transition: transform 0.2s ease;
+    font-family: var(--font-main);
+    border: 1px solid var(--slate-200);
 }
-.workflow-step-header {
-    background-color: #f8fafc;
-    border-bottom: 1px solid #edf2f7;
-    padding: 1rem 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.jsgrid-header-row th {
+    background: var(--slate-800) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    padding: 0.75rem !important;
 }
-.workflow-badge {
-    background-color: #0d6efd;
-    color: #fff;
-    font-weight: 600;
-    padding: 0.35rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
+.jsgrid-filter-row td {
+    background: var(--slate-50) !important;
+    padding: 0.5rem !important;
 }
-
-/* Code Snippets Presentation */
-pre.code-block {
-    background-color: #1e1e1e;
-    color: #d4d4d4;
-    padding: 1rem 1.25rem;
-    border-radius: 8px;
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 0.9rem;
-    overflow-x: auto;
-    border-left: 4px solid #0d6efd;
+.jsgrid-pager-container {
+    padding: 0.75rem !important;
+    background: #ffffff !important;
 }
 
-/* Pipeline Architecture Flowchart */
+/* Visual Architecture Pipeline */
 .pipeline-flow {
     display: flex;
     align-items: center;
@@ -113,64 +271,114 @@ pre.code-block {
     flex-wrap: wrap;
     background: #ffffff;
     padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: var(--card-shadow);
-    margin-bottom: 2rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--slate-200);
+    margin-bottom: 1.5rem;
 }
 .pipeline-node {
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
-    border-radius: 10px;
-    padding: 0.85rem 1.1rem;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-300);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem;
     text-align: center;
     flex: 1;
-    min-width: 140px;
+    min-width: 135px;
     margin: 0.35rem;
-    position: relative;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: all 0.2s ease;
 }
 .pipeline-node.active-node {
-    background: #eff6ff;
-    border-color: #3b82f6;
-    color: #1d4ed8;
-    font-weight: 600;
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15);
 }
 .pipeline-arrow {
-    color: #64748b;
-    font-size: 1.25rem;
-    font-weight: bold;
+    color: var(--slate-400);
+    font-size: 1.15rem;
     margin: 0 0.25rem;
 }
 
-/* Live Table Customization */
-#tblCustomers {
-    width: 100% !important;
-}
-#tblCustomers thead th {
-    background-color: #0f172a;
-    color: #ffffff;
-    font-weight: 600;
-    border: none;
-    padding: 12px 14px;
-}
-#tblCustomers tbody tr:hover {
-    background-color: #f1f5f9;
-}
-.badge-customer {
-    font-family: monospace;
-    font-size: 0.9rem;
+/* Code Snippets */
+pre.code-block {
+    background-color: var(--slate-900);
+    color: #e2e8f0;
+    padding: 1.1rem 1.25rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.86rem;
+    overflow-x: auto;
+    border-left: 4px solid var(--primary);
 }
 
 /* JSON Inspector */
 #jsonResponseViewer {
-    background-color: #111827;
-    color: #10b981;
-    font-family: 'Consolas', monospace;
-    font-size: 0.88rem;
-    border-radius: 8px;
-    padding: 1rem;
-    max-height: 420px;
+    background-color: #0b0f19;
+    color: #34d399;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 1.25rem;
+    max-height: 400px;
     overflow-y: auto;
     white-space: pre-wrap;
     word-break: break-all;
+    border-radius: var(--radius-sm);
+}
+
+/* Badges & Tags */
+.badge-code {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 0.35em 0.65em;
+    border-radius: 6px;
+}
+
+/* Action Center Cards */
+.action-card {
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-md);
+    background: #ffffff;
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+}
+.action-card:hover {
+    border-color: var(--primary-border);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Form Styling */
+.form-control, .form-select {
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--slate-300);
+    padding: 0.55rem 0.85rem;
+    font-size: 0.9rem;
+    transition: all 0.15s ease;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+/* Buttons */
+.btn {
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
 }
