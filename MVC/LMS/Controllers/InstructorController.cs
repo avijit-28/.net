@@ -945,7 +945,7 @@ namespace LMS.Controllers
         public ActionResult Earnings(string filter = "All", int? courseId = null, string search = null)
         {
             var model = _paymentService.GetInstructorPayments(CurrentUserId, filter, courseId, search);
-            return View("Payments", model);
+            return View("Earnings", model);
         }
 
         // GET: Instructor/ExportEarningsPdf
