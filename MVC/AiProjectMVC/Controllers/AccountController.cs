@@ -149,9 +149,130 @@ namespace AiProjectMVC.Controllers
 
         // GET: /Account/AccessDenied
         [AllowAnonymous]
-        public ActionResult AccessDenied()
+        public ActionResult AccessDenied(string required, string url)
         {
+            ViewBag.RequiredRole = required;
+            ViewBag.AttemptedUrl = url;
             return View();
+        }
+
+        // GET: /Account/QuickSwitch?role=SuperAdmin&returnUrl=...
+        [AllowAnonymous]
+        public ActionResult QuickSwitch(string role, string returnUrl)
+        {
+            if (string.IsNullOrWhiteSpace(role) || 
+                role.Equals("GUEST", StringComparison.OrdinalIgnoreCase) || 
+                role.Equals("LOGOUT", StringComparison.OrdinalIgnoreCase))
+            {
+                Session.Clear();
+                Session.Abandon();
+                FormsAuthentication.SignOut();
+
+                if (Request.Cookies[FormsAuthentication.FormsCookieName] != null)
+                {
+                    var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, "")
+                    {
+                        Expires = DateTime.Now.AddDays(-1)
+                    };
+                    Response.Cookies.Add(cookie);
+                }
+
+                TempData["SuccessMessage"] = "Switched to Guest mode (signed out).";
+
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            string roleUpper = role.Trim().ToUpper();
+            string username = null;
+            string userRole = null;
+            string fullName = null;
+            string email = null;
+            int userId = 0;
+
+            if (roleUpper == "SUPERADMIN")
+            {
+                username = "superadmin@gmail.com";
+                userRole = "SUPERADMIN,ADMIN,USER";
+                fullName = "Super Administrator";
+                email = "superadmin@gmail.com";
+                userId = 1;
+            }
+            else if (roleUpper == "ADMIN")
+            {
+                username = "admin@gmail.com";
+                userRole = "ADMIN";
+                fullName = "System Administrator";
+                email = "admin@gmail.com";
+                userId = 2;
+            }
+            else if (roleUpper == "HR")
+            {
+                username = "ankita108";
+                userRole = "HR";
+                fullName = "Ankita Sen (HR)";
+                email = "ankita@gmail.com";
+                userId = 9;
+            }
+            else if (roleUpper == "MANAGER")
+            {
+                username = "amit103";
+                userRole = "Manager";
+                fullName = "Amit Kumar (Manager)";
+                email = "amit@gmail.com";
+                userId = 4;
+            }
+            else if (roleUpper == "USER" || roleUpper == "EMPLOYEE")
+            {
+                username = "user@gmail.com";
+                userRole = "USER";
+                fullName = "Standard User";
+                email = "user@gmail.com";
+                userId = 4;
+            }
+
+            if (username != null)
+            {
+                FormsAuthentication.SetAuthCookie(username, false);
+                var authTicket = new FormsAuthenticationTicket(
+                    1,
+                    username,
+                    DateTime.Now,
+                    DateTime.Now.AddMinutes(30),
+                    false,
+                    userRole
+                );
+                string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+                var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+                Response.Cookies.Add(authCookie);
+
+                Session["CurrentUser"] = new EmployeeUser
+                {
+                    ID = userId,
+                    UserName = username,
+                    Name = fullName,
+                    Role = userRole,
+                    Email = email
+                };
+                Session["UserId"] = userId;
+                Session["UserName"] = username;
+                Session["FullName"] = fullName;
+                Session["UserRole"] = userRole;
+                Session["Email"] = email;
+
+                TempData["SuccessMessage"] = $"Instant switched to {fullName} (Role: {userRole})!";
+            }
+
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: /Account/Register
