@@ -132,6 +132,7 @@ namespace LMS.ViewModels
         public string CourseTitle { get; set; }
         public DateTime IssueDate { get; set; }
         public decimal? FinalScore { get; set; }
+        public string InstructorName { get; set; }
     }
 
     public class CourseReviewInputModel

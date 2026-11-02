@@ -69,13 +69,21 @@ namespace LMS.Services
         public CertificateViewModel GetCertificateViewModel(int certificateId)
         {
             var cert = _db.Certificates
-                .Include(c => c.Course)
+                .Include(c => c.Course.Instructor)
                 .FirstOrDefault(c => c.CertificateId == certificateId);
 
             if (cert == null) return null;
 
             var user = _db.Users.Find(cert.StudentId);
             string studentName = user != null && !string.IsNullOrEmpty(user.FullName) ? user.FullName : (user != null ? user.UserName : "Student");
+
+            string instructorName = "Marcus Holloway";
+            if (cert.Course != null && cert.Course.Instructor != null)
+            {
+                instructorName = !string.IsNullOrWhiteSpace(cert.Course.Instructor.FullName)
+                    ? cert.Course.Instructor.FullName
+                    : (!string.IsNullOrWhiteSpace(cert.Course.Instructor.UserName) ? cert.Course.Instructor.UserName : "Faculty Lead Instructor");
+            }
 
             return new CertificateViewModel
             {
@@ -84,7 +92,8 @@ namespace LMS.Services
                 StudentName = studentName,
                 CourseTitle = cert.Course != null ? cert.Course.Title : "Course",
                 IssueDate = cert.IssueDate,
-                FinalScore = cert.FinalScore
+                FinalScore = cert.FinalScore,
+                InstructorName = instructorName
             };
         }
 

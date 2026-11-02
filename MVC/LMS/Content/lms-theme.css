@@ -730,7 +730,16 @@ p, .lead {
    ========================================================================== */
 .why-choose-section {
     padding: 5.5rem 0 4.5rem;
-    background: #FFFFFF;
+    background: linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%) !important;
+    color: #FFFFFF;
+    position: relative;
+}
+.why-choose-section .text-dark {
+    color: #FFFFFF !important;
+}
+.why-choose-section .text-muted,
+.why-choose-section .lead {
+    color: rgba(255, 255, 255, 0.78) !important;
 }
 
 .feature-bullet-item {
@@ -739,11 +748,15 @@ p, .lead {
     gap: 1rem;
     padding: 0.85rem 1.15rem;
     border-radius: 14px;
+    background: rgba(6, 35, 48, 0.75) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(8px);
     transition: var(--lms-transition);
 }
 
 .feature-bullet-item:hover {
-    background: var(--lms-surface-subtle);
+    background: rgba(11, 52, 69, 0.95) !important;
+    border-color: rgba(255, 122, 24, 0.4) !important;
     transform: translateX(4px);
 }
 
@@ -761,7 +774,57 @@ p, .lead {
 .feature-bullet-text {
     font-size: 1.05rem;
     font-weight: 700;
-    color: var(--lms-text-main);
+    color: #FFFFFF !important;
+}
+
+.home-courses-section {
+    background: linear-gradient(180deg, #0B3445 0%, #062330 60%, #041822 100%) !important;
+    color: #FFFFFF;
+}
+.home-courses-section .text-dark {
+    color: #FFFFFF !important;
+}
+.home-courses-section .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+.home-courses-section .course-card-v2 {
+    background: rgba(6, 35, 48, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+.home-courses-section .course-card-v2 .course-card-body {
+    background: transparent !important;
+    color: #FFFFFF !important;
+}
+.home-courses-section .course-card-v2 .course-card-title,
+.home-courses-section .course-card-v2 .course-card-title a {
+    color: #FFFFFF !important;
+}
+.home-courses-section .course-card-v2:hover .course-card-title,
+.home-courses-section .course-card-v2:hover .course-card-title a {
+    color: #FF7A18 !important;
+}
+.home-courses-section .course-card-v2 .text-muted,
+.home-courses-section .course-card-v2 small,
+.home-courses-section .course-card-v2 .course-meta-item,
+.home-courses-section .course-card-v2 .course-instructor-name {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+.home-courses-section .course-card-v2 .course-card-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: transparent !important;
+}
+.home-courses-section .category-pill {
+    background: rgba(6, 35, 48, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #E2E8F0 !important;
+}
+.home-courses-section .category-pill:hover,
+.home-courses-section .category-pill.active {
+    background: #FF7A18 !important;
+    border-color: #FF7A18 !important;
+    color: #FFFFFF !important;
 }
 
 /* ==========================================================================
@@ -1846,34 +1909,35 @@ body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-notes-box {
     color: #1E293B !important;
 }
 body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-notes-box h6 {
-    color: #0F172A !important;
+    color: #FFFFFF !important;
 }
 body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-resource-box {
-    background: #F8FAFC !important;
-    border: 1px solid #E2E8F0 !important;
-    color: #0F172A !important;
+    background: linear-gradient(135deg, #062330 0%, #0B3445 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
 }
 body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-resource-box .resource-title {
-    color: #0F172A !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
 }
 body.page-learning:not(.focus-mode-active) .classroom-stage .lesson-resource-box .resource-subtitle {
-    color: #64748B !important;
+    color: rgba(255, 255, 255, 0.72) !important;
 }
 body.page-learning:not(.focus-mode-active) .classroom-stage .scratchpad-card {
-    background: #FFFFFF !important;
-    border: 1px solid #E2E8F0 !important;
-    color: #0F172A !important;
+    background: rgba(6, 35, 48, 0.95) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
 }
 body.page-learning:not(.focus-mode-active) .classroom-stage .scratchpad-card h6 {
-    color: #0F172A !important;
+    color: #FFFFFF !important;
 }
 body.page-learning:not(.focus-mode-active) .classroom-stage .scratchpad-card .text-muted {
-    color: #64748B !important;
+    color: rgba(255, 255, 255, 0.65) !important;
 }
 body.page-learning:not(.focus-mode-active) .classroom-stage .scratchpad-textarea {
-    background: #FFFFFF !important;
-    color: #0F172A !important;
-    border: 1px solid #CBD5E1 !important;
+    background: #041822 !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
     min-height: 140px !important;
 }
 
@@ -2543,4 +2607,77 @@ body.page-admin-dashboard .table th {
     background: #05141D !important;
     color: #FFFFFF !important;
     border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Instructors Showcase Faculty Page Atmosphere
+   -------------------------------------------------------------------------- */
+body.page-instructors {
+    background-color: #041822 !important;
+    background-image:
+        radial-gradient(circle at 18% 15%, rgba(39, 184, 214, 0.20), transparent 45%),
+        radial-gradient(circle at 82% 20%, rgba(255, 122, 24, 0.16), transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(18, 73, 92, 0.28), transparent 45%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%) !important;
+    background-attachment: fixed;
+    color: #E2E8F0 !important;
+}
+body.page-instructors h1, body.page-instructors h2, body.page-instructors h3,
+body.page-instructors h4, body.page-instructors h5, body.page-instructors h6 {
+    color: #FFFFFF !important;
+}
+
+/* --------------------------------------------------------------------------
+   Student Dashboard Card & Text Readability
+   -------------------------------------------------------------------------- */
+body.page-student-dashboard .card-custom.bg-white,
+body.page-student-dashboard .card.bg-white {
+    background: rgba(6, 35, 48, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+body.page-student-dashboard .bg-light {
+    background: rgba(11, 52, 69, 0.7) !important;
+    color: #E2E8F0 !important;
+}
+body.page-student-dashboard .text-dark {
+    color: #FFFFFF !important;
+}
+
+/* --------------------------------------------------------------------------
+   About & Contact Dark Glass Refinements
+   -------------------------------------------------------------------------- */
+body.page-about .card-custom.bg-white,
+body.page-about .card.bg-white,
+body.page-contact .card-custom.bg-white,
+body.page-contact .card.bg-white {
+    background: rgba(6, 35, 48, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+    backdrop-filter: blur(8px);
+}
+body.page-about .list-group-item {
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #E2E8F0 !important;
+}
+body.page-about .list-group-item .fw-semibold {
+    color: #FFFFFF !important;
+}
+body.page-contact .form-label {
+    color: #FFFFFF !important;
+}
+body.page-contact .form-control {
+    background: rgba(11, 52, 69, 0.7) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+body.page-contact .form-control:focus {
+    background: rgba(11, 52, 69, 0.9) !important;
+    border-color: #FF7A18 !important;
+    box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.25) !important;
+    color: #FFFFFF !important;
+}
+body.page-contact .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.45) !important;
 }

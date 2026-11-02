@@ -1,6 +1,7 @@
 @model LMS.ViewModels.CertificateViewModel
 @{
     Layout = null;
+    string instructorName = !string.IsNullOrWhiteSpace(Model.InstructorName) ? Model.InstructorName : "Marcus Holloway";
 }
 <!DOCTYPE html>
 <html>
@@ -16,88 +17,90 @@
         body {
             font-family: 'Times New Roman', Georgia, serif;
             background-color: #ffffff;
-            color: #1e293b;
-            padding: 24px;
+            color: #062330;
+            padding: 16px;
         }
         .cert-container {
-            width: 1000px;
-            height: 680px;
+            width: 1040px;
+            height: 720px;
             margin: 0 auto;
-            border: 12px solid #1e1b4b;
+            border: 12px solid #062330;
             padding: 8px;
             position: relative;
-            background: #ffffff;
+            background: #FAF9F5;
         }
         .cert-inner-border {
-            border: 3px solid #d97706;
+            border: 3px solid #D4AF37;
             height: 100%;
-            padding: 30px 40px;
+            padding: 24px 36px;
             text-align: center;
             position: relative;
-            background: radial-gradient(circle at 50% 50%, rgba(254, 243, 199, 0.25) 0%, #ffffff 80%);
+            background: radial-gradient(circle at 50% 50%, rgba(254, 249, 231, 0.8) 0%, rgba(250, 247, 240, 0.95) 75%, #F5F1E6 100%);
         }
         .emblem-pill {
             display: inline-block;
-            background: #1e1b4b;
+            background: #062330;
             color: #ffffff;
             padding: 6px 24px;
             border-radius: 9999px;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: bold;
             letter-spacing: 2px;
             text-transform: uppercase;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            border: 1px solid #D4AF37;
         }
         .cert-heading {
-            font-size: 42px;
+            font-size: 38px;
             font-weight: 900;
-            letter-spacing: 5px;
-            color: #0f172a;
-            margin-top: 18px;
+            letter-spacing: 4px;
+            color: #041822;
+            margin-top: 14px;
             text-transform: uppercase;
         }
         .sub-heading {
-            font-size: 13px;
-            letter-spacing: 3px;
+            font-size: 11px;
+            letter-spacing: 2px;
             text-transform: uppercase;
             color: #64748b;
-            margin: 12px 0 20px 0;
+            margin: 8px 0 14px 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
         }
         .student-name {
-            font-size: 34px;
-            font-weight: bold;
-            color: #3730a3;
-            letter-spacing: 1.5px;
-            border-bottom: 2px solid #4f46e5;
+            font-size: 32px;
+            font-weight: 900;
+            color: #0A364A;
+            letter-spacing: 2px;
+            border-bottom: 2px solid #D4AF37;
             display: inline-block;
-            padding: 0 30px 6px 30px;
-            margin-bottom: 16px;
+            padding: 0 30px 4px 30px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
         }
         .cert-statement {
-            font-size: 15px;
+            font-size: 14px;
             color: #475569;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             line-height: 1.5;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            font-style: italic;
         }
         .course-title {
             font-size: 24px;
             font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 24px;
+            color: #041822;
+            margin-bottom: 16px;
         }
         .metrics-table {
-            width: 80%;
-            margin: 0 auto 26px auto;
+            width: 75%;
+            margin: 0 auto 16px auto;
             border-collapse: collapse;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            background: #f8fafc;
+            background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
         }
         .metrics-table td {
-            padding: 10px 14px;
+            padding: 8px 12px;
             text-align: center;
             border-right: 1px solid #e2e8f0;
         }
@@ -113,15 +116,15 @@
             display: block;
         }
         .metrics-val {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
-            color: #0f172a;
-            margin-top: 3px;
+            color: #041822;
+            margin-top: 2px;
             display: block;
         }
         .signatures {
             width: 90%;
-            margin: 20px auto 0 auto;
+            margin: 12px auto 0 auto;
             display: table;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
         }
@@ -132,13 +135,13 @@
             text-align: center;
         }
         .sig-line {
-            width: 170px;
-            border-top: 2px solid #334155;
+            width: 190px;
+            border-top: 2px solid #062330;
             margin: 0 auto;
             padding-top: 4px;
             font-weight: bold;
             font-size: 13px;
-            color: #0f172a;
+            color: #041822;
         }
         .sig-role {
             font-size: 10px;
@@ -146,21 +149,25 @@
             margin-top: 2px;
         }
         .seal {
-            width: 76px;
-            height: 76px;
+            width: 72px;
+            height: 72px;
             border-radius: 50%;
-            border: 3px double #d97706;
-            background: #fef3c7;
-            color: #b45309;
+            border: 3px double #ffffff;
+            background: radial-gradient(circle, #FDE68A 0%, #F59E0B 60%, #B45309 100%);
+            color: #78350F;
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            font-weight: bold;
+            font-size: 9px;
+            font-weight: 800;
             letter-spacing: 1px;
             line-height: 1.2;
             text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .sig-svg {
+            margin-bottom: 2px;
         }
     </style>
 </head>
@@ -169,51 +176,62 @@
         <div class="cert-inner-border">
             <div>
                 <span class="emblem-pill">EduPlatform Learning Management System</span>
-                <div style="font-size: 9px; color: #64748b; letter-spacing: 2px; text-transform: uppercase; margin-top: 6px; font-family: sans-serif;">Board of Academic Accreditation &amp; Quality Standards</div>
+                <div style="font-size: 9px; color: #78716c; letter-spacing: 2px; text-transform: uppercase; margin-top: 5px; font-family: sans-serif;">Board of Academic Standards &amp; Technical Accreditation</div>
             </div>
 
             <h1 class="cert-heading">Certificate of Completion</h1>
-            <p class="sub-heading">This certifies that</p>
+            <p class="sub-heading">This is officially conferred upon</p>
 
             <div class="student-name">@Model.StudentName</div>
 
-            <p class="cert-statement">
-                has successfully fulfilled all curriculum requirements, modules, practical projects, and assessment milestones for
-            </p>
-
-            <h2 class="course-title">@Model.CourseTitle</h2>
+            <p class="cert-statement">for successfully fulfilling all curriculum coursework, laboratory modules, practical projects, and comprehensive final examination requirements for the professional curriculum:</p>
+            <div class="course-title">@Model.CourseTitle</div>
 
             <table class="metrics-table">
                 <tr>
                     <td>
                         <span class="metrics-label">Final Assessment Score</span>
-                        <span class="metrics-val" style="color: #16a34a;">@(Model.FinalScore.HasValue ? Model.FinalScore.Value.ToString("0.0") + "%" : "100.0%")</span>
+                        <span class="metrics-val" style="color: #059669;">@(Model.FinalScore.HasValue ? Model.FinalScore.Value.ToString("0.0") + "%" : "100.0%")</span>
                     </td>
                     <td>
-                        <span class="metrics-label">Issuance Date</span>
+                        <span class="metrics-label">Date of Issue</span>
                         <span class="metrics-val">@Model.IssueDate.ToString("MMMM dd, yyyy")</span>
                     </td>
                     <td>
                         <span class="metrics-label">Cryptographic ID</span>
-                        <span class="metrics-val" style="color: #4f46e5; font-family: monospace; font-size: 14px;">@Model.CertificateNumber</span>
+                        <span class="metrics-val" style="font-family: monospace; color: #0B3445;">@Model.CertificateNumber</span>
                     </td>
                 </tr>
             </table>
 
             <div class="signatures">
                 <div class="sig-col">
+                    <div class="sig-svg">
+                        <svg width="170" height="42" viewBox="0 0 190 48" fill="none">
+                            <path d="M12 36C22 28 35 12 42 16C47 19 32 38 48 32C62 26 78 14 92 18C104 22 88 40 108 30C122 22 135 15 152 24C162 29 174 20 182 22" stroke="#062330" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M28 20L44 26M64 18L76 34M130 18C140 14 150 28 160 22" stroke="#062330" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
                     <div class="sig-line">Dr. Evelyn Vance</div>
                     <div class="sig-role">Director of Academic Standards</div>
                 </div>
+
                 <div class="sig-col">
                     <div class="seal">
-                        OFFICIAL<br />SEAL
+                        VERIFIED<br />CREDENTIAL
                     </div>
-                    <div style="font-size: 8px; color: #94a3b8; font-family: monospace; margin-top: 4px;">SECURE DIGITAL ID</div>
+                    <div style="font-size: 8px; color: #64748b; margin-top: 4px; font-family: monospace;">AUTHENTIC SECURE ID</div>
                 </div>
+
                 <div class="sig-col">
-                    <div class="sig-line">Marcus Holloway</div>
-                    <div class="sig-role">Faculty Lead Instructor</div>
+                    <div class="sig-svg">
+                        <svg width="170" height="42" viewBox="0 0 190 48" fill="none">
+                            <path d="M14 18C28 12 38 34 52 28C66 22 72 14 86 24C98 32 110 16 126 22C140 28 152 14 168 20C176 23 182 18 186 24" stroke="#062330" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M34 26C48 38 68 32 82 20M115 22L135 36" stroke="#062330" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="sig-line">@instructorName</div>
+                    <div class="sig-role">Course Author &amp; Faculty Lead</div>
                 </div>
             </div>
         </div>
