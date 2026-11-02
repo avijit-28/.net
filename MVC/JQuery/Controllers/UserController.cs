@@ -50,7 +50,7 @@ namespace JQuery.Controllers
                 }
             }
 
-            ViewData["result"] = rowsAffected > 0 ? "1" : "0";
+            ViewData["result"] = (rowsAffected > 0 || rowsAffected == -1) ? "1" : "0";
 
             UserDetails objuser = new UserDetails();
             objuser.usersinfo = GetUsersFromDatabase();
