@@ -21,7 +21,7 @@
     <!-- Modern Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="@Url.Action("Dashboard", "Employee")">
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">
                 <span class="brand-icon">
                     <i class="bi bi-cpu-fill"></i>
                 </span>
@@ -33,6 +33,12 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarMain">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+                    <li class="nav-item">
+                        <a class="nav-link @(currentCtrl == "Home" && currentAct == "Index" ? "active text-white" : "")" 
+                           href="@Url.Action("Index", "Home")">
+                            <i class="bi bi-table me-1"></i> Role Matrix
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link @(currentCtrl == "Employee" && currentAct == "Dashboard" ? "active text-white" : "")" 
                            href="@Url.Action("Dashboard", "Employee")">
