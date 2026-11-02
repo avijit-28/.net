@@ -16,8 +16,9 @@ namespace AiProjectMVC.Controllers
     {
         /// <summary>
         /// Security & Filters Center: Clear visual dashboard of all filters.
-        /// Accessible to all authenticated users.
+        /// Open to all visitors (shows current role or Guest mode).
         /// </summary>
+        [AllowAnonymous]
         public ActionResult Index()
         {
             try
