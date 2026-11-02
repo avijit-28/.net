@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
 using JQuery.Models;
@@ -16,56 +19,61 @@ namespace JQuery.Controllers
 
         /// <summary>
         /// Handles the jQuery AJAX operation for jQuery DataTables.
-        /// Fetches records from the Customers table using Entity Framework and returns a JsonResult.
+        /// Connects via connection string 'DBConn' in Web.config and executes
+        /// the stored procedure dbo.sp_SearchCustomers.
         /// </summary>
         [HttpPost]
-        public JsonResult AjaxMethod()
+        public JsonResult AjaxMethod(string searchTerm = null)
         {
-            BikeStoresEntities entities = new BikeStoresEntities();
-            List<Customer> customers = (from customer in entities.Customers
-                                        select customer).ToList();
+            // Execute the stored procedure dbo.sp_SearchCustomers
+            List<Customer> customers = CustomerRepository.GetCustomers(searchTerm);
 
             return Json(customers);
         }
 
         /// <summary>
-        /// Handles AJAX requests for JSGrid client-side component.
-        /// Supports optional filtering by ContactName or Country.
+        /// Handles AJAX requests for the JSGrid component using stored procedures.
         /// </summary>
         [HttpPost]
         public JsonResult GetJsGridData(string filterName = "", string filterCountry = "")
         {
-            BikeStoresEntities entities = new BikeStoresEntities();
-            var query = entities.Customers.AsEnumerable();
+            string searchTerm = !string.IsNullOrWhiteSpace(filterName) ? filterName : filterCountry;
+            List<Customer> customers = CustomerRepository.GetCustomers(searchTerm);
 
-            if (!string.IsNullOrWhiteSpace(filterName))
-            {
-                query = query.Where(c => c.ContactName != null && c.ContactName.IndexOf(filterName, StringComparison.OrdinalIgnoreCase) >= 0);
-            }
-
-            if (!string.IsNullOrWhiteSpace(filterCountry))
-            {
-                query = query.Where(c => c.Country != null && c.Country.IndexOf(filterCountry, StringComparison.OrdinalIgnoreCase) >= 0);
-            }
-
-            return Json(query.ToList());
+            return Json(customers);
         }
 
         /// <summary>
-        /// Returns high-level dataset metrics for the executive dashboard overview cards.
+        /// Action method to insert a new customer via stored procedure dbo.sp_InsertCustomer.
+        /// </summary>
+        [HttpPost]
+        public JsonResult AddCustomer(Customer customer)
+        {
+            if (customer == null || string.IsNullOrWhiteSpace(customer.ContactName))
+            {
+                return Json(new { success = false, message = "ContactName is required." });
+            }
+
+            int newId = CustomerRepository.InsertCustomer(customer);
+            return Json(new { success = newId > 0, customerId = newId });
+        }
+
+        /// <summary>
+        /// Returns high-level dataset metrics fetched live from the SQL Server database.
         /// </summary>
         [HttpPost]
         public JsonResult GetDashboardMetrics()
         {
-            BikeStoresEntities entities = new BikeStoresEntities();
-            var customers = entities.Customers;
+            var customers = CustomerRepository.GetCustomers();
 
             var metrics = new
             {
                 TotalCustomers = customers.Count,
                 TotalCountries = customers.Select(c => c.Country).Distinct().Count(),
                 TotalCities = customers.Select(c => c.City).Distinct().Count(),
-                Status = "Online",
+                Status = "Online (SQL Server)",
+                DataSource = "dbo.sp_SearchCustomers",
+                ConnectionName = "DBConn",
                 ServerTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             };
 
@@ -74,13 +82,13 @@ namespace JQuery.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "jQuery DataTables and JSGrid in AJAX - Technical Reference.";
+            ViewBag.Message = "Stored Procedure Integration with jQuery DataTables & JSGrid.";
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Developer Support & Documentation.";
+            ViewBag.Message = "Database Configuration & Technical Support.";
             return View();
         }
     }
