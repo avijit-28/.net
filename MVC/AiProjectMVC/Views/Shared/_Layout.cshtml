@@ -1,5 +1,8 @@
 @{
     var loggedInUser = Session["CurrentUser"] as AiProjectMVC.Models.EmployeeUser;
+    var currentRole = Session["UserRole"] as string ?? (User.Identity.IsAuthenticated ? "USER" : null);
+    var displayName = loggedInUser?.Name ?? (User.Identity.IsAuthenticated ? User.Identity.Name : null);
+    var displayInitial = !string.IsNullOrEmpty(displayName) ? displayName.Substring(0, 1).ToUpper() : "U";
     var currentCtrl = ViewContext.RouteData.Values["controller"]?.ToString();
     var currentAct = ViewContext.RouteData.Values["action"]?.ToString();
 }
@@ -48,23 +51,37 @@
                             <i class="bi bi-geo-alt-fill me-1"></i> Addresses
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("About", "Home")">
-                            <i class="bi bi-info-circle me-1"></i> About
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle @(currentCtrl == "Home" ? "active text-white" : "")" href="#" id="authDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-shield-lock-fill me-1"></i> Authorization Center
                         </a>
+                        <ul class="dropdown-menu dropdown-menu-dark shadow" aria-labelledby="authDropdown">
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "Home")"><i class="bi bi-grid-fill me-2 text-primary"></i>Security Test Center</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="@Url.Action("NonSecureMethod", "Home")"><i class="bi bi-unlock-fill me-2 text-success"></i>Non-Secure Method <span class="badge bg-success ms-1 small">Public</span></a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("SecureMethod", "Home")"><i class="bi bi-shield-lock-fill me-2 text-primary"></i>Secure Method <span class="badge bg-primary ms-1 small">Auth</span></a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("UserPage", "Home")"><i class="bi bi-person-badge-fill me-2 text-info"></i>User Page <span class="badge bg-info ms-1 small">USER</span></a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Contact", "Home")"><i class="bi bi-envelope-shield-fill me-2 text-warning"></i>Admin Contact <span class="badge bg-warning text-dark ms-1 small">ADMIN</span></a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("About", "Home")"><i class="bi bi-award-fill me-2 text-danger"></i>SuperAdmin About <span class="badge bg-danger ms-1 small">SUPERADMIN</span></a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="@Url.Action("AccessDenied", "Account")"><i class="bi bi-shield-x me-2"></i>Access Denied View</a></li>
+                        </ul>
                     </li>
                 </ul>
 
                 <div class="d-flex align-items-center gap-2">
-                    @if (loggedInUser != null)
+                    @if (!string.IsNullOrEmpty(displayName))
                     {
                         <div class="d-flex align-items-center gap-2 me-2">
                             <div class="text-end d-none d-md-block">
-                                <div class="text-white small fw-bold">@loggedInUser.Name</div>
-                                <span class="badge bg-primary bg-opacity-25 text-white smaller py-0 px-1">@loggedInUser.Role</span>
+                                <div class="text-white small fw-bold">@displayName</div>
+                                @if (!string.IsNullOrWhiteSpace(currentRole))
+                                {
+                                    <span class="badge bg-primary bg-opacity-50 text-white smaller py-0 px-1">@currentRole</span>
+                                }
                             </div>
                             <div style="width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
-                                @(loggedInUser.Name.Length > 0 ? loggedInUser.Name.Substring(0, 1) : "U")
+                                @displayInitial
                             </div>
                         </div>
 
