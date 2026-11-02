@@ -93,7 +93,7 @@ namespace AiProjectMVC.Controllers
                         return Redirect(returnUrl);
                     }
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Dashboard", "Employee");
                 }
 
                 // 2. Check in EmployeeUser table (Employee management accounts)
