@@ -14,6 +14,7 @@
         else if (activeCtrl == "Courses" && activeAct == "Details") { pageClass = "page-course-details"; }
         else if (activeCtrl == "Student" && activeAct == "Index") { pageClass = "page-student-dashboard"; }
         else if (activeCtrl == "Student" && activeAct == "MyCourses") { pageClass = "page-my-courses"; }
+        else if (activeCtrl == "Student" && activeAct == "Quizzes") { pageClass = "page-quiz"; }
         else if (activeCtrl == "Student" && (activeAct == "Assignments" || activeAct == "AssignmentDetails")) { pageClass = "page-assignment"; }
         else if (activeCtrl == "Student" && activeAct == "Certificates") { pageClass = "page-certificate"; }
         else if (activeCtrl == "Learning") { pageClass = "page-learning"; }
@@ -28,7 +29,7 @@
         else if (activeCtrl == "Admin") { pageClass = "page-admin-management"; }
         else if (activeCtrl == "Account" && activeAct == "Login") { pageClass = "page-login"; }
         else if (activeCtrl == "Account" && activeAct == "Register") { pageClass = "page-register"; }
-        else if (activeCtrl == "Account" && activeAct == "Profile") { pageClass = "page-profile"; }
+        else if (activeCtrl == "Account" && (activeAct == "Profile" || activeAct == "ChangePassword")) { pageClass = "page-profile"; }
         else if (activeCtrl == "Notifications") { pageClass = "page-notifications"; }
         else { pageClass = "page-" + activeCtrl.ToLower(); }
     }
