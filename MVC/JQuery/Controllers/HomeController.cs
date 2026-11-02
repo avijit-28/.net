@@ -81,6 +81,53 @@ namespace JQuery.Controllers
             return Json(metrics);
         }
 
+        // ================================================================
+        // REDIRECT & STATUS RESULTS (BASIC LEVEL EXAMPLES)
+        // ================================================================
+
+        // Redirect to external URL
+        public RedirectResult RedirectExternal()
+        {
+            return Redirect("https://mccit.net");
+        }
+
+        // Redirect to route using controller & action parameters
+        public RedirectToRouteResult RedirectToRouteDemo()
+        {
+            return RedirectToRoute(new { controller = "Home", action = "About" });
+        }
+
+        // Redirect to action
+        public ActionResult RedirectToActionDemo()
+        {
+            return RedirectToAction("InsertUserDetails", "User");
+        }
+
+        // 401 Unauthorized using HttpStatusCodeResult
+        public HttpStatusCodeResult UnauthorizedStatusCode()
+        {
+            return new HttpStatusCodeResult(HttpStatusCode.Unauthorized, "You are not authorized to access this controller action.");
+        }
+
+        // 502 Bad Gateway using HttpStatusCodeResult
+        public HttpStatusCodeResult BadGateway()
+        {
+            return new HttpStatusCodeResult(HttpStatusCode.BadGateway, "I have no idea what this error means.");
+        }
+
+        // 401 Unauthorized using HttpUnauthorizedResult
+        public HttpStatusCodeResult UnauthorizedResult()
+        {
+            return new HttpUnauthorizedResult("You are not authorized to access this controller action.");
+        }
+
+        // 404 Not Found using HttpNotFoundResult helper
+        [ActionName("NotFound")]
+        public HttpNotFoundResult NotFoundAction()
+        {
+            return HttpNotFound("We didn't find that action, sorry!");
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Stored Procedure Integration with jQuery DataTables & JSGrid.";
