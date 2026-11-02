@@ -212,4 +212,13 @@ namespace LMS.ViewModels
 
         public string Status { get; set; }
     }
+
+    public class InstructorShowcaseViewModel
+    {
+        public ApplicationUser Instructor { get; set; }
+        public int CourseCount { get; set; }
+        public int TotalStudents { get; set; }
+        public double AverageRating { get; set; }
+        public List<Course> Courses { get; set; } = new List<Course>();
+    }
 }
