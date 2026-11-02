@@ -9,6 +9,8 @@ using AiProjectMVC.ViewModels;
 
 namespace AiProjectMVC.Controllers
 {
+    [EmployeeExceptionFilter]
+    [EmployeeAuditFilter]
     public class EmployeeController : Controller
     {
         private readonly EmployeeRepo _repo = new EmployeeRepo();
