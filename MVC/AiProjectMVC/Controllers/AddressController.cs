@@ -8,6 +8,8 @@ using AiProjectMVC.Models;
 
 namespace AiProjectMVC.Controllers
 {
+    [EmployeeExceptionFilter]
+    [EmployeeAuditFilter]
     public class AddressController : Controller
     {
         private readonly AddressRepo _repo = new AddressRepo();
