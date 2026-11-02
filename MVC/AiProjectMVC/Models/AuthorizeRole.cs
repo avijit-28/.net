@@ -83,10 +83,13 @@ namespace AiProjectMVC.Models
                 return;
             }
 
-            // If authenticated but unauthorized for this role, redirect to AccessDenied
+            // If authenticated but unauthorized for this role, redirect to AccessDenied with details
             if (filterContext.Result is HttpUnauthorizedResult)
             {
-                filterContext.Result = new RedirectResult("~/Account/AccessDenied");
+                string returnUrl = filterContext.HttpContext.Request.RawUrl;
+                string requiredRoles = this.Roles ?? "";
+                string redirectUrl = "~/Account/AccessDenied?required=" + HttpUtility.UrlEncode(requiredRoles) + "&url=" + HttpUtility.UrlEncode(returnUrl);
+                filterContext.Result = new RedirectResult(redirectUrl);
                 return;
             }
         }
