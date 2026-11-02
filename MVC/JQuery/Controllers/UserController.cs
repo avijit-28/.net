@@ -82,7 +82,9 @@ namespace JQuery.Controllers
                         int rows = cmd.ExecuteNonQuery();
                         con.Close();
 
-                        return Json(new { success = rows > 0, message = "User inserted successfully via usercrudoperations!" });
+                        // With SET NOCOUNT ON in stored procedures, ExecuteNonQuery returns -1 on success
+                        bool isSuccess = rows > 0 || rows == -1;
+                        return Json(new { success = isSuccess, message = "User registered successfully via usercrudoperations!" });
                     }
                 }
             }
