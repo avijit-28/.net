@@ -1,33 +1,227 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+@{
+    ViewBag.Title = "Authorization & Authentication Center";
+    var currentUser = Session["CurrentUser"] as AiProjectMVC.Models.EmployeeUser;
+    var currentRole = Session["UserRole"] as string ?? "Guest";
+    bool isSuperAdmin = User.IsInRole("SUPERADMIN") || currentRole.IndexOf("SUPERADMIN", StringComparison.OrdinalIgnoreCase) >= 0;
+    bool isAdmin = User.IsInRole("ADMIN") || currentRole.IndexOf("ADMIN", StringComparison.OrdinalIgnoreCase) >= 0;
+    bool isUser = User.IsInRole("USER") || currentRole.IndexOf("USER", StringComparison.OrdinalIgnoreCase) >= 0;
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
-
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+<div class="py-4">
+    <!-- Top Hero Banner -->
+    <div class="custom-card shadow-lg p-4 p-md-5 mb-4 text-white overflow-hidden position-relative" 
+         style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #4338ca 100%); border: none;">
+        <div class="row align-items-center position-relative" style="z-index: 2;">
+            <div class="col-lg-8">
+                <span class="badge bg-primary bg-opacity-25 text-white border border-light border-opacity-25 px-3 py-2 mb-3">
+                    <i class="bi bi-shield-check me-1"></i> ASP.NET MVC Security Architecture
+                </span>
+                <h1 class="display-6 fw-bold mb-2">Authorization Filter & Custom Role Security</h1>
+                <p class="text-white-50 mb-4 fs-6">
+                    Demonstrating Built-in <code>[Authorize]</code>, <code>[AllowAnonymous]</code>, Custom <code>[AuthorizeRole]</code>, 
+                    Custom <code>[IAuthenticationFilter]</code>, and diagnostic <code>[EmployeeAuditFilter]</code>.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="@Url.Action("NonSecureMethod", "Home")" class="btn btn-outline-light btn-sm px-3">
+                        <i class="bi bi-unlock me-1"></i> Non-Secure Method
+                    </a>
+                    <a href="@Url.Action("SecureMethod", "Home")" class="btn btn-primary-gradient btn-sm px-3">
+                        <i class="bi bi-shield-lock me-1"></i> Secure Method
+                    </a>
+                    <a href="@Url.Action("Dashboard", "Employee")" class="btn btn-light btn-sm px-3 text-dark fw-semibold">
+                        <i class="bi bi-speedometer2 me-1"></i> Employee Portal
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 mt-4 mt-lg-0 text-lg-end">
+                <div class="bg-white bg-opacity-10 backdrop-blur p-3 rounded-4 border border-white border-opacity-25 text-start d-inline-block w-100" style="max-width: 320px;">
+                    <div class="text-white-50 small text-uppercase fw-bold mb-2">
+                        <i class="bi bi-person-badge me-1"></i> Active Session Principal
+                    </div>
+                    <div class="fw-bold fs-5 text-white mb-1">
+                        @(currentUser != null ? currentUser.Name : (User.Identity.IsAuthenticated ? User.Identity.Name : "Anonymous Guest"))
+                    </div>
+                    <div class="small text-white-50 mb-2">
+                        ID: @(User.Identity.IsAuthenticated ? User.Identity.Name : "Not Signed In")
+                    </div>
+                    <div class="d-flex flex-wrap gap-1">
+                        @foreach (var r in currentRole.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <span class="badge bg-primary">@r.Trim()</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</main>
+
+    <!-- Security Testing Matrix -->
+    <div class="mb-3 d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="fw-bold text-dark mb-1"><i class="bi bi-grid-fill text-primary me-2"></i> Role Authorization Test Suite</h4>
+            <p class="text-muted small mb-0">Click any card below to test the corresponding authorization filter and role checks</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- 1. NonSecureMethod -->
+        <div class="col-md-6 col-lg-4">
+            <div class="custom-card h-100 p-4 border-top border-4 border-success d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">Public</span>
+                        <i class="bi bi-unlock-fill fs-4 text-success"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">Non-Secure Method</h5>
+                    <p class="text-muted small mb-3">
+                        Decorated with <code>[AllowAnonymous]</code>. Accessible by all visitors regardless of authentication.
+                    </p>
+                    <div class="small mb-3">
+                        <span class="text-success fw-semibold"><i class="bi bi-check-circle-fill me-1"></i> Available to All</span>
+                    </div>
+                </div>
+                <a href="@Url.Action("NonSecureMethod", "Home")" class="btn btn-outline-success btn-sm w-100">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Access Non-Secure Method
+                </a>
+            </div>
+        </div>
+
+        <!-- 2. SecureMethod -->
+        <div class="col-md-6 col-lg-4">
+            <div class="custom-card h-100 p-4 border-top border-4 border-primary d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">[Authorize]</span>
+                        <i class="bi bi-shield-lock-fill fs-4 text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">Secure Method</h5>
+                    <p class="text-muted small mb-3">
+                        Decorated with standard <code>[Authorize]</code>. Requires valid login ticket; redirects guests to Login.
+                    </p>
+                    <div class="small mb-3">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <span class="text-success fw-semibold"><i class="bi bi-check-circle-fill me-1"></i> Authenticated - Allowed</span>
+                        }
+                        else
+                        {
+                            <span class="text-danger fw-semibold"><i class="bi bi-x-circle-fill me-1"></i> Guest - Redirects to Login</span>
+                        }
+                    </div>
+                </div>
+                <a href="@Url.Action("SecureMethod", "Home")" class="btn btn-outline-primary btn-sm w-100">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Access Secure Method
+                </a>
+            </div>
+        </div>
+
+        <!-- 3. UserPage -->
+        <div class="col-md-6 col-lg-4">
+            <div class="custom-card h-100 p-4 border-top border-4 border-info d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25">Role: USER</span>
+                        <i class="bi bi-person-check-fill fs-4 text-info"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">User Page</h5>
+                    <p class="text-muted small mb-3">
+                        Decorated with <code>[AuthorizeRole(Role.USER)]</code>. Allows <code>USER</code>; routes others to Access Denied.
+                    </p>
+                    <div class="small mb-3">
+                        @if (isUser)
+                        {
+                            <span class="text-success fw-semibold"><i class="bi bi-check-circle-fill me-1"></i> Role USER - Allowed</span>
+                        }
+                        else
+                        {
+                            <span class="text-warning fw-semibold"><i class="bi bi-shield-exclamation me-1"></i> Non-User - Triggers Access Denied</span>
+                        }
+                    </div>
+                </div>
+                <a href="@Url.Action("UserPage", "Home")" class="btn btn-outline-info btn-sm w-100">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Access User Page
+                </a>
+            </div>
+        </div>
+
+        <!-- 4. Contact (Admin) -->
+        <div class="col-md-6 col-lg-4">
+            <div class="custom-card h-100 p-4 border-top border-4 border-primary d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">Role: ADMIN</span>
+                        <i class="bi bi-envelope-shield-fill fs-4 text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">Admin Contact Portal</h5>
+                    <p class="text-muted small mb-3">
+                        Decorated with <code>[AuthorizeRole(Role.ADMIN)]</code>. Restricted exclusively to administrative members.
+                    </p>
+                    <div class="small mb-3">
+                        @if (isAdmin)
+                        {
+                            <span class="text-success fw-semibold"><i class="bi bi-check-circle-fill me-1"></i> Role ADMIN - Allowed</span>
+                        }
+                        else
+                        {
+                            <span class="text-warning fw-semibold"><i class="bi bi-shield-exclamation me-1"></i> Non-Admin - Triggers Access Denied</span>
+                        }
+                    </div>
+                </div>
+                <a href="@Url.Action("Contact", "Home")" class="btn btn-outline-primary btn-sm w-100">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Access Admin Contact
+                </a>
+            </div>
+        </div>
+
+        <!-- 5. About (SuperAdmin) -->
+        <div class="col-md-6 col-lg-4">
+            <div class="custom-card h-100 p-4 border-top border-4 border-danger d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">Role: SUPERADMIN</span>
+                        <i class="bi bi-award-fill fs-4 text-danger"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">SuperAdmin About</h5>
+                    <p class="text-muted small mb-3">
+                        Decorated with <code>[AuthorizeRole(Role.SUPERADMIN)]</code>. Top-tier privilege; rejects standard Admin or User.
+                    </p>
+                    <div class="small mb-3">
+                        @if (isSuperAdmin)
+                        {
+                            <span class="text-success fw-semibold"><i class="bi bi-check-circle-fill me-1"></i> SUPERADMIN - Allowed</span>
+                        }
+                        else
+                        {
+                            <span class="text-danger fw-semibold"><i class="bi bi-shield-x me-1"></i> Restricted - Triggers Access Denied</span>
+                        }
+                    </div>
+                </div>
+                <a href="@Url.Action("About", "Home")" class="btn btn-outline-danger btn-sm w-100">
+                    <i class="bi bi-arrow-right-circle me-1"></i> Access SuperAdmin About
+                </a>
+            </div>
+        </div>
+
+        <!-- 6. Diagnostic Logging -->
+        <div class="col-md-6 col-lg-4">
+            <div class="custom-card h-100 p-4 border-top border-4 border-secondary d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">Filters</span>
+                        <i class="bi bi-journal-text fs-4 text-secondary"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">Audit & Exception Logging</h5>
+                    <p class="text-muted small mb-3">
+                        <code>[EmployeeAuditFilter]</code> and <code>[EmployeeExceptionFilter]</code> actively log all actions to <code>~/Log/Log.txt</code>.
+                    </p>
+                    <div class="small mb-3 text-muted">
+                        <i class="bi bi-activity text-success me-1"></i> Live Logging to <code>~/Log/Log.txt</code>
+                    </div>
+                </div>
+                <a href="@Url.Action("Index", "Employee")" class="btn btn-outline-secondary btn-sm w-100">
+                    <i class="bi bi-people me-1"></i> Test Employee Filters
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
