@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -127,10 +127,15 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\RestaurantController.cs" />
     <Compile Include="Controllers\RiderController.cs" />
+    <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\Restaurant.cs" />
     <Compile Include="Models\Rider.cs" />
+    <Compile Include="Models\RestaurantStaff.cs" />
+    <Compile Include="Models\RiderAffiliation.cs" />
+    <Compile Include="Models\Bulletin.cs" />
+    <Compile Include="Models\Transaction.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\FoodItem.cs" />
     <Compile Include="Models\Order.cs" />
@@ -144,6 +149,7 @@
     <Compile Include="DAL\AdminRepository.cs" />
     <Compile Include="DAL\RestaurantRepository.cs" />
     <Compile Include="DAL\RiderRepository.cs" />
+    <Compile Include="DAL\StaffRepository.cs" />
     <Compile Include="DAL\NotificationRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
