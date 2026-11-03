@@ -395,8 +395,12 @@ CREATE OR ALTER PROCEDURE food.usp_MenuItem_Save
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Restaurants r INNER JOIN food.Users u ON u.UserId = r.OwnerUserId
-                   WHERE r.RestaurantId = @RestaurantId AND r.OwnerUserId = @ActorUserId AND u.Role = N'Restaurant' AND u.IsActive = 1)
+    IF NOT EXISTS (SELECT 1 FROM food.Restaurants r
+                   INNER JOIN food.Users u ON u.UserId = r.OwnerUserId AND u.IsActive = 1
+                   INNER JOIN food.UserRoles ur ON ur.UserId = u.UserId AND ur.IsActive = 1
+                   INNER JOIN food.Roles role ON role.RoleId = ur.RoleId AND role.RoleName = N'Staff'
+                   INNER JOIN food.StaffProfiles sp ON sp.UserId = u.UserId AND sp.StaffType = N'Restaurant'
+                   WHERE r.RestaurantId = @RestaurantId AND r.OwnerUserId = @ActorUserId)
         THROW 51002, 'Actor does not own this restaurant.', 1;
     IF NULLIF(LTRIM(RTRIM(@Name)), N'') IS NULL OR @Price <= 0
         THROW 51003, 'Menu item name and a positive price are required.', 1;
@@ -431,8 +435,11 @@ BEGIN
     SET IsAvailable = @IsAvailable, UpdatedAt = SYSUTCDATETIME()
     FROM food.MenuItems mi
     INNER JOIN food.Restaurants r ON r.RestaurantId = mi.RestaurantId
-    INNER JOIN food.Users u ON u.UserId = r.OwnerUserId
-    WHERE mi.MenuItemId = @MenuItemId AND r.OwnerUserId = @ActorUserId AND u.Role = N'Restaurant' AND u.IsActive = 1;
+    INNER JOIN food.Users u ON u.UserId = r.OwnerUserId AND u.IsActive = 1
+    INNER JOIN food.UserRoles ur ON ur.UserId = u.UserId AND ur.IsActive = 1
+    INNER JOIN food.Roles role ON role.RoleId = ur.RoleId AND role.RoleName = N'Staff'
+    INNER JOIN food.StaffProfiles sp ON sp.UserId = u.UserId AND sp.StaffType = N'Restaurant'
+    WHERE mi.MenuItemId = @MenuItemId AND r.OwnerUserId = @ActorUserId;
     IF @@ROWCOUNT = 0 THROW 51005, 'Menu item was not found for this restaurant owner.', 1;
     SELECT @MenuItemId AS MenuItemId, @IsAvailable AS IsAvailable;
 END;
@@ -458,7 +465,9 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @CustomerUserId AND Role = N'Customer' AND IsActive = 1)
+    IF NOT EXISTS (SELECT 1 FROM food.Users u INNER JOIN food.UserRoles ur ON ur.UserId = u.UserId AND ur.IsActive = 1
+                   INNER JOIN food.Roles role ON role.RoleId = ur.RoleId AND role.RoleName = N'Customer'
+                   WHERE u.UserId = @CustomerUserId AND u.IsActive = 1)
         THROW 51010, 'Active customer account was not found.', 1;
     IF NOT EXISTS (SELECT 1 FROM food.Restaurants WHERE RestaurantId = @RestaurantId AND IsActive = 1)
         THROW 51011, 'Restaurant was not found or is inactive.', 1;
@@ -528,7 +537,9 @@ CREATE OR ALTER PROCEDURE food.usp_Order_CustomerList
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @CustomerUserId AND Role = N'Customer' AND IsActive = 1)
+    IF NOT EXISTS (SELECT 1 FROM food.Users u INNER JOIN food.UserRoles ur ON ur.UserId = u.UserId AND ur.IsActive = 1
+                   INNER JOIN food.Roles role ON role.RoleId = ur.RoleId AND role.RoleName = N'Customer'
+                   WHERE u.UserId = @CustomerUserId AND u.IsActive = 1)
         THROW 51021, 'Active customer account was not found.', 1;
     SELECT o.OrderId, o.OrderNumber, o.RestaurantId, r.Name AS RestaurantName,
            o.Subtotal, o.DeliveryFee, o.TaxAmount, o.TotalAmount, o.OrderStatus, o.CreatedAt,
@@ -547,7 +558,9 @@ CREATE OR ALTER PROCEDURE food.usp_Order_CustomerDetails
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @CustomerUserId AND Role = N'Customer' AND IsActive = 1)
+    IF NOT EXISTS (SELECT 1 FROM food.Users u INNER JOIN food.UserRoles ur ON ur.UserId = u.UserId AND ur.IsActive = 1
+                   INNER JOIN food.Roles role ON role.RoleId = ur.RoleId AND role.RoleName = N'Customer'
+                   WHERE u.UserId = @CustomerUserId AND u.IsActive = 1)
         THROW 51022, 'Active customer account was not found.', 1;
     IF NOT EXISTS (SELECT 1 FROM food.Orders WHERE OrderId = @OrderId AND CustomerUserId = @CustomerUserId)
         THROW 51020, 'Order was not found for this customer.', 1;
@@ -575,8 +588,12 @@ CREATE OR ALTER PROCEDURE food.usp_Order_RestaurantList
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Restaurants r INNER JOIN food.Users u ON u.UserId = r.OwnerUserId
-                   WHERE r.RestaurantId = @RestaurantId AND r.OwnerUserId = @ActorUserId AND u.Role = N'Restaurant' AND u.IsActive = 1)
+    IF NOT EXISTS (SELECT 1 FROM food.Restaurants r
+                   INNER JOIN food.Users u ON u.UserId = r.OwnerUserId AND u.IsActive = 1
+                   INNER JOIN food.UserRoles ur ON ur.UserId = u.UserId AND ur.IsActive = 1
+                   INNER JOIN food.Roles role ON role.RoleId = ur.RoleId AND role.RoleName = N'Staff'
+                   INNER JOIN food.StaffProfiles sp ON sp.UserId = u.UserId AND sp.StaffType = N'Restaurant'
+                   WHERE r.RestaurantId = @RestaurantId AND r.OwnerUserId = @ActorUserId)
         THROW 51030, 'Actor does not own this restaurant.', 1;
     SELECT o.OrderId, o.OrderNumber, o.CustomerUserId, u.FullName AS CustomerName,
            o.DeliveryRecipient, o.DeliveryPhone, o.DeliveryAddressLine, o.DeliveryCity,
@@ -598,8 +615,11 @@ BEGIN
         THROW 51031, 'Restaurant status is not allowed.', 1;
     IF NOT EXISTS
        (SELECT 1 FROM food.Orders o INNER JOIN food.Restaurants r ON r.RestaurantId = o.RestaurantId
-        INNER JOIN food.Users u ON u.UserId = r.OwnerUserId
-        WHERE o.OrderId = @OrderId AND r.OwnerUserId = @ActorUserId AND u.Role = N'Restaurant' AND u.IsActive = 1)
+        INNER JOIN food.Users u ON u.UserId = r.OwnerUserId AND u.IsActive = 1
+        INNER JOIN food.UserRoles ur ON ur.UserId = u.UserId AND ur.IsActive = 1
+        INNER JOIN food.Roles role ON role.RoleId = ur.RoleId AND role.RoleName = N'Staff'
+        INNER JOIN food.StaffProfiles sp ON sp.UserId = u.UserId AND sp.StaffType = N'Restaurant'
+        WHERE o.OrderId = @OrderId AND r.OwnerUserId = @ActorUserId)
         THROW 51032, 'Order was not found for this restaurant owner.', 1;
 
     UPDATE food.Orders
