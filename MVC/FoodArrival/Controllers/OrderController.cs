@@ -230,9 +230,15 @@ namespace FoodArrival.Controllers
         [HttpGet]
         public ActionResult History()
         {
-            if (Session["CustomerId"] == null)
+            string role = Session["UserRole"]?.ToString();
+            if (role == "Rider") return RedirectToAction("Dashboard", "Rider");
+            if (role == "RestaurantStaff") return RedirectToAction("Dashboard", "Staff");
+            if (role == "Restaurant") return RedirectToAction("Dashboard", "Restaurant");
+            if (role == "Admin") return RedirectToAction("Orders", "Admin");
+
+            if (Session["CustomerId"] == null || role != "Customer")
             {
-                TempData["Error"] = "Please login to view your order history.";
+                TempData["Error"] = "Please login as a customer to view your order history.";
                 return RedirectToAction("Login", "Account", new { returnUrl = Url.Action("History", "Order") });
             }
 
