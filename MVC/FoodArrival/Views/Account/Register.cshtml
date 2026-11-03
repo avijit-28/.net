@@ -1,0 +1,21 @@
+@model FoodArrival.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Create account";
+}
+<div class="row justify-content-center"><div class="col-md-8 col-lg-6">
+    <div class="form-panel">
+        <p class="eyebrow mb-1">Start with a good meal</p><h1 class="section-heading h2 mb-4">Create your account</h1>
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false)
+            <div class="mb-3">@Html.LabelFor(x => x.FullName, new { @class = "form-label" }) @Html.TextBoxFor(x => x.FullName, new { @class = "form-control", autocomplete = "name" }) @Html.ValidationMessageFor(x => x.FullName)</div>
+            <div class="mb-3">@Html.LabelFor(x => x.Email, new { @class = "form-label" }) @Html.TextBoxFor(x => x.Email, new { @class = "form-control", autocomplete = "email" }) @Html.ValidationMessageFor(x => x.Email)</div>
+            <div class="mb-3">@Html.LabelFor(x => x.Phone, new { @class = "form-label" }) @Html.TextBoxFor(x => x.Phone, new { @class = "form-control", autocomplete = "tel" }) @Html.ValidationMessageFor(x => x.Phone)</div>
+            <div class="mb-3">@Html.LabelFor(x => x.Password, new { @class = "form-label" }) @Html.PasswordFor(x => x.Password, new { @class = "form-control", autocomplete = "new-password" }) @Html.ValidationMessageFor(x => x.Password)<div class="form-text">Use at least 8 characters.</div></div>
+            <div class="mb-4">@Html.LabelFor(x => x.ConfirmPassword, new { @class = "form-label" }) @Html.PasswordFor(x => x.ConfirmPassword, new { @class = "form-control", autocomplete = "new-password" }) @Html.ValidationMessageFor(x => x.ConfirmPassword)</div>
+            <button class="btn btn-dark w-100" type="submit">Create account</button>
+        }
+    </div>
+</div></div>
+@section scripts { @Scripts.Render("~/bundles/jqueryval") }

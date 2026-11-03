@@ -1,0 +1,21 @@
+@model FoodArrival.Models.LoginViewModel
+@{
+    ViewBag.Title = "Sign in";
+}
+<div class="row justify-content-center"><div class="col-md-7 col-lg-5">
+    <div class="form-panel">
+        <p class="eyebrow mb-1">Welcome back</p><h1 class="section-heading h2 mb-4">Sign in to FoodArrival</h1>
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.ReturnUrl)
+            @Html.ValidationSummary(false)
+            <div class="mb-3">@Html.LabelFor(x => x.Email, new { @class = "form-label" }) @Html.TextBoxFor(x => x.Email, new { @class = "form-control", autocomplete = "email" }) @Html.ValidationMessageFor(x => x.Email)</div>
+            <div class="mb-3">@Html.LabelFor(x => x.Password, new { @class = "form-label" }) @Html.PasswordFor(x => x.Password, new { @class = "form-control", autocomplete = "current-password" }) @Html.ValidationMessageFor(x => x.Password)</div>
+            <div class="form-check mb-4">@Html.CheckBoxFor(x => x.RememberMe, new { @class = "form-check-input" }) @Html.LabelFor(x => x.RememberMe, new { @class = "form-check-label" })</div>
+            <button class="btn btn-dark w-100" type="submit">Sign in</button>
+        }
+        <p class="text-center small mt-4 mb-0">New here? @Html.ActionLink("Create a customer account", "Register")</p>
+    </div>
+</div></div>
+@section scripts { @Scripts.Render("~/bundles/jqueryval") }
