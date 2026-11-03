@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
@@ -40,7 +41,7 @@ namespace FoodArrival.Controllers
                 return View(model);
             }
             var ticket = new FormsAuthenticationTicket(1, account.UserId.ToString(), DateTime.Now,
-                DateTime.Now.AddHours(model.RememberMe ? 24 : 8), model.RememberMe, account.Role);
+                DateTime.Now.AddHours(model.RememberMe ? 24 : 8), model.RememberMe, account.Role + "|" + (account.StaffType ?? ""));
             var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket))
             {
                 HttpOnly = true,
@@ -71,7 +72,7 @@ namespace FoodArrival.Controllers
                 if (!ModelState.IsValid) return View(model);
                 var id = Repository.Register(model.FullName.Trim(), model.Email.Trim(), model.Phone.Trim(), HashPassword(model.Password),
                     model.RequestedAccountType, model.RequestedStaffType, model.RequestNote);
-                var ticket = new FormsAuthenticationTicket(1, id.ToString(), DateTime.Now, DateTime.Now.AddHours(8), false, "Customer");
+                var ticket = new FormsAuthenticationTicket(1, id.ToString(), DateTime.Now, DateTime.Now.AddHours(8), false, "Customer|");
                 Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket))
                 {
                     HttpOnly = true, Secure = Request.IsSecureConnection, SameSite = SameSiteMode.Lax
