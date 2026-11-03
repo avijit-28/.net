@@ -5,7 +5,7 @@ using FoodArrival.Models;
 
 namespace FoodArrival.Controllers
 {
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "DeliveryAgent")]
     public class DeliveryController : Controller
     {
         public ActionResult Index(bool includeCompleted = false)
