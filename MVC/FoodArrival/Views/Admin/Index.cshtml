@@ -99,6 +99,41 @@
         </form>
     }
 </section>
+<section class="surface-card p-4 mt-4">
+    <h2 class="h5 fw-bold">Food and menu management</h2>
+    @if (!Model.RestaurantChoices.Any()) { <p class="small text-muted">Add a restaurant before creating food items.</p> }
+    else
+    {
+        <form action="@Url.Action("SaveMenuItem", "Admin")" method="post" class="row g-2 align-items-end mb-4">
+            @Html.AntiForgeryToken()
+            <div class="col-md-2"><label class="form-label" for="new-food-restaurant">Restaurant</label>@Html.DropDownList("RestaurantId", Model.RestaurantChoices, "Choose", new { @class = "form-select", id = "new-food-restaurant", required = "required" })</div>
+            <div class="col-md-2"><label class="form-label" for="new-food-name">Item</label><input class="form-control" id="new-food-name" name="Name" maxlength="160" required /></div>
+            <div class="col-md-2"><label class="form-label" for="new-food-category">Category</label><input class="form-control" id="new-food-category" name="Category" maxlength="80" /></div>
+            <div class="col-md-2"><label class="form-label" for="new-food-price">Price</label><input class="form-control" id="new-food-price" name="Price" type="number" min="0.01" step="0.01" required /></div>
+            <div class="col-md-2"><label class="form-label" for="new-food-description">Description</label><input class="form-control" id="new-food-description" name="Description" maxlength="600" /></div>
+            <div class="col-md-1 form-check"><input class="form-check-input" type="checkbox" name="IsVegetarian" value="true" id="new-food-veg" /><input type="hidden" name="IsVegetarian" value="false" /><label class="form-check-label" for="new-food-veg">Veg</label></div>
+            <div class="col-md-1"><button class="btn btn-dark w-100" type="submit">Add</button></div>
+        </form>
+        @if (!Model.MenuItems.Any()) { <p class="text-muted">No menu items yet.</p> }
+        foreach (var item in Model.MenuItems)
+        {
+            <form action="@Url.Action("SaveMenuItem", "Admin")" method="post" class="row g-2 align-items-end border-top py-3">
+                @Html.AntiForgeryToken()<input type="hidden" name="MenuItemId" value="@item.MenuItemId" />
+                <div class="col-md-2"><label class="visually-hidden" for="restaurant-@item.MenuItemId">Restaurant</label>@Html.DropDownList("RestaurantId", new SelectList(Model.RestaurantChoices, "Value", "Text", item.RestaurantId), new { @class = "form-select", id = "restaurant-" + item.MenuItemId })</div>
+                <div class="col-md-2"><label class="visually-hidden" for="item-name-@item.MenuItemId">Name</label><input class="form-control" id="item-name-@item.MenuItemId" name="Name" value="@item.Name" maxlength="160" required /></div>
+                <div class="col-md-2"><label class="visually-hidden" for="item-category-@item.MenuItemId">Category</label><input class="form-control" id="item-category-@item.MenuItemId" name="Category" value="@item.Category" maxlength="80" /></div>
+                <div class="col-md-1"><label class="visually-hidden" for="item-price-@item.MenuItemId">Price</label><input class="form-control" id="item-price-@item.MenuItemId" name="Price" type="number" min="0.01" step="0.01" value="@item.Price" required /></div>
+                <div class="col-md-3"><label class="visually-hidden" for="item-description-@item.MenuItemId">Description</label><input class="form-control" id="item-description-@item.MenuItemId" name="Description" value="@item.Description" maxlength="600" /></div>
+                <div class="col-md-1 form-check"><input class="form-check-input" type="checkbox" name="IsVegetarian" value="true" id="item-veg-@item.MenuItemId" @(item.IsVegetarian ? "checked" : "") /><input type="hidden" name="IsVegetarian" value="false" /><label class="form-check-label" for="item-veg-@item.MenuItemId">Veg</label></div>
+                <div class="col-md-1"><button class="btn btn-outline-dark btn-sm w-100" type="submit">Save</button></div>
+            </form>
+            <form action="@Url.Action("SetMenuAvailability", "Admin")" method="post" class="text-end mb-2">
+                @Html.AntiForgeryToken()<input type="hidden" name="menuItemId" value="@item.MenuItemId" /><input type="hidden" name="isAvailable" value="@(!item.IsAvailable ? "true" : "false")" />
+                <button class="btn btn-sm @(item.IsAvailable ? "btn-outline-danger" : "btn-outline-success")" type="submit">@(item.IsAvailable ? "Disable item" : "Make available")</button>
+            </form>
+        }
+    }
+</section>
 @section scripts {
     <script>
         document.querySelectorAll('.js-account-role').forEach(function (roleSelect) {
