@@ -11,6 +11,14 @@ namespace FoodArrival.Models
         [Display(Name = "Restaurant Name")]
         public string RestaurantName { get; set; }
 
+        [StringLength(150)]
+        [Display(Name = "Owner Name")]
+        public string OwnerName { get; set; }
+
+        [StringLength(100)]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+
         [Required, EmailAddress, StringLength(150)]
         public string Email { get; set; }
 
@@ -29,6 +37,12 @@ namespace FoodArrival.Models
         public decimal Rating { get; set; } = 4.5m;
 
         public string ImageUrl { get; set; }
+
+        public bool IsVerified { get; set; } = true;
+
+        public int? VerifiedBy { get; set; }
+
+        public DateTime? VerifiedAt { get; set; }
 
         public bool IsActive { get; set; } = true;
 
