@@ -5,6 +5,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Security.Principal;
 using System.Web.Security;
+using System.Web.Helpers;
 
 namespace FoodArrival
 {
@@ -12,7 +13,7 @@ namespace FoodArrival
     {
         protected void Application_AuthenticateRequest(object sender, EventArgs e)
         {
-            // Clear any lingering Forms auth cookies to protect AntiForgery token validation
+            // Clear any lingering Forms auth cookies
             if (Request.Cookies[".ASPXAUTH"] != null)
             {
                 var deadCookie = new HttpCookie(".ASPXAUTH", string.Empty)
@@ -57,7 +58,7 @@ namespace FoodArrival
         protected void Application_Start()
         {
             // Suppress identity heuristic check to prevent HttpAntiForgeryException during account switches or multi-role sessions
-            System.Web.Helpers.AntiForgeryConfig.SuppressIdentityHeuristicChecks = true;
+            AntiForgeryConfig.SuppressIdentityHeuristicChecks = true;
 
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
