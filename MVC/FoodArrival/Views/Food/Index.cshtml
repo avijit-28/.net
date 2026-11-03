@@ -90,6 +90,14 @@
                                 </div>
                                 <div class="food-card-body">
                                     <h5 class="food-card-title">@item.ItemName</h5>
+                                    @if (!string.IsNullOrEmpty(item.RestaurantName))
+                                    {
+                                        <div class="mb-2">
+                                            <span class="badge bg-warning bg-opacity-25 text-dark border border-warning border-opacity-50 small">
+                                                <i class="bi bi-shop me-1 text-danger"></i> @item.RestaurantName
+                                            </span>
+                                        </div>
+                                    }
                                     <p class="text-muted small mb-3 flex-grow-1">@(string.IsNullOrEmpty(item.Description) ? "Prepared fresh with finest ingredients" : item.Description)</p>
                                     
                                     <div class="d-flex justify-content-between align-items-center mb-3">
