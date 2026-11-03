@@ -238,7 +238,7 @@ namespace FoodArrival.Controllers
 
             int restId = Convert.ToInt32(Session["RestaurantId"]);
             string message;
-            if (_staffRepo.VerifyDish(foodItemId, "Restaurant", restId, out message))
+            if (_staffRepo.ApproveDish(foodItemId, "Restaurant", restId, out message))
             {
                 TempData["Success"] = "Dish approved! It is now live on your active menu.";
             }
