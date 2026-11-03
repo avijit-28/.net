@@ -30,16 +30,15 @@ else
                 @foreach (var item in Model.Menu)
                 {
                     <div class="border-top py-3">
-                        using (Html.BeginForm("SaveMenu", "RestaurantDashboard", FormMethod.Post, new { @class = "row g-2 align-items-center" }))
-                        {
-                            @Html.AntiForgeryToken() @Html.Hidden("restaurantId", Model.RestaurantId) @Html.Hidden("MenuItemId", item.MenuItemId)
+                        <form action="@Url.Action("SaveMenu", "RestaurantDashboard")" method="post" class="row g-2 align-items-center">
+                            @Html.AntiForgeryToken()<input type="hidden" name="restaurantId" value="@Model.RestaurantId" /><input type="hidden" name="MenuItemId" value="@item.MenuItemId" />
                             <div class="col-md-4"><label class="visually-hidden" for="menu-name-@item.MenuItemId">Item name</label><input class="form-control form-control-sm" id="menu-name-@item.MenuItemId" name="Name" value="@item.Name" required /></div>
                             <div class="col-md-2"><label class="visually-hidden" for="menu-category-@item.MenuItemId">Category</label><input class="form-control form-control-sm" id="menu-category-@item.MenuItemId" name="Category" value="@item.Category" /></div>
                             <div class="col-md-2"><label class="visually-hidden" for="menu-price-@item.MenuItemId">Price</label><input class="form-control form-control-sm" id="menu-price-@item.MenuItemId" name="Price" type="number" min="0.01" step="0.01" value="@item.Price" required /></div>
                             <input type="hidden" name="Description" value="@item.Description" /><input type="hidden" name="IsVegetarian" value="@item.IsVegetarian.ToString().ToLowerInvariant()" />
                             <div class="col-md-2"><label class="visually-hidden" for="menu-active-@item.MenuItemId">Availability</label><select class="form-select form-select-sm" id="menu-active-@item.MenuItemId" name="IsAvailable"><option value="true" @(item.IsAvailable ? "selected" : "")>Available</option><option value="false" @(!item.IsAvailable ? "selected" : "")>Hidden</option></select></div>
                             <div class="col-md-2"><button class="btn btn-outline-dark btn-sm w-100" type="submit">Save</button></div>
-                        }
+                        </form>
                     </div>
                 }
             </section>
@@ -51,11 +50,11 @@ else
                 <div class="border-top py-3"><div class="d-flex justify-content-between gap-2"><strong>@order.OrderNumber</strong><span class="status-pill">@order.OrderStatus</span></div><div class="small text-muted my-2">@order.CreatedAt.ToLocalTime().ToString("dd MMM, h:mm tt") · ₹@order.TotalAmount.ToString("0.00")</div>
                     @if (order.OrderStatus == "Placed")
                     {
-                        using (Html.BeginForm("OrderStatus", "RestaurantDashboard", FormMethod.Post, new { @class = "d-flex gap-2" })) { @Html.AntiForgeryToken() @Html.Hidden("orderId", order.OrderId) <button name="status" value="Accepted" class="btn btn-success btn-sm">Accept</button><button name="status" value="Rejected" class="btn btn-outline-danger btn-sm">Reject</button> }
+                        <form action="@Url.Action("OrderStatus", "RestaurantDashboard")" method="post" class="d-flex gap-2">@Html.AntiForgeryToken()<input type="hidden" name="orderId" value="@order.OrderId" /><button name="status" value="Accepted" class="btn btn-success btn-sm">Accept</button><button name="status" value="Rejected" class="btn btn-outline-danger btn-sm">Reject</button></form>
                     }
                     else if (order.OrderStatus == "Accepted" || order.OrderStatus == "Preparing")
                     {
-                        using (Html.BeginForm("OrderStatus", "RestaurantDashboard", FormMethod.Post)) { @Html.AntiForgeryToken() @Html.Hidden("orderId", order.OrderId) <button name="status" value="@(order.OrderStatus == "Accepted" ? "Preparing" : "Ready")" class="btn btn-dark btn-sm">@(order.OrderStatus == "Accepted" ? "Start preparing" : "Mark ready")</button> }
+                        <form action="@Url.Action("OrderStatus", "RestaurantDashboard")" method="post">@Html.AntiForgeryToken()<input type="hidden" name="orderId" value="@order.OrderId" /><button name="status" value="@(order.OrderStatus == "Accepted" ? "Preparing" : "Ready")" class="btn btn-dark btn-sm">@(order.OrderStatus == "Accepted" ? "Start preparing" : "Mark ready")</button></form>
                     }
                 </div>
             }
