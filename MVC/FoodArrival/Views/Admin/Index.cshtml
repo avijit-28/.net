@@ -16,3 +16,55 @@
         </div>
     }
 </section>
+<div class="row g-4 mt-1">
+    <section class="col-xl-5">
+        <div class="surface-card p-4 h-100"><h2 class="h5 fw-bold">Add a restaurant</h2>
+            @if (!Model.RestaurantOwners.Any()) { <p class="small text-muted">Create or promote an account to the Restaurant role below before adding a restaurant.</p> }
+            @using (Html.BeginForm("SaveRestaurant", "Admin", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="mb-3"><label class="form-label" for="OwnerUserId">Restaurant owner</label>@Html.DropDownList("OwnerUserId", Model.RestaurantOwners, "Choose an owner", new { @class = "form-select", required = "required" })</div>
+                <div class="mb-3"><label class="form-label" for="Name">Restaurant name</label><input class="form-control" id="Name" name="Name" maxlength="160" required /></div>
+                <div class="mb-3"><label class="form-label" for="Cuisine">Cuisine</label><input class="form-control" id="Cuisine" name="Cuisine" maxlength="80" required /></div>
+                <div class="mb-3"><label class="form-label" for="AddressLine">Street address</label><input class="form-control" id="AddressLine" name="AddressLine" maxlength="250" required /></div>
+                <div class="mb-3"><label class="form-label" for="City">City</label><input class="form-control" id="City" name="City" maxlength="100" required /></div>
+                <div class="mb-3"><label class="form-label" for="Description">Description</label><textarea class="form-control" id="Description" name="Description" maxlength="1000"></textarea></div>
+                <div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="IsActive" name="IsActive" value="true" checked /><input type="hidden" name="IsActive" value="false" /><label class="form-check-label" for="IsActive">Active and visible to customers</label></div>
+                <button class="btn btn-dark" type="submit">Add restaurant</button>
+            }
+        </div>
+    </section>
+    <section class="col-xl-7"><div class="surface-card p-4"><h2 class="h5 fw-bold">User accounts</h2>
+        @if (!Model.Users.Any()) { <p class="text-muted">No accounts yet.</p> }
+        @foreach (var user in Model.Users)
+        {
+            <div class="border-top py-3"><div class="d-flex justify-content-between gap-2"><div><strong>@user.FullName</strong><div class="small text-muted">@user.Email · #@user.UserId</div></div><span class="status-pill">@(user.IsActive ? user.Role : "Inactive")</span></div>
+                @using (Html.BeginForm("UpdateUser", "Admin", FormMethod.Post, new { @class = "d-flex flex-wrap gap-2 mt-2" }))
+                {
+                    @Html.AntiForgeryToken() @Html.Hidden("userId", user.UserId)
+                    @Html.DropDownList("role", new SelectList(new[] { "Customer", "Restaurant", "DeliveryAgent", "Admin" }, user.Role), new { @class = "form-select", style = "max-width:190px" })
+                    <div class="form-check align-self-center"><input class="form-check-input" type="checkbox" id="active-@user.UserId" name="isActive" value="true" @(user.IsActive ? "checked" : "") /><input type="hidden" name="isActive" value="false" /><label class="form-check-label" for="active-@user.UserId">Active</label></div>
+                    <button class="btn btn-outline-dark btn-sm" type="submit">Save</button>
+                }
+            </div>
+        }
+    </div></section>
+</div>
+<section class="surface-card p-4 mt-4"><h2 class="h5 fw-bold">Restaurants</h2>
+    @if (!Model.Restaurants.Any()) { <p class="text-muted mb-0">No restaurants configured.</p> }
+    @foreach (var restaurant in Model.Restaurants)
+    {
+        <div class="d-flex justify-content-between align-items-center border-top py-3"><div><strong>@restaurant.Name</strong><div class="small text-muted">@restaurant.Cuisine · @restaurant.City · Owner #@restaurant.OwnerUserId</div></div><span class="status-pill">@(restaurant.IsActive ? "Active" : "Inactive")</span></div>
+        @using (Html.BeginForm("SaveRestaurant", "Admin", FormMethod.Post, new { @class = "row g-2 mb-3" }))
+        {
+            @Html.AntiForgeryToken() @Html.Hidden("RestaurantId", restaurant.RestaurantId)
+            <div class="col-md-2"><label class="visually-hidden" for="owner-@restaurant.RestaurantId">Owner</label>@Html.DropDownList("OwnerUserId", new SelectList(Model.RestaurantOwners, "Value", "Text", restaurant.OwnerUserId), new { @class = "form-select", id = "owner-" + restaurant.RestaurantId })</div>
+            <div class="col-md-2"><label class="visually-hidden" for="name-@restaurant.RestaurantId">Name</label><input class="form-control" id="name-@restaurant.RestaurantId" name="Name" value="@restaurant.Name" required /></div>
+            <div class="col-md-2"><label class="visually-hidden" for="cuisine-@restaurant.RestaurantId">Cuisine</label><input class="form-control" id="cuisine-@restaurant.RestaurantId" name="Cuisine" value="@restaurant.Cuisine" required /></div>
+            <div class="col-md-2"><label class="visually-hidden" for="address-@restaurant.RestaurantId">Address</label><input class="form-control" id="address-@restaurant.RestaurantId" name="AddressLine" value="@restaurant.AddressLine" required /></div>
+            <div class="col-md-2"><label class="visually-hidden" for="city-@restaurant.RestaurantId">City</label><input class="form-control" id="city-@restaurant.RestaurantId" name="City" value="@restaurant.City" required /></div>
+            <input type="hidden" name="IsActive" value="@restaurant.IsActive.ToString().ToLowerInvariant()" />
+            <div class="col-md-2"><button class="btn btn-outline-dark w-100" type="submit">Save details</button></div>
+        }
+    }
+</section>
