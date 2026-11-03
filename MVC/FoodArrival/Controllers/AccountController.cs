@@ -252,6 +252,7 @@ namespace FoodArrival.Controllers
             var admin = _adminRepo.Login(cleanLoginId, password);
             if (admin != null)
             {
+                FormsAuthentication.SignOut();
                 Session.Clear();
                 Session["AdminId"] = admin.AdminId;
                 Session["AdminName"] = admin.AdminName;
@@ -259,7 +260,6 @@ namespace FoodArrival.Controllers
                 Session["AdminUsername"] = admin.Username;
                 Session["UserRole"] = "Admin";
 
-                FormsAuthentication.SetAuthCookie(admin.Email, model.RememberMe);
                 TempData["Success"] = $"Welcome Master Administrator, {admin.AdminName}!";
                 return RedirectToAction("Dashboard", "Admin");
             }
@@ -274,6 +274,7 @@ namespace FoodArrival.Controllers
             }
             if (restaurant != null)
             {
+                FormsAuthentication.SignOut();
                 Session.Clear();
                 Session["RestaurantId"] = restaurant.RestaurantId;
                 Session["RestaurantName"] = restaurant.RestaurantName;
@@ -281,7 +282,6 @@ namespace FoodArrival.Controllers
                 Session["RestaurantEmail"] = restaurant.Email;
                 Session["UserRole"] = "Restaurant";
 
-                FormsAuthentication.SetAuthCookie(restaurant.Email, model.RememberMe);
                 TempData["Success"] = $"Welcome, {restaurant.RestaurantName} Kitchen Management!";
                 return RedirectToAction("Dashboard", "Restaurant");
             }
@@ -296,6 +296,7 @@ namespace FoodArrival.Controllers
                     return View(model);
                 }
 
+                FormsAuthentication.SignOut();
                 Session.Clear();
                 Session["StaffId"] = staff.StaffId;
                 Session["StaffCode"] = staff.StaffCode;
@@ -306,7 +307,6 @@ namespace FoodArrival.Controllers
                 Session["RoleTitle"] = staff.RoleTitle;
                 Session["UserRole"] = "RestaurantStaff";
 
-                FormsAuthentication.SetAuthCookie(staff.Email, model.RememberMe);
                 TempData["Success"] = $"Welcome to your PMS Portal, {staff.StaffName}! (Staff ID: {staff.StaffCode})";
                 return RedirectToAction("Dashboard", "Staff");
             }
@@ -315,6 +315,7 @@ namespace FoodArrival.Controllers
             var rider = _riderRepo.Login(cleanLoginId, password);
             if (rider != null)
             {
+                FormsAuthentication.SignOut();
                 Session.Clear();
                 Session["RiderId"] = rider.RiderId;
                 Session["RiderName"] = rider.RiderName;
@@ -322,7 +323,6 @@ namespace FoodArrival.Controllers
                 Session["VehicleType"] = rider.VehicleType;
                 Session["UserRole"] = "Rider";
 
-                FormsAuthentication.SetAuthCookie(rider.Email, model.RememberMe);
                 TempData["Success"] = $"Welcome Delivery Partner, {rider.RiderName}!";
                 return RedirectToAction("Dashboard", "Rider");
             }
@@ -331,10 +331,10 @@ namespace FoodArrival.Controllers
             var customer = _customerRepo.Login(cleanLoginId, password);
             if (customer != null)
             {
+                FormsAuthentication.SignOut();
                 Session.Clear();
                 SetUserSession(customer);
 
-                FormsAuthentication.SetAuthCookie(customer.Email, model.RememberMe);
                 TempData["Success"] = $"Welcome back, {customer.CustomerName}!";
 
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
