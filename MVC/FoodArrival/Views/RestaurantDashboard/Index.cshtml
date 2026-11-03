@@ -30,7 +30,7 @@ else
                 @foreach (var item in Model.Menu)
                 {
                     <div class="border-top py-3">
-                        @using (Html.BeginForm("SaveMenu", "RestaurantDashboard", FormMethod.Post, new { @class = "row g-2 align-items-center" }))
+                        using (Html.BeginForm("SaveMenu", "RestaurantDashboard", FormMethod.Post, new { @class = "row g-2 align-items-center" }))
                         {
                             @Html.AntiForgeryToken() @Html.Hidden("restaurantId", Model.RestaurantId) @Html.Hidden("MenuItemId", item.MenuItemId)
                             <div class="col-md-4"><label class="visually-hidden" for="menu-name-@item.MenuItemId">Item name</label><input class="form-control form-control-sm" id="menu-name-@item.MenuItemId" name="Name" value="@item.Name" required /></div>
