@@ -36,18 +36,21 @@ namespace FoodArrival
         protected void Application_Error(object sender, EventArgs e)
         {
             var ex = Server.GetLastError();
-            if (ex is HttpUnhandledException && ex.InnerException != null)
-            {
-                ex = ex.InnerException;
-            }
+            var baseEx = ex?.GetBaseException();
 
-            if (ex is HttpAntiForgeryException)
+            if (ex is HttpAntiForgeryException || baseEx is HttpAntiForgeryException)
             {
                 Server.ClearError();
                 Response.Clear();
                 FormsAuthentication.SignOut();
-                Session.Clear();
-                Response.Redirect("~/Account/Login");
+
+                string role = Session?["UserRole"]?.ToString();
+                if (role == "Rider") Response.Redirect("~/Rider/Dashboard");
+                else if (role == "Restaurant") Response.Redirect("~/Restaurant/Dashboard");
+                else if (role == "RestaurantStaff") Response.Redirect("~/Staff/Dashboard");
+                else if (role == "Admin") Response.Redirect("~/Admin/Dashboard");
+                else if (role == "Customer") Response.Redirect("~/Food/Index");
+                else Response.Redirect("~/Account/Login");
             }
         }
 
