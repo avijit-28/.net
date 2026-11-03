@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Web.Mvc;
 using System.Web.Security;
 using FoodArrival.DAL;
@@ -76,7 +76,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpGet]
-        public ActionResult Profile()
+        public new ActionResult Profile()
         {
             if (!IsRiderAuthenticated())
             {
@@ -95,7 +95,7 @@ namespace FoodArrival.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Profile(Rider model)
+        public new ActionResult Profile(Rider model)
         {
             if (!IsRiderAuthenticated())
             {
