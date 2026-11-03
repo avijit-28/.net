@@ -61,11 +61,11 @@ $(document).ready(function () {
                     if (qty <= 0) {
                         $('#cart-row-' + foodId).fadeOut(300, function () { $(this).remove(); checkEmptyCart(); });
                     } else {
-                        $('#item-subtotal-' + foodId).text('₹' + res.itemSubtotal.toFixed(2));
+                        $('#item-subtotal-' + foodId).text('\u20B9' + res.itemSubtotal.toFixed(2));
                     }
-                    $('#cart-subtotal').text('₹' + res.subtotal.toFixed(2));
-                    $('#cart-delivery-fee').text('₹' + res.deliveryFee.toFixed(2));
-                    $('#cart-total').text('₹' + res.totalAmount.toFixed(2));
+                    $('#cart-subtotal').text('\u20B9' + res.subtotal.toFixed(2));
+                    $('#cart-delivery-fee').text('\u20B9' + res.deliveryFee.toFixed(2));
+                    $('#cart-total').text('\u20B9' + res.totalAmount.toFixed(2));
                     $('#cart-badge').text(res.totalCount);
                     if (res.totalCount === 0) {
                         $('#cart-badge').addClass('d-none');
