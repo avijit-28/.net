@@ -1,4 +1,4 @@
-﻿using FoodArrival.Attributes;
+using FoodArrival.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -215,13 +215,17 @@ namespace FoodArrival.Controllers
             int orderId;
             if (_orderRepo.CreateMasterOrder(customerId, cart, deliveryAddress, "UPI", out message, out orderId))
             {
-                // Run intelligent rider allocation algorithm
-                var allocationService = new FoodArrival.Services.RiderAllocationService();
-                var allocResult = allocationService.AllocateRiders(orderId);
+                // Mark payment as Pending until customer completes checkout on Dummy Payment Gateway
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new System.Data.SqlClient.SqlCommand("UPDATE dbo.Orders SET PaymentStatus = 'Pending', OrderStatus = 'Pending' WHERE OrderId = @OrderId", conn))
+                {
+                    cmd.Parameters.AddWithValue("@OrderId", orderId);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
 
-                Session["Cart"] = new List<CartItem>(); // Empty the cart
-                TempData["Success"] = "Order placed successfully! " + (allocResult.IsSuccessful ? allocResult.Message : "Allocating delivery partner...");
-                return RedirectToAction("Track", "OrderTracking", new { orderId = orderId });
+                // Redirect directly to Dummy Payment Gateway
+                return RedirectToAction("Gateway", "Payment", new { orderId = orderId });
             }
 
             TempData["Error"] = "Failed to place order: " + message;
