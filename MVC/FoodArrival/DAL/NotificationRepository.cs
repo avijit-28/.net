@@ -110,19 +110,29 @@ namespace FoodArrival.DAL
 
         public bool MarkAllAsRead(string role, int? userId = null)
         {
-            string sql = @"
-                UPDATE dbo.Notifications
-                SET IsRead = 1
-                WHERE (UserRole = 'All' OR UserRole = @Role)
-                  AND (@UserId IS NULL OR UserId IS NULL OR UserId = @UserId)";
+            if (string.IsNullOrWhiteSpace(role)) return false;
+
+            string sql;
+            if (role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                sql = "UPDATE dbo.Notifications SET IsRead = 1 WHERE UserRole = 'Admin'";
+            }
+            else
+            {
+                if (!userId.HasValue || userId.Value <= 0) return false;
+                sql = "UPDATE dbo.Notifications SET IsRead = 1 WHERE UserRole = @Role AND UserId = @UserId";
+            }
 
             try
             {
                 using (var conn = DbHelper.GetConnection())
                 using (var cmd = new SqlCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Role", (object)role ?? "All");
-                    cmd.Parameters.AddWithValue("@UserId", (object)userId ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Role", role);
+                    if (userId.HasValue)
+                    {
+                        cmd.Parameters.AddWithValue("@UserId", userId.Value);
+                    }
                     conn.Open();
                     return cmd.ExecuteNonQuery() > 0;
                 }
