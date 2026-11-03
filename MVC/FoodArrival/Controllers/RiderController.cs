@@ -140,9 +140,13 @@ namespace FoodArrival.Controllers
             string riderName = Session["RiderName"]?.ToString() ?? "Rider";
             if (_riderRepo.AcceptDelivery(orderId, riderId))
             {
-                _notifRepo.AddNotification("Customer", null, "Rider On the Way!", riderName + " picked up your Order #FD" + (1000 + orderId) + " and is heading to your address.", "Order", "/Order/History");
-                _notifRepo.AddNotification("Admin", null, "Delivery Dispatched", "Order #FD" + (1000 + orderId) + " is out for delivery with " + riderName + ".", "Order", "/Admin/Orders");
-                TempData["Success"] = "You accepted delivery for Order #FD" + (1000 + orderId) + ". Drive safe!";
+                var order = _orderRepo.GetById(orderId);
+                int? custId = order != null ? (int?)order.CustomerId : null;
+                string orderNum = order != null && !string.IsNullOrEmpty(order.OrderNumber) ? order.OrderNumber : ("#FD" + (1000 + orderId));
+                
+                _notifRepo.AddNotification("Customer", custId, "Rider On the Way!", riderName + " picked up your Order " + orderNum + " and is heading to your address.", "Order", "/Order/History");
+                _notifRepo.AddNotification("Admin", null, "Delivery Dispatched", "Order " + orderNum + " is out for delivery with " + riderName + ".", "Order", "/Admin/Orders");
+                TempData["Success"] = "You accepted delivery for Order " + orderNum + ". Drive safe!";
             }
             else
             {
@@ -164,9 +168,13 @@ namespace FoodArrival.Controllers
             int riderId = Convert.ToInt32(Session["RiderId"]);
             if (_riderRepo.CompleteDelivery(orderId, riderId))
             {
-                _notifRepo.AddNotification("Customer", null, "Order Delivered!", "Your Order #FD" + (1000 + orderId) + " has been delivered. Enjoy your delicious food!", "Order", "/Order/History");
-                _notifRepo.AddNotification("Admin", null, "Order Completed", "Order #FD" + (1000 + orderId) + " delivered successfully.", "Order", "/Admin/Orders?tab=accepted");
-                TempData["Success"] = "Order #FD" + (1000 + orderId) + " marked as DELIVERED. Great job!";
+                var order = _orderRepo.GetById(orderId);
+                int? custId = order != null ? (int?)order.CustomerId : null;
+                string orderNum = order != null && !string.IsNullOrEmpty(order.OrderNumber) ? order.OrderNumber : ("#FD" + (1000 + orderId));
+
+                _notifRepo.AddNotification("Customer", custId, "Order Delivered!", "Your Order " + orderNum + " has been delivered. Enjoy your delicious food!", "Order", "/Order/History");
+                _notifRepo.AddNotification("Admin", null, "Order Completed", "Order " + orderNum + " delivered successfully.", "Order", "/Admin/Orders?tab=accepted");
+                TempData["Success"] = "Order " + orderNum + " marked as DELIVERED. Great job!";
             }
             else
             {
