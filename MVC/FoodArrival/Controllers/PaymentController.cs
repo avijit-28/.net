@@ -210,17 +210,24 @@ namespace FoodArrival.Controllers
                             cmd.ExecuteNonQuery();
                         }
 
+                        decimal deliveryFee = order.DeliveryFee > 0 ? order.DeliveryFee : 40.00m;
+                        decimal platformFee = 15.00m;
+                        decimal restShare = Math.Max(0, order.TotalAmount - deliveryFee - platformFee);
+
                         // C. Insert Transaction Record
                         using (var cmd = new SqlCommand(@"
                             INSERT INTO dbo.Transactions 
-                            (OrderId, TransactionReference, Amount, PaymentMethod, PaymentStatus, GatewayResponse, CreatedAt)
+                            (OrderId, TransactionReference, Amount, PaymentMethod, PaymentStatus, RestaurantShare, PlatformFee, DeliveryFee, GatewayResponse, CreatedAt)
                             VALUES 
-                            (@OrderId, @TxnRef, @Amount, @Method, 'Success', 'Payment Authorized 200 OK via FoodReady Gateway', GETDATE())", conn, tran))
+                            (@OrderId, @TxnRef, @Amount, @Method, 'Success', @RestShare, @PlatformFee, @DeliveryFee, 'Payment Authorized 200 OK via FoodReady Gateway', GETDATE())", conn, tran))
                         {
                             cmd.Parameters.AddWithValue("@OrderId", orderId);
                             cmd.Parameters.AddWithValue("@TxnRef", txnRef);
                             cmd.Parameters.AddWithValue("@Amount", order.TotalAmount);
                             cmd.Parameters.AddWithValue("@Method", cleanMethod);
+                            cmd.Parameters.AddWithValue("@RestShare", restShare);
+                            cmd.Parameters.AddWithValue("@PlatformFee", platformFee);
+                            cmd.Parameters.AddWithValue("@DeliveryFee", deliveryFee);
                             cmd.ExecuteNonQuery();
                         }
 
