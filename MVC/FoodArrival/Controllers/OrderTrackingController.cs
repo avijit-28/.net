@@ -1,3 +1,4 @@
+﻿using FoodArrival.Attributes;
 using System;
 using System.Linq;
 using System.Web.Mvc;
@@ -105,7 +106,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult Cancel(int orderId, string reason)
         {
             int? customerId = GetCurrentCustomerId();
@@ -124,7 +125,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult Rate(OrderRating model)
         {
             int? customerId = GetCurrentCustomerId();
