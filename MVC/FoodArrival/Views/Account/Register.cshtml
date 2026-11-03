@@ -12,10 +12,27 @@
             <div class="mb-3">@Html.LabelFor(x => x.FullName, new { @class = "form-label" }) @Html.TextBoxFor(x => x.FullName, new { @class = "form-control", autocomplete = "name" }) @Html.ValidationMessageFor(x => x.FullName)</div>
             <div class="mb-3">@Html.LabelFor(x => x.Email, new { @class = "form-label" }) @Html.TextBoxFor(x => x.Email, new { @class = "form-control", autocomplete = "email" }) @Html.ValidationMessageFor(x => x.Email)</div>
             <div class="mb-3">@Html.LabelFor(x => x.Phone, new { @class = "form-label" }) @Html.TextBoxFor(x => x.Phone, new { @class = "form-control", autocomplete = "tel" }) @Html.ValidationMessageFor(x => x.Phone)</div>
+            <div class="mb-3"><label class="form-label" for="RequestedAccountType">I want to register as</label>@Html.DropDownListFor(x => x.RequestedAccountType, new SelectList(new[] { new { Value = "Customer", Text = "Customer" }, new { Value = "Staff", Text = "Staff (approval required)" } }, "Value", "Text", Model.RequestedAccountType), new { @class = "form-select", id = "RequestedAccountType" })</div>
+            <div id="staffRequestFields" class="border rounded-3 p-3 mb-3" style="display:none">
+                <p class="small text-muted">Staff accounts are reviewed by an administrator. You can use customer features while your request is pending.</p>
+                <div class="mb-3"><label class="form-label" for="RequestedStaffType">Staff area</label>@Html.DropDownListFor(x => x.RequestedStaffType, new SelectList(new[] { new { Value = "Restaurant", Text = "Restaurant staff" }, new { Value = "DeliveryAgent", Text = "Delivery agent" } }, "Value", "Text"), "Choose staff area", new { @class = "form-select", id = "RequestedStaffType" }) @Html.ValidationMessageFor(x => x.RequestedStaffType)</div>
+                <div><label class="form-label" for="RequestNote">Request note (optional)</label>@Html.TextAreaFor(x => x.RequestNote, new { @class = "form-control", rows = 2 })</div>
+            </div>
             <div class="mb-3">@Html.LabelFor(x => x.Password, new { @class = "form-label" }) @Html.PasswordFor(x => x.Password, new { @class = "form-control", autocomplete = "new-password" }) @Html.ValidationMessageFor(x => x.Password)<div class="form-text">Use at least 8 characters.</div></div>
             <div class="mb-4">@Html.LabelFor(x => x.ConfirmPassword, new { @class = "form-label" }) @Html.PasswordFor(x => x.ConfirmPassword, new { @class = "form-control", autocomplete = "new-password" }) @Html.ValidationMessageFor(x => x.ConfirmPassword)</div>
             <button class="btn btn-dark w-100" type="submit">Create account</button>
         }
     </div>
 </div></div>
-@section scripts { @Scripts.Render("~/bundles/jqueryval") }
+@section scripts {
+    <script>
+        (function () {
+            var type = document.getElementById('RequestedAccountType');
+            var staff = document.getElementById('staffRequestFields');
+            function update() { staff.style.display = type.value === 'Staff' ? 'block' : 'none'; }
+            type.addEventListener('change', update);
+            update();
+        }());
+    </script>
+    @Scripts.Render("~/bundles/jqueryval")
+}
