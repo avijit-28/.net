@@ -155,4 +155,25 @@ namespace FoodArrival.Models
         public bool IsVegetarian { get; set; }
         public bool IsAvailable { get; set; }
     }
+
+    public class RestaurantDashboardViewModel
+    {
+        public int RestaurantId { get; set; }
+        public string RestaurantName { get; set; }
+        public IList<MenuItem> Menu { get; set; }
+        public IList<OrderSummary> Orders { get; set; }
+        public MenuEditViewModel NewMenuItem { get; set; }
+    }
+
+    public class DeliveryDashboardViewModel
+    {
+        public IList<DeliveryAssignmentViewModel> Assignments { get; set; }
+        public bool IncludeCompleted { get; set; }
+    }
+
+    public class AdminDashboardViewModel
+    {
+        public IList<ReadyOrderViewModel> ReadyOrders { get; set; }
+        public IList<System.Web.Mvc.SelectListItem> Agents { get; set; }
+    }
 }
