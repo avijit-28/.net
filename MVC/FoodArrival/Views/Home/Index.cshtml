@@ -59,56 +59,45 @@
                 </div>
             </div>
 
-            <!-- Right Hero Graphic: Food Platter & Rider navigating to Map Pin -->
+            <!-- Right Hero Graphic: 3D Food Platter & Scooter Rider (Faithful match to design) -->
             <div class="col-lg-6 position-relative text-center">
-                <!-- Skyline & Rider Transit Track Illustration -->
-                <div class="position-relative w-100" style="min-height: 440px;">
-                    <!-- City Skyline Vector Background -->
-                    <svg viewBox="0 0 600 220" class="position-absolute start-0 top-0 w-100" style="opacity: 0.18; pointer-events: none;" xmlns="http://www.w3.org/2000/svg">
+                <div class="hero-image-wrapper position-relative d-inline-block w-100" style="min-height: 420px;">
+                    <!-- Dynamic Soft Orange Radial Glow Backdrop -->
+                    <div class="position-absolute start-50 top-50 translate-middle rounded-circle"
+                         style="width: 480px; height: 480px; background: radial-gradient(circle, rgba(255, 94, 30, 0.20) 0%, rgba(255, 122, 24, 0.08) 45%, rgba(255, 255, 255, 0) 70%); pointer-events: none; z-index: 1;">
+                    </div>
+
+                    <!-- Subtle Skyline Backdrop SVG -->
+                    <svg viewBox="0 0 600 220" class="position-absolute start-0 top-0 w-100" style="opacity: 0.12; pointer-events: none; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
                         <path d="M40 180 V100 H70 V70 H100 V180 H140 V40 H180 V180 H210 V110 H250 V180 H300 V90 H340 V180 H380 V60 H420 V180 H470 V120 H510 V180 H560 V80 H590 V180 Z" fill="#FF5E1E" />
                     </svg>
 
-                    <!-- Dashed Delivery Route with Scooter Rider traveling to Destination Pin -->
-                    <svg viewBox="0 0 600 240" class="position-absolute start-0 top-0 w-100" style="pointer-events: none; z-index: 3;" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Curved Dashed Track -->
-                        <path d="M 120 100 Q 260 130 380 95" fill="none" stroke="#FF5E1E" stroke-width="3" stroke-dasharray="6,6" opacity="0.65" />
-                        
-                        <!-- Map Location Pin -->
-                        <g transform="translate(380, 75)">
-                            <path d="M 0 0 C -12 -12 -12 -28 0 -38 C 12 -28 12 -12 0 0 Z" fill="#EA580C" filter="drop-shadow(0 4px 6px rgba(234, 88, 12, 0.4))" />
-                            <circle cx="0" cy="-24" r="5" fill="#FFFFFF" />
-                        </g>
-                    </svg>
+                    <!-- Hero 3D Rider & Food Graphic -->
+                    <img src="@Url.Content("~/Content/images/hero-rider-food.png")"
+                         alt="FoodReady Express Delivery & Food Platter"
+                         class="img-fluid position-relative hero-main-img"
+                         style="max-height: 430px; width: auto; object-fit: contain; filter: drop-shadow(0 15px 25px rgba(255, 94, 30, 0.22)) drop-shadow(0 10px 15px rgba(0,0,0,0.12)); z-index: 2;"
+                         onerror="this.src='@Url.Content("~/Content/images/hero-rider-food.jpg")'" />
 
-                    <!-- Rider Figure on Scooter moving along path -->
-                    <div class="position-absolute" style="top: 38px; left: 160px; z-index: 4; transform: scale(0.95);">
-                        <div class="d-flex align-items-center bg-white shadow-sm px-3 py-1 rounded-pill border border-warning border-opacity-50">
-                            <i class="bi bi-scooter text-danger fs-5 me-1"></i>
-                            <span class="small fw-bold text-dark">Rider En Route</span>
+                    <!-- Floating Badge 1: Top Right - Live Delivery Time -->
+                    <div class="position-absolute shadow-lg bg-white rounded-pill px-3 py-2 d-flex align-items-center gap-2 border border-light"
+                         style="top: 15px; right: 15px; z-index: 3;">
+                        <span class="rounded-circle p-1 d-flex align-items-center justify-content-center" style="background: #FFF0EB; color: #FF5E1E; width: 32px; height: 32px;">
+                            <i class="bi bi-clock-history"></i>
+                        </span>
+                        <div class="text-start">
+                            <span class="d-block fw-bold text-dark lh-1" style="font-size: 0.85rem;">25 - 35 mins</span>
+                            <span class="text-muted" style="font-size: 0.7rem;">Average Delivery</span>
                         </div>
                     </div>
 
-                    <!-- Composition of Food Items: Burger, Pizza, Fries, Drink, Delivery Bag -->
-                    <div class="position-relative d-inline-block mt-4" style="z-index: 5;">
-                        <!-- Right Curved Orange Backdrop Glow -->
-                        <div class="position-absolute end-0 top-0 rounded-circle" style="width: 320px; height: 320px; background: radial-gradient(circle, rgba(255,94,30,0.18) 0%, rgba(255,255,255,0) 70%); z-index: 1;"></div>
-
-                        <!-- Main Composite Graphic Container -->
-                        <div class="d-flex align-items-end justify-content-center position-relative" style="z-index: 2;">
-                            <!-- Takeout Bag with Chef Logo & Drinks (Left-Behind) -->
-                            <div class="me-n4 mb-3 position-relative" style="z-index: 2;">
-                                <div class="card border-0 shadow-lg p-2 text-center" style="border-radius: 18px; background: linear-gradient(135deg, #F59E0B, #D97706); width: 110px;">
-                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" class="mx-auto mb-1">
-                                        <path d="M12 2C9.5 2 7.5 3.8 7.1 6.1C5.3 6.6 4 8.2 4 10.2C4 12.3 5.5 14 7.5 14.3V18C7.5 19.1 8.4 20 9.5 20H14.5C15.6 20 16.5 19.1 16.5 18V14.3C18.5 14 20 12.3 20 10.2C20 8.2 18.7 6.6 16.9 6.1C16.5 3.8 14.5 2 12 2Z" fill="#FFFFFF" />
-                                    </svg>
-                                    <span class="badge bg-white text-dark fw-bold" style="font-size: 0.65rem;">FoodReady Bag</span>
-                                </div>
-                            </div>
-
-                            <!-- Big Food Platter: Burger, Pizza, Crispy Fries (Center & Right) -->
-                            <div class="position-relative" style="z-index: 3;">
-                                <img src="~/Content/images/hero-banner.jpg" alt="Delicious Food Platter" class="img-fluid rounded-5 shadow-lg" style="max-height: 380px; object-fit: contain; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.12));" onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80'" />
-                            </div>
+                    <!-- Floating Badge 2: Bottom Left - Top Rated -->
+                    <div class="position-absolute shadow-lg bg-white rounded-4 px-3 py-2 d-flex align-items-center gap-2 border border-light"
+                         style="bottom: 20px; left: 15px; z-index: 3;">
+                        <span class="text-warning fs-5"><i class="bi bi-star-fill"></i></span>
+                        <div class="text-start">
+                            <span class="d-block fw-bold text-dark lh-1" style="font-size: 0.85rem;">4.9 / 5.0</span>
+                            <span class="text-muted" style="font-size: 0.7rem;">10,000+ Happy Orders</span>
                         </div>
                     </div>
                 </div>
