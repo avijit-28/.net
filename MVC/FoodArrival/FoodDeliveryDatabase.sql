@@ -153,7 +153,8 @@ GO
 CREATE OR ALTER VIEW food.vw_UserAccess
 AS
     SELECT u.UserId, u.FullName, u.Email, u.PasswordHash, u.Phone, u.IsActive,
-           role.RoleName, sp.StaffType, pending.RequestId AS PendingRoleRequestId,
+           role.RoleName, CASE WHEN role.RoleName = N'Staff' THEN sp.StaffType END AS StaffType,
+           pending.RequestId AS PendingRoleRequestId,
            pending.RequestedStaffType, pending.RequestedAt AS StaffRequestDate
     FROM food.Users u
     INNER JOIN food.UserRoles ur ON ur.UserId = u.UserId AND ur.IsActive = 1
@@ -790,9 +791,9 @@ BEGIN
     IF NULLIF(LTRIM(RTRIM(@FullName)), N'') IS NULL OR NULLIF(LTRIM(RTRIM(@Email)), N'') IS NULL
        OR NULLIF(LTRIM(RTRIM(@PasswordHash)), N'') IS NULL
         THROW 51060, 'Name, email, and password hash are required.', 1;
-    IF @RequestedAccountType NOT IN (N'Customer', N'Staff')
+    IF @RequestedAccountType IS NULL OR @RequestedAccountType NOT IN (N'Customer', N'Staff')
         THROW 51063, 'Public registration supports Customer accounts and Staff requests only.', 1;
-    IF @RequestedAccountType = N'Staff' AND @RequestedStaffType NOT IN (N'Restaurant', N'DeliveryAgent')
+    IF @RequestedAccountType = N'Staff' AND (@RequestedStaffType IS NULL OR @RequestedStaffType NOT IN (N'Restaurant', N'DeliveryAgent'))
         THROW 51064, 'Choose Restaurant or DeliveryAgent as the requested staff type.', 1;
     IF EXISTS (SELECT 1 FROM food.Users WHERE Email = @Email)
         THROW 51061, 'An account with this email already exists.', 1;
@@ -952,18 +953,18 @@ CREATE OR ALTER PROCEDURE food.usp_Admin_UserUpdate
     @ActorUserId INT,
     @UserId INT,
     @Role NVARCHAR(20),
-    @StaffType NVARCHAR(30) = NULL,
-    @IsActive BIT
+    @IsActive BIT,
+    @StaffType NVARCHAR(30) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
     IF NOT EXISTS (SELECT 1 FROM food.vw_UserAccess WHERE UserId = @ActorUserId AND RoleName = N'Admin' AND IsActive = 1)
         THROW 51070, 'Only an active administrator can manage accounts.', 1;
-    IF @Role NOT IN (N'Customer', N'Staff', N'Admin')
+    IF @Role IS NULL OR @Role NOT IN (N'Customer', N'Staff', N'Admin')
         THROW 51071, 'Role is invalid.', 1;
     IF @UserId = @ActorUserId AND (@Role <> N'Admin' OR @IsActive = 0)
         THROW 51072, 'Administrators cannot disable or demote their own account.', 1;
-    IF @Role = N'Staff' AND @StaffType NOT IN (N'Restaurant', N'DeliveryAgent')
+    IF @Role = N'Staff' AND (@StaffType IS NULL OR @StaffType NOT IN (N'Restaurant', N'DeliveryAgent'))
         THROW 51078, 'Staff accounts require a Restaurant or DeliveryAgent staff type.', 1;
     IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @UserId)
         THROW 51073, 'User was not found.', 1;
