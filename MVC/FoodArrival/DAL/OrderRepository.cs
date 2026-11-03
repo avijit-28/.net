@@ -10,6 +10,11 @@ namespace FoodArrival.DAL
     {
         public bool CreateOrder(int customerId, List<CartItem> items, out string message, out int orderId)
         {
+            return CreateMasterOrder(customerId, items, null, "UPI", out message, out orderId);
+        }
+
+        public bool CreateMasterOrder(int customerId, List<CartItem> items, string deliveryAddress, string paymentMethod, out string message, out int orderId)
+        {
             message = string.Empty;
             orderId = 0;
 
@@ -19,35 +24,155 @@ namespace FoodArrival.DAL
                 return false;
             }
 
-            var tvpParam = DbHelper.CreateOrderItemTableParam("@Items", items);
-            var custParam = new SqlParameter("@CustomerId", customerId);
+            decimal subTotal = 0;
+            foreach (var item in items) subTotal += item.SubTotal;
+            decimal deliveryFee = 40.00m;
+            decimal platformFee = 15.00m;
+            decimal totalAmount = subTotal + deliveryFee + platformFee;
 
-            try
+            using (var conn = DbHelper.GetConnection())
             {
-                var dt = DbHelper.ExecuteDataTable("dbo.sp_Order_CreateMultiple", custParam, tvpParam);
-                if (dt.Rows.Count > 0)
+                conn.Open();
+                using (var tran = conn.BeginTransaction())
                 {
-                    int result = Convert.ToInt32(dt.Rows[0]["Result"]);
-                    message = dt.Rows[0]["Message"].ToString();
-                    if (result == 1)
+                    try
                     {
-                        orderId = Convert.ToInt32(dt.Rows[0]["OrderId"]);
+                        // 1. Insert Master Order
+                        string insertMasterSql = @"
+                            INSERT INTO dbo.Orders 
+                            (CustomerId, TotalAmount, OrderStatus, OrderedAt, DeliveryFee, DeliveryAddress, PaymentStatus, PaymentMethod, DeliveryStatus, EstimatedDeliveryTime)
+                            VALUES 
+                            (@CustomerId, @TotalAmount, 'Confirmed', GETDATE(), @DeliveryFee, @DeliveryAddress, 'Success', @PaymentMethod, 'Pending', DATEADD(MINUTE, 35, GETDATE()));
+                            SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+                        int newOrderId;
+                        using (var cmd = new SqlCommand(insertMasterSql, conn, tran))
+                        {
+                            cmd.Parameters.AddWithValue("@CustomerId", customerId);
+                            cmd.Parameters.AddWithValue("@TotalAmount", totalAmount);
+                            cmd.Parameters.AddWithValue("@DeliveryFee", deliveryFee);
+                            cmd.Parameters.AddWithValue("@DeliveryAddress", (object)deliveryAddress ?? DBNull.Value);
+                            cmd.Parameters.AddWithValue("@PaymentMethod", (object)paymentMethod ?? "UPI");
+                            newOrderId = Convert.ToInt32(cmd.ExecuteScalar());
+                        }
+
+                        orderId = newOrderId;
+                        string orderNumber = "FR" + (100000 + newOrderId);
+
+                        // Update OrderNumber
+                        using (var cmd = new SqlCommand("UPDATE dbo.Orders SET OrderNumber = @OrderNum WHERE OrderId = @OrderId", conn, tran))
+                        {
+                            cmd.Parameters.AddWithValue("@OrderNum", orderNumber);
+                            cmd.Parameters.AddWithValue("@OrderId", newOrderId);
+                            cmd.ExecuteNonQuery();
+                        }
+
+                        // 2. Group items by RestaurantId and insert OrderSubOrders
+                        var restaurantGroups = new Dictionary<int, List<CartItem>>();
+                        foreach (var itm in items)
+                        {
+                            int rId = itm.RestaurantId > 0 ? itm.RestaurantId : 1;
+                            if (!restaurantGroups.ContainsKey(rId))
+                                restaurantGroups[rId] = new List<CartItem>();
+                            restaurantGroups[rId].Add(itm);
+                        }
+
+                        foreach (var kvp in restaurantGroups)
+                        {
+                            int restId = kvp.Key;
+                            var restItems = kvp.Value;
+                            decimal restSubTotal = 0;
+                            foreach (var itm in restItems) restSubTotal += itm.SubTotal;
+
+                            // Fetch restaurant prep minutes
+                            int prepMinutes = 15;
+                            using (var cmdPrep = new SqlCommand("SELECT ISNULL(EstimatedPrepMinutes, 15) FROM dbo.Restaurants WHERE RestaurantId = @RestId", conn, tran))
+                            {
+                                cmdPrep.Parameters.AddWithValue("@RestId", restId);
+                                var scalar = cmdPrep.ExecuteScalar();
+                                if (scalar != null && scalar != DBNull.Value) prepMinutes = Convert.ToInt32(scalar);
+                            }
+
+                            int subOrderId;
+                            string insertSubSql = @"
+                                INSERT INTO dbo.OrderSubOrders 
+                                (OrderId, RestaurantId, SubTotal, PreparationStatus, EstimatedReadyAt, DeliveryStatus, PickupSequence, CreatedAt)
+                                VALUES 
+                                (@OrderId, @RestaurantId, @SubTotal, 'Confirmed', DATEADD(MINUTE, @PrepMin, GETDATE()), 'Pending', 1, GETDATE());
+                                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+                            using (var cmdSub = new SqlCommand(insertSubSql, conn, tran))
+                            {
+                                cmdSub.Parameters.AddWithValue("@OrderId", newOrderId);
+                                cmdSub.Parameters.AddWithValue("@RestaurantId", restId);
+                                cmdSub.Parameters.AddWithValue("@SubTotal", restSubTotal);
+                                cmdSub.Parameters.AddWithValue("@PrepMin", prepMinutes);
+                                subOrderId = Convert.ToInt32(cmdSub.ExecuteScalar());
+                            }
+
+                            // 3. Insert OrderDetails for this restaurant
+                            foreach (var item in restItems)
+                            {
+                                string insertDetailSql = @"
+                                    INSERT INTO dbo.OrderDetails 
+                                    (OrderId, SubOrderId, FoodItemId, Quantity, UnitPrice, SubTotal)
+                                    VALUES 
+                                    (@OrderId, @SubOrderId, @FoodItemId, @Quantity, @UnitPrice, @SubTotal);";
+
+                                using (var cmdDetail = new SqlCommand(insertDetailSql, conn, tran))
+                                {
+                                    cmdDetail.Parameters.AddWithValue("@OrderId", newOrderId);
+                                    cmdDetail.Parameters.AddWithValue("@SubOrderId", subOrderId);
+                                    cmdDetail.Parameters.AddWithValue("@FoodItemId", item.FoodItemId);
+                                    cmdDetail.Parameters.AddWithValue("@Quantity", item.Quantity);
+                                    cmdDetail.Parameters.AddWithValue("@UnitPrice", item.UnitPrice);
+                                    cmdDetail.Parameters.AddWithValue("@SubTotal", item.SubTotal);
+                                    cmdDetail.ExecuteNonQuery();
+                                }
+                            }
+                        }
+
+                        // 4. Record initial Timeline event
+                        string historySql = @"
+                            INSERT INTO dbo.OrderStatusHistory (OrderId, Status, ChangedByRole, Message, CreatedAt)
+                            VALUES (@OrderId, 'Confirmed', 'Customer', @Message, GETDATE());";
+                        using (var cmdHist = new SqlCommand(historySql, conn, tran))
+                        {
+                            cmdHist.Parameters.AddWithValue("@OrderId", newOrderId);
+                            cmdHist.Parameters.AddWithValue("@Message", "Master order #" + orderNumber + " placed across " + restaurantGroups.Count + " kitchen partner(s).");
+                            cmdHist.ExecuteNonQuery();
+                        }
+
+                        // 5. Record Transaction
+                        string txnSql = @"
+                            INSERT INTO dbo.Transactions 
+                            (OrderId, TransactionReference, Amount, PaymentMethod, PaymentStatus, RestaurantShare, PlatformFee, DeliveryFee, CreatedAt)
+                            VALUES 
+                            (@OrderId, @Ref, @Amount, @Method, 'Success', @RestShare, @PlatformFee, @DeliveryFee, GETDATE());";
+                        using (var cmdTxn = new SqlCommand(txnSql, conn, tran))
+                        {
+                            cmdTxn.Parameters.AddWithValue("@OrderId", newOrderId);
+                            cmdTxn.Parameters.AddWithValue("@Ref", "TXN-" + Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper());
+                            cmdTxn.Parameters.AddWithValue("@Amount", totalAmount);
+                            cmdTxn.Parameters.AddWithValue("@Method", (object)paymentMethod ?? "UPI");
+                            cmdTxn.Parameters.AddWithValue("@RestShare", subTotal * 0.90m);
+                            cmdTxn.Parameters.AddWithValue("@PlatformFee", platformFee + (subTotal * 0.10m));
+                            cmdTxn.Parameters.AddWithValue("@DeliveryFee", deliveryFee);
+                            cmdTxn.ExecuteNonQuery();
+                        }
+
+                        tran.Commit();
+                        message = "Order placed successfully!";
                         return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        tran.Rollback();
+                        message = "Transaction rolled back: " + ex.Message;
+                        return false;
                     }
                 }
             }
-            catch (SqlException ex)
-            {
-                message = ex.Message;
-                return false;
-            }
-            catch (Exception ex)
-            {
-                message = ex.Message;
-                return false;
-            }
-
-            return false;
         }
 
         public List<Order> GetByCustomer(int customerId)
