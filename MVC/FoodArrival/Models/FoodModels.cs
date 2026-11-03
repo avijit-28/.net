@@ -28,6 +28,7 @@ namespace FoodArrival.Models
         public string ImageUrl { get; set; }
         public bool IsVegetarian { get; set; }
         public bool IsAvailable { get; set; }
+        public string RestaurantName { get; set; }
     }
 
     public class RestaurantPageViewModel
@@ -200,6 +201,8 @@ namespace FoodArrival.Models
     public class AdminDashboardViewModel
     {
         public IList<OrderSummary> Orders { get; set; }
+        public IList<MenuItem> MenuItems { get; set; }
+        public IList<System.Web.Mvc.SelectListItem> RestaurantChoices { get; set; }
         public IList<ReadyOrderViewModel> ReadyOrders { get; set; }
         public IList<System.Web.Mvc.SelectListItem> Agents { get; set; }
         public IList<AdminUserViewModel> Users { get; set; }
