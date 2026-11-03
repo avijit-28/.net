@@ -1,3 +1,4 @@
+﻿using FoodArrival.Attributes;
 using System;
 using System.IO;
 using System.Web;
@@ -31,7 +32,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
@@ -93,7 +94,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult ProposeDish(FoodItem item, HttpPostedFileBase dishImage)
         {
             if (!IsStaffAuthenticated())
@@ -139,7 +140,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult UpdateOrderStatus(int orderId, string status)
         {
             if (!IsStaffAuthenticated())
