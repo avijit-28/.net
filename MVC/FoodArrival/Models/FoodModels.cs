@@ -178,6 +178,7 @@ namespace FoodArrival.Models
         public IList<AdminUserViewModel> Users { get; set; }
         public IList<AdminRestaurantViewModel> Restaurants { get; set; }
         public AdminRestaurantViewModel NewRestaurant { get; set; }
+        public IList<System.Web.Mvc.SelectListItem> RestaurantOwners { get; set; }
     }
 
     public class AdminUserViewModel
