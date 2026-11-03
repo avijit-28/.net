@@ -284,7 +284,8 @@ namespace LMS.Controllers
                 PhoneNumber = user.PhoneNumber,
                 Bio = user.Bio,
                 ProfilePicture = user.ProfilePicture,
-                Role = roles.FirstOrDefault() ?? "Student"
+                Role = roles.FirstOrDefault() ?? "Student",
+                SignaturePath = user.SignaturePath
             };
 
             return View(model);
@@ -293,7 +294,7 @@ namespace LMS.Controllers
         // POST: /Account/Profile
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public new async Task<ActionResult> Profile(ProfileViewModel model)
+        public new async Task<ActionResult> Profile(ProfileViewModel model, HttpPostedFileBase signatureFile)
         {
             if (!ModelState.IsValid) return View(model);
 
@@ -305,10 +306,51 @@ namespace LMS.Controllers
             user.Bio = model.Bio;
             user.ProfilePicture = model.ProfilePicture;
 
+            // Handle Drawn Signature (Base64 PNG from Canvas)
+            if (!string.IsNullOrWhiteSpace(model.SignatureData) && model.SignatureData.StartsWith("data:image"))
+            {
+                try
+                {
+                    var base64Data = model.SignatureData.Substring(model.SignatureData.IndexOf(",") + 1);
+                    var imageBytes = Convert.FromBase64String(base64Data);
+                    var uploadDir = Server.MapPath("~/Content/uploads/signatures");
+                    if (!System.IO.Directory.Exists(uploadDir))
+                    {
+                        System.IO.Directory.CreateDirectory(uploadDir);
+                    }
+                    var fileName = "signature_" + user.Id + "_" + DateTime.UtcNow.Ticks + ".png";
+                    var filePath = System.IO.Path.Combine(uploadDir, fileName);
+                    System.IO.File.WriteAllBytes(filePath, imageBytes);
+                    user.SignaturePath = "/Content/uploads/signatures/" + fileName;
+                }
+                catch { }
+            }
+            // Handle Uploaded Signature File
+            else if (signatureFile != null && signatureFile.ContentLength > 0)
+            {
+                try
+                {
+                    var ext = System.IO.Path.GetExtension(signatureFile.FileName).ToLower();
+                    if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".svg")
+                    {
+                        var uploadDir = Server.MapPath("~/Content/uploads/signatures");
+                        if (!System.IO.Directory.Exists(uploadDir))
+                        {
+                            System.IO.Directory.CreateDirectory(uploadDir);
+                        }
+                        var fileName = "signature_" + user.Id + "_" + DateTime.UtcNow.Ticks + ext;
+                        var filePath = System.IO.Path.Combine(uploadDir, fileName);
+                        signatureFile.SaveAs(filePath);
+                        user.SignaturePath = "/Content/uploads/signatures/" + fileName;
+                    }
+                }
+                catch { }
+            }
+
             var result = await UserManager.UpdateAsync(user);
             if (result.Succeeded)
             {
-                TempData["SuccessMessage"] = "Profile updated successfully!";
+                TempData["SuccessMessage"] = "Profile and official credentials updated successfully!";
                 return RedirectToAction("Profile");
             }
 

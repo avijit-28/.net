@@ -93,7 +93,8 @@ namespace LMS.Services
                 CourseTitle = cert.Course != null ? cert.Course.Title : "Course",
                 IssueDate = cert.IssueDate,
                 FinalScore = cert.FinalScore,
-                InstructorName = instructorName
+                InstructorName = instructorName,
+                InstructorSignaturePath = cert.Course?.Instructor?.SignaturePath
             };
         }
 

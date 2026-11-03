@@ -133,6 +133,7 @@ namespace LMS.ViewModels
         public DateTime IssueDate { get; set; }
         public decimal? FinalScore { get; set; }
         public string InstructorName { get; set; }
+        public string InstructorSignaturePath { get; set; }
     }
 
     public class CourseReviewInputModel

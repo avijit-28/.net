@@ -17,6 +17,7 @@ namespace LMS.Models
         public string RequestedRole { get; set; }
         public string RejectionReason { get; set; }
         public DateTime RegisteredDate { get; set; } = DateTime.UtcNow;
+        public string SignaturePath { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {

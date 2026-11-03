@@ -71,10 +71,10 @@
                             <button class="accordion-button @(isModuleActive ? "" : "collapsed") bg-transparent py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@module.ModuleId">
                                 <div class="w-100 pe-2">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <span class="small text-muted fw-bold text-uppercase" style="font-size: 10px;">Module @(mIdx + 1)</span>
-                                        <span class="badge bg-light text-muted border" style="font-size: 9px;">@totalItemsInMod items</span>
+                                        <span class="small fw-bold text-uppercase" style="font-size: 10px; color: #27B8D6;">Module @(mIdx + 1)</span>
+                                        <span class="badge rounded-pill px-2 py-1" style="font-size: 9px; background: rgba(39, 184, 214, 0.15); color: #27B8D6; border: 1px solid rgba(39, 184, 214, 0.3);">@totalItemsInMod items</span>
                                     </div>
-                                    <div class="fw-bold text-dark small">@module.ModuleName</div>
+                                    <div class="fw-bold text-white small">@module.ModuleName</div>
                                 </div>
                             </button>
                         </h2>
@@ -205,28 +205,28 @@
                 <!-- Dedicated Final Mandatory Certification Exam Section -->
                 @if (Model.FinalExam != null)
                 {
-                    <div class="p-3 border-top bg-white">
-                        <div class="card p-3 rounded-3 @(Model.HasPassedFinalExam ? "border-success bg-success-subtle bg-opacity-25" : (Model.IsFinalExamUnlocked ? "border-warning bg-warning-subtle bg-opacity-25" : "border-secondary-subtle bg-light text-muted")) shadow-xs">
+                    <div class="p-3 border-top" style="background: #062330; border-color: rgba(255, 255, 255, 0.1) !important;">
+                        <div class="card p-3 rounded-3 shadow-xs" style="background: rgba(11, 52, 69, 0.65); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;">
                             <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="badge @(Model.HasPassedFinalExam ? "bg-success text-white" : (Model.IsFinalExamUnlocked ? "bg-warning text-dark" : "bg-secondary text-white")) rounded-pill px-2 py-1" style="font-size: 10px;">
+                                <span class="badge rounded-pill px-2 py-1" style="font-size: 10px; background: @(Model.HasPassedFinalExam ? "#35C98A" : (Model.IsFinalExamUnlocked ? "#FF7A18" : "rgba(255, 255, 255, 0.15)")); color: #FFFFFF;">
                                     <i class="bi @(Model.HasPassedFinalExam ? "bi-check2-circle" : (Model.IsFinalExamUnlocked ? "bi-unlock-fill" : "bi-lock-fill")) me-1"></i>
                                     @(Model.HasPassedFinalExam ? "EXAM CLEARED" : (Model.IsFinalExamUnlocked ? "FINAL EXAM READY" : "FINAL EXAM LOCKED"))
                                 </span>
-                                <span class="font-monospace small text-muted" style="font-size: 10px;">Pass: @Model.FinalExam.PassingPercentage%</span>
+                                <span class="font-monospace small" style="font-size: 10px; color: #94A3B8;">Pass: @Model.FinalExam.PassingPercentage%</span>
                             </div>
 
-                            <h6 class="fw-bold mb-1 @(Model.IsFinalExamUnlocked || Model.HasPassedFinalExam ? "text-dark" : "text-muted")" style="font-size: 13px;">
-                                <i class="bi bi-award-fill text-warning me-1"></i> @Model.FinalExam.Title
+                            <h6 class="fw-bold mb-1 text-white" style="font-size: 13px;">
+                                <i class="bi bi-award-fill text-orange me-1"></i> @Model.FinalExam.Title
                             </h6>
 
-                            <p class="small text-muted mb-2" style="font-size: 11px;">
+                            <p class="small mb-2" style="font-size: 11px; color: #94A3B8;">
                                 @if (Model.HasPassedFinalExam)
                                 {
-                                    <span>Cleared with <strong>@Model.FinalExamScore%</strong>. Official certificate unlocked!</span>
+                                    <span class="text-white">Cleared with <strong class="text-success">@Model.FinalExamScore%</strong>. Official certificate unlocked!</span>
                                 }
                                 else if (Model.IsFinalExamUnlocked)
                                 {
-                                    <span class="text-dark fw-semibold">100% Modules complete! Clear this exam to get your certificate.</span>
+                                    <span class="text-white fw-semibold">100% Modules complete! Clear this exam to get your certificate.</span>
                                 }
                                 else
                                 {
@@ -236,19 +236,19 @@
 
                             @if (Model.HasPassedFinalExam)
                             {
-                                <a href="@Url.Action("Certificates", "Student")" class="btn btn-sm btn-success rounded-pill fw-bold w-100 py-1" style="font-size: 12px;">
+                                <a href="@Url.Action("Certificates", "Student")" class="btn btn-sm btn-success rounded-pill fw-bold w-100 py-1" style="font-size: 12px; background-color: #35C98A !important; border-color: #35C98A !important;">
                                     <i class="bi bi-award me-1"></i> View Credential
                                 </a>
                             }
                             else if (Model.IsFinalExamUnlocked)
                             {
-                                <a href="@Url.Action("Take", "Quiz", new { id = Model.FinalExam.QuizId })" class="btn btn-sm btn-primary text-white rounded-pill fw-bold w-100 py-1 shadow-xs" style="font-size: 12px;">
+                                <a href="@Url.Action("Take", "Quiz", new { id = Model.FinalExam.QuizId })" class="btn btn-sm btn-primary text-white rounded-pill fw-bold w-100 py-1 shadow-xs" style="font-size: 12px; background-color: #FF7A18 !important; border-color: #FF7A18 !important;">
                                     <i class="bi bi-lightning-charge-fill me-1"></i> Take Final Exam Now
                                 </a>
                             }
                             else
                             {
-                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill w-100 py-1 opacity-75" disabled style="font-size: 12px;">
+                                <button type="button" class="btn btn-sm rounded-pill w-100 py-1" disabled style="font-size: 12px; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.15); color: #94A3B8;">
                                     <i class="bi bi-lock-fill me-1"></i> Unlocks at 100%
                                 </button>
                             }
@@ -372,16 +372,16 @@
                     else if (Model.CurrentLesson.LessonType == "Quiz")
                     {
                         var quiz = Model.Course.Quizzes.FirstOrDefault(q => q.LessonId == Model.CurrentLesson.LessonId) ?? Model.Course.Quizzes.FirstOrDefault();
-                        <div class="lesson-quiz-box card card-custom p-5 text-center my-3 shadow-sm">
-                            <div class="rounded-circle bg-warning-subtle text-warning p-4 d-inline-flex mx-auto mb-3">
+                        <div class="lesson-quiz-box card card-custom p-5 text-center my-3 shadow-lg" style="background: linear-gradient(135deg, #062330 0%, #0B3445 100%) !important; border: 1px solid rgba(39, 184, 214, 0.25) !important; color: #FFFFFF !important; border-radius: 20px;">
+                            <div class="rounded-circle p-4 d-inline-flex mx-auto mb-3 shadow-sm" style="background: rgba(255, 122, 24, 0.15); color: #FF7A18; border: 1px solid rgba(255, 122, 24, 0.3);">
                                 <i class="bi bi-patch-question-fill display-4"></i>
                             </div>
-                            <h4 class="fw-bold">Module Knowledge Assessment</h4>
-                            <p class="text-muted small mb-4" style="max-width: 500px; margin: 0 auto;">Evaluate your understanding of the concepts covered in this module. Quizzes feature a live timer and instant score calculation.</p>
+                            <h4 class="fw-bold text-white mb-2">Module Knowledge Assessment</h4>
+                            <p class="small mb-4" style="max-width: 500px; margin: 0 auto; color: #94A3B8;">Evaluate your understanding of the concepts covered in this module. Quizzes feature a live timer and instant score calculation.</p>
                             @if (quiz != null)
                             {
                                 <div>
-                                    <a href="@Url.Action("Take", "Quiz", new { id = quiz.QuizId })" class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow text-white">
+                                    <a href="@Url.Action("Take", "Quiz", new { id = quiz.QuizId })" class="btn btn-primary rounded-pill px-5 py-2 fw-bold shadow text-white" style="background-color: #FF7A18 !important; border-color: #FF7A18 !important;">
                                         <i class="bi bi-lightning-charge-fill me-1"></i> Start Assessment Now
                                     </a>
                                 </div>
@@ -391,16 +391,16 @@
                     else if (Model.CurrentLesson.LessonType == "Assignment")
                     {
                         var assignment = Model.Course.Assignments.FirstOrDefault(a => a.LessonId == Model.CurrentLesson.LessonId) ?? Model.Course.Assignments.FirstOrDefault();
-                        <div class="card card-custom p-5 bg-light border-info text-center my-3 shadow-sm">
-                            <div class="rounded-circle bg-info-subtle text-info p-4 d-inline-flex mx-auto mb-3">
+                        <div class="card card-custom p-5 text-center my-3 shadow-lg" style="background: linear-gradient(135deg, #062330 0%, #0B3445 100%) !important; border: 1px solid rgba(39, 184, 214, 0.25) !important; color: #FFFFFF !important; border-radius: 20px;">
+                            <div class="rounded-circle p-4 d-inline-flex mx-auto mb-3 shadow-sm" style="background: rgba(39, 184, 214, 0.15); color: #27B8D6; border: 1px solid rgba(39, 184, 214, 0.3);">
                                 <i class="bi bi-file-earmark-code-fill display-4"></i>
                             </div>
-                            <h4 class="fw-bold">Practical Project Assignment</h4>
-                            <p class="text-muted small mb-4" style="max-width: 500px; margin: 0 auto;">Submit your documented solution and GitHub repository link for faculty evaluation and grading.</p>
+                            <h4 class="fw-bold text-white mb-2">Practical Project Assignment</h4>
+                            <p class="small mb-4" style="max-width: 500px; margin: 0 auto; color: #94A3B8;">Submit your documented solution and GitHub repository link for faculty evaluation and grading.</p>
                             @if (assignment != null)
                             {
                                 <div>
-                                    <a href="@Url.Action("Details", "Assignment", new { id = assignment.AssignmentId })" class="btn btn-info text-white rounded-pill px-5 py-2 fw-bold shadow">
+                                    <a href="@Url.Action("Details", "Assignment", new { id = assignment.AssignmentId })" class="btn btn-info text-white rounded-pill px-5 py-2 fw-bold shadow" style="background-color: #27B8D6 !important; border-color: #27B8D6 !important;">
                                         <i class="bi bi-arrow-up-right-circle me-1"></i> Open Assignment Workspace
                                     </a>
                                 </div>
@@ -429,17 +429,17 @@
 
                     @if (!string.IsNullOrEmpty(Model.CurrentLesson.ResourceUrl))
                     {
-                        <div class="lesson-resource-box p-3 rounded-3 d-flex justify-content-between align-items-center shadow-sm mb-4" style="background: rgba(6, 35, 48, 0.95); border: 1px solid rgba(255, 255, 255, 0.15);">
+                        <div class="lesson-resource-box p-3 rounded-3 d-flex justify-content-between align-items-center shadow-sm mb-4" style="background: rgba(6, 35, 48, 0.95) !important; border: 1px solid rgba(39, 184, 214, 0.25) !important; border-radius: 14px !important;">
                             <div class="d-flex align-items-center gap-3">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center p-2" style="width: 42px; height: 42px; background: rgba(255, 122, 24, 0.15); color: #FF7A18;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center p-2" style="width: 44px; height: 44px; background: rgba(255, 122, 24, 0.15); color: #FF7A18; border: 1px solid rgba(255, 122, 24, 0.3);">
                                     <i class="bi bi-download fs-5"></i>
                                 </div>
                                 <div>
-                                    <div class="fw-bold small resource-title text-white">Supplemental Material &amp; Assets</div>
-                                    <small class="resource-subtitle" style="color: rgba(255, 255, 255, 0.72);">Downloadable guide or source code repository</small>
+                                    <div class="fw-bold small text-white resource-title">Supplemental Material &amp; Assets</div>
+                                    <small class="resource-subtitle" style="color: #94A3B8 !important;">Downloadable guide or source code repository</small>
                                 </div>
                             </div>
-                            <a href="@Model.CurrentLesson.ResourceUrl" target="_blank" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold text-white shadow-xs">
+                            <a href="@Model.CurrentLesson.ResourceUrl" target="_blank" class="btn btn-sm btn-primary rounded-pill px-4 py-2 fw-bold text-white shadow-xs" style="background-color: #FF7A18 !important; border-color: #FF7A18 !important;">
                                 <i class="bi bi-cloud-arrow-down me-1"></i> Access Download
                             </a>
                         </div>

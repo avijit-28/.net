@@ -1307,26 +1307,26 @@ body.focus-mode-active .footer-lms {
 }
 
 .lesson-resource-box {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0 !important;
+    background: rgba(6, 35, 48, 0.95);
+    border: 1px solid rgba(39, 184, 214, 0.25) !important;
 }
 
 .lesson-resource-box .resource-title {
-    color: #0F172A;
+    color: #FFFFFF !important;
 }
 
 .lesson-resource-box .resource-subtitle {
-    color: #64748B;
+    color: #94A3B8 !important;
 }
 
 .lesson-quiz-box {
-    background: #FFFBEB;
-    border: 1.5px solid #FDE68A !important;
-    color: #1E293B;
+    background: linear-gradient(135deg, #062330 0%, #0B3445 100%) !important;
+    border: 1px solid rgba(39, 184, 214, 0.25) !important;
+    color: #FFFFFF !important;
 }
 
 .lesson-quiz-box h4 {
-    color: #0F172A;
+    color: #FFFFFF !important;
 }
 
 .scratchpad-textarea {

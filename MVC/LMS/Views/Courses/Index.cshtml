@@ -19,30 +19,30 @@
             <p class="text-muted small mb-0">Discover structured curriculums taught by industry engineers and instructors</p>
         </div>
         <div class="d-flex align-items-center gap-2">
-            <span class="badge bg-white text-dark border px-3 py-2 rounded-pill shadow-xs">
-                <strong>@Model.TotalItems</strong> Courses in Database
+            <span class="badge px-3 py-2 rounded-pill shadow-sm" style="background: rgba(6, 35, 48, 0.9); color: #FFFFFF; border: 1px solid rgba(39, 184, 214, 0.35); font-weight: 600;">
+                <span class="text-cyan fw-bold">@Model.TotalItems</span> Courses in Database
             </span>
-            <a href="@Url.Action("Index", "Courses")" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+            <a href="@Url.Action("Index", "Courses")" class="btn btn-sm btn-outline-light rounded-pill px-3" style="border-color: rgba(255, 255, 255, 0.25);">
                 <i class="bi bi-arrow-clockwise me-1"></i> Reset Filters
             </a>
         </div>
     </div>
 
     <!-- Quick Category Chips Bar -->
-    <div class="card card-custom p-3 mb-4 shadow-sm bg-white">
+    <div class="card card-custom p-3 mb-4 shadow-sm" style="background: rgba(6, 35, 48, 0.85); border: 1px solid rgba(255, 255, 255, 0.12);">
         <div class="d-flex align-items-center gap-2 overflow-auto py-1">
-            <span class="small fw-bold text-muted text-uppercase me-2 text-nowrap" style="font-size: 11px;">
-                <i class="bi bi-funnel-fill text-primary me-1"></i> Subject:
+            <span class="small fw-bold text-uppercase me-2 text-nowrap" style="font-size: 11px; color: #94A3B8;">
+                <i class="bi bi-funnel-fill text-cyan me-1"></i> Subject:
             </span>
             <a href="@Url.Action("Index", "Courses", new { search = Model.Search, level = Model.Level, priceType = Model.PriceType, sortBy = Model.SortBy })"
-               class="btn btn-sm category-chip-btn @(Model.CategoryId == null ? "active btn-primary" : "btn-light border") rounded-pill px-3 text-nowrap"
+               class="btn btn-sm category-chip-btn @(Model.CategoryId == null ? "active btn-primary" : "btn-outline-light") rounded-pill px-3 text-nowrap" style="@(Model.CategoryId == null ? "background-color: #FF7A18 !important; border-color: #FF7A18 !important;" : "border-color: rgba(255, 255, 255, 0.2); color: #E2E8F0;")"
                data-cat-id="">
                 All Subjects
             </a>
             @foreach (var cat in Model.Categories)
             {
                 <a href="@Url.Action("Index", "Courses", new { categoryId = cat.CategoryId, search = Model.Search, level = Model.Level, priceType = Model.PriceType, sortBy = Model.SortBy })"
-                   class="btn btn-sm category-chip-btn @(Model.CategoryId == cat.CategoryId ? "active btn-primary" : "btn-light border") rounded-pill px-3 text-nowrap"
+                   class="btn btn-sm category-chip-btn @(Model.CategoryId == cat.CategoryId ? "active btn-primary" : "btn-outline-light") rounded-pill px-3 text-nowrap" style="@(Model.CategoryId == cat.CategoryId ? "background-color: #FF7A18 !important; border-color: #FF7A18 !important;" : "border-color: rgba(255, 255, 255, 0.2); color: #E2E8F0;")"
                    data-cat-id="@cat.CategoryId">
                     @cat.CategoryName
                 </a>
@@ -53,19 +53,19 @@
     <div class="row g-4">
         <!-- Sidebar Filter Card -->
         <div class="col-lg-3">
-            <div class="card card-custom p-4 shadow-sm sticky-top" style="top: 85px;">
+            <div class="card card-custom p-4 shadow-sm sticky-top" style="top: 85px; background: rgba(6, 35, 48, 0.95); border: 1px solid rgba(39, 184, 214, 0.25); color: #FFFFFF;">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-sliders me-1 text-primary"></i> Filter Options</h6>
+                    <h6 class="fw-bold mb-0 text-white"><i class="bi bi-sliders me-1 text-cyan"></i> Filter Options</h6>
                     <a href="@Url.Action("Index", "Courses")" class="small text-danger text-decoration-none fw-semibold">Reset All</a>
                 </div>
 
                 @using (Html.BeginForm("Index", "Courses", FormMethod.Get, new { id = "filterForm" }))
                 {
                     <div class="mb-3">
-                        <label class="form-label small fw-bold text-dark">Keyword Search</label>
+                        <label class="form-label small fw-bold text-white">Keyword Search</label>
                         <div class="input-group input-group-sm">
-                            <input type="text" name="search" id="catalogSearchInput" class="form-control" value="@Model.Search" placeholder="Search title, skills..." />
-                            <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+                            <input type="text" name="search" id="catalogSearchInput" class="form-control" value="@Model.Search" placeholder="Search title, skills..." style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;" />
+                            <button class="btn btn-primary" type="submit" style="background-color: #FF7A18 !important; border-color: #FF7A18 !important;"><i class="bi bi-search"></i></button>
                         </div>
                     </div>
 
@@ -75,30 +75,30 @@
                     }
 
                     <div class="mb-3">
-                        <label class="form-label small fw-bold text-dark">Difficulty Level</label>
+                        <label class="form-label small fw-bold text-white">Difficulty Level</label>
                         <input type="hidden" name="level" id="filterLevelInput" value="@Model.Level" />
                         <div class="d-flex flex-wrap gap-1">
-                            <button type="button" class="btn btn-xs level-chip-btn @(string.IsNullOrEmpty(Model.Level) || Model.Level == "All" ? "active btn-primary" : "btn-outline-secondary") rounded-pill px-2 py-1 small" data-level="">All</button>
-                            <button type="button" class="btn btn-xs level-chip-btn @(Model.Level == "Beginner" ? "active btn-primary" : "btn-outline-secondary") rounded-pill px-2 py-1 small" data-level="Beginner">Beginner</button>
-                            <button type="button" class="btn btn-xs level-chip-btn @(Model.Level == "Intermediate" ? "active btn-primary" : "btn-outline-secondary") rounded-pill px-2 py-1 small" data-level="Intermediate">Mid</button>
-                            <button type="button" class="btn btn-xs level-chip-btn @(Model.Level == "Advanced" ? "active btn-primary" : "btn-outline-secondary") rounded-pill px-2 py-1 small" data-level="Advanced">Adv</button>
+                            <button type="button" class="btn btn-xs level-chip-btn @(string.IsNullOrEmpty(Model.Level) || Model.Level == "All" ? "active btn-primary" : "btn-outline-light") rounded-pill px-2 py-1 small" data-level="" style="@(string.IsNullOrEmpty(Model.Level) || Model.Level == "All" ? "background-color: #FF7A18 !important; border-color: #FF7A18 !important;" : "border-color: rgba(255, 255, 255, 0.2); color: #E2E8F0;")">All</button>
+                            <button type="button" class="btn btn-xs level-chip-btn @(Model.Level == "Beginner" ? "active btn-primary" : "btn-outline-light") rounded-pill px-2 py-1 small" data-level="Beginner" style="@(Model.Level == "Beginner" ? "background-color: #FF7A18 !important; border-color: #FF7A18 !important;" : "border-color: rgba(255, 255, 255, 0.2); color: #E2E8F0;")">Beginner</button>
+                            <button type="button" class="btn btn-xs level-chip-btn @(Model.Level == "Intermediate" ? "active btn-primary" : "btn-outline-light") rounded-pill px-2 py-1 small" data-level="Intermediate" style="@(Model.Level == "Intermediate" ? "background-color: #FF7A18 !important; border-color: #FF7A18 !important;" : "border-color: rgba(255, 255, 255, 0.2); color: #E2E8F0;")">Mid</button>
+                            <button type="button" class="btn btn-xs level-chip-btn @(Model.Level == "Advanced" ? "active btn-primary" : "btn-outline-light") rounded-pill px-2 py-1 small" data-level="Advanced" style="@(Model.Level == "Advanced" ? "background-color: #FF7A18 !important; border-color: #FF7A18 !important;" : "border-color: rgba(255, 255, 255, 0.2); color: #E2E8F0;")">Adv</button>
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label small fw-bold text-dark">Pricing Model</label>
-                        <div class="p-2 bg-light rounded-3 border">
-                            <div class="form-check small mb-1">
+                        <label class="form-label small fw-bold text-white">Pricing Model</label>
+                        <div class="p-3 rounded-3" style="background: rgba(4, 24, 34, 0.7); border: 1px solid rgba(255, 255, 255, 0.12);">
+                            <div class="form-check small mb-2">
                                 <input class="form-check-input" type="radio" name="priceType" id="priceAll" value="" @(string.IsNullOrEmpty(Model.PriceType) ? "checked" : "") onchange="this.form.submit()">
-                                <label class="form-check-label fw-semibold" for="priceAll">All Tracks</label>
+                                <label class="form-check-label fw-semibold text-white" for="priceAll">All Tracks</label>
                             </div>
-                            <div class="form-check small mb-1">
+                            <div class="form-check small mb-2">
                                 <input class="form-check-input" type="radio" name="priceType" id="priceFree" value="Free" @(Model.PriceType == "Free" ? "checked" : "") onchange="this.form.submit()">
-                                <label class="form-check-label fw-semibold text-success" for="priceFree">Free Only</label>
+                                <label class="form-check-label fw-semibold" style="color: #35C98A;" for="priceFree">Free Only</label>
                             </div>
                             <div class="form-check small">
                                 <input class="form-check-input" type="radio" name="priceType" id="pricePaid" value="Paid" @(Model.PriceType == "Paid" ? "checked" : "") onchange="this.form.submit()">
-                                <label class="form-check-label fw-semibold text-primary" for="pricePaid">Premium Only</label>
+                                <label class="form-check-label fw-semibold" style="color: #27B8D6;" for="pricePaid">Premium Only</label>
                             </div>
                         </div>
                     </div>
@@ -164,20 +164,20 @@
                                         <span class="position-absolute top-0 end-0 m-2 badge bg-dark bg-opacity-75 rounded-pill px-3 py-1 small">
                                             @course.Level
                                         </span>
-                                        <span class="position-absolute bottom-0 start-0 m-2 badge bg-white text-dark shadow-sm border small">
-                                            <i class="bi bi-clock me-1 text-primary"></i> @course.DurationInHours hrs
+                                        <span class="position-absolute bottom-0 start-0 m-2 badge rounded-pill px-3 py-1 shadow-sm small" style="background: rgba(4, 24, 34, 0.85); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.2); color: #FFFFFF; font-weight: 600;">
+                                            <i class="bi bi-clock me-1 text-orange"></i> @course.DurationInHours hrs
                                         </span>
                                     </div>
                                 }
                                 else
                                 {
-                                    <div class="bg-light text-center py-4 border-bottom position-relative" style="height: 160px; display:flex; align-items:center; justify-content:center; background: radial-gradient(circle, #f8fafc 0%, #e2e8f0 100%);">
-                                        <i class="bi bi-mortarboard-fill display-4 text-primary opacity-25"></i>
+                                    <div class="bg-dark text-center py-4 border-bottom position-relative" style="height: 160px; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg, #041822 0%, #062330 50%, #0B3445 100%);">
+                                        <i class="bi bi-mortarboard-fill display-4 text-orange opacity-75"></i>
                                         <span class="position-absolute top-0 end-0 m-2 badge bg-dark bg-opacity-75 rounded-pill px-3 py-1 small">
                                             @course.Level
                                         </span>
-                                        <span class="position-absolute bottom-0 start-0 m-2 badge bg-white text-dark shadow-sm border small">
-                                            <i class="bi bi-clock me-1 text-primary"></i> @course.DurationInHours hrs
+                                        <span class="position-absolute bottom-0 start-0 m-2 badge rounded-pill px-3 py-1 shadow-sm small" style="background: rgba(4, 24, 34, 0.85); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.2); color: #FFFFFF; font-weight: 600;">
+                                            <i class="bi bi-clock me-1 text-orange"></i> @course.DurationInHours hrs
                                         </span>
                                     </div>
                                 }
@@ -217,7 +217,7 @@
                                                 <span class="fs-5 fw-extrabold text-dark"><span class="rupee-symbol">&#8377;</span>@course.Price.ToString("N2")</span>
                                             }
                                         </div>
-                                        <a href="@Url.Action("Details", "Courses", new { id = course.CourseId })" class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold">
+                                        <a href="@Url.Action("Details", "Courses", new { id = course.CourseId })" class="btn btn-sm btn-primary rounded-pill px-3 fw-semibold text-white shadow-xs" style="background-color: #FF7A18 !important; border-color: #FF7A18 !important;">
                                             Details &rarr;
                                         </a>
                                     </div>

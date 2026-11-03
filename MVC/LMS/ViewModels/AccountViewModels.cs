@@ -134,5 +134,10 @@ namespace LMS.ViewModels
         public string ProfilePicture { get; set; }
 
         public string Role { get; set; }
+
+        [Display(Name = "Official Signature Path")]
+        public string SignaturePath { get; set; }
+
+        public string SignatureData { get; set; } // Base64 data from drawing pad
     }
 }
