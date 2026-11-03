@@ -1,0 +1,397 @@
+@model FoodArrival.Models.AdminDashboardViewModel
+@{
+    ViewBag.Title = "Approvals & Verifications - Admin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string activeTab = ViewBag.ActiveTab as string ?? "restaurants";
+}
+
+<div class="container-fluid py-4 px-lg-5">
+    <div class="row g-4">
+        <!-- Admin Left Sidebar -->
+        <div class="col-lg-2 col-md-3">
+            <div class="admin-sidebar sticky-top" style="top: 85px;">
+                <div class="d-flex align-items-center gap-2 mb-4 px-2">
+                    <span class="badge bg-warning text-dark fw-bold px-2 py-1"><i class="bi bi-shield-lock-fill me-1"></i> Admin Panel</span>
+                </div>
+                <div class="nav flex-column gap-1">
+                    <a href="@Url.Action("Dashboard", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="@Url.Action("Approvals", "Admin")" class="admin-nav-item active d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Approvals</span>
+                        </div>
+                        @if (Model.PendingApprovalsCount > 0)
+                        {
+                            <span class="badge bg-danger rounded-pill">@Model.PendingApprovalsCount</span>
+                        }
+                    </a>
+                    <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="admin-nav-item">
+                        <i class="bi bi-card-checklist"></i>
+                        <span>Orders</span>
+                    </a>
+                    <a href="@Url.Action("FoodItems", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-egg-fried"></i>
+                        <span>Food Menu</span>
+                    </a>
+                    <a href="@Url.Action("Riders", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-bicycle"></i>
+                        <span>Rider Fleet</span>
+                    </a>
+                    <a href="@Url.Action("Transactions", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-cash-stack"></i>
+                        <span>Transactions</span>
+                    </a>
+                    <a href="@Url.Action("Bulletins", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-megaphone-fill"></i>
+                        <span>Bulletins</span>
+                    </a>
+                    <hr class="border-secondary my-3" />
+                    <a href="@Url.Action("Logout", "Admin")" class="admin-nav-item text-danger">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-lg-10 col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-0">Platform Approvals & Verifications</h2>
+                    <p class="text-muted small mb-0">Review partner applications, staff onboarding, rider credentials, and kitchen dish proposals</p>
+                </div>
+            </div>
+
+            <!-- Tab Pills -->
+            <ul class="nav nav-pills mb-4 gap-2">
+                <li class="nav-item">
+                    <a class="nav-link fw-bold @(activeTab == "restaurants" ? "active bg-warning text-dark" : "bg-light text-dark")" href="@Url.Action("Approvals", "Admin", new { tab = "restaurants" })">
+                        <i class="bi bi-shop me-1"></i> Restaurants (@Model.PendingRestaurants.Count)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bold @(activeTab == "staff" ? "active bg-warning text-dark" : "bg-light text-dark")" href="@Url.Action("Approvals", "Admin", new { tab = "staff" })">
+                        <i class="bi bi-person-badge me-1"></i> Kitchen Staff (@Model.PendingStaff.Count)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bold @(activeTab == "riders" ? "active bg-warning text-dark" : "bg-light text-dark")" href="@Url.Action("Approvals", "Admin", new { tab = "riders" })">
+                        <i class="bi bi-bicycle me-1"></i> Rider Affiliations (@Model.PendingRiders.Count)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bold @(activeTab == "dishes" ? "active bg-warning text-dark" : "bg-light text-dark")" href="@Url.Action("Approvals", "Admin", new { tab = "dishes" })">
+                        <i class="bi bi-egg-fried me-1"></i> Proposed Dishes (@Model.PendingDishes.Count)
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Tab 1: Pending Restaurants -->
+            @if (activeTab == "restaurants")
+            {
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="p-3 bg-light border-bottom fw-bold text-dark d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-shop text-primary me-2"></i> Pending Restaurant Registrations</span>
+                        <span class="badge bg-secondary">Total: @Model.PendingRestaurants.Count</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0 custom-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Restaurant Name</th>
+                                    <th>Owner</th>
+                                    <th>Contact</th>
+                                    <th>Address</th>
+                                    <th>Cuisine</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.PendingRestaurants != null && Model.PendingRestaurants.Any())
+                                {
+                                    foreach (var rest in Model.PendingRestaurants)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold text-dark">#R@(rest.RestaurantId)</td>
+                                            <td>
+                                                <div class="fw-bold text-dark">@rest.RestaurantName</div>
+                                                <div class="small text-muted">@rest.Username</div>
+                                            </td>
+                                            <td>@(string.IsNullOrEmpty(rest.OwnerName) ? "-" : rest.OwnerName)</td>
+                                            <td>
+                                                <div><i class="bi bi-envelope small text-muted me-1"></i>@rest.Email</div>
+                                                <div class="small text-muted"><i class="bi bi-telephone small text-muted me-1"></i>@rest.PhoneNumber</div>
+                                            </td>
+                                            <td class="small">@rest.Address</td>
+                                            <td><span class="badge bg-light text-dark border">@rest.Cuisine</span></td>
+                                            <td class="text-end">
+                                                @using (Html.BeginForm("ApproveRestaurant", "Admin", new { id = rest.RestaurantId }, FormMethod.Post, new { @class = "d-inline" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-success fw-bold px-3 py-1">
+                                                        <i class="bi bi-check-circle me-1"></i> Approve
+                                                    </button>
+                                                }
+                                                @using (Html.BeginForm("RejectRestaurant", "Admin", new { id = rest.RestaurantId }, FormMethod.Post, new { @class = "d-inline ms-1" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold px-3 py-1">
+                                                        <i class="bi bi-x-circle me-1"></i> Reject
+                                                    </button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center py-5 text-muted">
+                                            <i class="bi bi-check2-all display-6 text-success d-block mb-2"></i>
+                                            No pending restaurant verification requests at this time.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            <!-- Tab 2: Pending Staff -->
+            @if (activeTab == "staff")
+            {
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="p-3 bg-light border-bottom fw-bold text-dark d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-person-badge text-primary me-2"></i> Pending Kitchen Staff Verifications</span>
+                        <span class="badge bg-secondary">Total: @Model.PendingStaff.Count</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0 custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Staff Code</th>
+                                    <th>Name</th>
+                                    <th>Restaurant</th>
+                                    <th>Designation</th>
+                                    <th>Contact</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.PendingStaff != null && Model.PendingStaff.Any())
+                                {
+                                    foreach (var stf in Model.PendingStaff)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold text-dark"><span class="badge bg-dark">@stf.StaffCode</span></td>
+                                            <td>
+                                                <div class="fw-bold text-dark">@stf.StaffName</div>
+                                                <div class="small text-muted">@stf.Username</div>
+                                            </td>
+                                            <td><span class="fw-bold text-primary">@stf.RestaurantName</span></td>
+                                            <td><span class="badge bg-light text-dark border">@stf.RoleTitle</span></td>
+                                            <td>
+                                                <div>@stf.Email</div>
+                                                <div class="small text-muted">@stf.PhoneNumber</div>
+                                            </td>
+                                            <td class="text-end">
+                                                @using (Html.BeginForm("ApproveStaff", "Admin", new { id = stf.StaffId }, FormMethod.Post, new { @class = "d-inline" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-success fw-bold px-3 py-1">
+                                                        <i class="bi bi-check-circle me-1"></i> Verify Staff
+                                                    </button>
+                                                }
+                                                @using (Html.BeginForm("RejectStaff", "Admin", new { id = stf.StaffId }, FormMethod.Post, new { @class = "d-inline ms-1" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold px-3 py-1">
+                                                        <i class="bi bi-x-circle me-1"></i> Reject
+                                                    </button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5 text-muted">
+                                            <i class="bi bi-check2-all display-6 text-success d-block mb-2"></i>
+                                            All staff applications are verified.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            <!-- Tab 3: Pending Rider Affiliations -->
+            @if (activeTab == "riders")
+            {
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="p-3 bg-light border-bottom fw-bold text-dark d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-bicycle text-primary me-2"></i> Rider Restaurant Affiliations Pending Verification</span>
+                        <span class="badge bg-secondary">Total: @Model.PendingRiders.Count</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0 custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Rider</th>
+                                    <th>Target Restaurant</th>
+                                    <th>Vehicle</th>
+                                    <th>Driving License</th>
+                                    <th>Applied On</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.PendingRiders != null && Model.PendingRiders.Any())
+                                {
+                                    foreach (var aff in Model.PendingRiders)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="fw-bold text-dark">@aff.RiderName</div>
+                                                <div class="small text-muted">@aff.PhoneNumber &bull; @aff.Email</div>
+                                            </td>
+                                            <td><span class="fw-bold text-primary">@aff.RestaurantName</span></td>
+                                            <td><span class="badge bg-light text-dark border">@aff.VehicleType</span></td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(aff.LicenseNumber))
+                                                {
+                                                    <div class="fw-bold text-dark small">@aff.LicenseNumber</div>
+                                                    if (!string.IsNullOrEmpty(aff.LicenseDocumentUrl))
+                                                    {
+                                                        <a href="@aff.LicenseDocumentUrl" target="_blank" class="small text-primary text-decoration-underline">
+                                                            <i class="bi bi-file-earmark-text me-1"></i> View Document
+                                                        </a>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted small">Not Required (Non-motorized)</span>
+                                                }
+                                            </td>
+                                            <td class="small text-muted">@aff.AffiliatedAt.ToString("dd MMM yyyy")</td>
+                                            <td class="text-end">
+                                                @using (Html.BeginForm("ApproveRiderAffiliation", "Admin", new { id = aff.AffiliationId }, FormMethod.Post, new { @class = "d-inline" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-success fw-bold px-3 py-1">
+                                                        <i class="bi bi-check-circle me-1"></i> Verify & Link
+                                                    </button>
+                                                }
+                                                @using (Html.BeginForm("RejectRiderAffiliation", "Admin", new { id = aff.AffiliationId }, FormMethod.Post, new { @class = "d-inline ms-1" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold px-3 py-1">
+                                                        <i class="bi bi-x-circle me-1"></i> Reject
+                                                    </button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5 text-muted">
+                                            <i class="bi bi-check2-all display-6 text-success d-block mb-2"></i>
+                                            No pending rider affiliations.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            <!-- Tab 4: Pending Dishes -->
+            @if (activeTab == "dishes")
+            {
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="p-3 bg-light border-bottom fw-bold text-dark d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-egg-fried text-primary me-2"></i> Staff-Proposed Dishes Awaiting Approval</span>
+                        <span class="badge bg-secondary">Total: @Model.PendingDishes.Count</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0 custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Dish</th>
+                                    <th>Restaurant</th>
+                                    <th>Proposed By</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.PendingDishes != null && Model.PendingDishes.Any())
+                                {
+                                    foreach (var dish in Model.PendingDishes)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <img src="@dish.ImageUrl" alt="@dish.ItemName" class="rounded-3" style="width: 44px; height: 44px; object-fit: cover;" onerror="this.src='/Content/images/margherita.jpg'" />
+                                                    <div>
+                                                        <div class="fw-bold text-dark">@dish.ItemName</div>
+                                                        <div class="small text-muted">@dish.Description</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><span class="fw-bold text-primary">@dish.RestaurantName</span></td>
+                                            <td>
+                                                <div class="small fw-bold">@dish.StaffName</div>
+                                                <div class="small text-muted">Kitchen Staff</div>
+                                            </td>
+                                            <td><span class="badge bg-light text-dark border">@dish.Category</span></td>
+                                            <td class="fw-bold text-dark">&#8377;@dish.Price.ToString("F0")</td>
+                                            <td class="text-end">
+                                                @using (Html.BeginForm("ApproveDish", "Admin", new { id = dish.FoodItemId }, FormMethod.Post, new { @class = "d-inline" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-success fw-bold px-3 py-1">
+                                                        <i class="bi bi-check-circle me-1"></i> Add to Menu
+                                                    </button>
+                                                }
+                                                @using (Html.BeginForm("RejectDish", "Admin", new { id = dish.FoodItemId }, FormMethod.Post, new { @class = "d-inline ms-1" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger fw-bold px-3 py-1">
+                                                        <i class="bi bi-x-circle me-1"></i> Reject
+                                                    </button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5 text-muted">
+                                            <i class="bi bi-check2-all display-6 text-success d-block mb-2"></i>
+                                            No proposed dishes pending review.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
