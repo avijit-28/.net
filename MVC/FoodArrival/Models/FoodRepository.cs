@@ -343,6 +343,18 @@ namespace FoodArrival.Models
             return result;
         }
 
+        public void SetAdminOrderStatus(int adminId, long orderId, string status)
+        {
+            using (var connection = OpenConnection())
+            using (var command = Procedure(connection, "food.usp_Admin_OrderSetStatus"))
+            {
+                command.Parameters.Add("@ActorUserId", SqlDbType.Int).Value = adminId;
+                command.Parameters.Add("@OrderId", SqlDbType.BigInt).Value = orderId;
+                command.Parameters.Add("@NewStatus", SqlDbType.NVarChar, 20).Value = status;
+                command.ExecuteNonQuery();
+            }
+        }
+
         public IList<KeyValuePair<int, string>> GetActiveAgents()
         {
             var result = new List<KeyValuePair<int, string>>();
