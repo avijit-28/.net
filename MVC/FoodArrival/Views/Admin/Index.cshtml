@@ -39,13 +39,12 @@
         @foreach (var user in Model.Users)
         {
             <div class="border-top py-3"><div class="d-flex justify-content-between gap-2"><div><strong>@user.FullName</strong><div class="small text-muted">@user.Email · #@user.UserId</div></div><span class="status-pill">@(user.IsActive ? user.Role : "Inactive")</span></div>
-                using (Html.BeginForm("UpdateUser", "Admin", FormMethod.Post, new { @class = "d-flex flex-wrap gap-2 mt-2" }))
-                {
-                    @Html.AntiForgeryToken() @Html.Hidden("userId", user.UserId)
+                <form action="@Url.Action("UpdateUser", "Admin")" method="post" class="d-flex flex-wrap gap-2 mt-2">
+                    @Html.AntiForgeryToken()<input type="hidden" name="userId" value="@user.UserId" />
                     @Html.DropDownList("role", new SelectList(new[] { "Customer", "Restaurant", "DeliveryAgent", "Admin" }, user.Role), new { @class = "form-select", style = "max-width:190px" })
                     <div class="form-check align-self-center"><input class="form-check-input" type="checkbox" id="active-@user.UserId" name="isActive" value="true" @(user.IsActive ? "checked" : "") /><input type="hidden" name="isActive" value="false" /><label class="form-check-label" for="active-@user.UserId">Active</label></div>
                     <button class="btn btn-outline-dark btn-sm" type="submit">Save</button>
-                }
+                </form>
             </div>
         }
     </div></section>
@@ -55,9 +54,8 @@
     @foreach (var restaurant in Model.Restaurants)
     {
         <div class="d-flex justify-content-between align-items-center border-top py-3"><div><strong>@restaurant.Name</strong><div class="small text-muted">@restaurant.Cuisine · @restaurant.City · Owner #@restaurant.OwnerUserId</div></div><span class="status-pill">@(restaurant.IsActive ? "Active" : "Inactive")</span></div>
-        using (Html.BeginForm("SaveRestaurant", "Admin", FormMethod.Post, new { @class = "row g-2 mb-3" }))
-        {
-            @Html.AntiForgeryToken() @Html.Hidden("RestaurantId", restaurant.RestaurantId)
+        <form action="@Url.Action("SaveRestaurant", "Admin")" method="post" class="row g-2 mb-3">
+            @Html.AntiForgeryToken()<input type="hidden" name="RestaurantId" value="@restaurant.RestaurantId" />
             <div class="col-md-2"><label class="visually-hidden" for="owner-@restaurant.RestaurantId">Owner</label>@Html.DropDownList("OwnerUserId", new SelectList(Model.RestaurantOwners, "Value", "Text", restaurant.OwnerUserId), new { @class = "form-select", id = "owner-" + restaurant.RestaurantId })</div>
             <div class="col-md-2"><label class="visually-hidden" for="name-@restaurant.RestaurantId">Name</label><input class="form-control" id="name-@restaurant.RestaurantId" name="Name" value="@restaurant.Name" required /></div>
             <div class="col-md-2"><label class="visually-hidden" for="cuisine-@restaurant.RestaurantId">Cuisine</label><input class="form-control" id="cuisine-@restaurant.RestaurantId" name="Cuisine" value="@restaurant.Cuisine" required /></div>
@@ -65,6 +63,6 @@
             <div class="col-md-2"><label class="visually-hidden" for="city-@restaurant.RestaurantId">City</label><input class="form-control" id="city-@restaurant.RestaurantId" name="City" value="@restaurant.City" required /></div>
             <div class="col-md-2"><label class="visually-hidden" for="active-restaurant-@restaurant.RestaurantId">Visibility</label><select class="form-select" id="active-restaurant-@restaurant.RestaurantId" name="IsActive"><option value="true" @(restaurant.IsActive ? "selected" : "")>Active</option><option value="false" @(!restaurant.IsActive ? "selected" : "")>Hidden</option></select></div>
             <div class="col-md-2"><button class="btn btn-outline-dark w-100" type="submit">Save details</button></div>
-        }
+        </form>
     }
 </section>
