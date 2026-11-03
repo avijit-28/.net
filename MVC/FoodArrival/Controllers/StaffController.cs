@@ -1,4 +1,4 @@
-﻿using FoodArrival.Attributes;
+using FoodArrival.Attributes;
 using System;
 using System.IO;
 using System.Web;
@@ -148,26 +148,70 @@ namespace FoodArrival.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            _restRepo.UpdateDeliveryStatus(orderId, status);
+            int? restId = Session["RestaurantId"] != null ? (int?)Convert.ToInt32(Session["RestaurantId"]) : null;
+
+            _restRepo.UpdateDeliveryStatus(orderId, status, restId);
 
             var order = _orderRepo.GetById(orderId);
             int? custId = order != null ? (int?)order.CustomerId : null;
             int? riderId = order != null ? order.RiderId : null;
+
+            // If not directly on master order, check sub-orders for assigned rider
+            if (!riderId.HasValue)
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new System.Data.SqlClient.SqlCommand("SELECT TOP 1 RiderId FROM dbo.OrderSubOrders WHERE OrderId = @OrderId AND RiderId IS NOT NULL", conn))
+                {
+                    cmd.Parameters.AddWithValue("@OrderId", orderId);
+                    conn.Open();
+                    var rObj = cmd.ExecuteScalar();
+                    if (rObj != null && rObj != DBNull.Value)
+                    {
+                        riderId = Convert.ToInt32(rObj);
+                        using (var cmdSync = new System.Data.SqlClient.SqlCommand("UPDATE dbo.Orders SET RiderId = @RiderId WHERE OrderId = @OrderId AND RiderId IS NULL", conn))
+                        {
+                            cmdSync.Parameters.AddWithValue("@RiderId", riderId.Value);
+                            cmdSync.Parameters.AddWithValue("@OrderId", orderId);
+                            cmdSync.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+
+            // If still no rider assigned, trigger intelligent rider allocation now!
+            if (!riderId.HasValue)
+            {
+                var allocService = new FoodArrival.Services.RiderAllocationService();
+                var allocRes = allocService.AllocateRiders(orderId);
+                if (allocRes.IsSuccessful)
+                {
+                    using (var conn = DbHelper.GetConnection())
+                    using (var cmd = new System.Data.SqlClient.SqlCommand("SELECT TOP 1 RiderId FROM dbo.OrderSubOrders WHERE OrderId = @OrderId AND RiderId IS NOT NULL", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@OrderId", orderId);
+                        conn.Open();
+                        var rObj = cmd.ExecuteScalar();
+                        if (rObj != null && rObj != DBNull.Value) riderId = Convert.ToInt32(rObj);
+                    }
+                }
+            }
+
             string orderNum = order != null && !string.IsNullOrEmpty(order.OrderNumber) ? order.OrderNumber : ($"#FD{1000 + orderId}");
 
             if (status == "ReadyForPickup")
             {
                 if (riderId.HasValue)
                 {
-                    _notifRepo.AddNotification("Rider", riderId.Value, "Order Ready for Pickup!", $"Order {orderNum} is prepared by kitchen staff.", "Order", "/Rider/Dashboard");
+                    _notifRepo.AddNotification("Rider", riderId.Value, "Order Ready for Pickup!", $"Order {orderNum} is freshly prepared & ready for pickup from kitchen.", "Order", "/Rider/Dashboard");
                 }
                 if (custId.HasValue)
                 {
                     _notifRepo.AddNotification("Customer", custId.Value, "Your Food is Prepared!", $"Order {orderNum} is freshly cooked & packed.", "Order", "/Order/History");
                 }
+                _notifRepo.AddNotification("Admin", null, "Order Ready for Pickup", $"Order {orderNum} is prepared and ready for rider pickup.", "Order", "/Admin/Orders");
             }
 
-            TempData["Success"] = $"Order {orderNum} marked as {status}.";
+            TempData["Success"] = $"Order {orderNum} marked as {status}. Dispatched to delivery partner queue.";
             return RedirectToAction("Dashboard");
         }
     }
