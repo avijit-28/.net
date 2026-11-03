@@ -982,6 +982,65 @@ BEGIN
 END;
 GO
 
+CREATE OR ALTER PROCEDURE food.usp_Admin_MenuItemList
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT m.MenuItemId, m.RestaurantId, r.Name AS RestaurantName, m.Name, m.Description,
+           m.Category, m.Price, m.ImageUrl, m.IsVegetarian, m.IsAvailable
+    FROM food.MenuItems m INNER JOIN food.Restaurants r ON r.RestaurantId = m.RestaurantId
+    ORDER BY r.Name, m.Category, m.Name;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE food.usp_Admin_MenuItemSave
+    @ActorUserId INT,
+    @MenuItemId INT = NULL,
+    @RestaurantId INT,
+    @Name NVARCHAR(160),
+    @Description NVARCHAR(600) = NULL,
+    @Category NVARCHAR(80) = NULL,
+    @Price DECIMAL(10,2),
+    @ImageUrl NVARCHAR(500) = NULL,
+    @IsVegetarian BIT,
+    @IsAvailable BIT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF NOT EXISTS (SELECT 1 FROM food.vw_UserAccess WHERE UserId = @ActorUserId AND RoleName = N'Admin' AND IsActive = 1)
+        THROW 51073, 'Only an active administrator can manage menu items.', 1;
+    IF NOT EXISTS (SELECT 1 FROM food.Restaurants WHERE RestaurantId = @RestaurantId)
+        THROW 51074, 'Restaurant was not found.', 1;
+    IF NULLIF(LTRIM(RTRIM(@Name)), N'') IS NULL OR @Price <= 0
+        THROW 51075, 'Menu item name and a positive price are required.', 1;
+    IF @MenuItemId IS NULL
+        INSERT food.MenuItems(RestaurantId, Name, Description, Category, Price, ImageUrl, IsVegetarian, IsAvailable)
+        VALUES (@RestaurantId, @Name, @Description, @Category, @Price, @ImageUrl, @IsVegetarian, @IsAvailable);
+    ELSE
+    BEGIN
+        UPDATE food.MenuItems
+        SET RestaurantId=@RestaurantId, Name=@Name, Description=@Description, Category=@Category,
+            Price=@Price, ImageUrl=@ImageUrl, IsVegetarian=@IsVegetarian, IsAvailable=@IsAvailable,
+            UpdatedAt=SYSUTCDATETIME()
+        WHERE MenuItemId=@MenuItemId;
+        IF @@ROWCOUNT=0 THROW 51076, 'Menu item was not found.', 1;
+    END;
+    SELECT COALESCE(@MenuItemId, CONVERT(INT, SCOPE_IDENTITY())) AS MenuItemId;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE food.usp_Admin_MenuItemSetAvailability
+    @ActorUserId INT, @MenuItemId INT, @IsAvailable BIT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF NOT EXISTS (SELECT 1 FROM food.vw_UserAccess WHERE UserId=@ActorUserId AND RoleName=N'Admin' AND IsActive=1)
+        THROW 51077, 'Only an active administrator can manage menu items.', 1;
+    UPDATE food.MenuItems SET IsAvailable=@IsAvailable, UpdatedAt=SYSUTCDATETIME() WHERE MenuItemId=@MenuItemId;
+    IF @@ROWCOUNT=0 THROW 51078, 'Menu item was not found.', 1;
+END;
+GO
+
 CREATE OR ALTER PROCEDURE food.usp_Admin_AgentList
 AS
 BEGIN
