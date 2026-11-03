@@ -42,7 +42,7 @@ namespace FoodArrival.Attributes
             {
                 AntiForgery.Validate();
             }
-            catch (HttpAntiForgeryException ex)
+            catch (HttpAntiForgeryException)
             {
                 // If the exception was due to an identity username mismatch (e.g. token generated for user A, but session switched to user B):
                 var cookieToken = request.Cookies[AntiForgeryConfig.CookieName]?.Value;
