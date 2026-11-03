@@ -1,3 +1,4 @@
+﻿using FoodArrival.Attributes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,7 +38,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult Login(LoginViewModel model)
         {
             if (string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
@@ -131,7 +132,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult ApproveRestaurant(int id)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -151,7 +152,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult RejectRestaurant(int id)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -169,7 +170,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult ApproveStaff(int id)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -188,7 +189,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult RejectStaff(int id)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -206,7 +207,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult ApproveRiderAffiliation(int id)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -225,7 +226,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult RejectRiderAffiliation(int id)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -243,7 +244,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult ApproveDish(int id)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -262,7 +263,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult RejectDish(int id)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -319,7 +320,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult AddBulletin(Bulletin bulletin)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -339,7 +340,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult DeleteBulletin(int id)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -400,7 +401,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult TriggerAutoReject()
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -411,7 +412,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult AcceptOrder(int orderId)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -447,7 +448,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult RejectOrder(int orderId, string reason)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -483,7 +484,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult AddFoodItem(FoodItem item, HttpPostedFileBase imageFile)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -523,7 +524,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult EditFoodItem(FoodItem item, HttpPostedFileBase imageFile)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -553,7 +554,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult DeleteFoodItem(int id)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -572,7 +573,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult ToggleAvailability(int id)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
@@ -590,7 +591,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult ResetUserPassword(string role, int id)
         {
             if (!IsAdminAuthenticated()) return RedirectToAction("Login");
