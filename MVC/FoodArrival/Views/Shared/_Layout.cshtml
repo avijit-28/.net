@@ -19,7 +19,7 @@
                     <li class="nav-item">@Html.ActionLink("Your orders", "Index", "Orders", null, new { @class = "nav-link" })</li>
                     @if (Request.IsAuthenticated)
                     {
-                        if (User.IsInRole("Restaurant")) { <li class="nav-item">@Html.ActionLink("Restaurant dashboard", "Index", "RestaurantDashboard", null, new { @class = "nav-link" })</li> }
+                        if (User.IsInRole("RestaurantStaff")) { <li class="nav-item">@Html.ActionLink("Restaurant dashboard", "Index", "RestaurantDashboard", null, new { @class = "nav-link" })</li> }
                         if (User.IsInRole("DeliveryAgent")) { <li class="nav-item">@Html.ActionLink("Deliveries", "Index", "Delivery", null, new { @class = "nav-link" })</li> }
                         if (User.IsInRole("Admin")) { <li class="nav-item">@Html.ActionLink("Admin", "Index", "Admin", null, new { @class = "nav-link" })</li> }
                         <li class="nav-item"><span class="nav-link text-muted">My account</span></li>
