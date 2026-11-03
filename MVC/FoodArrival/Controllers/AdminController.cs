@@ -423,11 +423,21 @@ namespace FoodArrival.Controllers
             {
                 var order = _orderRepo.GetDetails(orderId);
                 int? custId = order != null ? (int?)order.CustomerId : null;
-                _notifRepo.AddNotification("Customer", custId, "Order Accepted!", "Your Order #FD" + (1000 + orderId) + " was accepted and sent to kitchen.", "Order", "/Order/History");
-                _notifRepo.AddNotification("Restaurant", null, "Order Confirmed by Admin", "Order #FD" + (1000 + orderId) + " confirmed. Start preparation.", "Order", "/Restaurant/Dashboard");
-                _notifRepo.AddNotification("Rider", null, "Upcoming Delivery", "Order #FD" + (1000 + orderId) + " accepted. Ready for pickup shortly.", "Info", "/Rider/Dashboard");
+                int? restId = order != null ? order.RestaurantId : null;
+                int? riderId = order != null ? order.RiderId : null;
+                string orderNum = order != null && !string.IsNullOrEmpty(order.OrderNumber) ? order.OrderNumber : ("#FD" + (1000 + orderId));
 
-                TempData["Success"] = "Order #FD" + (1000 + orderId) + " accepted successfully.";
+                _notifRepo.AddNotification("Customer", custId, "Order Accepted!", "Your Order " + orderNum + " was accepted and sent to kitchen.", "Order", "/Order/History");
+                if (restId.HasValue)
+                {
+                    _notifRepo.AddNotification("Restaurant", restId.Value, "Order Confirmed by Admin", "Order " + orderNum + " confirmed. Start preparation.", "Order", "/Restaurant/Dashboard");
+                }
+                if (riderId.HasValue)
+                {
+                    _notifRepo.AddNotification("Rider", riderId.Value, "Upcoming Delivery", "Order " + orderNum + " accepted. Ready for pickup shortly.", "Info", "/Rider/Dashboard");
+                }
+
+                TempData["Success"] = "Order " + orderNum + " accepted successfully.";
             }
             else
             {
