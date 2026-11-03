@@ -198,6 +198,11 @@ namespace FoodArrival.DAL
             return list;
         }
 
+        public Order GetById(int orderId)
+        {
+            return GetDetails(orderId);
+        }
+
         public Order GetDetails(int orderId)
         {
             var parameters = new[]
