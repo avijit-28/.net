@@ -151,6 +151,15 @@
     <Compile Include="DAL\RiderRepository.cs" />
     <Compile Include="DAL\StaffRepository.cs" />
     <Compile Include="DAL\NotificationRepository.cs" />
+    <Compile Include="Controllers\OrderTrackingController.cs" />
+    <Compile Include="Models\OrderSubOrder.cs" />
+    <Compile Include="Models\OrderStatusHistory.cs" />
+    <Compile Include="Models\OrderRating.cs" />
+    <Compile Include="Models\OrderTrackingViewModel.cs" />
+    <Compile Include="Services\IRiderAllocationService.cs" />
+    <Compile Include="Services\RiderAllocationService.cs" />
+    <Compile Include="Services\IOrderTrackingService.cs" />
+    <Compile Include="Services\OrderTrackingService.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
