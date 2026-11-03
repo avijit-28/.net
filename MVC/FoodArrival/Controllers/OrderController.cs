@@ -216,7 +216,7 @@ namespace FoodArrival.Controllers
 
                 // Broadcast notifications across roles
                 _notifRepo.AddNotification("Customer", customerId, "Order Placed Successfully", "We received your Order #FD" + (1000 + orderId) + ". Currently Pending approval.", "Order", "/Order/History");
-                _notifRepo.AddNotification("Restaurant", null, "New Order Received!", "Order #FD" + (1000 + orderId) + " placed by " + customerName + " (Total: ₹" + orderTotal.ToString("F0") + ").", "Order", "/Restaurant/Dashboard");
+                _notifRepo.AddNotification("Restaurant", null, "New Order Received!", "Order #FD" + (1000 + orderId) + " placed by " + customerName + " (Total: &#8377;" + orderTotal.ToString("F0") + ").", "Order", "/Restaurant/Dashboard");
                 _notifRepo.AddNotification("Admin", null, "New Pending Order", "Order #FD" + (1000 + orderId) + " is pending. Subject to 5-min auto-reject.", "Alert", "/Admin/Orders?tab=pending");
 
                 Session["Cart"] = new List<CartItem>(); // Empty the cart
