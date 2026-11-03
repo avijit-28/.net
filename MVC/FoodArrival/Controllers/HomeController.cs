@@ -1,29 +1,30 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using FoodArrival.DAL;
 
 namespace FoodArrival.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly FoodItemRepository _foodRepo = new FoodItemRepository();
+
         public ActionResult Index()
         {
-            return RedirectToAction("Index", "Restaurants");
+            var featuredItems = _foodRepo.GetAvailable().Take(4).ToList();
+            return View(featuredItems);
         }
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
-
+            ViewBag.Message = "About FoodReady - Fast, Fresh, Safe Food Delivery.";
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
-
+            ViewBag.Message = "Contact our 24/7 FoodReady customer support team.";
             return View();
         }
     }
