@@ -12,7 +12,7 @@
         <div class="d-flex gap-2">
             @if (item.Status == "Assigned" || item.Status == "PickedUp")
             {
-                using (Html.BeginForm("Status", "Delivery", FormMethod.Post, new { @class = "d-flex gap-2" })) { @Html.AntiForgeryToken() @Html.Hidden("orderId", item.OrderId) @if (item.Status == "Assigned") { <button name="status" value="PickedUp" class="btn btn-dark btn-sm">Picked up</button> } else { <button name="status" value="Delivered" class="btn btn-success btn-sm">Delivered</button> } <button name="status" value="Failed" class="btn btn-outline-danger btn-sm">Report issue</button> }
+                <form action="@Url.Action("Status", "Delivery")" method="post" class="d-flex gap-2">@Html.AntiForgeryToken()<input type="hidden" name="orderId" value="@item.OrderId" />@if (item.Status == "Assigned") { <button name="status" value="PickedUp" class="btn btn-dark btn-sm">Picked up</button> } else { <button name="status" value="Delivered" class="btn btn-success btn-sm">Delivered</button> } <button name="status" value="Failed" class="btn btn-outline-danger btn-sm">Report issue</button></form>
             }
         </div>
     </article>
