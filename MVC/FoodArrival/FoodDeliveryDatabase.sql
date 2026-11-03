@@ -940,9 +940,11 @@ CREATE OR ALTER PROCEDURE food.usp_Admin_UserList
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT UserId, FullName, Email, Role, IsActive, CreatedAt
-    FROM food.Users
-    ORDER BY CreatedAt DESC;
+    SELECT access.UserId, access.FullName, access.Email, access.RoleName AS Role, access.StaffType,
+           access.IsActive, access.PendingRoleRequestId, access.RequestedStaffType, access.StaffRequestDate, u.CreatedAt
+    FROM food.vw_UserAccess access
+    INNER JOIN food.Users u ON u.UserId = access.UserId
+    ORDER BY CASE WHEN access.PendingRoleRequestId IS NOT NULL THEN 0 ELSE 1 END, u.CreatedAt DESC;
 END;
 GO
 
@@ -950,19 +952,52 @@ CREATE OR ALTER PROCEDURE food.usp_Admin_UserUpdate
     @ActorUserId INT,
     @UserId INT,
     @Role NVARCHAR(20),
+    @StaffType NVARCHAR(30) = NULL,
     @IsActive BIT
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @ActorUserId AND Role = N'Admin' AND IsActive = 1)
+    IF NOT EXISTS (SELECT 1 FROM food.vw_UserAccess WHERE UserId = @ActorUserId AND RoleName = N'Admin' AND IsActive = 1)
         THROW 51070, 'Only an active administrator can manage accounts.', 1;
-    IF @Role NOT IN (N'Customer', N'Restaurant', N'DeliveryAgent', N'Admin')
+    IF @Role NOT IN (N'Customer', N'Staff', N'Admin')
         THROW 51071, 'Role is invalid.', 1;
     IF @UserId = @ActorUserId AND (@Role <> N'Admin' OR @IsActive = 0)
         THROW 51072, 'Administrators cannot disable or demote their own account.', 1;
-    UPDATE food.Users SET Role = @Role, IsActive = @IsActive WHERE UserId = @UserId;
-    IF @@ROWCOUNT = 0 THROW 51073, 'User was not found.', 1;
-    SELECT UserId, FullName, Email, Role, IsActive FROM food.Users WHERE UserId = @UserId;
+    IF @Role = N'Staff' AND @StaffType NOT IN (N'Restaurant', N'DeliveryAgent')
+        THROW 51078, 'Staff accounts require a Restaurant or DeliveryAgent staff type.', 1;
+    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @UserId)
+        THROW 51073, 'User was not found.', 1;
+
+    DECLARE @RoleId SMALLINT;
+    SELECT @RoleId = RoleId FROM food.Roles WHERE RoleName = @Role AND IsActive = 1;
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        UPDATE food.Users SET IsActive = @IsActive WHERE UserId = @UserId;
+        UPDATE food.UserRoles SET IsActive = 0 WHERE UserId = @UserId AND IsActive = 1;
+        INSERT food.UserRoles(UserId, RoleId, AssignedByUserId, IsActive)
+        VALUES (@UserId, @RoleId, @ActorUserId, 1);
+
+        IF @Role = N'Staff'
+        BEGIN
+            IF EXISTS (SELECT 1 FROM food.StaffProfiles WHERE UserId = @UserId)
+                UPDATE food.StaffProfiles SET StaffType = @StaffType, IsAvailable = @IsActive WHERE UserId = @UserId;
+            ELSE
+                INSERT food.StaffProfiles(UserId, StaffType, Phone, IsAvailable)
+                SELECT UserId, @StaffType, Phone, @IsActive FROM food.Users WHERE UserId = @UserId;
+        END;
+
+        UPDATE food.AccountRoleRequests
+        SET Status = CASE WHEN @Role = N'Staff' AND RequestedStaffType = @StaffType THEN N'Approved' ELSE N'Rejected' END,
+            ReviewedByUserId = @ActorUserId, ReviewedAt = SYSUTCDATETIME()
+        WHERE UserId = @UserId AND Status = N'Pending';
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH;
+    SELECT UserId, FullName, Email, RoleName AS Role, StaffType, IsActive
+    FROM food.vw_UserAccess WHERE UserId = @UserId;
 END;
 GO
 
@@ -989,10 +1024,10 @@ CREATE OR ALTER PROCEDURE food.usp_Admin_RestaurantSave
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @ActorUserId AND Role = N'Admin' AND IsActive = 1)
+    IF NOT EXISTS (SELECT 1 FROM food.vw_UserAccess WHERE UserId = @ActorUserId AND RoleName = N'Admin' AND IsActive = 1)
         THROW 51074, 'Only an active administrator can manage restaurants.', 1;
-    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @OwnerUserId AND Role = N'Restaurant' AND IsActive = 1)
-        THROW 51075, 'Restaurant owner must be an active restaurant account.', 1;
+    IF NOT EXISTS (SELECT 1 FROM food.vw_UserAccess WHERE UserId = @OwnerUserId AND RoleName = N'Staff' AND StaffType = N'Restaurant' AND IsActive = 1)
+        THROW 51075, 'Restaurant owner must be active restaurant staff.', 1;
     IF NULLIF(LTRIM(RTRIM(@Name)), N'') IS NULL OR NULLIF(LTRIM(RTRIM(@Cuisine)), N'') IS NULL
        OR NULLIF(LTRIM(RTRIM(@AddressLine)), N'') IS NULL OR NULLIF(LTRIM(RTRIM(@City)), N'') IS NULL
         THROW 51076, 'Name, cuisine, address, and city are required.', 1;
