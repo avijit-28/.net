@@ -7,6 +7,16 @@ namespace FoodArrival.Models
     {
         public int FoodItemId { get; set; }
 
+        public int? RestaurantId { get; set; }
+
+        public int? SubmittedByStaffId { get; set; }
+
+        [Display(Name = "Restaurant")]
+        public string RestaurantName { get; set; }
+
+        [Display(Name = "Submitted By Staff")]
+        public string StaffName { get; set; }
+
         [Required(ErrorMessage = "Item Name is required")]
         [StringLength(150)]
         [Display(Name = "Item Name")]
@@ -31,6 +41,9 @@ namespace FoodArrival.Models
 
         [Display(Name = "Available")]
         public bool IsAvailable { get; set; } = true;
+
+        [Display(Name = "Verified")]
+        public bool IsVerified { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
