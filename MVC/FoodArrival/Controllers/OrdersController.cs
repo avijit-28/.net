@@ -4,7 +4,7 @@ using FoodArrival.Models;
 
 namespace FoodArrival.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Customer")]
     public class OrdersController : Controller
     {
         public ActionResult Index() { return View(new FoodRepository().GetCustomerOrders(Int32.Parse(User.Identity.Name))); }
