@@ -19,10 +19,24 @@ namespace FoodArrival.Controllers
             foreach (var user in users.Where(x => x.Role == "Staff" && x.StaffType == "Restaurant" && x.IsActive)) owners.Add(new SelectListItem { Value = user.UserId.ToString(), Text = user.FullName + " · " + user.Email });
             return View(new AdminDashboardViewModel
             {
+                Orders = repo.GetAdminOrders(),
                 ReadyOrders = repo.GetReadyOrders(), Agents = agents, Users = users,
                 Restaurants = repo.GetAdminRestaurants(), RestaurantOwners = owners,
                 NewRestaurant = new AdminRestaurantViewModel { IsActive = true }
             });
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult UpdateOrder(long orderId, string status)
+        {
+            if (status != "Accepted" && status != "Rejected") return new HttpStatusCodeResult(400);
+            try
+            {
+                new FoodRepository().SetAdminOrderStatus(Int32.Parse(User.Identity.Name), orderId, status);
+                TempData["Notice"] = "Order " + status.ToLowerInvariant() + ".";
+            }
+            catch (Exception ex) { TempData["Error"] = ex.Message; }
+            return RedirectToAction("Index");
         }
 
         [HttpPost, ValidateAntiForgeryToken]
