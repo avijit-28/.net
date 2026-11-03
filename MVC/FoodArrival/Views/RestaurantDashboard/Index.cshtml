@@ -1,0 +1,55 @@
+@model FoodArrival.Models.RestaurantDashboardViewModel
+@{
+    ViewBag.Title = "Restaurant dashboard";
+}
+<p class="eyebrow mb-1">Restaurant workspace</p><h1 class="section-heading mb-4">@(!String.IsNullOrWhiteSpace(Model.RestaurantName) ? Model.RestaurantName : "Restaurant dashboard")</h1>
+@if (Model.RestaurantId == 0)
+{
+    <div class="empty-state"><h2 class="h5">No restaurant is linked to this account</h2><p class="text-muted mb-0">Ask an administrator to connect your account to a restaurant.</p></div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-xl-5">
+            <section class="surface-card p-4 mb-4">
+                <h2 class="h5 fw-bold">Add a menu item</h2>
+                @using (Html.BeginForm("SaveMenu", "RestaurantDashboard", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken() @Html.Hidden("restaurantId", Model.RestaurantId)
+                    <div class="mb-3"><label class="form-label" for="Name">Item name</label><input class="form-control" id="Name" name="Name" required maxlength="160" /></div>
+                    <div class="mb-3"><label class="form-label" for="Description">Description</label><textarea class="form-control" id="Description" name="Description" maxlength="600"></textarea></div>
+                    <div class="row"><div class="col-6 mb-3"><label class="form-label" for="Category">Category</label><input class="form-control" id="Category" name="Category" maxlength="80" /></div><div class="col-6 mb-3"><label class="form-label" for="Price">Price (₹)</label><input class="form-control" id="Price" name="Price" type="number" min="0.01" step="0.01" required /></div></div>
+                    <div class="form-check mb-2"><input class="form-check-input" id="IsVegetarian" name="IsVegetarian" type="checkbox" value="true" /><input name="IsVegetarian" type="hidden" value="false" /><label class="form-check-label" for="IsVegetarian">Vegetarian</label></div>
+                    <div class="form-check mb-3"><input class="form-check-input" id="IsAvailable" name="IsAvailable" type="checkbox" value="true" checked /><input name="IsAvailable" type="hidden" value="false" /><label class="form-check-label" for="IsAvailable">Available to order</label></div>
+                    <button class="btn btn-dark" type="submit">Save item</button>
+                }
+            </section>
+            <section class="surface-card p-4">
+                <h2 class="h5 fw-bold">Your menu</h2>
+                @if (!Model.Menu.Any()) { <p class="text-muted mb-0">No menu items yet.</p> }
+                @foreach (var item in Model.Menu)
+                {
+                    <div class="d-flex justify-content-between align-items-center gap-2 border-top py-3"><div><strong>@item.Name</strong><div class="small text-muted">₹@item.Price.ToString("0.00") · @(item.IsAvailable ? "Available" : "Hidden")</div></div>
+                        @using (Html.BeginForm("Availability", "RestaurantDashboard", FormMethod.Post)) { @Html.AntiForgeryToken() @Html.Hidden("menuItemId", item.MenuItemId) @Html.Hidden("isAvailable", !item.IsAvailable) <button class="btn btn-outline-secondary btn-sm" type="submit">@(item.IsAvailable ? "Hide" : "Show")</button> }
+                    </div>
+                }
+            </section>
+        </div>
+        <div class="col-xl-7"><section class="surface-card p-4"><h2 class="h5 fw-bold">Recent orders</h2>
+            @if (!Model.Orders.Any()) { <p class="text-muted">No orders yet. New orders will appear here.</p> }
+            @foreach (var order in Model.Orders)
+            {
+                <div class="border-top py-3"><div class="d-flex justify-content-between gap-2"><strong>@order.OrderNumber</strong><span class="status-pill">@order.OrderStatus</span></div><div class="small text-muted my-2">@order.CreatedAt.ToLocalTime().ToString("dd MMM, h:mm tt") · ₹@order.TotalAmount.ToString("0.00")</div>
+                    @if (order.OrderStatus == "Placed")
+                    {
+                        using (Html.BeginForm("OrderStatus", "RestaurantDashboard", FormMethod.Post, new { @class = "d-flex gap-2" })) { @Html.AntiForgeryToken() @Html.Hidden("orderId", order.OrderId) <button name="status" value="Accepted" class="btn btn-success btn-sm">Accept</button><button name="status" value="Rejected" class="btn btn-outline-danger btn-sm">Reject</button> }
+                    }
+                    else if (order.OrderStatus == "Accepted" || order.OrderStatus == "Preparing")
+                    {
+                        using (Html.BeginForm("OrderStatus", "RestaurantDashboard", FormMethod.Post)) { @Html.AntiForgeryToken() @Html.Hidden("orderId", order.OrderId) <button name="status" value="@(order.OrderStatus == "Accepted" ? "Preparing" : "Ready")" class="btn btn-dark btn-sm">@(order.OrderStatus == "Accepted" ? "Start preparing" : "Mark ready")</button> }
+                    }
+                </div>
+            }
+        </section></div>
+    </div>
+}
