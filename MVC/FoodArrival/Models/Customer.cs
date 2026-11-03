@@ -12,6 +12,10 @@ namespace FoodArrival.Models
         [Display(Name = "Full Name")]
         public string CustomerName { get; set; }
 
+        [StringLength(100)]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+
         [Required(ErrorMessage = "Email Address is required")]
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         [StringLength(150)]
