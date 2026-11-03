@@ -98,7 +98,6 @@ namespace FoodArrival.Controllers
                     customer.CustomerId = customerId;
                     SetUserSession(customer);
 
-                    FormsAuthentication.SetAuthCookie(customer.Email, false);
                     TempData["Success"] = $"Welcome to FoodReady, {customer.CustomerName}! Your customer account has been created.";
                     return RedirectToAction("Index", "Food");
                 }
