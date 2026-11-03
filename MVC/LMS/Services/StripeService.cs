@@ -43,12 +43,10 @@ namespace LMS.Services
         private static readonly HttpClient _httpClient = new HttpClient();
 
         public static string SecretKey =>
-            ConfigurationManager.AppSettings["StripeSecretKey"] ??
-            "sk_test_51UWzjwAM9KvfIco7RFAwjRnRq4dtw086m4ZAaxecDghJMWCrANMVbt8FwNxImTh92OPOp5n1t5L3DeHfBOy3eCsw00mnAZAc4p";
+            LMS.Helpers.EnvHelper.Get("StripeSecretKey", ConfigurationManager.AppSettings["StripeSecretKey"] ?? string.Empty);
 
         public static string PublishableKey =>
-            ConfigurationManager.AppSettings["StripePublishableKey"] ??
-            "pk_test_51UWzjwAM9KvfIco7QVuDX765v8YNbA14GtJRsLMiUgNraytejekJaP7PejOfP3ERsOOzu6aAc8Fwyp2eVPmf1Nna00KARQlvDN";
+            LMS.Helpers.EnvHelper.Get("StripePublishableKey", ConfigurationManager.AppSettings["StripePublishableKey"] ?? string.Empty);
 
         /// <summary>
         /// Creates an official Stripe Hosted Checkout Session
