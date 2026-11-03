@@ -49,8 +49,8 @@ namespace FoodArrival.Controllers
             };
             Response.Cookies.Add(cookie);
             if (Url.IsLocalUrl(model.ReturnUrl)) return Redirect(model.ReturnUrl);
-            if (account.Role == "Restaurant") return RedirectToAction("Index", "RestaurantDashboard");
-            if (account.Role == "DeliveryAgent") return RedirectToAction("Index", "Delivery");
+            if (account.Role == "Staff" && account.StaffType == "Restaurant") return RedirectToAction("Index", "RestaurantDashboard");
+            if (account.Role == "Staff" && account.StaffType == "DeliveryAgent") return RedirectToAction("Index", "Delivery");
             if (account.Role == "Admin") return RedirectToAction("Index", "Admin");
             return RedirectToAction("Index", "Restaurants");
         }
@@ -64,12 +64,20 @@ namespace FoodArrival.Controllers
             if (!ModelState.IsValid) return View(model);
             try
             {
-                var id = Repository.Register(model.FullName.Trim(), model.Email.Trim(), model.Phone.Trim(), HashPassword(model.Password));
+                if (!new[] { "Customer", "Staff" }.Contains(model.RequestedAccountType))
+                    ModelState.AddModelError("RequestedAccountType", "Choose Customer or Staff.");
+                if (model.RequestedAccountType == "Staff" && !new[] { "Restaurant", "DeliveryAgent" }.Contains(model.RequestedStaffType))
+                    ModelState.AddModelError("RequestedStaffType", "Choose the staff area you work in.");
+                if (!ModelState.IsValid) return View(model);
+                var id = Repository.Register(model.FullName.Trim(), model.Email.Trim(), model.Phone.Trim(), HashPassword(model.Password),
+                    model.RequestedAccountType, model.RequestedStaffType, model.RequestNote);
                 var ticket = new FormsAuthenticationTicket(1, id.ToString(), DateTime.Now, DateTime.Now.AddHours(8), false, "Customer");
                 Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket))
                 {
                     HttpOnly = true, Secure = Request.IsSecureConnection, SameSite = SameSiteMode.Lax
                 });
+                if (model.RequestedAccountType == "Staff")
+                    TempData["Notice"] = "Your customer account is ready. Your " + model.RequestedStaffType + " staff request is pending administrator approval.";
                 return RedirectToAction("Index", "Restaurants");
             }
             catch (System.Data.SqlClient.SqlException ex)
