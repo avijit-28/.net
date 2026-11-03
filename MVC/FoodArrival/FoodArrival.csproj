@@ -131,6 +131,7 @@
     <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Attributes\ValidateCustomAntiForgeryTokenAttribute.cs" />
     <Compile Include="Models\PaymentGatewayViewModel.cs" />
+    <Compile Include="Models\ContactViewModel.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Admin.cs" />
     <Compile Include="Models\Restaurant.cs" />
