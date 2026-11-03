@@ -223,9 +223,15 @@
     <Content Include="Views\Admin\Dashboard.cshtml" />
     <Content Include="Views\Admin\FoodItems.cshtml" />
     <Content Include="Views\Admin\Orders.cshtml" />
+    <Content Include="Views\Admin\Approvals.cshtml" />
+    <Content Include="Views\Admin\Riders.cshtml" />
+    <Content Include="Views\Admin\Transactions.cshtml" />
+    <Content Include="Views\Admin\Bulletins.cshtml" />
     <Content Include="Views\Restaurant\Login.cshtml" />
     <Content Include="Views\Restaurant\Dashboard.cshtml" />
     <Content Include="Views\Restaurant\Details.cshtml" />
+    <Content Include="Views\Staff\Login.cshtml" />
+    <Content Include="Views\Staff\Dashboard.cshtml" />
     <Content Include="Views\Rider\Login.cshtml" />
     <Content Include="Views\Rider\Dashboard.cshtml" />
     <Content Include="Views\Rider\Profile.cshtml" />
