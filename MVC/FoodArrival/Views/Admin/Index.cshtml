@@ -63,7 +63,7 @@
             <div class="col-md-2"><label class="visually-hidden" for="cuisine-@restaurant.RestaurantId">Cuisine</label><input class="form-control" id="cuisine-@restaurant.RestaurantId" name="Cuisine" value="@restaurant.Cuisine" required /></div>
             <div class="col-md-2"><label class="visually-hidden" for="address-@restaurant.RestaurantId">Address</label><input class="form-control" id="address-@restaurant.RestaurantId" name="AddressLine" value="@restaurant.AddressLine" required /></div>
             <div class="col-md-2"><label class="visually-hidden" for="city-@restaurant.RestaurantId">City</label><input class="form-control" id="city-@restaurant.RestaurantId" name="City" value="@restaurant.City" required /></div>
-            <input type="hidden" name="IsActive" value="@restaurant.IsActive.ToString().ToLowerInvariant()" />
+            <div class="col-md-2"><label class="visually-hidden" for="active-restaurant-@restaurant.RestaurantId">Visibility</label><select class="form-select" id="active-restaurant-@restaurant.RestaurantId" name="IsActive"><option value="true" @(restaurant.IsActive ? "selected" : "")>Active</option><option value="false" @(!restaurant.IsActive ? "selected" : "")>Hidden</option></select></div>
             <div class="col-md-2"><button class="btn btn-outline-dark w-100" type="submit">Save details</button></div>
         }
     }
