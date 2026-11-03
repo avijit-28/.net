@@ -164,6 +164,7 @@
     <Compile Include="Controllers\CertificateController.cs" />
     <Compile Include="Controllers\CoursesController.cs" />
     <Compile Include="Helpers\VideoHelper.cs" />
+    <Compile Include="Helpers\EnvHelper.cs" />
     <Compile Include="Helpers\UserHelper.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\InstructorController.cs" />
@@ -330,6 +331,7 @@
     <Content Include="Views\Admin\ReportPdf.cshtml" />
     <Content Include="Views\Notifications\Index.cshtml" />
     <Content Include="packages.config" />
+    <None Include=".env.example" />
     <None Include="Properties\launchSettings.json" />
   </ItemGroup>
   <ItemGroup>
