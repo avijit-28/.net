@@ -6,29 +6,29 @@
     var pizzas = ViewBag.PizzaItems as List<FoodArrival.Models.FoodItem> ?? Model.Where(x => x.Category == "Pizza").ToList();
     var burgers = ViewBag.BurgerItems as List<FoodArrival.Models.FoodItem> ?? Model.Where(x => x.Category == "Burger").ToList();
     var indian = ViewBag.IndianItems as List<FoodArrival.Models.FoodItem> ?? Model.Where(x => x.Category == "Indian").ToList();
-    var notifications = ViewBag.Notifications as List<FoodArrival.Models.Notification> ?? new List<FoodArrival.Models.Notification>();
+    var bulletins = ViewBag.Bulletins as List<FoodArrival.Models.Bulletin> ?? new List<FoodArrival.Models.Bulletin>();
 }
 
-<!-- Hero Section (Faithfully matching uploaded template) -->
-<section class="hero-banner-section">
-    <div class="container">
-        <div class="row align-items-center g-5">
+<!-- Hero Section (Faithfully matching uploaded template: Right food platter & Rider traveling to map location) -->
+<section class="hero-banner-section position-relative overflow-hidden" style="background: linear-gradient(105deg, #FFFDFB 0%, #FFF5EE 55%, #FFEDD5 100%); padding: 3.5rem 0 4rem 0;">
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="row align-items-center g-4">
             <!-- Left Hero Content -->
             <div class="col-lg-6">
-                <h1 class="hero-title">
+                <h1 class="hero-title" style="font-size: 3.2rem; font-weight: 850; line-height: 1.15; color: #1F2937; letter-spacing: -1px;">
                     Delicious Food <br />
                     Delivered to <br />
-                    <span class="orange">Your Doorstep</span>
+                    <span style="color: #FF5E1E;">Your Doorstep</span>
                 </h1>
-                <p class="hero-subtitle">
+                <p class="hero-subtitle mt-3 mb-4" style="font-size: 1.15rem; color: #4B5563; max-width: 480px; line-height: 1.6;">
                     Order your favorite meals from top restaurants and get it delivered fast, fresh, and safe.
                 </p>
 
-                <!-- Location Search Bar -->
-                <form action="@Url.Action("Index", "Food")" method="get" class="location-search-box mb-4">
+                <!-- Location Search Bar (Matching template) -->
+                <form action="@Url.Action("Index", "Food")" method="get" class="location-search-box mb-4 shadow-sm" style="background: #FFFFFF; border-radius: 50px; padding: 6px 8px 6px 18px; border: 1.5px solid #F3F4F6; display: flex; align-items: center; max-width: 490px;">
                     <i class="bi bi-geo-alt-fill text-danger fs-5 me-2"></i>
-                    <input type="text" name="search" placeholder="Enter your delivery location" />
-                    <button type="submit" class="btn btn-primary-food py-2 px-4 d-flex align-items-center gap-2">
+                    <input type="text" name="search" placeholder="Enter your delivery location" class="border-0 flex-grow-1" style="outline: none; font-size: 0.95rem;" />
+                    <button type="submit" class="btn btn-primary-food py-2 px-4 d-flex align-items-center gap-2" style="background: linear-gradient(135deg, #FF7A18, #FF5E1E); border-radius: 50px; color: #fff; font-weight: 600;">
                         <i class="bi bi-scooter fs-5"></i>
                         <span>Find Food</span>
                     </button>
@@ -37,326 +37,221 @@
                 <!-- 3 Highlights Badges -->
                 <div class="d-flex flex-wrap gap-4 mt-4 pt-2">
                     <div class="d-flex align-items-center gap-2">
-                        <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="background: #FFF0EB; color: #FF5E1E; width: 44px; height: 44px;">
+                        <div class="rounded-circle p-2 d-flex align-items-center justify-content-center shadow-sm" style="background: #FFF0EB; color: #FF5E1E; width: 44px; height: 44px;">
                             <i class="bi bi-scooter fs-5"></i>
                         </div>
-                        <span class="fw-bold text-dark">Fast Delivery</span>
+                        <span class="fw-bold text-dark small">Fast Delivery</span>
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="background: #FFF7ED; color: #EA580C; width: 44px; height: 44px;">
+                        <div class="rounded-circle p-2 d-flex align-items-center justify-content-center shadow-sm" style="background: #FFF7ED; color: #EA580C; width: 44px; height: 44px;">
                             <i class="bi bi-fire fs-5"></i>
                         </div>
-                        <span class="fw-bold text-dark">Fresh & Tasty</span>
+                        <span class="fw-bold text-dark small">Fresh & Tasty</span>
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="background: #E8F5E9; color: #2E7D32; width: 44px; height: 44px;">
+                        <div class="rounded-circle p-2 d-flex align-items-center justify-content-center shadow-sm" style="background: #E8F5E9; color: #2E7D32; width: 44px; height: 44px;">
                             <i class="bi bi-shield-check fs-5"></i>
                         </div>
-                        <span class="fw-bold text-dark">Secure Ordering</span>
+                        <span class="fw-bold text-dark small">Secure Ordering</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Hero Graphic -->
-            <div class="col-lg-6 hero-image-wrap">
-                <img src="~/Content/images/hero-banner.jpg" alt="Delicious Food Delivery" class="img-fluid" onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80'" />
+            <!-- Right Hero Graphic: Food Platter & Rider navigating to Map Pin -->
+            <div class="col-lg-6 position-relative text-center">
+                <!-- Skyline & Rider Transit Track Illustration -->
+                <div class="position-relative w-100" style="min-height: 440px;">
+                    <!-- City Skyline Vector Background -->
+                    <svg viewBox="0 0 600 220" class="position-absolute start-0 top-0 w-100" style="opacity: 0.18; pointer-events: none;" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M40 180 V100 H70 V70 H100 V180 H140 V40 H180 V180 H210 V110 H250 V180 H300 V90 H340 V180 H380 V60 H420 V180 H470 V120 H510 V180 H560 V80 H590 V180 Z" fill="#FF5E1E" />
+                    </svg>
+
+                    <!-- Dashed Delivery Route with Scooter Rider traveling to Destination Pin -->
+                    <svg viewBox="0 0 600 240" class="position-absolute start-0 top-0 w-100" style="pointer-events: none; z-index: 3;" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Curved Dashed Track -->
+                        <path d="M 120 100 Q 260 130 380 95" fill="none" stroke="#FF5E1E" stroke-width="3" stroke-dasharray="6,6" opacity="0.65" />
+                        
+                        <!-- Map Location Pin -->
+                        <g transform="translate(380, 75)">
+                            <path d="M 0 0 C -12 -12 -12 -28 0 -38 C 12 -28 12 -12 0 0 Z" fill="#EA580C" filter="drop-shadow(0 4px 6px rgba(234, 88, 12, 0.4))" />
+                            <circle cx="0" cy="-24" r="5" fill="#FFFFFF" />
+                        </g>
+                    </svg>
+
+                    <!-- Rider Figure on Scooter moving along path -->
+                    <div class="position-absolute" style="top: 38px; left: 160px; z-index: 4; transform: scale(0.95);">
+                        <div class="d-flex align-items-center bg-white shadow-sm px-3 py-1 rounded-pill border border-warning border-opacity-50">
+                            <i class="bi bi-scooter text-danger fs-5 me-1"></i>
+                            <span class="small fw-bold text-dark">Rider En Route</span>
+                        </div>
+                    </div>
+
+                    <!-- Composition of Food Items: Burger, Pizza, Fries, Drink, Delivery Bag -->
+                    <div class="position-relative d-inline-block mt-4" style="z-index: 5;">
+                        <!-- Right Curved Orange Backdrop Glow -->
+                        <div class="position-absolute end-0 top-0 rounded-circle" style="width: 320px; height: 320px; background: radial-gradient(circle, rgba(255,94,30,0.18) 0%, rgba(255,255,255,0) 70%); z-index: 1;"></div>
+
+                        <!-- Main Composite Graphic Container -->
+                        <div class="d-flex align-items-end justify-content-center position-relative" style="z-index: 2;">
+                            <!-- Takeout Bag with Chef Logo & Drinks (Left-Behind) -->
+                            <div class="me-n4 mb-3 position-relative" style="z-index: 2;">
+                                <div class="card border-0 shadow-lg p-2 text-center" style="border-radius: 18px; background: linear-gradient(135deg, #F59E0B, #D97706); width: 110px;">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" class="mx-auto mb-1">
+                                        <path d="M12 2C9.5 2 7.5 3.8 7.1 6.1C5.3 6.6 4 8.2 4 10.2C4 12.3 5.5 14 7.5 14.3V18C7.5 19.1 8.4 20 9.5 20H14.5C15.6 20 16.5 19.1 16.5 18V14.3C18.5 14 20 12.3 20 10.2C20 8.2 18.7 6.6 16.9 6.1C16.5 3.8 14.5 2 12 2Z" fill="#FFFFFF" />
+                                    </svg>
+                                    <span class="badge bg-white text-dark fw-bold" style="font-size: 0.65rem;">FoodReady Bag</span>
+                                </div>
+                            </div>
+
+                            <!-- Big Food Platter: Burger, Pizza, Crispy Fries (Center & Right) -->
+                            <div class="position-relative" style="z-index: 3;">
+                                <img src="~/Content/images/hero-banner.jpg" alt="Delicious Food Platter" class="img-fluid rounded-5 shadow-lg" style="max-height: 380px; object-fit: contain; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.12));" onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80'" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- 4 Roles Portals Showcase Section -->
+<!-- Bulletins / Public Announcements Section -->
+@if (bulletins != null && bulletins.Any())
+{
+    <section class="py-3 bg-white border-bottom">
+        <div class="container">
+            <div class="d-flex align-items-center gap-3 bg-light rounded-4 p-3 border">
+                <span class="badge bg-danger text-white rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-1">
+                    <i class="bi bi-megaphone-fill"></i> Bulletin
+                </span>
+                <div class="flex-grow-1 overflow-hidden">
+                    <marquee behavior="scroll" direction="left" scrollamount="6" class="small fw-bold text-dark mb-0">
+                        @foreach (var b in bulletins)
+                        {
+                            <span class="me-4 text-dark"><i class="bi bi-dot text-danger"></i> <strong>@b.Title:</strong> @b.Message (@b.TargetAudience)</span>
+                        }
+                    </marquee>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+<!-- Multi-Role Gateway Showcase -->
 <section class="py-5" style="background: #FFFFFF;">
     <div class="container">
         <div class="text-center max-w-700 mx-auto mb-5">
             <span class="badge bg-warning bg-opacity-25 text-dark fw-bold px-3 py-2 rounded-pill mb-2">4 Ecosystem Roles</span>
-            <h2 class="fw-bold text-dark">One Platform, Seamless Experiences</h2>
-            <p class="text-muted small">Choose your portal to experience FoodReady tailored for your journey</p>
+            <h2 class="fw-bold text-dark">One Platform, Dedicated Experiences</h2>
+            <p class="text-muted small">Register or log into your dedicated role portal</p>
         </div>
 
         <div class="row g-4">
             <!-- Role 1: Customer -->
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center transition-all" style="border-top: 4px solid #FF5E1E !important;">
-                    <div class="stat-icon items mx-auto mb-3" style="width: 58px; height: 58px;">
+                    <div class="stat-icon items mx-auto mb-3" style="width: 58px; height: 58px; background: #FFF0EB; color: #FF5E1E;">
                         <i class="bi bi-person-heart fs-3"></i>
                     </div>
                     <h5 class="fw-bold text-dark mb-2">Customer</h5>
-                    <p class="text-muted small mb-3">Browse multi-cuisine menu, place orders, make secure payments, and track food arrival.</p>
-                    <a href="@Url.Action("Index", "Food")" class="btn btn-outline-food btn-sm rounded-pill w-100 mt-auto fw-bold">
-                        Browse Menu <i class="bi bi-arrow-right ms-1"></i>
+                    <p class="text-muted small mb-3">Browse multi-cuisine dishes, place multi-item orders, track live status, and manage receipts.</p>
+                    <a href="@Url.Action("Register", "Account", new { role = "Customer" })" class="btn btn-outline-food btn-sm rounded-pill w-100 mt-auto fw-bold">
+                        Customer Portal <i class="bi bi-arrow-right ms-1"></i>
                     </a>
                 </div>
             </div>
 
-            <!-- Role 2: Restaurant -->
+            <!-- Role 2: Restaurant Owner -->
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center transition-all" style="border-top: 4px solid #EA580C !important;">
                     <div class="stat-icon pending mx-auto mb-3" style="width: 58px; height: 58px; background: #FFF7ED; color: #EA580C;">
                         <i class="bi bi-shop fs-3"></i>
                     </div>
-                    <h5 class="fw-bold text-dark mb-2">Restaurant</h5>
-                    <p class="text-muted small mb-3">Receive incoming orders, control preparation time, set food readiness, and manage item prices.</p>
-                    <a href="@Url.Action("Login", "Restaurant")" class="btn btn-sm btn-outline-danger rounded-pill w-100 mt-auto fw-bold">
-                        Kitchen Portal <i class="bi bi-arrow-right ms-1"></i>
+                    <h5 class="fw-bold text-dark mb-2">Restaurant Owner</h5>
+                    <p class="text-muted small mb-3">Manage restaurant profile, review staff & rider affiliations, monitor kitchen queue, and view sales ledger.</p>
+                    <a href="@Url.Action("Register", "Account", new { role = "RestaurantOwner" })" class="btn btn-sm btn-outline-danger rounded-pill w-100 mt-auto fw-bold">
+                        Owner Registration <i class="bi bi-arrow-right ms-1"></i>
                     </a>
                 </div>
             </div>
 
-            <!-- Role 3: Rider -->
+            <!-- Role 3: Restaurant Staff -->
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center transition-all" style="border-top: 4px solid #2563EB !important;">
+                    <div class="stat-icon accepted mx-auto mb-3" style="width: 58px; height: 58px; background: #EFF6FF; color: #2563EB;">
+                        <i class="bi bi-person-badge fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Restaurant Staff</h5>
+                    <p class="text-muted small mb-3">Kitchen staff PMS portal with auto Staff ID, dish proposal with owner verification, and order prep status.</p>
+                    <a href="@Url.Action("Register", "Account", new { role = "RestaurantStaff" })" class="btn btn-sm btn-outline-primary rounded-pill w-100 mt-auto fw-bold">
+                        Staff Sign Up <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Role 4: Rider -->
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center transition-all" style="border-top: 4px solid #0284C7 !important;">
                     <div class="stat-icon accepted mx-auto mb-3" style="width: 58px; height: 58px; background: #E0F2FE; color: #0284C7;">
                         <i class="bi bi-scooter fs-3"></i>
                     </div>
                     <h5 class="fw-bold text-dark mb-2">Delivery Rider</h5>
-                    <p class="text-muted small mb-3">Claim pickup orders, follow customer delivery addresses, update trip status, and deliver hot food.</p>
-                    <a href="@Url.Action("Login", "Rider")" class="btn btn-sm btn-outline-primary rounded-pill w-100 mt-auto fw-bold">
+                    <p class="text-muted small mb-3">Deliver orders across multiple affiliated restaurants, license verification, and work tracking hub.</p>
+                    <a href="@Url.Action("Register", "Account", new { role = "Rider" })" class="btn btn-sm btn-outline-info rounded-pill w-100 mt-auto fw-bold">
                         Rider Hub <i class="bi bi-arrow-right ms-1"></i>
                     </a>
                 </div>
             </div>
-
-            <!-- Role 4: Admin -->
-            <div class="col-lg-3 col-md-6">
-                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center transition-all" style="border-top: 4px solid #1A202C !important;">
-                    <div class="stat-icon rejected mx-auto mb-3" style="width: 58px; height: 58px; background: #F1F5F9; color: #1E293B;">
-                        <i class="bi bi-shield-lock-fill fs-3"></i>
-                    </div>
-                    <h5 class="fw-bold text-dark mb-2">Master Admin</h5>
-                    <p class="text-muted small mb-3">Complete oversight: auto-rejection rule (> 5 mins), review orders, edit catalog, and monitor real-time stats.</p>
-                    <a href="@Url.Action("Login", "Admin")" class="btn btn-sm btn-outline-dark rounded-pill w-100 mt-auto fw-bold">
-                        Admin Access <i class="bi bi-arrow-right ms-1"></i>
-                    </a>
-                </div>
-            </div>
         </div>
     </div>
 </section>
 
-<!-- Live Notification Alert Banner -->
-@if (notifications != null && notifications.Any())
-{
-    var latest = notifications.First();
-    <div class="container my-2">
-        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white border-start border-4 border-warning">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-3">
-                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold">
-                        <i class="bi bi-bell-fill me-1"></i> Live Update
-                    </span>
-                    <div>
-                        <strong class="text-dark">@latest.Title:</strong>
-                        <span class="text-muted ms-1 small">@latest.Message</span>
-                    </div>
-                </div>
-                <a href="@(latest.TargetUrl ?? Url.Action("Index", "Food"))" class="btn btn-outline-food btn-sm rounded-pill px-3 d-none d-md-inline-block">
-                    View Details
-                </a>
-            </div>
-        </div>
-    </div>
-}
-
-<!-- Categories Quick Strip -->
-<section class="py-4">
+<!-- Menu Preview Grid -->
+<section class="py-5" style="background: #FAFAFA;">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="fw-bold mb-0">Explore Categories</h4>
-            <a href="@Url.Action("Index", "Food")" class="text-primary fw-bold text-decoration-none small">
-                See all <i class="bi bi-chevron-right"></i>
-            </a>
-        </div>
-        <div class="d-flex flex-wrap gap-2">
-            @foreach (var c in categories)
-            {
-                <a href="@Url.Action("Index", "Food", new { category = c })" class="btn btn-light border rounded-pill px-4 py-2 fw-bold text-dark d-flex align-items-center gap-2 category-chip">
-                    @if (c == "Pizza")
-                    {
-                        <i class="bi bi-pie-chart text-danger"></i>
-                    }
-                    else if (c == "Burger")
-                    {
-                        <i class="bi bi-circle-fill text-warning fs-6"></i>
-                    }
-                    else if (c == "Indian")
-                    {
-                        <i class="bi bi-fire text-danger"></i>
-                    }
-                    else if (c == "Chinese")
-                    {
-                        <i class="bi bi-box2-heart text-primary"></i>
-                    }
-                    else if (c == "Drinks")
-                    {
-                        <i class="bi bi-cup-straw text-info"></i>
-                    }
-                    else
-                    {
-                        <i class="bi bi-collection text-secondary"></i>
-                    }
-                    <span>@c</span>
-                </a>
-            }
-        </div>
-    </div>
-</section>
-
-<!-- Featured Dishes with Proper Food Images -->
-<section class="py-5">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-end mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <span class="text-danger fw-bold small text-uppercase">Chef's Handcrafted Picks</span>
-                <h2 class="fw-bold mb-0 text-dark">Most Loved Delicacies</h2>
+                <h3 class="fw-bold mb-1">Featured Delicious Items</h3>
+                <p class="text-muted small mb-0">Prepared fresh upon order</p>
             </div>
-            <a href="@Url.Action("Index", "Food")" class="btn btn-outline-food rounded-pill px-4">
-                Full Menu
+            <a href="@Url.Action("Index", "Food")" class="btn btn-outline-food btn-sm">
+                View Full Menu <i class="bi bi-arrow-right ms-1"></i>
             </a>
         </div>
 
         <div class="row g-4">
-            @if (featured != null && featured.Any())
-            {
-                foreach (var item in featured)
-                {
-                    <div class="col-xl-3 col-lg-4 col-md-6">
-                        <div class="food-card" id="food-card-@item.FoodItemId">
-                            <div class="food-card-img-wrap">
-                                <img src="@item.ImageUrl" alt="@item.ItemName" onerror="this.src='/Content/images/margherita.jpg'" />
-                                <span class="position-absolute top-0 end-0 m-2 badge bg-dark bg-opacity-75 rounded-pill px-3 py-1">
-                                    @item.Category
-                                </span>
-                                <span class="position-absolute bottom-0 start-0 m-2 badge bg-warning text-dark rounded-pill px-2 py-1 small">
-                                    <i class="bi bi-star-fill text-dark me-1"></i> 4.8 (120+)
-                                </span>
-                            </div>
-                            <div class="food-card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-1">
-                                    <h5 class="food-card-title mb-0">@item.ItemName</h5>
-                                </div>
-                                <p class="text-muted small mb-3 flex-grow-1" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                                    @(string.IsNullOrEmpty(item.Description) ? "Prepared fresh to order using finest ingredients." : item.Description)
-                                </p>
-                                
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="food-card-price">&#8377;@item.Price.ToString("F0")</span>
-                                    <div class="qty-picker">
-                                        <button type="button" class="qty-btn btn-qty-minus"><i class="bi bi-dash"></i></button>
-                                        <input type="text" class="qty-input input-quantity" value="1" readonly />
-                                        <button type="button" class="qty-btn btn-qty-plus"><i class="bi bi-plus"></i></button>
-                                    </div>
-                                </div>
-
-                                <button class="btn btn-primary-food w-100 btn-add-to-cart" data-id="@item.FoodItemId">
-                                    <i class="bi bi-cart-plus me-1"></i> Add to Cart
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                }
-            }
-        </div>
-    </div>
-</section>
-
-<!-- Pizza & Burger Showcase Sections -->
-<section class="py-5 bg-white">
-    <div class="container">
-        <!-- Pizzas -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <span class="badge bg-danger bg-opacity-10 text-danger fw-bold px-3 py-1 rounded-pill mb-1">Authentic Crust</span>
-                <h3 class="fw-bold mb-0">Pizzas Handcrafted With Love</h3>
-            </div>
-            <a href="@Url.Action("Index", "Food", new { category = "Pizza" })" class="btn btn-outline-food btn-sm rounded-pill px-3">
-                View All Pizzas
-            </a>
-        </div>
-
-        <div class="row g-4 mb-5">
-            @foreach (var item in pizzas)
+            @foreach (var item in featured)
             {
                 <div class="col-lg-3 col-md-6">
                     <div class="food-card">
                         <div class="food-card-img-wrap">
                             <img src="@item.ImageUrl" alt="@item.ItemName" onerror="this.src='/Content/images/margherita.jpg'" />
+                            <span class="position-absolute top-0 end-0 m-2 badge bg-dark bg-opacity-75">
+                                @item.Category
+                            </span>
                         </div>
                         <div class="food-card-body">
-                            <h6 class="food-card-title">@item.ItemName</h6>
-                            <p class="text-muted small mb-2 flex-grow-1">@item.Description</p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                            <h5 class="food-card-title">@item.ItemName</h5>
+                            <p class="text-muted small mb-3 flex-grow-1">@(string.IsNullOrEmpty(item.Description) ? "Prepared fresh with finest ingredients" : item.Description)</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="food-card-price">&#8377;@item.Price.ToString("F0")</span>
-                                <button class="btn btn-primary-food btn-sm btn-add-to-cart px-3" data-id="@item.FoodItemId">
-                                    <i class="bi bi-cart-plus me-1"></i> Add
-                                </button>
+                                <div class="qty-picker">
+                                    <button type="button" class="qty-btn btn-qty-minus"><i class="bi bi-dash"></i></button>
+                                    <input type="text" class="qty-input input-quantity" value="1" readonly />
+                                    <button type="button" class="qty-btn btn-qty-plus"><i class="bi bi-plus"></i></button>
+                                </div>
                             </div>
+
+                            <button class="btn btn-primary-food w-100 btn-add-to-cart" data-id="@item.FoodItemId">
+                                <i class="bi bi-cart-plus me-1"></i> Add to Cart
+                            </button>
                         </div>
                     </div>
                 </div>
             }
-        </div>
-
-        <!-- Burgers -->
-        <div class="d-flex justify-content-between align-items-center mb-4 pt-3 border-top">
-            <div>
-                <span class="badge bg-warning bg-opacity-25 text-dark fw-bold px-3 py-1 rounded-pill mb-1">Flame Grilled</span>
-                <h3 class="fw-bold mb-0">Gourmet Burgers & Crisp Fries</h3>
-            </div>
-            <a href="@Url.Action("Index", "Food", new { category = "Burger" })" class="btn btn-outline-food btn-sm rounded-pill px-3">
-                View All Burgers
-            </a>
-        </div>
-
-        <div class="row g-4">
-            @foreach (var item in burgers)
-            {
-                <div class="col-lg-3 col-md-6">
-                    <div class="food-card">
-                        <div class="food-card-img-wrap">
-                            <img src="@item.ImageUrl" alt="@item.ItemName" onerror="this.src='/Content/images/veggie-burger.jpg'" />
-                        </div>
-                        <div class="food-card-body">
-                            <h6 class="food-card-title">@item.ItemName</h6>
-                            <p class="text-muted small mb-2 flex-grow-1">@item.Description</p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
-                                <span class="food-card-price">&#8377;@item.Price.ToString("F0")</span>
-                                <button class="btn btn-primary-food btn-sm btn-add-to-cart px-3" data-id="@item.FoodItemId">
-                                    <i class="bi bi-cart-plus me-1"></i> Add
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    </div>
-</section>
-
-<!-- Mobile App Download & Live Tracking Promo -->
-<section class="py-5" style="background: linear-gradient(135deg, #FF7A18 0%, #FF5E1E 100%);">
-    <div class="container text-white py-4">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-7">
-                <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold mb-3">Fast & Reliable</span>
-                <h2 class="display-6 fw-bold mb-3">Track Your Order Live In Real Time</h2>
-                <p class="lead text-white-50 mb-4">
-                    From the restaurant kitchen straight to your hands. Receive instant push notifications as your food is prepared and dispatched with our delivery rider.
-                </p>
-                <div class="d-flex flex-wrap gap-3">
-                    <a href="@Url.Action("History", "Order")" class="btn btn-light rounded-pill px-4 py-2 fw-bold text-dark shadow">
-                        <i class="bi bi-geo-alt-fill text-danger me-1"></i> Track Live Orders
-                    </a>
-                    <a href="@Url.Action("Index", "Food")" class="btn btn-outline-light rounded-pill px-4 py-2 fw-bold">
-                        <i class="bi bi-bag-heart me-1"></i> Order Now
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-5 text-center">
-                <i class="bi bi-phone display-1 text-white opacity-75"></i>
-            </div>
         </div>
     </div>
 </section>
