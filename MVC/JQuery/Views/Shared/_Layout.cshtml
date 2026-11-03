@@ -142,5 +142,89 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @RenderSection("scripts", required: false)
+
+    <!-- Global Navigation & Hub Controller -->
+    <script type="text/javascript">
+        function switchHubTab(targetHash, updateHistory) {
+            if (!targetHash) return;
+            
+            var $targetBtn = $('#mainHubNav button[data-bs-target="' + targetHash + '"]');
+            if ($targetBtn.length) {
+                var triggerEl = $targetBtn[0];
+                var tabInstance = bootstrap.Tab.getOrCreateInstance(triggerEl);
+                tabInstance.show();
+
+                $('.nav-hub-item').removeClass('active');
+                $('.nav-hub-item[data-tab-target="' + targetHash + '"]').addClass('active');
+
+                if (updateHistory !== false && history.pushState) {
+                    history.pushState(null, null, targetHash);
+                }
+
+                if (targetHash === '#tab-datatable' && window.customerDataTable) {
+                    setTimeout(function () {
+                        window.customerDataTable.columns.adjust().responsive.recalc();
+                    }, 150);
+                } else if (targetHash === '#tab-jsgrid' && $('#jsGridContainer').length) {
+                    setTimeout(function () {
+                        $('#jsGridContainer').jsGrid('refresh');
+                    }, 150);
+                } else if (targetHash === '#tab-userdetails' && typeof window.loadUserDetailsLive === 'function') {
+                    window.loadUserDetailsLive();
+                }
+
+                var navOffset = $('#mainHubNav').offset();
+                if (navOffset && $(window).scrollTop() > (navOffset.top + 50)) {
+                    $('html, body').animate({ scrollTop: navOffset.top - 70 }, 200);
+                }
+            }
+        }
+
+        $(function () {
+            var currentPath = window.location.pathname.toLowerCase();
+
+            if (currentPath.indexOf('/user') >= 0) {
+                $('.nav-hub-item[data-page="user-page"]').addClass('active');
+            }
+
+            $(document).on('click', '.nav-hub-item[data-tab-target]', function (e) {
+                var targetHash = $(this).data('tab-target');
+
+                if ($('#mainHubNav').length > 0) {
+                    e.preventDefault();
+                    switchHubTab(targetHash, true);
+
+                    var navbarCollapse = document.getElementById('navbarAppHub');
+                    if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+                        bootstrap.Collapse.getOrCreateInstance(navbarCollapse).hide();
+                    }
+                }
+            });
+
+            $(document).on('shown.bs.tab', '#mainHubNav button', function (e) {
+                var targetHash = $(e.target).data('bs-target');
+                $('.nav-hub-item').removeClass('active');
+                $('.nav-hub-item[data-tab-target="' + targetHash + '"]').addClass('active');
+                if (history.replaceState) {
+                    history.replaceState(null, null, targetHash);
+                }
+            });
+
+            if ($('#mainHubNav').length > 0) {
+                var hash = window.location.hash;
+                if (hash && $('#mainHubNav button[data-bs-target="' + hash + '"]').length) {
+                    switchHubTab(hash, false);
+                } else {
+                    switchHubTab('#tab-datatable', false);
+                }
+            }
+
+            window.addEventListener('hashchange', function () {
+                if ($('#mainHubNav').length > 0 && window.location.hash) {
+                    switchHubTab(window.location.hash, false);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
