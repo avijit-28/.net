@@ -12,7 +12,7 @@
     @if (Model.Order.OrderStatus == "Delivered")
     {
         <div class="border-top mt-4 pt-4"><h2 class="h5 fw-bold">How was your meal?</h2>
-            @using (Html.BeginForm("Review", "Orders", FormMethod.Post))
+            using (Html.BeginForm("Review", "Orders", FormMethod.Post))
             {
                 @Html.AntiForgeryToken() @Html.Hidden("orderId", Model.Order.OrderId)
                 <div class="row g-3 align-items-end"><div class="col-sm-3"><label class="form-label" for="rating">Rating</label><select class="form-select" name="rating" id="rating"><option value="5">5 · Loved it</option><option value="4">4 · Great</option><option value="3">3 · Good</option><option value="2">2 · Could improve</option><option value="1">1 · Disappointed</option></select></div><div class="col-sm-7"><label class="form-label" for="comment">Review (optional)</label><input class="form-control" name="comment" id="comment" maxlength="1000" /></div><div class="col-sm-2"><button class="btn btn-dark w-100" type="submit">Submit</button></div></div>
