@@ -1,6 +1,6 @@
 @model FoodArrival.Models.AdminDashboardViewModel
 @{
-    ViewBag.Title = "Admin Dashboard - FoodReady";
+    ViewBag.Title = "Admin Control Center - FoodReady";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,28 +10,48 @@
         <div class="col-lg-2 col-md-3">
             <div class="admin-sidebar sticky-top" style="top: 85px;">
                 <div class="d-flex align-items-center gap-2 mb-4 px-2">
-                    <span class="badge bg-warning text-dark fw-bold px-2 py-1">Admin Panel</span>
+                    <span class="badge bg-warning text-dark fw-bold px-2 py-1"><i class="bi bi-shield-lock-fill me-1"></i> Admin Panel</span>
                 </div>
-                <div class="nav flex-column">
+                <div class="nav flex-column gap-1">
                     <a href="@Url.Action("Dashboard", "Admin")" class="admin-nav-item active">
                         <i class="bi bi-speedometer2"></i>
                         <span>Dashboard</span>
                     </a>
+                    <a href="@Url.Action("Approvals", "Admin")" class="admin-nav-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Approvals</span>
+                        </div>
+                        @if (Model.PendingApprovalsCount > 0)
+                        {
+                            <span class="badge bg-danger rounded-pill">@Model.PendingApprovalsCount</span>
+                        }
+                    </a>
+                    <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="admin-nav-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-card-checklist"></i>
+                            <span>Orders</span>
+                        </div>
+                        @if (Model.PendingOrders > 0)
+                        {
+                            <span class="badge bg-warning text-dark rounded-pill">@Model.PendingOrders</span>
+                        }
+                    </a>
                     <a href="@Url.Action("FoodItems", "Admin")" class="admin-nav-item">
                         <i class="bi bi-egg-fried"></i>
-                        <span>Food Items</span>
+                        <span>Food Menu</span>
                     </a>
-                    <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="admin-nav-item">
-                        <i class="bi bi-card-checklist"></i>
-                        <span>Orders</span>
+                    <a href="@Url.Action("Riders", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-bicycle"></i>
+                        <span>Rider Fleet</span>
                     </a>
-                    <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="admin-nav-item">
-                        <i class="bi bi-people"></i>
-                        <span>Customers</span>
+                    <a href="@Url.Action("Transactions", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-cash-stack"></i>
+                        <span>Transactions</span>
                     </a>
-                    <a href="@Url.Action("Dashboard", "Admin")" class="admin-nav-item">
-                        <i class="bi bi-graph-up"></i>
-                        <span>Reports</span>
+                    <a href="@Url.Action("Bulletins", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-megaphone-fill"></i>
+                        <span>Bulletins</span>
                     </a>
                     <hr class="border-secondary my-3" />
                     <a href="@Url.Action("Logout", "Admin")" class="admin-nav-item text-danger">
@@ -42,27 +62,45 @@
             </div>
         </div>
 
-        <!-- Admin Main Content -->
+        <!-- Admin Main Content Area -->
         <div class="col-lg-10 col-md-9">
             <!-- Header Bar -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
                 <div>
-                    <h2 class="fw-bold mb-0">Dashboard</h2>
-                    <p class="text-muted small mb-0">Welcome back, @Session["AdminName"] | Real-time Operations Overview</p>
+                    <h2 class="fw-bold mb-0">System Control Center</h2>
+                    <p class="text-muted small mb-0">
+                        Admin: <span class="fw-bold text-dark">@Session["AdminName"]</span> (avi@123) &bull; Full Administrative Privileges
+                    </p>
                 </div>
-                <div class="d-flex gap-2">
-                    <a href="@Url.Action("Orders", "Admin")" class="btn btn-primary-food btn-sm">
-                        <i class="bi bi-bell-fill me-1"></i> Review Orders (@Model.PendingOrders Pending)
+                <div class="d-flex flex-wrap gap-2">
+                    @using (Html.BeginForm("TriggerAutoReject", "Admin", FormMethod.Post, new { @class = "d-inline" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Manually scan and reject pending orders older than 5 minutes">
+                            <i class="bi bi-stopwatch-fill me-1"></i> Auto-Reject Scan (> 5 Min)
+                        </button>
+                    }
+                    <a href="@Url.Action("Approvals", "Admin")" class="btn btn-warning btn-sm fw-bold">
+                        <i class="bi bi-shield-check me-1"></i> Approvals Queue (@Model.PendingApprovalsCount)
                     </a>
-                    <a href="@Url.Action("FoodItems", "Admin")" class="btn btn-outline-food btn-sm">
-                        <i class="bi bi-plus-circle me-1"></i> Add Food Item
+                    <a href="@Url.Action("FoodItems", "Admin")" class="btn btn-primary-food btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i> Add Dish
                     </a>
                 </div>
             </div>
 
-            <!-- Stat Cards Row -->
+            @if (ViewBag.AutoRejectedNotice != null)
+            {
+                <div class="alert alert-warning alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                    <div>@ViewBag.AutoRejectedNotice</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <!-- Key Platform Metrics Cards Row 1 -->
             <div class="row g-3 mb-4">
-                <div class="col-xl col-md-4 col-sm-6">
+                <div class="col-xl-3 col-md-6">
                     <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="text-decoration-none">
                         <div class="stat-card">
                             <div class="stat-icon pending">
@@ -76,7 +114,7 @@
                     </a>
                 </div>
 
-                <div class="col-xl col-md-4 col-sm-6">
+                <div class="col-xl-3 col-md-6">
                     <a href="@Url.Action("Orders", "Admin", new { tab = "accepted" })" class="text-decoration-none">
                         <div class="stat-card">
                             <div class="stat-icon accepted">
@@ -90,7 +128,7 @@
                     </a>
                 </div>
 
-                <div class="col-xl col-md-4 col-sm-6">
+                <div class="col-xl-3 col-md-6">
                     <a href="@Url.Action("Orders", "Admin", new { tab = "rejected" })" class="text-decoration-none">
                         <div class="stat-card">
                             <div class="stat-icon rejected">
@@ -104,46 +142,115 @@
                     </a>
                 </div>
 
-                <div class="col-xl col-md-6 col-sm-6">
-                    <a href="@Url.Action("FoodItems", "Admin")" class="text-decoration-none">
-                        <div class="stat-card">
-                            <div class="stat-icon items">
-                                <i class="bi bi-egg-fried"></i>
+                <div class="col-xl-3 col-md-6">
+                    <a href="@Url.Action("Approvals", "Admin")" class="text-decoration-none">
+                        <div class="stat-card border-warning">
+                            <div class="stat-icon" style="background: #FFF3E0; color: #E65100;">
+                                <i class="bi bi-person-check-fill"></i>
                             </div>
                             <div>
-                                <div class="stat-number text-dark">@Model.AvailableFoodItems</div>
-                                <div class="stat-label">Food Items</div>
+                                <div class="stat-number text-warning">@Model.PendingApprovalsCount</div>
+                                <div class="stat-label">Pending Approvals</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Ecosystem Multi-Role Count & Financials Row 2 -->
+            <div class="row g-3 mb-4">
+                <div class="col-xl-3 col-md-6">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #E0F2FE; color: #0284C7;">
+                            <i class="bi bi-shop"></i>
+                        </div>
+                        <div>
+                            <div class="stat-number text-dark">@Model.TotalRestaurants</div>
+                            <div class="stat-label">Partner Restaurants</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6">
+                    <a href="@Url.Action("Riders", "Admin")" class="text-decoration-none">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: #DCFCE7; color: #16A34A;">
+                                <i class="bi bi-bicycle"></i>
+                            </div>
+                            <div>
+                                <div class="stat-number text-dark">@Model.TotalRiders</div>
+                                <div class="stat-label">Active Riders</div>
                             </div>
                         </div>
                     </a>
                 </div>
 
-                <div class="col-xl col-md-6 col-sm-6">
+                <div class="col-xl-3 col-md-6">
                     <div class="stat-card">
-                        <div class="stat-icon customers">
-                            <i class="bi bi-people"></i>
+                        <div class="stat-icon" style="background: #EDE7F6; color: #5E35B1;">
+                            <i class="bi bi-people-fill"></i>
                         </div>
                         <div>
                             <div class="stat-number text-dark">@Model.ActiveCustomers</div>
-                            <div class="stat-label">Customers</div>
+                            <div class="stat-label">Customers Enrolled</div>
                         </div>
                     </div>
                 </div>
+
+                <div class="col-xl-3 col-md-6">
+                    <a href="@Url.Action("Transactions", "Admin")" class="text-decoration-none">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #1A202C, #2D3748); color: #FFFFFF;">
+                            <div class="stat-icon" style="background: rgba(255,255,255,0.1); color: #FFE600;">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
+                            <div>
+                                <div class="stat-number" style="color: #FFE600;">&#8377;@Model.PlatformEarnings.ToString("N0")</div>
+                                <div class="stat-label text-white-50">Platform Revenue</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             </div>
 
-            <!-- Today's Orders Chart & Insights -->
+            <!-- Pending Approvals Action Bar (If any exist) -->
+            @if (Model.PendingApprovalsCount > 0)
+            {
+                <div class="card border-0 shadow-sm rounded-4 mb-4" style="background: #FFF8E1; border-left: 5px solid #FFB300 !important;">
+                    <div class="p-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle p-3 bg-warning text-dark fs-4">
+                                <i class="bi bi-bell-fill"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1">Actions Required: @Model.PendingApprovalsCount Pending Applications</h5>
+                                <p class="text-muted small mb-0">
+                                    Restaurants: <span class="fw-bold">@Model.PendingRestaurants.Count</span> | 
+                                    Staff: <span class="fw-bold">@Model.PendingStaff.Count</span> | 
+                                    Riders: <span class="fw-bold">@Model.PendingRiders.Count</span> | 
+                                    Dishes: <span class="fw-bold">@Model.PendingDishes.Count</span>
+                                </p>
+                            </div>
+                        </div>
+                        <a href="@Url.Action("Approvals", "Admin")" class="btn btn-warning fw-bold px-4">
+                            Review All Approvals &rarr;
+                        </a>
+                    </div>
+                </div>
+            }
+
+            <!-- Today's Orders Velocity Chart & 5-Min Rule Policy -->
             <div class="row g-4 mb-4">
                 <div class="col-lg-8">
                     <div class="card border-0 shadow-sm rounded-4 p-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <div>
                                 <h5 class="fw-bold mb-0">Today's Orders Velocity</h5>
-                                <p class="text-muted small mb-0">Orders progression throughout the day</p>
+                                <p class="text-muted small mb-0">Real-time incoming orders throughout the day</p>
                             </div>
-                            <span class="badge bg-light text-muted border">Live Chart</span>
+                            <span class="badge bg-light text-muted border"><i class="bi bi-activity text-success me-1"></i> Live Stream</span>
                         </div>
                         
-                        <!-- Visual SVG Chart matching Template -->
+                        <!-- Visual SVG Chart matching Template Image 8 -->
                         <div class="p-3" style="background: #FAFAFA; border-radius: 16px;">
                             <svg viewBox="0 0 700 200" class="w-100" style="overflow: visible;">
                                 <defs>
@@ -152,18 +259,14 @@
                                         <stop offset="100%" stop-color="#FF5E1E" stop-opacity="0.0" />
                                     </linearGradient>
                                 </defs>
-                                <!-- Grid Lines -->
                                 <line x1="0" y1="40" x2="700" y2="40" stroke="#E2E8F0" stroke-dasharray="4" />
                                 <line x1="0" y1="90" x2="700" y2="90" stroke="#E2E8F0" stroke-dasharray="4" />
                                 <line x1="0" y1="140" x2="700" y2="140" stroke="#E2E8F0" stroke-dasharray="4" />
                                 <line x1="0" y1="180" x2="700" y2="180" stroke="#CBD5E0" />
 
-                                <!-- Chart Area -->
                                 <path d="M 0,160 Q 120,170 200,120 T 400,90 T 550,50 T 700,70 L 700,180 L 0,180 Z" fill="url(#chartGradient)" />
-                                <!-- Chart Line -->
                                 <path d="M 0,160 Q 120,170 200,120 T 400,90 T 550,50 T 700,70" fill="none" stroke="#FF5E1E" stroke-width="4" stroke-linecap="round" />
 
-                                <!-- Points -->
                                 <circle cx="200" cy="120" r="5" fill="#FFFFFF" stroke="#FF5E1E" stroke-width="3" />
                                 <circle cx="400" cy="90" r="5" fill="#FFFFFF" stroke="#FF5E1E" stroke-width="3" />
                                 <circle cx="550" cy="50" r="5" fill="#FFFFFF" stroke="#FF5E1E" stroke-width="3" />
@@ -183,29 +286,38 @@
                 </div>
 
                 <div class="col-lg-4">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-                        <h5 class="fw-bold mb-3">Auto-Reject Workflow</h5>
-                        <div class="p-3 bg-light rounded-3 mb-3 border">
-                            <div class="d-flex align-items-center gap-2 mb-2 text-warning fw-bold">
-                                <i class="bi bi-stopwatch-fill fs-5"></i>
-                                <span>5-Minute Rule Active</span>
+                    <div class="card border-0 shadow-sm rounded-4 p-4 h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <h5 class="fw-bold mb-3">Auto-Rejection Policy</h5>
+                            <div class="p-3 bg-light rounded-3 mb-3 border">
+                                <div class="d-flex align-items-center gap-2 mb-2 text-warning fw-bold">
+                                    <i class="bi bi-stopwatch-fill fs-5"></i>
+                                    <span>5-Minute Rule Active</span>
+                                </div>
+                                <p class="small text-muted mb-0">
+                                    Any order that remains unaddressed in <strong>Pending</strong> status for longer than <strong>5 minutes</strong> is automatically rejected by <code>sp_Order_AutoReject</code> to maintain service quality.
+                                </p>
                             </div>
-                            <p class="small text-muted mb-0">
-                                Any order remaining in <strong>Pending</strong> state for more than 5 minutes is automatically updated to <strong>Rejected</strong> by the system.
-                            </p>
+                            <div class="small text-muted">
+                                <i class="bi bi-info-circle text-primary me-1"></i> Triggering auto-reject manually scans the queue immediately and notifies the customers.
+                            </div>
                         </div>
 
-                        <div class="mt-auto">
-                            <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="btn btn-warning w-100 fw-bold py-2">
-                                <i class="bi bi-arrow-repeat me-1"></i> Process Pending Orders
-                            </a>
+                        <div class="mt-4">
+                            @using (Html.BeginForm("TriggerAutoReject", "Admin", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-warning w-100 fw-bold py-2 shadow-sm">
+                                    <i class="bi bi-arrow-repeat me-1"></i> Run Auto-Reject Now
+                                </button>
+                            }
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Orders Preview Table -->
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <!-- Recent Orders Queue Preview -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
                 <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
                     <h5 class="fw-bold mb-0">Recent Order Activity</h5>
                     <a href="@Url.Action("Orders", "Admin")" class="btn btn-outline-food btn-sm">View All Orders</a>
@@ -220,6 +332,7 @@
                                 <th>Amount</th>
                                 <th>Status</th>
                                 <th>Time</th>
+                                <th class="text-end">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -233,18 +346,40 @@
 
                                     <tr>
                                         <td class="fw-bold text-dark">#FD@(1000 + order.OrderId)</td>
-                                        <td>@order.CustomerName</td>
+                                        <td>
+                                            <div class="fw-bold text-dark">@order.CustomerName</div>
+                                            <div class="small text-muted">@order.PhoneNumber</div>
+                                        </td>
                                         <td class="text-muted small">@(string.IsNullOrEmpty(order.Items) ? "-" : order.Items)</td>
                                         <td class="fw-bold text-dark">&#8377;@order.TotalAmount.ToString("F0")</td>
                                         <td><span class="status-badge @badgeClass">@order.OrderStatus</span></td>
                                         <td class="text-muted small">@order.OrderedAt.ToString("hh:mm tt")</td>
+                                        <td class="text-end">
+                                            @if (order.OrderStatus == "Pending")
+                                            {
+                                                using (Html.BeginForm("AcceptOrder", "Admin", new { orderId = order.OrderId }, FormMethod.Post, new { @class = "d-inline" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-success px-2 py-1"><i class="bi bi-check-lg"></i></button>
+                                                }
+                                                using (Html.BeginForm("RejectOrder", "Admin", new { orderId = order.OrderId, reason = "Rejected by Admin" }, FormMethod.Post, new { @class = "d-inline ms-1" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-sm btn-danger px-2 py-1"><i class="bi bi-x-lg"></i></button>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted small">&bull; Finalized</span>
+                                            }
+                                        </td>
                                     </tr>
                                 }
                             }
                             else
                             {
                                 <tr>
-                                    <td colspan="6" class="text-center py-4 text-muted">No recent orders yet.</td>
+                                    <td colspan="7" class="text-center py-4 text-muted">No orders recorded in system yet.</td>
                                 </tr>
                             }
                         </tbody>
