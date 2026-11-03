@@ -1,0 +1,68 @@
+@model FoodArrival.Models.LoginViewModel
+@{
+    ViewBag.Title = "Restaurant Partner Login - FoodReady";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="auth-container" style="max-width: 850px;">
+        <div class="row g-0">
+            <!-- Left Banner -->
+            <div class="col-lg-5 p-5 text-white d-flex flex-column justify-content-center" style="background: linear-gradient(135deg, #C2410C 0%, #EA580C 100%);">
+                <div class="mb-4">
+                    <i class="bi bi-shop-window display-3 text-white"></i>
+                </div>
+                <h2 class="fw-bold mb-3">Restaurant Portal</h2>
+                <p class="text-white-50 mb-4">
+                    Manage your kitchen queue, review incoming orders, and set food readiness for rider pickup.
+                </p>
+                <div class="mt-auto">
+                    <span class="badge bg-white text-dark px-3 py-2 rounded-pill fw-bold">FoodReady Partner</span>
+                </div>
+            </div>
+
+            <!-- Right Form -->
+            <div class="col-lg-7 auth-form-card">
+                <div class="text-center mb-4">
+                    <div class="stat-icon pending mx-auto mb-2" style="width: 48px; height: 48px; background: #FFF7ED; color: #EA580C;">
+                        <i class="bi bi-egg-fried"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark">Kitchen Login</h3>
+                    <p class="text-muted small">Access your restaurant order dispatch board</p>
+                </div>
+
+                @using (Html.BeginForm("Login", "Restaurant", FormMethod.Post, new { @class = "needs-validation" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3 small" })
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Partner Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control border-start-0", type = "email", placeholder = "restaurant@example.com" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control border-start-0", placeholder = "Kitchen Password" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-food w-100 py-2 fs-6 fw-bold shadow">
+                        Login as Restaurant Partner
+                    </button>
+
+                    <div class="mt-4 p-3 bg-light rounded text-center small text-muted border">
+                        <i class="bi bi-key-fill text-warning me-1"></i> <strong>Demo Restaurant:</strong> restaurant@example.com | <strong>Pass:</strong> rest123
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
