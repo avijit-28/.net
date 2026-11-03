@@ -45,6 +45,10 @@ namespace FoodArrival.Models
         [Display(Name = "Verified")]
         public bool IsVerified { get; set; } = true;
 
+        public string VerifiedByRole { get; set; }
+
+        public int? VerifiedBy { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public DateTime? UpdatedAt { get; set; }
