@@ -108,7 +108,7 @@ BEGIN
         RequestId BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_AccountRoleRequests PRIMARY KEY,
         UserId INT NOT NULL,
         RequestedRole NVARCHAR(30) NOT NULL,
-        RequestedStaffType NVARCHAR(30) NULL,
+        RequestedStaffType NVARCHAR(30) NOT NULL,
         Status NVARCHAR(20) NOT NULL CONSTRAINT DF_AccountRoleRequests_Status DEFAULT N'Pending',
         RequestNote NVARCHAR(500) NULL,
         RequestedAt DATETIME2(0) NOT NULL CONSTRAINT DF_AccountRoleRequests_RequestedAt DEFAULT SYSUTCDATETIME(),
@@ -148,6 +148,18 @@ BEGIN
         ALTER TABLE food.Users DROP CONSTRAINT CK_Users_Role;
     ALTER TABLE food.Users DROP COLUMN Role;
 END;
+GO
+
+CREATE OR ALTER VIEW food.vw_UserAccess
+AS
+    SELECT u.UserId, u.FullName, u.Email, u.PasswordHash, u.Phone, u.IsActive,
+           role.RoleName, sp.StaffType, pending.RequestId AS PendingRoleRequestId,
+           pending.RequestedStaffType, pending.RequestedAt AS StaffRequestDate
+    FROM food.Users u
+    INNER JOIN food.UserRoles ur ON ur.UserId = u.UserId AND ur.IsActive = 1
+    INNER JOIN food.Roles role ON role.RoleId = ur.RoleId AND role.IsActive = 1
+    LEFT JOIN food.StaffProfiles sp ON sp.UserId = u.UserId
+    LEFT JOIN food.AccountRoleRequests pending ON pending.UserId = u.UserId AND pending.Status = N'Pending';
 GO
 
 IF OBJECT_ID(N'food.Restaurants', N'U') IS NULL
