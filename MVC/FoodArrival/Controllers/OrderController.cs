@@ -238,7 +238,8 @@ namespace FoodArrival.Controllers
 
             int customerId = Convert.ToInt32(Session["CustomerId"]);
             var customer = _customerRepo.GetById(customerId);
-            var orders = _orderRepo.GetByCustomer(customerId);
+            var trackingService = new FoodArrival.Services.OrderTrackingService();
+            var orders = trackingService.GetCustomerOrders(customerId);
 
             ViewBag.Customer = customer;
             return View(orders);
