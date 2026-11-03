@@ -135,7 +135,7 @@ namespace FoodArrival.DAL
                         // 4. Record initial Timeline event
                         string historySql = @"
                             INSERT INTO dbo.OrderStatusHistory (OrderId, Status, ChangedByRole, Message, CreatedAt)
-                            VALUES (@OrderId, 'Confirmed', 'Customer', @Message, GETDATE());";
+                            VALUES (@OrderId, 'Placed', 'Customer', @Message, GETDATE());";
                         using (var cmdHist = new SqlCommand(historySql, conn, tran))
                         {
                             cmdHist.Parameters.AddWithValue("@OrderId", newOrderId);
