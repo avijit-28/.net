@@ -32,37 +32,63 @@ namespace FoodArrival.Controllers
             }
 
             int customerId = Convert.ToInt32(Session["CustomerId"]);
-            var order = _orderRepo.GetById(orderId);
-            if (order == null || order.CustomerId != customerId)
+            PaymentGatewayViewModel vm = null;
+
+            using (var conn = DbHelper.GetConnection())
+            using (var cmd = new SqlCommand(@"
+                SELECT o.OrderId, o.OrderNumber, o.CustomerId, c.CustomerName, c.PhoneNumber, c.Email,
+                       ISNULL(o.DeliveryAddress, c.Address) AS DeliveryAddress,
+                       o.TotalAmount, o.DeliveryFee, o.PaymentStatus, o.PaymentMethod, o.OrderStatus
+                FROM dbo.Orders o
+                INNER JOIN dbo.Customers c ON o.CustomerId = c.CustomerId
+                WHERE o.OrderId = @OrderId", conn))
+            {
+                cmd.Parameters.AddWithValue("@OrderId", orderId);
+                conn.Open();
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        int orderCustId = Convert.ToInt32(reader["CustomerId"]);
+                        if (orderCustId != customerId)
+                        {
+                            TempData["Error"] = "Order not found or unauthorized.";
+                            return RedirectToAction("Index", "Food");
+                        }
+
+                        string payStatus = reader["PaymentStatus"] != DBNull.Value ? reader["PaymentStatus"].ToString() : "Pending";
+                        if (string.Equals(payStatus, "Success", StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(payStatus, "Paid", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return RedirectToAction("Track", "OrderTracking", new { orderId = orderId });
+                        }
+
+                        vm = new PaymentGatewayViewModel
+                        {
+                            OrderId = Convert.ToInt32(reader["OrderId"]),
+                            OrderNumber = reader["OrderNumber"] != DBNull.Value ? reader["OrderNumber"].ToString() : ("FR" + (100000 + orderId)),
+                            CustomerId = orderCustId,
+                            CustomerName = reader["CustomerName"].ToString(),
+                            CustomerPhone = reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : "",
+                            CustomerEmail = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : "",
+                            DeliveryAddress = reader["DeliveryAddress"] != DBNull.Value ? reader["DeliveryAddress"].ToString() : "",
+                            TotalAmount = Convert.ToDecimal(reader["TotalAmount"]),
+                            DeliveryFee = reader["DeliveryFee"] != DBNull.Value ? Convert.ToDecimal(reader["DeliveryFee"]) : 40.00m,
+                            PlatformFee = 15.00m,
+                            PaymentMethod = reader["PaymentMethod"] != DBNull.Value ? reader["PaymentMethod"].ToString() : "UPI",
+                            DefaultUpiId = (Session["CustomerUsername"]?.ToString() ?? "user") + "@okaxis"
+                        };
+                        vm.Subtotal = Math.Max(0, vm.TotalAmount - vm.DeliveryFee - vm.PlatformFee);
+                    }
+                }
+            }
+
+            if (vm == null)
             {
                 TempData["Error"] = "Order not found.";
                 return RedirectToAction("Index", "Food");
             }
-
-            // If order already paid, redirect straight to live tracking
-            if (string.Equals(order.PaymentStatus, "Success", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(order.PaymentStatus, "Paid", StringComparison.OrdinalIgnoreCase))
-            {
-                return RedirectToAction("Track", "OrderTracking", new { orderId = orderId });
-            }
-
-            var vm = new PaymentGatewayViewModel
-            {
-                OrderId = order.OrderId,
-                OrderNumber = !string.IsNullOrEmpty(order.OrderNumber) ? order.OrderNumber : ("FR" + (100000 + order.OrderId)),
-                CustomerId = order.CustomerId,
-                CustomerName = order.CustomerName ?? Session["CustomerName"]?.ToString() ?? "Valued Customer",
-                CustomerPhone = order.PhoneNumber ?? Session["CustomerPhone"]?.ToString() ?? "",
-                CustomerEmail = Session["CustomerEmail"]?.ToString() ?? "",
-                DeliveryAddress = order.DeliveryAddress ?? Session["CustomerAddress"]?.ToString() ?? "",
-                TotalAmount = order.TotalAmount,
-                DeliveryFee = order.DeliveryFee > 0 ? order.DeliveryFee : 40.00m,
-                PlatformFee = 15.00m,
-                PaymentMethod = !string.IsNullOrEmpty(order.PaymentMethod) ? order.PaymentMethod : "UPI",
-                DefaultUpiId = (Session["CustomerUsername"]?.ToString() ?? "user") + "@okaxis"
-            };
-
-            vm.Subtotal = Math.Max(0, vm.TotalAmount - vm.DeliveryFee - vm.PlatformFee);
 
             // Fetch order items for summary
             using (var conn = DbHelper.GetConnection())
