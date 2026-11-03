@@ -1,0 +1,79 @@
+@model FoodArrival.Models.Customer
+@{
+    ViewBag.Title = "My Profile - FoodReady";
+}
+
+<div class="container py-4">
+    <div class="row g-4">
+        <!-- Customer Left Sidebar -->
+        <div class="col-lg-3 col-md-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center mb-4">
+                <div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #FF7A18, #FF5E1E); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 2rem; font-weight: bold;">
+                    @(Model.CustomerName.Length > 0 ? Model.CustomerName.Substring(0, 1).ToUpper() : "C")
+                </div>
+                <h5 class="fw-bold mb-0">@Model.CustomerName</h5>
+                <span class="badge bg-light text-muted border rounded-pill mt-1">Customer</span>
+                <p class="text-muted small mt-2 mb-0">@Model.Email</p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-3">
+                <div class="nav flex-column">
+                    <a href="@Url.Action("Profile", "Account")" class="category-pill active">
+                        <i class="bi bi-person me-2"></i> My Profile
+                    </a>
+                    <a href="@Url.Action("History", "Order")" class="category-pill">
+                        <i class="bi bi-bag-check me-2"></i> My Orders
+                    </a>
+                    <a href="@Url.Action("Profile", "Account")" class="category-pill">
+                        <i class="bi bi-key me-2"></i> Change Password
+                    </a>
+                    <hr class="my-2" />
+                    <a href="@Url.Action("Logout", "Account")" class="category-pill text-danger">
+                        <i class="bi bi-box-arrow-right me-2"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Form -->
+        <div class="col-lg-9 col-md-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+                <h3 class="fw-bold text-dark mb-1">Personal Profile</h3>
+                <p class="text-muted small mb-4">Update your contact details and default delivery address</p>
+
+                @using (Html.BeginForm("Profile", "Account", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3 small" })
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Full Name</label>
+                        @Html.TextBoxFor(m => m.CustomerName, new { @class = "form-control", placeholder = "Your Full Name" })
+                        @Html.ValidationMessageFor(m => m.CustomerName, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Email Address (Registered)</label>
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control bg-light", @readonly = "readonly" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Phone Number</label>
+                        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Phone Number" })
+                        @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">Default Delivery Address</label>
+                        @Html.TextAreaFor(m => m.Address, new { @class = "form-control", rows = "3", placeholder = "Street, building, area, landmark, city" })
+                        @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-food px-4 py-2 fw-bold">
+                        Save Profile
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
