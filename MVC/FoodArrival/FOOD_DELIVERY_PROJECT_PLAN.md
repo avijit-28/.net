@@ -37,9 +37,11 @@ The supplied archives and PDF are examples for reference. Their specific setup s
 
 ### Administrator
 
-1. Manage account roles and restaurant activation.
-2. Assign delivery agents to accepted orders.
+1. Manage account roles, restaurants, and food/menu items.
+2. Accept or reject pending orders, review accepted/rejected queues, and assign delivery agents to ready orders.
 3. Review operational orders and user/restaurant activity.
+
+Pending orders are stored as `Placed` in the application schema. Opening or refreshing the admin dashboard runs `food.usp_Order_AutoReject`, which rejects only orders still in `Placed` state after five minutes. Admin order actions validate the Admin role and current order state in SQL. Admin menu management supports create, edit, and availability toggling. Items are disabled instead of physically deleted so prior order history remains intact.
 
 ## UI/UX direction
 
@@ -69,6 +71,8 @@ Keep SQL and connection handling out of controllers and views. Use parameterized
 `FoodDeliveryDatabase.sql` is a single SQL Server script. It creates the `FoodDeliveryDB` database if needed, then creates schema `food` with normalized `Roles` and `UserRoles`, `StaffProfiles`, pending `AccountRoleRequests`, users, restaurants, menu items, saved addresses, orders, order-item snapshots, payments, delivery assignments, and reviews. It defines keys, foreign keys, uniqueness, status/role checks, money and quantity checks, and common lookup indexes. Stored procedures are grouped after the tables. Optional demo records are in a separately marked, commented section at the end.
 
 The script exposes procedures for restaurant search, menu browsing, menu-item add/update, menu availability, order placement, customer order history/details, restaurant order listing/status changes, delivery assignment/status changes, and order reviews. Multi-row order creation is transactional; item prices are read from the database rather than trusted from the browser. Procedure inputs are parameterized, ownership is checked in the procedure, and invalid operations raise SQL errors for the repository to handle.
+
+`FoodDeliveryDB_All_SQL.sql` was provided as an additional example. It targets a separate `FoodArrivalDB` database with `dbo.Customers`/`dbo.FoodItems` tables and includes drop-and-recreate sections. Its five-minute rejection behavior and admin order/menu workflow have been incorporated into the existing `FoodDeliveryDB` / `food.*` design rather than swapping the application to an incompatible database contract.
 
 ## Build phases
 
