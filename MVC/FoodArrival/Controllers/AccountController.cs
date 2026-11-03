@@ -21,7 +21,18 @@ namespace FoodArrival.Controllers
         public ActionResult Login(LoginViewModel model)
         {
             if (!ModelState.IsValid) return View(model);
-            var account = Repository.FindAccount(model.Email.Trim());
+            AccountRecord account;
+            try { account = Repository.FindAccount(model.Email.Trim()); }
+            catch (ConfigurationErrorsException)
+            {
+                ModelState.AddModelError("", "Database connection is not configured. Add the FoodDeliveryDB connection string in Web.config.");
+                return View(model);
+            }
+            catch (System.Data.SqlClient.SqlException)
+            {
+                ModelState.AddModelError("", "FoodArrival could not connect to the database. Check the FoodDeliveryDB connection and run the database script.");
+                return View(model);
+            }
             if (account == null || !VerifyPassword(model.Password, account.PasswordHash))
             {
                 ModelState.AddModelError("", "Email or password is incorrect.");
@@ -62,7 +73,12 @@ namespace FoodArrival.Controllers
             }
             catch (System.Data.SqlClient.SqlException ex)
             {
-                ModelState.AddModelError("", ex.Number == 2601 || ex.Number == 2627 ? "An account with that email already exists." : ex.Message);
+                ModelState.AddModelError("", ex.Number == 2601 || ex.Number == 2627 ? "An account with that email already exists." : "The account could not be created. Check the database connection and try again.");
+                return View(model);
+            }
+            catch (ConfigurationErrorsException)
+            {
+                ModelState.AddModelError("", "Database connection is not configured. Add the FoodDeliveryDB connection string in Web.config.");
                 return View(model);
             }
         }
