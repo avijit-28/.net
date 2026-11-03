@@ -355,6 +355,54 @@ namespace FoodArrival.Models
             }
         }
 
+        public IList<MenuItem> GetAdminMenuItems()
+        {
+            var result = new List<MenuItem>();
+            using (var connection = OpenConnection())
+            using (var command = Procedure(connection, "food.usp_Admin_MenuItemList"))
+            using (var reader = command.ExecuteReader())
+                while (reader.Read()) result.Add(new MenuItem
+                {
+                    MenuItemId = Convert.ToInt32(reader["MenuItemId"]), RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
+                    RestaurantName = Text(reader, "RestaurantName"), Name = Text(reader, "Name"),
+                    Description = Text(reader, "Description"), Category = Text(reader, "Category"),
+                    Price = Convert.ToDecimal(reader["Price"]), ImageUrl = Text(reader, "ImageUrl"),
+                    IsVegetarian = Convert.ToBoolean(reader["IsVegetarian"]), IsAvailable = Convert.ToBoolean(reader["IsAvailable"])
+                });
+            return result;
+        }
+
+        public int SaveAdminMenuItem(int adminId, MenuItem item)
+        {
+            using (var connection = OpenConnection())
+            using (var command = Procedure(connection, "food.usp_Admin_MenuItemSave"))
+            {
+                command.Parameters.Add("@ActorUserId", SqlDbType.Int).Value = adminId;
+                command.Parameters.Add("@MenuItemId", SqlDbType.Int).Value = item.MenuItemId == 0 ? (object)DBNull.Value : item.MenuItemId;
+                command.Parameters.Add("@RestaurantId", SqlDbType.Int).Value = item.RestaurantId;
+                command.Parameters.Add("@Name", SqlDbType.NVarChar, 160).Value = item.Name;
+                command.Parameters.Add("@Description", SqlDbType.NVarChar, 600).Value = (object)item.Description ?? DBNull.Value;
+                command.Parameters.Add("@Category", SqlDbType.NVarChar, 80).Value = (object)item.Category ?? DBNull.Value;
+                command.Parameters.Add("@Price", SqlDbType.Decimal).Value = item.Price;
+                command.Parameters.Add("@ImageUrl", SqlDbType.NVarChar, 500).Value = (object)item.ImageUrl ?? DBNull.Value;
+                command.Parameters.Add("@IsVegetarian", SqlDbType.Bit).Value = item.IsVegetarian;
+                command.Parameters.Add("@IsAvailable", SqlDbType.Bit).Value = item.IsAvailable;
+                return Convert.ToInt32(command.ExecuteScalar());
+            }
+        }
+
+        public void SetAdminMenuAvailability(int adminId, int menuItemId, bool isAvailable)
+        {
+            using (var connection = OpenConnection())
+            using (var command = Procedure(connection, "food.usp_Admin_MenuItemSetAvailability"))
+            {
+                command.Parameters.Add("@ActorUserId", SqlDbType.Int).Value = adminId;
+                command.Parameters.Add("@MenuItemId", SqlDbType.Int).Value = menuItemId;
+                command.Parameters.Add("@IsAvailable", SqlDbType.Bit).Value = isAvailable;
+                command.ExecuteNonQuery();
+            }
+        }
+
         public IList<KeyValuePair<int, string>> GetActiveAgents()
         {
             var result = new List<KeyValuePair<int, string>>();
