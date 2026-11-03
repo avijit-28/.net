@@ -31,12 +31,122 @@ BEGIN
         Email NVARCHAR(254) NOT NULL,
         PasswordHash NVARCHAR(500) NOT NULL,
         Phone NVARCHAR(30) NULL,
-        Role NVARCHAR(20) NOT NULL CONSTRAINT DF_Users_Role DEFAULT N'Customer',
         IsActive BIT NOT NULL CONSTRAINT DF_Users_IsActive DEFAULT 1,
         CreatedAt DATETIME2(0) NOT NULL CONSTRAINT DF_Users_CreatedAt DEFAULT SYSUTCDATETIME(),
-        CONSTRAINT UQ_Users_Email UNIQUE (Email),
-        CONSTRAINT CK_Users_Role CHECK (Role IN (N'Customer', N'Restaurant', N'DeliveryAgent', N'Admin'))
+        CONSTRAINT UQ_Users_Email UNIQUE (Email)
     );
+END;
+GO
+
+IF OBJECT_ID(N'food.Roles', N'U') IS NULL
+BEGIN
+    CREATE TABLE food.Roles
+    (
+        RoleId SMALLINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Roles PRIMARY KEY,
+        RoleName NVARCHAR(30) NOT NULL,
+        Description NVARCHAR(250) NULL,
+        IsSelfAssignable BIT NOT NULL CONSTRAINT DF_Roles_SelfAssignable DEFAULT 0,
+        IsActive BIT NOT NULL CONSTRAINT DF_Roles_IsActive DEFAULT 1,
+        CONSTRAINT UQ_Roles_RoleName UNIQUE (RoleName),
+        CONSTRAINT CK_Roles_Name CHECK (RoleName IN (N'Admin', N'Customer', N'Staff'))
+    );
+END;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM food.Roles WHERE RoleName = N'Admin')
+    INSERT food.Roles(RoleName, Description, IsSelfAssignable) VALUES (N'Admin', N'Platform administrator', 0);
+IF NOT EXISTS (SELECT 1 FROM food.Roles WHERE RoleName = N'Customer')
+    INSERT food.Roles(RoleName, Description, IsSelfAssignable) VALUES (N'Customer', N'Food ordering customer', 1);
+IF NOT EXISTS (SELECT 1 FROM food.Roles WHERE RoleName = N'Staff')
+    INSERT food.Roles(RoleName, Description, IsSelfAssignable) VALUES (N'Staff', N'Restaurant or delivery operations staff', 0);
+GO
+
+IF OBJECT_ID(N'food.UserRoles', N'U') IS NULL
+BEGIN
+    CREATE TABLE food.UserRoles
+    (
+        UserRoleId BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_UserRoles PRIMARY KEY,
+        UserId INT NOT NULL,
+        RoleId SMALLINT NOT NULL,
+        AssignedByUserId INT NULL,
+        AssignedAt DATETIME2(0) NOT NULL CONSTRAINT DF_UserRoles_AssignedAt DEFAULT SYSUTCDATETIME(),
+        IsActive BIT NOT NULL CONSTRAINT DF_UserRoles_IsActive DEFAULT 1,
+        CONSTRAINT FK_UserRoles_User FOREIGN KEY (UserId) REFERENCES food.Users(UserId),
+        CONSTRAINT FK_UserRoles_Role FOREIGN KEY (RoleId) REFERENCES food.Roles(RoleId),
+        CONSTRAINT FK_UserRoles_AssignedBy FOREIGN KEY (AssignedByUserId) REFERENCES food.Users(UserId)
+    );
+END;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'food.UserRoles') AND name = N'UX_UserRoles_OneActiveRole')
+    CREATE UNIQUE INDEX UX_UserRoles_OneActiveRole ON food.UserRoles(UserId) WHERE IsActive = 1;
+GO
+
+IF OBJECT_ID(N'food.StaffProfiles', N'U') IS NULL
+BEGIN
+    CREATE TABLE food.StaffProfiles
+    (
+        UserId INT NOT NULL CONSTRAINT PK_StaffProfiles PRIMARY KEY,
+        StaffType NVARCHAR(30) NOT NULL,
+        EmployeeCode NVARCHAR(30) NULL,
+        Phone NVARCHAR(30) NULL,
+        IsAvailable BIT NOT NULL CONSTRAINT DF_StaffProfiles_IsAvailable DEFAULT 1,
+        VehicleType NVARCHAR(50) NULL,
+        VehicleNumber NVARCHAR(30) NULL,
+        JoinedAt DATETIME2(0) NOT NULL CONSTRAINT DF_StaffProfiles_JoinedAt DEFAULT SYSUTCDATETIME(),
+        CONSTRAINT FK_StaffProfiles_User FOREIGN KEY (UserId) REFERENCES food.Users(UserId),
+        CONSTRAINT UQ_StaffProfiles_EmployeeCode UNIQUE (EmployeeCode),
+        CONSTRAINT CK_StaffProfiles_Type CHECK (StaffType IN (N'Restaurant', N'DeliveryAgent'))
+    );
+END;
+GO
+
+IF OBJECT_ID(N'food.AccountRoleRequests', N'U') IS NULL
+BEGIN
+    CREATE TABLE food.AccountRoleRequests
+    (
+        RequestId BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_AccountRoleRequests PRIMARY KEY,
+        UserId INT NOT NULL,
+        RequestedRole NVARCHAR(30) NOT NULL,
+        RequestedStaffType NVARCHAR(30) NULL,
+        Status NVARCHAR(20) NOT NULL CONSTRAINT DF_AccountRoleRequests_Status DEFAULT N'Pending',
+        RequestNote NVARCHAR(500) NULL,
+        RequestedAt DATETIME2(0) NOT NULL CONSTRAINT DF_AccountRoleRequests_RequestedAt DEFAULT SYSUTCDATETIME(),
+        ReviewedByUserId INT NULL,
+        ReviewedAt DATETIME2(0) NULL,
+        CONSTRAINT FK_AccountRoleRequests_User FOREIGN KEY (UserId) REFERENCES food.Users(UserId),
+        CONSTRAINT FK_AccountRoleRequests_Reviewer FOREIGN KEY (ReviewedByUserId) REFERENCES food.Users(UserId),
+        CONSTRAINT CK_AccountRoleRequests_Role CHECK (RequestedRole = N'Staff'),
+        CONSTRAINT CK_AccountRoleRequests_StaffType CHECK (RequestedStaffType IN (N'Restaurant', N'DeliveryAgent')),
+        CONSTRAINT CK_AccountRoleRequests_Status CHECK (Status IN (N'Pending', N'Approved', N'Rejected'))
+    );
+END;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'food.AccountRoleRequests') AND name = N'UX_AccountRoleRequests_PendingUser')
+    CREATE UNIQUE INDEX UX_AccountRoleRequests_PendingUser ON food.AccountRoleRequests(UserId) WHERE Status = N'Pending';
+GO
+
+/* Migrate users created by the earlier single-column role version. */
+IF COL_LENGTH(N'food.Users', N'Role') IS NOT NULL
+BEGIN
+    INSERT food.UserRoles(UserId, RoleId, IsActive)
+    SELECT u.UserId, r.RoleId, 1
+    FROM food.Users u
+    INNER JOIN food.Roles r ON r.RoleName = CASE WHEN u.Role IN (N'Restaurant', N'DeliveryAgent') THEN N'Staff' ELSE u.Role END
+    WHERE NOT EXISTS (SELECT 1 FROM food.UserRoles ur WHERE ur.UserId = u.UserId AND ur.IsActive = 1);
+
+    INSERT food.StaffProfiles(UserId, StaffType, Phone)
+    SELECT u.UserId, CASE WHEN u.Role = N'DeliveryAgent' THEN N'DeliveryAgent' ELSE N'Restaurant' END, u.Phone
+    FROM food.Users u
+    WHERE u.Role IN (N'Restaurant', N'DeliveryAgent')
+      AND NOT EXISTS (SELECT 1 FROM food.StaffProfiles sp WHERE sp.UserId = u.UserId);
+
+    IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = N'DF_Users_Role')
+        ALTER TABLE food.Users DROP CONSTRAINT DF_Users_Role;
+    IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_Users_Role')
+        ALTER TABLE food.Users DROP CONSTRAINT CK_Users_Role;
+    ALTER TABLE food.Users DROP COLUMN Role;
 END;
 GO
 
