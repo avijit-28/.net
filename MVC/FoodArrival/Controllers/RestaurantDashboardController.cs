@@ -14,7 +14,7 @@ namespace FoodArrival.Controllers
             var restaurants = repo.GetOwnedRestaurants(Int32.Parse(User.Identity.Name));
             if (!restaurants.Any()) return View(new RestaurantDashboardViewModel { Menu = new MenuItem[0], Orders = new OrderSummary[0], NewMenuItem = new MenuEditViewModel() });
             var restaurant = restaurants[0];
-            return View(Build(repo, restaurant.Key, restaurant.Value));
+            return View(Build(repo, restaurant.Key, restaurant.Value, Int32.Parse(User.Identity.Name)));
         }
 
         [HttpPost, ValidateAntiForgeryToken]
@@ -42,13 +42,13 @@ namespace FoodArrival.Controllers
             return RedirectToAction("Index");
         }
 
-        private static RestaurantDashboardViewModel Build(FoodRepository repo, int id, string name)
+        private static RestaurantDashboardViewModel Build(FoodRepository repo, int id, string name, int actorId)
         {
             return new RestaurantDashboardViewModel
             {
                 RestaurantId = id, RestaurantName = name,
-                Menu = repo.GetOwnedMenu(Int32.Parse(System.Web.HttpContext.Current.User.Identity.Name), id),
-                Orders = repo.GetRestaurantOrders(Int32.Parse(System.Web.HttpContext.Current.User.Identity.Name), id),
+                Menu = repo.GetOwnedMenu(actorId, id),
+                Orders = repo.GetRestaurantOrders(actorId, id),
                 NewMenuItem = new MenuEditViewModel { IsAvailable = true }
             };
         }
