@@ -93,4 +93,66 @@ $(document).ready(function () {
             setTimeout(function () { $toast.fadeOut(400); }, 3000);
         }
     }
+
+    // ----------------------------------------------------
+    // NOTIFICATIONS SYSTEM
+    // ----------------------------------------------------
+    function loadNotifications() {
+        $.ajax({
+            url: '/Home/GetNotifications',
+            type: 'GET',
+            cache: false,
+            success: function (res) {
+                if (res.success) {
+                    if (res.unreadCount > 0) {
+                        $('#notif-badge').text(res.unreadCount).show();
+                    } else {
+                        $('#notif-badge').hide();
+                    }
+
+                    var html = '';
+                    if (res.notifications && res.notifications.length > 0) {
+                        $.each(res.notifications, function (i, item) {
+                            var icon = 'bi-bell-fill text-primary';
+                            if (item.type === 'Order') icon = 'bi-bag-check-fill text-success';
+                            else if (item.type === 'Alert') icon = 'bi-exclamation-triangle-fill text-danger';
+                            else if (item.type === 'Promo') icon = 'bi-tag-fill text-warning';
+
+                            var unreadBg = !item.isRead ? 'background-color: #FFF9F5;' : '';
+
+                            html += '<a href="' + item.url + '" class="d-flex align-items-start gap-2 p-2 text-decoration-none border-bottom rounded mb-1" style="' + unreadBg + '">';
+                            html += '<i class="bi ' + icon + ' fs-5 mt-1"></i>';
+                            html += '<div class="flex-grow-1">';
+                            html += '<div class="small fw-bold text-dark d-flex justify-content-between">';
+                            html += '<span>' + item.title + '</span>';
+                            html += '<span class="text-muted" style="font-size:0.7rem;">' + item.time + '</span>';
+                            html += '</div>';
+                            html += '<div class="text-muted small" style="font-size:0.8rem; line-height: 1.2;">' + item.message + '</div>';
+                            html += '</div></a>';
+                        });
+                    } else {
+                        html = '<div class="text-center py-4 text-muted small"><i class="bi bi-inbox fs-4 d-block mb-1"></i>No notifications yet</div>';
+                    }
+                    $('#notif-list').html(html);
+                }
+            }
+        });
+    }
+
+    // Initial load & recurring poll
+    loadNotifications();
+    setInterval(loadNotifications, 20000);
+
+    // Mark notifications as read
+    $('#btn-mark-notif-read').on('click', function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/Home/MarkNotificationsRead',
+            type: 'POST',
+            success: function () {
+                $('#notif-badge').hide();
+                loadNotifications();
+            }
+        });
+    });
 });
