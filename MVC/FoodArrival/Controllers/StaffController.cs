@@ -13,6 +13,7 @@ namespace FoodArrival.Controllers
         private readonly StaffRepository _staffRepo = new StaffRepository();
         private readonly RestaurantRepository _restRepo = new RestaurantRepository();
         private readonly NotificationRepository _notifRepo = new NotificationRepository();
+        private readonly OrderRepository _orderRepo = new OrderRepository();
 
         private bool IsStaffAuthenticated()
         {
