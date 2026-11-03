@@ -1,0 +1,125 @@
+@model IEnumerable<FoodArrival.Models.FoodItem>
+@{
+    ViewBag.Title = "Our Menu - FoodReady";
+    string currentCategory = ViewBag.CurrentCategory as string ?? "All items";
+    var categories = ViewBag.Categories as List<string> ?? new List<string> { "All items", "Pizza", "Burger", "Indian", "Chinese", "Drinks", "Snacks" };
+}
+
+<div class="container py-4">
+    <div class="row g-4">
+        <!-- Categories Left Sidebar -->
+        <div class="col-lg-3 col-md-4">
+            <div class="category-menu-card sticky-top" style="top: 90px;">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-grid-fill text-warning"></i>
+                    <span>Categories</span>
+                </h5>
+                <div class="nav flex-column">
+                    @foreach (var cat in categories)
+                    {
+                        bool isActive = string.Equals(cat, currentCategory, StringComparison.OrdinalIgnoreCase);
+                        <a href="@Url.Action("Index", "Food", new { category = cat })" class="category-pill @(isActive ? "active" : "")">
+                            @if (cat == "All items")
+                            {
+                                <i class="bi bi-collection me-2"></i>
+                            }
+                            else if (cat == "Pizza")
+                            {
+                                <i class="bi bi-pie-chart me-2"></i>
+                            }
+                            else if (cat == "Burger")
+                            {
+                                <i class="bi bi-circle-fill me-2 fs-6"></i>
+                            }
+                            else if (cat == "Indian")
+                            {
+                                <i class="bi bi-fire me-2"></i>
+                            }
+                            else if (cat == "Chinese")
+                            {
+                                <i class="bi bi-box2-heart me-2"></i>
+                            }
+                            else if (cat == "Drinks")
+                            {
+                                <i class="bi bi-cup-straw me-2"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-egg-fried me-2"></i>
+                            }
+                            <span>@cat</span>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Food Items Right Grid -->
+        <div class="col-lg-9 col-md-8">
+            <!-- Header & Search Bar -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                <div>
+                    <h2 class="fw-bold mb-0">Our Menu</h2>
+                    <p class="text-muted small mb-0">Showing dishes in <strong class="text-dark">@currentCategory</strong></p>
+                </div>
+
+                <form action="@Url.Action("Index", "Food")" method="get" class="d-flex align-items-center gap-2">
+                    <input type="hidden" name="category" value="@currentCategory" />
+                    <div class="input-group" style="max-width: 300px;">
+                        <input type="text" name="search" class="form-control rounded-pill rounded-end border-end-0 ps-3" placeholder="Search food items..." value="@ViewBag.Search" />
+                        <button class="btn btn-primary-food rounded-pill rounded-start px-3" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Food Cards Grid -->
+            @if (Model != null && Model.Any())
+            {
+                <div class="row g-4">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-lg-4 col-md-6">
+                            <div class="food-card" id="food-item-@item.FoodItemId">
+                                <div class="food-card-img-wrap">
+                                    <img src="@item.ImageUrl" alt="@item.ItemName" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80'" />
+                                    <span class="position-absolute top-0 end-0 m-2 badge bg-dark bg-opacity-75">
+                                        @item.Category
+                                    </span>
+                                </div>
+                                <div class="food-card-body">
+                                    <h5 class="food-card-title">@item.ItemName</h5>
+                                    <p class="text-muted small mb-3 flex-grow-1">@(string.IsNullOrEmpty(item.Description) ? "Prepared fresh with finest ingredients" : item.Description)</p>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="food-card-price">₹@item.Price.ToString("F0")</span>
+                                        <!-- Quantity Selector -->
+                                        <div class="qty-picker">
+                                            <button type="button" class="qty-btn btn-qty-minus"><i class="bi bi-dash"></i></button>
+                                            <input type="text" class="qty-input input-quantity" value="1" readonly />
+                                            <button type="button" class="qty-btn btn-qty-plus"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                    </div>
+
+                                    <button class="btn btn-primary-food w-100 btn-add-to-cart" data-id="@item.FoodItemId">
+                                        <i class="bi bi-cart-plus me-1"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 bg-white rounded-4 shadow-sm border">
+                    <i class="bi bi-search text-muted display-4"></i>
+                    <h5 class="fw-bold mt-3">No Food Items Found</h5>
+                    <p class="text-muted small">Try searching for something else or browse another category.</p>
+                    <a href="@Url.Action("Index", "Food")" class="btn btn-outline-food mt-2">Reset Filters</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
