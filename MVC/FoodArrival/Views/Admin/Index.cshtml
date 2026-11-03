@@ -38,10 +38,11 @@
         @if (!Model.Users.Any()) { <p class="text-muted">No accounts yet.</p> }
         @foreach (var user in Model.Users)
         {
-            <div class="border-top py-3"><div class="d-flex justify-content-between gap-2"><div><strong>@user.FullName</strong><div class="small text-muted">@user.Email · #@user.UserId</div></div><span class="status-pill">@(user.IsActive ? user.Role : "Inactive")</span></div>
+            <div class="border-top py-3"><div class="d-flex justify-content-between gap-2"><div><strong>@user.FullName</strong><div class="small text-muted">@user.Email · #@user.UserId</div>@if (user.PendingRoleRequestId.HasValue) { <div class="small text-warning-emphasis">Pending staff request: @user.RequestedStaffType</div> }</div><span class="status-pill">@(user.IsActive ? user.Role + (String.IsNullOrEmpty(user.StaffType) ? "" : " · " + user.StaffType) : "Inactive")</span></div>
                 <form action="@Url.Action("UpdateUser", "Admin")" method="post" class="d-flex flex-wrap gap-2 mt-2">
                     @Html.AntiForgeryToken()<input type="hidden" name="userId" value="@user.UserId" />
-                    @Html.DropDownList("role", new SelectList(new[] { "Customer", "Restaurant", "DeliveryAgent", "Admin" }, user.Role), new { @class = "form-select", style = "max-width:190px" })
+                    @Html.DropDownList("role", new SelectList(new[] { "Customer", "Staff", "Admin" }, user.Role), new { @class = "form-select", style = "max-width:150px" })
+                    @Html.DropDownList("staffType", new SelectList(new[] { "Restaurant", "DeliveryAgent" }, user.StaffType ?? user.RequestedStaffType), "Staff area", new { @class = "form-select", style = "max-width:190px" })
                     <div class="form-check align-self-center"><input class="form-check-input" type="checkbox" id="active-@user.UserId" name="isActive" value="true" @(user.IsActive ? "checked" : "") /><input type="hidden" name="isActive" value="false" /><label class="form-check-label" for="active-@user.UserId">Active</label></div>
                     <button class="btn btn-outline-dark btn-sm" type="submit">Save</button>
                 </form>
