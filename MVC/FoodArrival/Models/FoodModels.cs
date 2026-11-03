@@ -51,6 +51,9 @@ namespace FoodArrival.Models
 
     public class CheckoutViewModel
     {
+        public int? AddressId { get; set; }
+        public bool SaveAddress { get; set; }
+        public IList<AddressViewModel> SavedAddresses { get; set; }
         [Required, StringLength(120)]
         [Display(Name = "Recipient name")]
         public string RecipientName { get; set; }
@@ -74,6 +77,20 @@ namespace FoodArrival.Models
         [Required]
         [Display(Name = "Payment method")]
         public string PaymentMethod { get; set; }
+    }
+
+    public class AddressViewModel
+    {
+        public int AddressId { get; set; }
+        public string Label { get; set; }
+        public string RecipientName { get; set; }
+        public string Phone { get; set; }
+        public string AddressLine { get; set; }
+        public string AddressLine2 { get; set; }
+        public string City { get; set; }
+        public string PostalCode { get; set; }
+        public string Instructions { get; set; }
+        public bool IsDefault { get; set; }
     }
 
     public class OrderSummary
