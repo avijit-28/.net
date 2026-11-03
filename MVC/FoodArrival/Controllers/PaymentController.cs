@@ -242,6 +242,7 @@ namespace FoodArrival.Controllers
                     catch (Exception ex)
                     {
                         tran.Rollback();
+                        try { System.IO.File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "pay_error.log", ex.ToString()); } catch { }
                         if (Request.IsAjaxRequest())
                             return Json(new { success = false, message = "Payment processing error: " + ex.Message });
                         TempData["Error"] = "Payment failed: " + ex.Message;
