@@ -1,0 +1,154 @@
+@model List<FoodArrival.Models.Bulletin>
+@{
+    ViewBag.Title = "Platform Bulletins & Announcements - Admin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4 px-lg-5">
+    <div class="row g-4">
+        <!-- Admin Left Sidebar -->
+        <div class="col-lg-2 col-md-3">
+            <div class="admin-sidebar sticky-top" style="top: 85px;">
+                <div class="d-flex align-items-center gap-2 mb-4 px-2">
+                    <span class="badge bg-warning text-dark fw-bold px-2 py-1"><i class="bi bi-shield-lock-fill me-1"></i> Admin Panel</span>
+                </div>
+                <div class="nav flex-column gap-1">
+                    <a href="@Url.Action("Dashboard", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="@Url.Action("Approvals", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>Approvals</span>
+                    </a>
+                    <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="admin-nav-item">
+                        <i class="bi bi-card-checklist"></i>
+                        <span>Orders</span>
+                    </a>
+                    <a href="@Url.Action("FoodItems", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-egg-fried"></i>
+                        <span>Food Menu</span>
+                    </a>
+                    <a href="@Url.Action("Riders", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-bicycle"></i>
+                        <span>Rider Fleet</span>
+                    </a>
+                    <a href="@Url.Action("Transactions", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-cash-stack"></i>
+                        <span>Transactions</span>
+                    </a>
+                    <a href="@Url.Action("Bulletins", "Admin")" class="admin-nav-item active">
+                        <i class="bi bi-megaphone-fill"></i>
+                        <span>Bulletins</span>
+                    </a>
+                    <hr class="border-secondary my-3" />
+                    <a href="@Url.Action("Logout", "Admin")" class="admin-nav-item text-danger">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-lg-10 col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-0">Platform Bulletins & Public Announcements</h2>
+                    <p class="text-muted small mb-0">Broadcast alerts and notices across Customer, Restaurant, Staff, and Rider portals</p>
+                </div>
+                <button type="button" class="btn btn-primary-food btn-sm" data-bs-toggle="modal" data-bs-target="#newBulletinModal">
+                    <i class="bi bi-plus-circle me-1"></i> Post New Announcement
+                </button>
+            </div>
+
+            <!-- Bulletins Cards Grid -->
+            <div class="row g-3">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var b in Model)
+                    {
+                        string priorityBadge = b.Priority == "High" ? "bg-danger" : (b.Priority == "Medium" ? "bg-warning text-dark" : "bg-info text-dark");
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm rounded-4 p-4 h-100 position-relative">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <span class="badge @priorityBadge">@b.Priority Priority</span>
+                                        <span class="badge bg-light text-dark border"><i class="bi bi-bullseye me-1"></i> @b.TargetAudience</span>
+                                    </div>
+                                    @using (Html.BeginForm("DeleteBulletin", "Admin", new { id = b.BulletinId }, FormMethod.Post, new { @class = "d-inline" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger p-1" onclick="return confirm('Archive this bulletin?');" title="Archive Announcement">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    }
+                                </div>
+                                <h5 class="fw-bold text-dark mb-2">@b.Title</h5>
+                                <p class="text-muted small mb-3">@b.Message</p>
+                                <div class="mt-auto small text-muted border-top pt-2">
+                                    <i class="bi bi-clock me-1"></i> Posted on @b.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12 text-center py-5 text-muted">
+                        <i class="bi bi-megaphone display-5 text-muted d-block mb-2"></i>
+                        No active announcements broadcasted currently. Click "Post New Announcement" to publish one.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: New Bulletin Announcement -->
+<div class="modal fade" id="newBulletinModal" tabindex="-1" aria-labelledby="newBulletinModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold" id="newBulletinModalLabel"><i class="bi bi-megaphone-fill text-warning me-2"></i> Broadcast Announcement</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Html.BeginForm("AddBulletin", "Admin", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Headline / Title <span class="text-danger">*</span></label>
+                        <input type="text" name="Title" class="form-control" placeholder="e.g. Festival Rush - High Delivery Incentive" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Target Audience <span class="text-danger">*</span></label>
+                        <select name="TargetAudience" class="form-select">
+                            <option value="All">All Users (Public Header Marquee & App)</option>
+                            <option value="Customer">Customers Only</option>
+                            <option value="Restaurant">Restaurant Partners Only</option>
+                            <option value="RestaurantStaff">Kitchen Staff Only</option>
+                            <option value="Rider">Delivery Riders Only</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Priority Level <span class="text-danger">*</span></label>
+                        <select name="Priority" class="form-select">
+                            <option value="Normal">Normal</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent Alert</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Announcement Message <span class="text-danger">*</span></label>
+                        <textarea name="Message" class="form-control" rows="4" placeholder="Type announcement details..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary-food fw-bold px-4">Broadcast Bulletin</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
