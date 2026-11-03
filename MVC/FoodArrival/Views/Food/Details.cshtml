@@ -29,7 +29,7 @@
                 </div>
 
                 <h1 class="fw-bold mb-2 text-dark">@Model.ItemName</h1>
-                <h3 class="fw-bold text-danger mb-3">₹@Model.Price.ToString("F2")</h3>
+                <h3 class="fw-bold text-danger mb-3">&#8377;@Model.Price.ToString("F2")</h3>
 
                 <p class="text-muted mb-4 lead fs-6">
                     @(string.IsNullOrEmpty(Model.Description) ? "Cooked fresh to order with premium ingredients and hand-selected spices." : Model.Description)
