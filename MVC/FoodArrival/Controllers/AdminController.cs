@@ -150,6 +150,12 @@ namespace FoodArrival.Controllers
             string message;
             if (_orderRepo.AcceptOrder(orderId, adminId, out message))
             {
+                var order = _orderRepo.GetDetails(orderId);
+                int? custId = order != null ? (int?)order.CustomerId : null;
+                _notifRepo.AddNotification("Customer", custId, "Order Accepted!", "Your Order #FD" + (1000 + orderId) + " was accepted and sent to kitchen.", "Order", "/Order/History");
+                _notifRepo.AddNotification("Restaurant", null, "Order Confirmed by Admin", "Order #FD" + (1000 + orderId) + " confirmed. Start preparation.", "Order", "/Restaurant/Dashboard");
+                _notifRepo.AddNotification("Rider", null, "Upcoming Delivery", "Order #FD" + (1000 + orderId) + " accepted. Will be ready for delivery shortly.", "Info", "/Rider/Dashboard");
+
                 TempData["Success"] = "Order #FD" + (1000 + orderId) + " accepted successfully.";
             }
             else
