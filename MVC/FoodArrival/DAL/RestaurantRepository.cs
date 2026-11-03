@@ -47,6 +47,86 @@ namespace FoodArrival.DAL
             return null;
         }
 
+        public Restaurant GetById(int restaurantId)
+        {
+            string sql = @"
+                SELECT RestaurantId, RestaurantName, Email, PhoneNumber, Address, Cuisine, Rating, ImageUrl, IsActive
+                FROM dbo.Restaurants
+                WHERE RestaurantId = @RestaurantId";
+
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@RestaurantId", restaurantId);
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Restaurant
+                            {
+                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
+                                RestaurantName = reader["RestaurantName"].ToString(),
+                                Email = reader["Email"].ToString(),
+                                PhoneNumber = reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : null,
+                                Address = reader["Address"] != DBNull.Value ? reader["Address"].ToString() : null,
+                                Cuisine = reader["Cuisine"] != DBNull.Value ? reader["Cuisine"].ToString() : null,
+                                Rating = Convert.ToDecimal(reader["Rating"]),
+                                ImageUrl = reader["ImageUrl"] != DBNull.Value ? reader["ImageUrl"].ToString() : null,
+                                IsActive = Convert.ToBoolean(reader["IsActive"])
+                            };
+                        }
+                    }
+                }
+            }
+            catch { }
+            return null;
+        }
+
+        public bool Update(Restaurant model, out string message)
+        {
+            message = string.Empty;
+            string sql = @"
+                UPDATE dbo.Restaurants
+                SET RestaurantName = @RestaurantName,
+                    PhoneNumber = @PhoneNumber,
+                    Address = @Address,
+                    Cuisine = @Cuisine,
+                    ImageUrl = @ImageUrl
+                WHERE RestaurantId = @RestaurantId";
+
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@RestaurantId", model.RestaurantId);
+                    cmd.Parameters.AddWithValue("@RestaurantName", model.RestaurantName ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", (object)model.PhoneNumber ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Address", (object)model.Address ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Cuisine", (object)model.Cuisine ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@ImageUrl", (object)model.ImageUrl ?? DBNull.Value);
+
+                    conn.Open();
+                    int affected = cmd.ExecuteNonQuery();
+                    if (affected > 0)
+                    {
+                        message = "Restaurant details updated successfully.";
+                        return true;
+                    }
+                    message = "Restaurant not found.";
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
+        }
+
         public List<Order> GetOrders(int? restaurantId = null)
         {
             var list = new List<Order>();
