@@ -16,7 +16,7 @@ namespace FoodArrival.Controllers
             foreach (var agent in repo.GetActiveAgents()) agents.Add(new SelectListItem { Value = agent.Key.ToString(), Text = agent.Value });
             var users = repo.GetAdminUsers();
             var owners = new List<SelectListItem>();
-            foreach (var user in users.Where(x => x.Role == "Restaurant" && x.IsActive)) owners.Add(new SelectListItem { Value = user.UserId.ToString(), Text = user.FullName + " · " + user.Email });
+            foreach (var user in users.Where(x => x.Role == "Staff" && x.StaffType == "Restaurant" && x.IsActive)) owners.Add(new SelectListItem { Value = user.UserId.ToString(), Text = user.FullName + " · " + user.Email });
             return View(new AdminDashboardViewModel
             {
                 ReadyOrders = repo.GetReadyOrders(), Agents = agents, Users = users,
@@ -34,10 +34,11 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult UpdateUser(int userId, string role, bool isActive)
+        public ActionResult UpdateUser(int userId, string role, string staffType, bool isActive)
         {
-            if (!new[] { "Customer", "Restaurant", "DeliveryAgent", "Admin" }.Contains(role)) return new HttpStatusCodeResult(400);
-            try { new FoodRepository().UpdateUserRole(Int32.Parse(User.Identity.Name), userId, role, isActive); TempData["Notice"] = "Account updated."; }
+            if (!new[] { "Customer", "Staff", "Admin" }.Contains(role)) return new HttpStatusCodeResult(400);
+            if (role == "Staff" && !new[] { "Restaurant", "DeliveryAgent" }.Contains(staffType)) return new HttpStatusCodeResult(400);
+            try { new FoodRepository().UpdateUserRole(Int32.Parse(User.Identity.Name), userId, role, staffType, isActive); TempData["Notice"] = "Account updated."; }
             catch (Exception ex) { TempData["Error"] = ex.Message; }
             return RedirectToAction("Index");
         }
