@@ -509,15 +509,18 @@ BEGIN
         THROW 51041, 'Active delivery agent was not found.', 1;
     IF NOT EXISTS (SELECT 1 FROM food.Orders WHERE OrderId = @OrderId AND OrderStatus = N'Ready')
         THROW 51042, 'Only ready orders can be assigned.', 1;
-    IF EXISTS (SELECT 1 FROM food.DeliveryAssignments WHERE OrderId = @OrderId)
-        THROW 51043, 'Order already has a delivery assignment.', 1;
+    IF EXISTS (SELECT 1 FROM food.DeliveryAssignments WHERE OrderId = @OrderId AND Status <> N'Failed')
+        THROW 51043, 'Order already has an active or completed delivery assignment.', 1;
     BEGIN TRY
         BEGIN TRANSACTION;
-        INSERT food.DeliveryAssignments(OrderId, AgentUserId, AssignedByUserId)
-        VALUES (@OrderId, @AgentUserId, @ActorUserId);
-        UPDATE food.Orders SET OrderStatus = N'OutForDelivery', UpdatedAt = SYSUTCDATETIME()
-        WHERE OrderId = @OrderId AND OrderStatus = N'Ready';
-        IF @@ROWCOUNT = 0 THROW 51044, 'Order is no longer ready for delivery.', 1;
+        IF EXISTS (SELECT 1 FROM food.DeliveryAssignments WHERE OrderId = @OrderId AND Status = N'Failed')
+            UPDATE food.DeliveryAssignments
+            SET AgentUserId = @AgentUserId, AssignedByUserId = @ActorUserId,
+                Status = N'Assigned', AssignedAt = SYSUTCDATETIME(), PickedUpAt = NULL, DeliveredAt = NULL
+            WHERE OrderId = @OrderId AND Status = N'Failed';
+        ELSE
+            INSERT food.DeliveryAssignments(OrderId, AgentUserId, AssignedByUserId)
+            VALUES (@OrderId, @AgentUserId, @ActorUserId);
         COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
@@ -566,7 +569,10 @@ BEGIN
             OR (Status = N'PickedUp' AND @NewStatus IN (N'Delivered', N'Failed')));
         IF @@ROWCOUNT = 0 THROW 51046, 'Assignment not found or delivery status transition is not allowed.', 1;
 
-        IF @NewStatus = N'Delivered'
+        IF @NewStatus = N'PickedUp'
+            UPDATE food.Orders SET OrderStatus = N'OutForDelivery', UpdatedAt = SYSUTCDATETIME()
+            WHERE OrderId = @OrderId AND OrderStatus = N'Ready';
+        ELSE IF @NewStatus = N'Delivered'
             UPDATE food.Orders SET OrderStatus = N'Delivered', UpdatedAt = SYSUTCDATETIME()
             WHERE OrderId = @OrderId AND OrderStatus = N'OutForDelivery';
         ELSE IF @NewStatus = N'Failed'
