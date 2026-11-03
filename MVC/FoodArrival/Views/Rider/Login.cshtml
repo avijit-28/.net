@@ -1,0 +1,68 @@
+@model FoodArrival.Models.LoginViewModel
+@{
+    ViewBag.Title = "Rider Partner Login - FoodReady";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="auth-container" style="max-width: 850px;">
+        <div class="row g-0">
+            <!-- Left Banner -->
+            <div class="col-lg-5 p-5 text-white d-flex flex-column justify-content-center" style="background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);">
+                <div class="mb-4">
+                    <i class="bi bi-bicycle display-3 text-white"></i>
+                </div>
+                <h2 class="fw-bold mb-3">Rider Hub</h2>
+                <p class="text-white-50 mb-4">
+                    Deliver happiness to food lovers across the city. Accept rides, follow delivery routes, and earn with every trip.
+                </p>
+                <div class="mt-auto">
+                    <span class="badge bg-white text-dark px-3 py-2 rounded-pill fw-bold">Delivery Partner</span>
+                </div>
+            </div>
+
+            <!-- Right Form -->
+            <div class="col-lg-7 auth-form-card">
+                <div class="text-center mb-4">
+                    <div class="stat-icon pending mx-auto mb-2" style="width: 48px; height: 48px; background: #E0F2FE; color: #0284C7;">
+                        <i class="bi bi-scooter"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark">Rider Login</h3>
+                    <p class="text-muted small">Access your active deliveries and route dashboard</p>
+                </div>
+
+                @using (Html.BeginForm("Login", "Rider", FormMethod.Post, new { @class = "needs-validation" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3 small" })
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Rider Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control border-start-0", type = "email", placeholder = "rider@example.com" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control border-start-0", placeholder = "Rider Password" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-food w-100 py-2 fs-6 fw-bold shadow">
+                        Login as Delivery Rider
+                    </button>
+
+                    <div class="mt-4 p-3 bg-light rounded text-center small text-muted border">
+                        <i class="bi bi-key-fill text-warning me-1"></i> <strong>Demo Rider:</strong> rider@example.com | <strong>Pass:</strong> rider123
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
