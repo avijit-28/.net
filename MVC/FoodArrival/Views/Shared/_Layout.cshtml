@@ -51,7 +51,26 @@
                             <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Food" ? "active" : "")" href="@Url.Action("Index", "Food")">Menu</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Order" && ViewContext.RouteData.Values["action"]?.ToString() == "History" ? "active" : "")" href="@Url.Action("History", "Order")">Track Order</a>
+                            @if (isRider)
+                            {
+                                <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Rider" ? "active" : "")" href="@Url.Action("Dashboard", "Rider")">Track Trips</a>
+                            }
+                            else if (isRestaurant)
+                            {
+                                <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Restaurant" ? "active" : "")" href="@Url.Action("Dashboard", "Restaurant")">Live Orders</a>
+                            }
+                            else if (isStaff)
+                            {
+                                <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Staff" ? "active" : "")" href="@Url.Action("Dashboard", "Staff")">Kitchen Queue</a>
+                            }
+                            else if (isAdmin)
+                            {
+                                <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Orders" ? "active" : "")" href="@Url.Action("Orders", "Admin")">Manage Orders</a>
+                            }
+                            else
+                            {
+                                <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Order" && ViewContext.RouteData.Values["action"]?.ToString() == "History" ? "active" : "")" href="@Url.Action("History", "Order")">Track Order</a>
+                            }
                         </li>
                         <li class="nav-item">
                             <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "About" ? "active" : "")" href="@Url.Action("About", "Home")">About</a>
