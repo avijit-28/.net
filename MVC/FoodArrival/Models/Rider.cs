@@ -11,6 +11,10 @@ namespace FoodArrival.Models
         [Display(Name = "Rider Name")]
         public string RiderName { get; set; }
 
+        [StringLength(100)]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+
         [Required, EmailAddress, StringLength(150)]
         public string Email { get; set; }
 
@@ -22,6 +26,11 @@ namespace FoodArrival.Models
 
         [StringLength(50)]
         public string VehicleType { get; set; } = "Motorbike";
+
+        [StringLength(100)]
+        public string LicenseNumber { get; set; }
+
+        public string LicenseDocumentUrl { get; set; }
 
         public string CurrentStatus { get; set; } = "Available"; // Available, OnDelivery, Offline
 
