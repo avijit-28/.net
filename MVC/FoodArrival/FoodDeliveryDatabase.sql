@@ -611,7 +611,89 @@ BEGIN
 END;
 GO
 
-/* 9. Optional demo seed data - uncomment and replace sample password hashes before use.
+/* 9. Account and role-workflow support */
+CREATE OR ALTER PROCEDURE food.usp_Account_Register
+    @FullName NVARCHAR(120),
+    @Email NVARCHAR(254),
+    @Phone NVARCHAR(30),
+    @PasswordHash NVARCHAR(500)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF NULLIF(LTRIM(RTRIM(@FullName)), N'') IS NULL OR NULLIF(LTRIM(RTRIM(@Email)), N'') IS NULL
+       OR NULLIF(LTRIM(RTRIM(@PasswordHash)), N'') IS NULL
+        THROW 51060, 'Name, email, and password hash are required.', 1;
+    IF EXISTS (SELECT 1 FROM food.Users WHERE Email = @Email)
+        THROW 51061, 'An account with this email already exists.', 1;
+    INSERT food.Users(FullName, Email, Phone, PasswordHash, Role)
+    VALUES (@FullName, LOWER(LTRIM(RTRIM(@Email))), @Phone, @PasswordHash, N'Customer');
+    SELECT CONVERT(INT, SCOPE_IDENTITY()) AS UserId;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE food.usp_Account_FindByEmail
+    @Email NVARCHAR(254)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT UserId, FullName, Email, PasswordHash, Role
+    FROM food.Users
+    WHERE Email = LOWER(LTRIM(RTRIM(@Email))) AND IsActive = 1;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE food.usp_Restaurant_OwnedList
+    @OwnerUserId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT RestaurantId, Name, Cuisine, City, IsActive
+    FROM food.Restaurants
+    WHERE OwnerUserId = @OwnerUserId
+    ORDER BY Name;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE food.usp_Menu_OwnerList
+    @ActorUserId INT,
+    @RestaurantId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF NOT EXISTS (SELECT 1 FROM food.Restaurants WHERE RestaurantId = @RestaurantId AND OwnerUserId = @ActorUserId)
+        THROW 51062, 'Actor does not own this restaurant.', 1;
+    SELECT MenuItemId, Name, Description, Category, Price, IsVegetarian, IsAvailable
+    FROM food.MenuItems WHERE RestaurantId = @RestaurantId
+    ORDER BY Category, Name;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE food.usp_Admin_ReadyOrders
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT o.OrderId, o.OrderNumber, r.Name AS RestaurantName, o.DeliveryCity,
+           da.AgentUserId
+    FROM food.Orders o
+    INNER JOIN food.Restaurants r ON r.RestaurantId = o.RestaurantId
+    LEFT JOIN food.DeliveryAssignments da ON da.OrderId = o.OrderId
+    WHERE o.OrderStatus = N'Ready'
+    ORDER BY o.CreatedAt;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE food.usp_Admin_AgentList
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT UserId, FullName
+    FROM food.Users
+    WHERE Role = N'DeliveryAgent' AND IsActive = 1
+    ORDER BY FullName;
+END;
+GO
+
+/* 10. Optional demo seed data - uncomment and replace sample password hashes before use.
    PasswordHash values below are intentionally placeholders and cannot be used to log in.
 */
 /*
