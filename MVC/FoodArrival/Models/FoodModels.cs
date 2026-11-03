@@ -147,6 +147,14 @@ namespace FoodArrival.Models
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
         public string ConfirmPassword { get; set; }
+        [Required]
+        [Display(Name = "Account type")]
+        public string RequestedAccountType { get; set; }
+        [Display(Name = "Staff area")]
+        public string RequestedStaffType { get; set; }
+        [StringLength(500)]
+        [Display(Name = "Tell us about your staff request")]
+        public string RequestNote { get; set; }
     }
 
     public class LoginViewModel
@@ -204,6 +212,9 @@ namespace FoodArrival.Models
         public string FullName { get; set; }
         public string Email { get; set; }
         public string Role { get; set; }
+        public string StaffType { get; set; }
+        public int? PendingRoleRequestId { get; set; }
+        public string RequestedStaffType { get; set; }
         public bool IsActive { get; set; }
     }
 
