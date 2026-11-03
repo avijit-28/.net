@@ -150,13 +150,24 @@ namespace FoodArrival.Controllers
 
             _restRepo.UpdateDeliveryStatus(orderId, status);
 
+            var order = _orderRepo.GetById(orderId);
+            int? custId = order != null ? (int?)order.CustomerId : null;
+            int? riderId = order != null ? order.RiderId : null;
+            string orderNum = order != null && !string.IsNullOrEmpty(order.OrderNumber) ? order.OrderNumber : ($"#FD{1000 + orderId}");
+
             if (status == "ReadyForPickup")
             {
-                _notifRepo.AddNotification("Rider", null, "Order Ready for Pickup!", $"Order #FD{1000 + orderId} is prepared by kitchen staff.", "Order", "/Rider/Dashboard");
-                _notifRepo.AddNotification("Customer", null, "Your Food is Prepared!", $"Order #FD{1000 + orderId} is freshly cooked & packed.", "Order", "/Order/History");
+                if (riderId.HasValue)
+                {
+                    _notifRepo.AddNotification("Rider", riderId.Value, "Order Ready for Pickup!", $"Order {orderNum} is prepared by kitchen staff.", "Order", "/Rider/Dashboard");
+                }
+                if (custId.HasValue)
+                {
+                    _notifRepo.AddNotification("Customer", custId.Value, "Your Food is Prepared!", $"Order {orderNum} is freshly cooked & packed.", "Order", "/Order/History");
+                }
             }
 
-            TempData["Success"] = $"Order #FD{1000 + orderId} marked as {status}.";
+            TempData["Success"] = $"Order {orderNum} marked as {status}.";
             return RedirectToAction("Dashboard");
         }
     }
