@@ -570,14 +570,23 @@ BEGIN
         IF @@ROWCOUNT = 0 THROW 51046, 'Assignment not found or delivery status transition is not allowed.', 1;
 
         IF @NewStatus = N'PickedUp'
+        BEGIN
             UPDATE food.Orders SET OrderStatus = N'OutForDelivery', UpdatedAt = SYSUTCDATETIME()
             WHERE OrderId = @OrderId AND OrderStatus = N'Ready';
+            IF @@ROWCOUNT = 0 THROW 51047, 'Order is not ready for pickup.', 1;
+        END
         ELSE IF @NewStatus = N'Delivered'
+        BEGIN
             UPDATE food.Orders SET OrderStatus = N'Delivered', UpdatedAt = SYSUTCDATETIME()
             WHERE OrderId = @OrderId AND OrderStatus = N'OutForDelivery';
+            IF @@ROWCOUNT = 0 THROW 51048, 'Order is not out for delivery.', 1;
+        END
         ELSE IF @NewStatus = N'Failed'
+        BEGIN
             UPDATE food.Orders SET OrderStatus = N'Ready', UpdatedAt = SYSUTCDATETIME()
             WHERE OrderId = @OrderId AND OrderStatus = N'OutForDelivery';
+            IF @@ROWCOUNT = 0 THROW 51049, 'Order is not out for delivery.', 1;
+        END
         COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
