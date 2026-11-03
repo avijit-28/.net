@@ -42,7 +42,7 @@ namespace FoodArrival.DAL
                             INSERT INTO dbo.Orders 
                             (CustomerId, TotalAmount, OrderStatus, OrderedAt, DeliveryFee, DeliveryAddress, PaymentStatus, PaymentMethod, DeliveryStatus, EstimatedDeliveryTime)
                             VALUES 
-                            (@CustomerId, @TotalAmount, 'Confirmed', GETDATE(), @DeliveryFee, @DeliveryAddress, 'Success', @PaymentMethod, 'Pending', DATEADD(MINUTE, 35, GETDATE()));
+                            (@CustomerId, @TotalAmount, 'Pending', GETDATE(), @DeliveryFee, @DeliveryAddress, 'Success', @PaymentMethod, 'Pending', DATEADD(MINUTE, 35, GETDATE()));
                             SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
                         int newOrderId;
