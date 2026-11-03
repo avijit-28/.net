@@ -23,7 +23,11 @@ namespace FoodArrival.Controllers
                 var item = page == null ? null : page.Menu.FirstOrDefault(x => x.MenuItemId == menuItemId);
                 if (item == null) return HttpNotFound("This menu item is not available.");
                 var cart = CartSession.Get(Session);
-                if (cart.Any(x => x.RestaurantId != restaurantId)) cart.Clear();
+                if (cart.Any(x => x.RestaurantId != restaurantId))
+                {
+                    TempData["Error"] = "Your cart already contains items from another restaurant. Place that order first, then start a new cart.";
+                    return RedirectToAction("Index", "Cart");
+                }
                 var line = cart.FirstOrDefault(x => x.MenuItemId == menuItemId);
                 if (line == null) cart.Add(new CartLine { MenuItemId = item.MenuItemId, RestaurantId = restaurantId, RestaurantName = page.Restaurant.Name, Name = item.Name, UnitPrice = item.Price, Quantity = quantity });
                 else line.Quantity = Math.Min(50, line.Quantity + quantity);
