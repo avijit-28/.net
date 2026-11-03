@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using FoodArrival.DAL;
@@ -72,7 +74,61 @@ namespace FoodArrival.Controllers
             int restId = Convert.ToInt32(Session["RestaurantId"]);
             var orders = _restRepo.GetOrders(restId);
             ViewBag.AvailableItems = _foodRepo.GetAvailable();
+            ViewBag.Restaurant = _restRepo.GetById(restId);
             return View(orders);
+        }
+
+        [HttpGet]
+        public ActionResult Details()
+        {
+            if (!IsRestaurantAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            int restId = Convert.ToInt32(Session["RestaurantId"]);
+            var rest = _restRepo.GetById(restId);
+            if (rest == null)
+            {
+                return RedirectToAction("Logout");
+            }
+
+            return View(rest);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Details(Restaurant model, HttpPostedFileBase bannerImage)
+        {
+            if (!IsRestaurantAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            int restId = Convert.ToInt32(Session["RestaurantId"]);
+            model.RestaurantId = restId;
+
+            if (bannerImage != null && bannerImage.ContentLength > 0)
+            {
+                string fileName = Path.GetFileName(bannerImage.FileName);
+                string uniqueName = Guid.NewGuid().ToString("N").Substring(0, 8) + "_" + fileName;
+                string dirPath = Server.MapPath("~/Content/images");
+                if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
+                string targetPath = Path.Combine(dirPath, uniqueName);
+                bannerImage.SaveAs(targetPath);
+                model.ImageUrl = "/Content/images/" + uniqueName;
+            }
+
+            string message;
+            if (_restRepo.Update(model, out message))
+            {
+                Session["RestaurantName"] = model.RestaurantName;
+                TempData["Success"] = "Restaurant details updated successfully.";
+                return RedirectToAction("Details");
+            }
+
+            ModelState.AddModelError("", message);
+            return View(model);
         }
 
         [HttpPost]
