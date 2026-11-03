@@ -41,7 +41,7 @@
                                         </td>
                                         <td>
                                             <h6 class="fw-bold mb-1">@item.ItemName</h6>
-                                            <span class="text-muted small">₹@item.UnitPrice.ToString("F0") each</span>
+                                            <span class="text-muted small">&#8377;@item.UnitPrice.ToString("F0") each</span>
                                         </td>
                                         <td class="text-center">
                                             <div class="qty-picker">
@@ -51,7 +51,7 @@
                                             </div>
                                         </td>
                                         <td class="text-end fw-bold text-dark" id="item-subtotal-@item.FoodItemId">
-                                            ₹@item.SubTotal.ToString("F0")
+                                            &#8377;@item.SubTotal.ToString("F0")
                                         </td>
                                         <td class="text-center">
                                             @using (Html.BeginForm("RemoveFromCart", "Order", FormMethod.Post, new { @class = "d-inline" }))
@@ -83,19 +83,19 @@
 
                     <div class="d-flex justify-content-between text-muted mb-2">
                         <span>Subtotal</span>
-                        <span id="cart-subtotal" class="fw-bold text-dark">₹@Model.Subtotal.ToString("F0")</span>
+                        <span id="cart-subtotal" class="fw-bold text-dark">&#8377;@Model.Subtotal.ToString("F0")</span>
                     </div>
 
                     <div class="d-flex justify-content-between text-muted mb-2">
                         <span>Delivery Fee</span>
-                        <span id="cart-delivery-fee" class="fw-bold text-dark">₹@Model.DeliveryFee.ToString("F0")</span>
+                        <span id="cart-delivery-fee" class="fw-bold text-dark">&#8377;@Model.DeliveryFee.ToString("F0")</span>
                     </div>
 
                     <hr class="my-3" />
 
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <span class="fs-5 fw-bold text-dark">Total Amount</span>
-                        <span id="cart-total" class="fs-4 fw-bold text-danger">₹@Model.TotalAmount.ToString("F0")</span>
+                        <span id="cart-total" class="fs-4 fw-bold text-danger">&#8377;@Model.TotalAmount.ToString("F0")</span>
                     </div>
 
                     @using (Html.BeginForm("PlaceOrder", "Order", FormMethod.Post))
