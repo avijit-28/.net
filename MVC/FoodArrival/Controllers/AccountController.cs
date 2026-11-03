@@ -39,7 +39,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult Register(RegisterViewModel model)
         {
             PopulateRoleDropdowns();
@@ -245,7 +245,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
@@ -383,7 +383,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public new ActionResult Profile(Customer model)
         {
             if (Session["CustomerId"] == null)
