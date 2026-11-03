@@ -20,7 +20,15 @@ namespace FoodArrival
             {
                 var ticket = FormsAuthentication.Decrypt(cookie.Value);
                 if (ticket == null || ticket.Expired) return;
-                Context.User = new GenericPrincipal(new FormsIdentity(ticket), new[] { ticket.UserData });
+                var roleData = (ticket.UserData ?? "").Split('|');
+                var roles = new System.Collections.Generic.List<string>();
+                if (roleData.Length > 0 && !String.IsNullOrWhiteSpace(roleData[0])) roles.Add(roleData[0]);
+                if (roleData.Length > 1 && roleData[0] == "Staff")
+                {
+                    if (roleData[1] == "Restaurant") roles.Add("RestaurantStaff");
+                    if (roleData[1] == "DeliveryAgent") roles.Add("DeliveryAgent");
+                }
+                Context.User = new GenericPrincipal(new FormsIdentity(ticket), roles.ToArray());
             }
             catch (Exception) { FormsAuthentication.SignOut(); }
         }
