@@ -1,9 +1,138 @@
-﻿@{
-    ViewBag.Title = "About";
+@{
+    ViewBag.Title = "About Us - FoodReady";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
 
-    <p>Use this area to provide additional information.</p>
-</main>
+<!-- Hero Section -->
+<div class="py-5 text-white" style="background: linear-gradient(135deg, #FF7A18 0%, #FF5E1E 100%);">
+    <div class="container text-center py-4">
+        <span class="badge bg-white text-danger px-3 py-1 rounded-pill fw-bold mb-3 shadow-sm">
+            <i class="bi bi-heart-fill text-danger me-1"></i> Our Story & Ecosystem
+        </span>
+        <h1 class="display-4 fw-bold mb-3">Delivering Happiness, Fresh to Your Doorstep</h1>
+        <p class="lead text-white-50 mx-auto" style="max-width: 720px;">
+            FoodReady connects culinary creators, kitchen artisans, dedicated delivery fleets, and hungry foodies in a seamless, real-time ecosystem.
+        </p>
+    </div>
+</div>
+
+<!-- Mission & Metrics -->
+<div class="container py-5">
+    <div class="row g-4 align-items-center mb-5">
+        <div class="col-lg-6">
+            <span class="text-primary fw-bold text-uppercase small">Why FoodReady?</span>
+            <h2 class="fw-bold mb-3">Redefining Hyperlocal Food Delivery</h2>
+            <p class="text-muted" style="line-height: 1.8;">
+                Founded with a mission to eliminate hunger wait times and empower local restaurant kitchens, FoodReady provides a high-velocity delivery network backed by rigorous quality standards and automatic dispatch workflows.
+            </p>
+            <p class="text-muted" style="line-height: 1.8;">
+                Our signature <strong>5-Minute Quality Rule</strong> ensures that orders are confirmed or automatically re-routed immediately, so customers are never kept in limbo.
+            </p>
+            <div class="d-flex flex-wrap gap-4 pt-2">
+                <div>
+                    <h3 class="fw-bold text-dark mb-0">15-30 <span class="fs-5 text-warning">min</span></h3>
+                    <div class="small text-muted">Average Delivery Time</div>
+                </div>
+                <div class="border-start ps-4">
+                    <h3 class="fw-bold text-dark mb-0">100%</h3>
+                    <div class="small text-muted">Verified Kitchens</div>
+                </div>
+                <div class="border-start ps-4">
+                    <h3 class="fw-bold text-dark mb-0">4.9 <span class="fs-5 text-warning">&starf;</span></h3>
+                    <div class="small text-muted">Customer Satisfaction</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 text-center">
+            <div class="p-4 bg-white rounded-5 shadow-sm border">
+                <img src="/Content/images/hero-burger-pizza.png" alt="Delicious Food" class="img-fluid rounded-4" style="max-height: 320px;" onerror="this.src='/Content/images/margherita.jpg'" />
+            </div>
+        </div>
+    </div>
+
+    <!-- The 4-Tier Collaborative Ecosystem -->
+    <div class="text-center mb-5">
+        <span class="badge bg-warning-subtle text-warning border border-warning px-3 py-1 rounded-pill fw-bold mb-2">Our Network</span>
+        <h2 class="fw-bold">A Connected 4-Role Ecosystem</h2>
+        <p class="text-muted mx-auto" style="max-width: 600px;">Every stakeholder in the food journey has a dedicated, tailored portal designed for peak efficiency.</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <!-- Role 1: Customers -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 h-100 text-center">
+                <div class="stat-icon customers mx-auto mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <h5 class="fw-bold text-dark">1. Foodies & Customers</h5>
+                <p class="small text-muted mb-3">
+                    Explore curated menus, customize quantities, track real-time delivery status, and receive hot, sanitized meals.
+                </p>
+                <span class="badge bg-light text-dark border mt-auto">Fast Ordering</span>
+            </div>
+        </div>
+
+        <!-- Role 2: Restaurant Owners -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 h-100 text-center">
+                <div class="stat-icon items mx-auto mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-shop"></i>
+                </div>
+                <h5 class="fw-bold text-dark">2. Restaurant Partners</h5>
+                <p class="small text-muted mb-3">
+                    Admin-verified onboarding, live kitchen order tickets, staff monitoring, dish approval workflows, and earnings ledgers.
+                </p>
+                <span class="badge bg-light text-dark border mt-auto">Kitchen Dispatch</span>
+            </div>
+        </div>
+
+        <!-- Role 3: Kitchen Staff -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 h-100 text-center">
+                <div class="stat-icon accepted mx-auto mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-person-workspace"></i>
+                </div>
+                <h5 class="fw-bold text-dark">3. Kitchen Staff</h5>
+                <p class="small text-muted mb-3">
+                    Assigned unique Staff IDs, staff Performance Management System (PMS), kitchen prep queues, and ability to propose innovative dishes.
+                </p>
+                <span class="badge bg-light text-dark border mt-auto">Staff PMS</span>
+            </div>
+        </div>
+
+        <!-- Role 4: Delivery Riders -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 p-4 h-100 text-center">
+                <div class="stat-icon pending mx-auto mb-3" style="width: 60px; height: 60px;">
+                    <i class="bi bi-bicycle"></i>
+                </div>
+                <h5 class="fw-bold text-dark">4. Delivery Fleet</h5>
+                <p class="small text-muted mb-3">
+                    Flexible vehicle onboarding (Cycle, E-Bike, Motorcycle), verified driving licenses, multi-restaurant partnerships, and transparent trip earnings.
+                </p>
+                <span class="badge bg-light text-dark border mt-auto">Fleet Dispatch</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Safety & Quality Pillars -->
+    <div class="card border-0 shadow-sm rounded-4 p-5 bg-white">
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <i class="bi bi-shield-check display-5 text-success mb-3 d-inline-block"></i>
+                <h5 class="fw-bold">100% Quality Verified</h5>
+                <p class="small text-muted">All restaurants undergo administrative inspections and verification before being listed.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="bi bi-stopwatch display-5 text-warning mb-3 d-inline-block"></i>
+                <h5 class="fw-bold">5-Minute Safety Rule</h5>
+                <p class="small text-muted">Unprocessed orders are auto-rejected in 5 minutes so food is always prepared fresh to order.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="bi bi-headset display-5 text-primary mb-3 d-inline-block"></i>
+                <h5 class="fw-bold">24/7 Dedicated Care</h5>
+                <p class="small text-muted">Round-the-clock support for foodies, restaurant kitchens, and delivery riders.</p>
+            </div>
+        </div>
+    </div>
+</div>
