@@ -19,7 +19,7 @@ namespace FoodArrival.Controllers
 
         private bool IsCustomerAuthenticated()
         {
-            return Session["CustomerId"] != null && Session["UserRole"]?.ToString() == "Customer";
+            return Session["CustomerId"] != null;
         }
 
         [HttpGet]
