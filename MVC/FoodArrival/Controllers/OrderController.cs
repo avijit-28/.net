@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -56,7 +56,10 @@ namespace FoodArrival.Controllers
                     Description = food.Description,
                     UnitPrice = food.Price,
                     Quantity = quantity,
-                    ImageUrl = food.ImageUrl
+                    ImageUrl = food.ImageUrl,
+                    RestaurantId = food.RestaurantId ?? 1,
+                    RestaurantName = !string.IsNullOrEmpty(food.RestaurantName) ? food.RestaurantName : "FoodReady Central Kitchen",
+                    Category = food.Category ?? "Snacks"
                 });
             }
 
