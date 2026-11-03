@@ -394,9 +394,28 @@ namespace FoodArrival.DAL
             return list;
         }
 
-        public bool UpdateDeliveryStatus(int orderId, string status)
+        public bool UpdateDeliveryStatus(int orderId, string status, int? restaurantId = null)
         {
-            string sql = @"UPDATE dbo.Orders SET DeliveryStatus = @Status WHERE OrderId = @OrderId";
+            string sql = @"
+                UPDATE dbo.Orders 
+                SET DeliveryStatus = @Status,
+                    OrderStatus = CASE WHEN @Status IN ('ReadyForPickup', 'PickedUp', 'OutForDelivery', 'Delivered') THEN 'Accepted' ELSE OrderStatus END
+                WHERE OrderId = @OrderId;
+
+                IF @RestaurantId IS NOT NULL
+                BEGIN
+                    UPDATE dbo.OrderSubOrders
+                    SET PreparationStatus = @Status,
+                        DeliveryStatus = CASE WHEN @Status = 'ReadyForPickup' THEN 'ReadyForPickup' ELSE DeliveryStatus END
+                    WHERE OrderId = @OrderId AND RestaurantId = @RestaurantId;
+                END
+                ELSE
+                BEGIN
+                    UPDATE dbo.OrderSubOrders
+                    SET PreparationStatus = @Status,
+                        DeliveryStatus = CASE WHEN @Status = 'ReadyForPickup' THEN 'ReadyForPickup' ELSE DeliveryStatus END
+                    WHERE OrderId = @OrderId;
+                END";
             try
             {
                 using (var conn = DbHelper.GetConnection())
@@ -404,6 +423,7 @@ namespace FoodArrival.DAL
                 {
                     cmd.Parameters.AddWithValue("@Status", status);
                     cmd.Parameters.AddWithValue("@OrderId", orderId);
+                    cmd.Parameters.AddWithValue("@RestaurantId", (object)restaurantId ?? DBNull.Value);
                     conn.Open();
                     return cmd.ExecuteNonQuery() > 0;
                 }
