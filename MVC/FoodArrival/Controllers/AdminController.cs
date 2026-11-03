@@ -1,97 +1,312 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
+using FoodArrival.DAL;
 using FoodArrival.Models;
 
 namespace FoodArrival.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        public ActionResult Index()
+        private readonly AdminRepository _adminRepo = new AdminRepository();
+        private readonly OrderRepository _orderRepo = new OrderRepository();
+        private readonly FoodItemRepository _foodRepo = new FoodItemRepository();
+        private readonly CustomerRepository _customerRepo = new CustomerRepository();
+
+        private bool IsAdminAuthenticated()
         {
-            var repo = new FoodRepository();
-            var restaurants = repo.GetAdminRestaurants();
-            var agents = new List<SelectListItem>();
-            foreach (var agent in repo.GetActiveAgents()) agents.Add(new SelectListItem { Value = agent.Key.ToString(), Text = agent.Value });
-            var users = repo.GetAdminUsers();
-            var owners = new List<SelectListItem>();
-            foreach (var user in users.Where(x => x.Role == "Staff" && x.StaffType == "Restaurant" && x.IsActive)) owners.Add(new SelectListItem { Value = user.UserId.ToString(), Text = user.FullName + " · " + user.Email });
-            return View(new AdminDashboardViewModel
-            {
-                Orders = repo.GetAdminOrders(),
-                ReadyOrders = repo.GetReadyOrders(), Agents = agents, Users = users,
-                Restaurants = restaurants, MenuItems = repo.GetAdminMenuItems(),
-                RestaurantChoices = restaurants.Select(x => new SelectListItem { Value = x.RestaurantId.ToString(), Text = x.Name }).ToList(),
-                RestaurantOwners = owners,
-                NewRestaurant = new AdminRestaurantViewModel { IsActive = true }
-            });
+            return Session["AdminId"] != null;
         }
 
-        [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult SaveMenuItem(MenuItem model)
+        [HttpGet]
+        public ActionResult Login()
         {
-            if (String.IsNullOrWhiteSpace(model.Name) || model.Price <= 0 || model.RestaurantId <= 0)
+            if (IsAdminAuthenticated())
             {
-                TempData["Error"] = "Choose a restaurant and provide a menu name and positive price.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Dashboard");
             }
-            try { new FoodRepository().SaveAdminMenuItem(Int32.Parse(User.Identity.Name), model); TempData["Notice"] = "Menu item saved."; }
-            catch (Exception ex) { TempData["Error"] = ex.Message; }
-            return RedirectToAction("Index");
+            return View(new LoginViewModel());
         }
 
-        [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult SetMenuAvailability(int menuItemId, bool isAvailable)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Login(LoginViewModel model)
         {
-            try { new FoodRepository().SetAdminMenuAvailability(Int32.Parse(User.Identity.Name), menuItemId, isAvailable); TempData["Notice"] = "Menu availability updated."; }
-            catch (Exception ex) { TempData["Error"] = ex.Message; }
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult UpdateOrder(long orderId, string status)
-        {
-            if (status != "Accepted" && status != "Rejected") return new HttpStatusCodeResult(400);
-            try
+            if (!ModelState.IsValid)
             {
-                new FoodRepository().SetAdminOrderStatus(Int32.Parse(User.Identity.Name), orderId, status);
-                TempData["Notice"] = "Order " + status.ToLowerInvariant() + ".";
+                return View(model);
             }
-            catch (Exception ex) { TempData["Error"] = ex.Message; }
-            return RedirectToAction("Index");
-        }
 
-        [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult Assign(long orderId, int agentUserId)
-        {
-            try { new FoodRepository().AssignDelivery(Int32.Parse(User.Identity.Name), orderId, agentUserId); TempData["Notice"] = "Delivery assigned."; }
-            catch (Exception ex) { TempData["Error"] = ex.Message; }
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult UpdateUser(int userId, string role, string staffType, bool isActive)
-        {
-            if (!new[] { "Customer", "Staff", "Admin" }.Contains(role)) return new HttpStatusCodeResult(400);
-            if (role == "Staff" && !new[] { "Restaurant", "DeliveryAgent" }.Contains(staffType))
+            var admin = _adminRepo.Login(model.Email.Trim().ToLower(), model.Password);
+            if (admin != null)
             {
-                TempData["Error"] = "Choose a staff area before granting the Staff role.";
-                return RedirectToAction("Index");
+                Session["AdminId"] = admin.AdminId;
+                Session["AdminName"] = admin.AdminName;
+                Session["AdminEmail"] = admin.Email;
+                Session["UserRole"] = "Admin";
+
+                FormsAuthentication.SetAuthCookie(admin.Email, false);
+                TempData["Success"] = "Welcome, Admin " + admin.AdminName + "!";
+                return RedirectToAction("Dashboard");
             }
-            try { new FoodRepository().UpdateUserRole(Int32.Parse(User.Identity.Name), userId, role, staffType, isActive); TempData["Notice"] = "Account updated."; }
-            catch (Exception ex) { TempData["Error"] = ex.Message; }
-            return RedirectToAction("Index");
+
+            ModelState.AddModelError("", "Invalid admin email or password.");
+            return View(model);
         }
 
-        [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult SaveRestaurant(AdminRestaurantViewModel model)
+        public ActionResult Logout()
         {
-            if (!ModelState.IsValid) { TempData["Error"] = "Complete all required restaurant fields."; return RedirectToAction("Index"); }
-            try { new FoodRepository().SaveRestaurant(Int32.Parse(User.Identity.Name), model); TempData["Notice"] = "Restaurant saved."; }
-            catch (Exception ex) { TempData["Error"] = ex.Message; }
-            return RedirectToAction("Index");
+            Session.Clear();
+            FormsAuthentication.SignOut();
+            TempData["Success"] = "Admin logged out successfully.";
+            return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        public ActionResult Dashboard()
+        {
+            if (!IsAdminAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Auto-reject pending orders older than 5 minutes
+            _orderRepo.AutoRejectOrders();
+
+            var summary = _adminRepo.GetDashboardSummary();
+            var recentPending = _orderRepo.GetPendingOrders();
+            var recentAccepted = _orderRepo.GetAcceptedOrders();
+            var recentRejected = _orderRepo.GetRejectedOrders();
+
+            // Recent orders list for preview
+            var allRecent = recentPending.Concat(recentAccepted).Concat(recentRejected)
+                .OrderByDescending(x => x.OrderedAt)
+                .Take(10)
+                .ToList();
+
+            summary.RecentOrders = allRecent;
+
+            return View(summary);
+        }
+
+        [HttpGet]
+        public ActionResult Orders(string tab = "pending")
+        {
+            if (!IsAdminAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            // Auto-reject pending orders older than 5 minutes
+            int autoRejected = _orderRepo.AutoRejectOrders();
+            if (autoRejected > 0)
+            {
+                ViewBag.AutoRejectedNotice = $"{autoRejected} pending order(s) older than 5 minutes were automatically rejected.";
+            }
+
+            var pendingOrders = _orderRepo.GetPendingOrders();
+            var acceptedOrders = _orderRepo.GetAcceptedOrders();
+            var rejectedOrders = _orderRepo.GetRejectedOrders();
+
+            ViewBag.PendingCount = pendingOrders.Count;
+            ViewBag.AcceptedCount = acceptedOrders.Count;
+            ViewBag.RejectedCount = rejectedOrders.Count;
+
+            tab = (tab ?? "pending").ToLower();
+            ViewBag.ActiveTab = tab;
+
+            List<Order> ordersToDisplay;
+            if (tab == "accepted")
+            {
+                ordersToDisplay = acceptedOrders;
+            }
+            else if (tab == "rejected")
+            {
+                ordersToDisplay = rejectedOrders;
+            }
+            else
+            {
+                ordersToDisplay = pendingOrders;
+            }
+
+            return View(ordersToDisplay);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AcceptOrder(int orderId)
+        {
+            if (!IsAdminAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            int adminId = Convert.ToInt32(Session["AdminId"]);
+            string message;
+            if (_orderRepo.AcceptOrder(orderId, adminId, out message))
+            {
+                TempData["Success"] = "Order #FD" + (1000 + orderId) + " accepted successfully.";
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            return RedirectToAction("Orders", new { tab = "pending" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RejectOrder(int orderId, string reason)
+        {
+            if (!IsAdminAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            int adminId = Convert.ToInt32(Session["AdminId"]);
+            string message;
+            if (_orderRepo.RejectOrder(orderId, adminId, reason, out message))
+            {
+                TempData["Success"] = "Order #FD" + (1000 + orderId) + " rejected.";
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            return RedirectToAction("Orders", new { tab = "pending" });
+        }
+
+        [HttpGet]
+        public ActionResult FoodItems()
+        {
+            if (!IsAdminAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            var items = _foodRepo.GetAll();
+            return View(items);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddFoodItem(FoodItem item, HttpPostedFileBase imageFile)
+        {
+            if (!IsAdminAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            if (imageFile != null && imageFile.ContentLength > 0)
+            {
+                string fileName = Path.GetFileName(imageFile.FileName);
+                string uniqueName = Guid.NewGuid().ToString("N").Substring(0, 8) + "_" + fileName;
+                string dirPath = Server.MapPath("~/Content/images");
+                if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
+                string targetPath = Path.Combine(dirPath, uniqueName);
+                imageFile.SaveAs(targetPath);
+                item.ImageUrl = "/Content/images/" + uniqueName;
+            }
+
+            if (string.IsNullOrWhiteSpace(item.ImageUrl))
+            {
+                item.ImageUrl = "/Content/images/margherita.jpg";
+            }
+
+            string message;
+            int newId;
+            if (_foodRepo.Insert(item, out message, out newId))
+            {
+                TempData["Success"] = "Food item '" + item.ItemName + "' added successfully.";
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            return RedirectToAction("FoodItems");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditFoodItem(FoodItem item, HttpPostedFileBase imageFile)
+        {
+            if (!IsAdminAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            if (imageFile != null && imageFile.ContentLength > 0)
+            {
+                string fileName = Path.GetFileName(imageFile.FileName);
+                string uniqueName = Guid.NewGuid().ToString("N").Substring(0, 8) + "_" + fileName;
+                string dirPath = Server.MapPath("~/Content/images");
+                if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
+                string targetPath = Path.Combine(dirPath, uniqueName);
+                imageFile.SaveAs(targetPath);
+                item.ImageUrl = "/Content/images/" + uniqueName;
+            }
+
+            string message;
+            if (_foodRepo.Update(item, out message))
+            {
+                TempData["Success"] = "Food item '" + item.ItemName + "' updated successfully.";
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            return RedirectToAction("FoodItems");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteFoodItem(int id)
+        {
+            if (!IsAdminAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            string message;
+            if (_foodRepo.Delete(id, out message))
+            {
+                TempData["Success"] = "Food item marked as inactive/removed.";
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            return RedirectToAction("FoodItems");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ToggleAvailability(int id)
+        {
+            if (!IsAdminAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            var item = _foodRepo.GetById(id);
+            if (item != null)
+            {
+                item.IsAvailable = !item.IsAvailable;
+                string message;
+                _foodRepo.Update(item, out message);
+                TempData["Success"] = "'" + item.ItemName + "' availability toggled to " + (item.IsAvailable ? "Available" : "Unavailable") + ".";
+            }
+
+            return RedirectToAction("FoodItems");
         }
     }
 }
