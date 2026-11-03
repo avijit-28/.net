@@ -96,7 +96,10 @@ namespace FoodArrival.Controllers
                 if (_customerRepo.Insert(customer, out message, out customerId))
                 {
                     customer.CustomerId = customerId;
+                    Session.Clear();
                     SetUserSession(customer);
+
+                    _notifRepo.AddNotification("Customer", customerId, "Welcome to FoodReady!", $"Hello {customer.CustomerName}, your customer account is active. Order fresh food from top partner kitchens!", "Promo", "/Food/Index");
 
                     TempData["Success"] = $"Welcome to FoodReady, {customer.CustomerName}! Your customer account has been created.";
                     return RedirectToAction("Index", "Food");
