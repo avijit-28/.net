@@ -1,0 +1,126 @@
+@model IEnumerable<FoodArrival.Models.Order>
+@{
+    ViewBag.Title = "Restaurant Kitchen Dashboard - FoodReady";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var foodItems = ViewBag.AvailableItems as List<FoodArrival.Models.FoodItem> ?? new List<FoodArrival.Models.FoodItem>();
+}
+
+<div class="container py-4">
+    <!-- Header Banner -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 text-white" style="background: linear-gradient(135deg, #C2410C 0%, #EA580C 100%);">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold mb-2">Kitchen Dispatch</span>
+                <h2 class="fw-bold mb-1">@Session["RestaurantName"]</h2>
+                <p class="text-white-50 mb-0"><i class="bi bi-clock-history me-1"></i> Live Kitchen Queue & Food Readiness</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="@Url.Action("Dashboard", "Restaurant")" class="btn btn-light rounded-pill px-3 fw-bold">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Refresh Orders
+                </a>
+                <a href="@Url.Action("Logout", "Restaurant")" class="btn btn-outline-light rounded-pill px-3">
+                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Orders Section -->
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                <i class="bi bi-receipt text-danger"></i>
+                <span>Kitchen Order Tickets</span>
+            </h4>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="d-flex flex-column gap-3">
+                    @foreach (var order in Model)
+                    {
+                        string cardBorder = "border-start border-4 border-warning";
+                        if (order.DeliveryStatus == "ReadyForPickup") { cardBorder = "border-start border-4 border-info"; }
+                        else if (order.DeliveryStatus == "OutForDelivery" || order.DeliveryStatus == "Delivered") { cardBorder = "border-start border-4 border-success"; }
+
+                        <div class="card border-0 shadow-sm rounded-4 p-4 @cardBorder">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h5 class="fw-bold mb-0">Order #FD@(1000 + order.OrderId)</h5>
+                                    <span class="text-muted small">Placed at @order.OrderedAt.ToString("hh:mm tt") by <strong>@order.CustomerName</strong></span>
+                                </div>
+                                <span class="badge bg-dark rounded-pill px-3 py-2">
+                                    Status: @(string.IsNullOrEmpty(order.DeliveryStatus) ? order.OrderStatus : order.DeliveryStatus)
+                                </span>
+                            </div>
+
+                            <div class="p-3 bg-light rounded-3 my-2">
+                                <h6 class="fw-bold text-dark mb-1 small text-uppercase">Items to Prepare:</h6>
+                                <p class="mb-0 text-dark fw-bold">@(string.IsNullOrEmpty(order.Items) ? "Standard Food Combo" : order.Items)</p>
+                            </div>
+
+                            <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-2 border-top gap-2">
+                                <span class="fw-bold text-danger fs-5">₹@order.TotalAmount.ToString("F0")</span>
+                                <div class="d-flex gap-2">
+                                    @using (Html.BeginForm("UpdateStatus", "Restaurant", FormMethod.Post, new { @class = "d-inline" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                        <input type="hidden" name="status" value="Preparing" />
+                                        <button type="submit" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold @(order.DeliveryStatus == "Preparing" ? "disabled" : "")">
+                                            <i class="bi bi-fire me-1"></i> Cooking
+                                        </button>
+                                    }
+
+                                    @using (Html.BeginForm("UpdateStatus", "Restaurant", FormMethod.Post, new { @class = "d-inline" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                        <input type="hidden" name="status" value="ReadyForPickup" />
+                                        <button type="submit" class="btn btn-success btn-sm rounded-pill px-3 fw-bold @(order.DeliveryStatus == "ReadyForPickup" ? "disabled" : "")">
+                                            <i class="bi bi-bag-check me-1"></i> Food Ready
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 bg-white rounded-4 shadow-sm p-4">
+                    <i class="bi bi-inbox display-4 text-muted"></i>
+                    <h5 class="fw-bold mt-3">No Orders Pending in Kitchen</h5>
+                    <p class="text-muted small">New incoming customer orders will appear here automatically.</p>
+                </div>
+            }
+        </div>
+
+        <!-- Right Side: Menu Items Summary -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 90px;">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-egg-fried text-warning"></i>
+                    <span>Menu Catalog</span>
+                </h5>
+                <p class="text-muted small mb-3">Total @foodItems.Count available dishes served from this kitchen.</p>
+
+                <div class="d-flex flex-column gap-2" style="max-height: 400px; overflow-y: auto;">
+                    @foreach (var f in foodItems)
+                    {
+                        <div class="d-flex align-items-center justify-content-between p-2 rounded bg-light">
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="@f.ImageUrl" alt="@f.ItemName" class="rounded" style="width: 38px; height: 38px; object-fit: cover;" onerror="this.src='/Content/images/margherita.jpg'" />
+                                <div>
+                                    <div class="small fw-bold text-dark">@f.ItemName</div>
+                                    <span class="text-muted" style="font-size: 0.75rem;">@f.Category</span>
+                                </div>
+                            </div>
+                            <span class="fw-bold text-dark small">₹@f.Price.ToString("F0")</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
