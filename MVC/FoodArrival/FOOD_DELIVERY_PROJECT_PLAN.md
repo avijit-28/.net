@@ -66,7 +66,7 @@ Keep SQL and connection handling out of controllers and views. Use parameterized
 
 ## Database deliverable
 
-`FoodDeliveryDatabase.sql` is a single SQL Server script. It creates the `FoodDeliveryDB` database if needed, then creates schema `food` with tables for users, restaurants, menu items, saved addresses, orders, order-item snapshots, payments, delivery assignments, and reviews. It defines keys, foreign keys, uniqueness, status/role checks, money and quantity checks, and common lookup indexes. Stored procedures are grouped after the tables. Optional demo records are in a separately marked, commented section at the end.
+`FoodDeliveryDatabase.sql` is a single SQL Server script. It creates the `FoodDeliveryDB` database if needed, then creates schema `food` with normalized `Roles` and `UserRoles`, `StaffProfiles`, pending `AccountRoleRequests`, users, restaurants, menu items, saved addresses, orders, order-item snapshots, payments, delivery assignments, and reviews. It defines keys, foreign keys, uniqueness, status/role checks, money and quantity checks, and common lookup indexes. Stored procedures are grouped after the tables. Optional demo records are in a separately marked, commented section at the end.
 
 The script exposes procedures for restaurant search, menu browsing, menu-item add/update, menu availability, order placement, customer order history/details, restaurant order listing/status changes, delivery assignment/status changes, and order reviews. Multi-row order creation is transactional; item prices are read from the database rather than trusted from the browser. Procedure inputs are parameterized, ownership is checked in the procedure, and invalid operations raise SQL errors for the repository to handle.
 
