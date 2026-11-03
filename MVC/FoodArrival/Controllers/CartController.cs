@@ -51,11 +51,19 @@ namespace FoodArrival.Controllers
         }
 
         [Authorize(Roles = "Customer")]
-        public ActionResult Checkout()
+        public ActionResult Checkout(int? addressId)
         {
             RefreshCart();
             if (!CartSession.Get(Session).Any()) return RedirectToAction("Index");
-            return View(new CheckoutViewModel { PaymentMethod = "Cash" });
+            var model = new CheckoutViewModel { PaymentMethod = "Cash", SavedAddresses = new FoodRepository().GetAddresses(Int32.Parse(User.Identity.Name)) };
+            var selected = model.SavedAddresses.FirstOrDefault(x => x.AddressId == addressId) ?? model.SavedAddresses.FirstOrDefault(x => x.IsDefault);
+            if (selected != null)
+            {
+                model.AddressId = selected.AddressId; model.RecipientName = selected.RecipientName; model.Phone = selected.Phone;
+                model.AddressLine = selected.AddressLine; model.AddressLine2 = selected.AddressLine2; model.City = selected.City;
+                model.PostalCode = selected.PostalCode; model.Instructions = selected.Instructions;
+            }
+            return View(model);
         }
 
         [HttpPost, Authorize(Roles = "Customer"), ValidateAntiForgeryToken]
@@ -65,10 +73,14 @@ namespace FoodArrival.Controllers
             var cart = CartSession.Get(Session);
             if (!cart.Any()) return RedirectToAction("Index");
             if (!new[] { "Cash", "Card", "UPI", "Other" }.Contains(model.PaymentMethod)) ModelState.AddModelError("PaymentMethod", "Choose a valid payment method.");
+            var repository = new FoodRepository();
+            model.SavedAddresses = repository.GetAddresses(Int32.Parse(User.Identity.Name));
             if (!ModelState.IsValid) return View(model);
             try
             {
-                var orderId = new FoodRepository().PlaceOrder(Int32.Parse(User.Identity.Name), cart[0].RestaurantId, model, cart);
+                var customerId = Int32.Parse(User.Identity.Name);
+                var addressId = model.SaveAddress ? repository.SaveAddress(customerId, model) : model.AddressId;
+                var orderId = repository.PlaceOrder(customerId, cart[0].RestaurantId, model, cart, addressId);
                 Session.Remove("FoodArrival.Cart");
                 return RedirectToAction("Confirmation", new { id = orderId });
             }
