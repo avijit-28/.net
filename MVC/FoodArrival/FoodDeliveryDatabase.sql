@@ -130,23 +130,24 @@ GO
 /* Migrate users created by the earlier single-column role version. */
 IF COL_LENGTH(N'food.Users', N'Role') IS NOT NULL
 BEGIN
-    INSERT food.UserRoles(UserId, RoleId, IsActive)
-    SELECT u.UserId, r.RoleId, 1
-    FROM food.Users u
-    INNER JOIN food.Roles r ON r.RoleName = CASE WHEN u.Role IN (N'Restaurant', N'DeliveryAgent') THEN N'Staff' ELSE u.Role END
-    WHERE NOT EXISTS (SELECT 1 FROM food.UserRoles ur WHERE ur.UserId = u.UserId AND ur.IsActive = 1);
+    EXEC sys.sp_executesql N'
+        INSERT food.UserRoles(UserId, RoleId, IsActive)
+        SELECT u.UserId, r.RoleId, 1
+        FROM food.Users u
+        INNER JOIN food.Roles r ON r.RoleName = CASE WHEN u.Role IN (N''Restaurant'', N''DeliveryAgent'') THEN N''Staff'' ELSE u.Role END
+        WHERE NOT EXISTS (SELECT 1 FROM food.UserRoles ur WHERE ur.UserId = u.UserId AND ur.IsActive = 1);
 
-    INSERT food.StaffProfiles(UserId, StaffType, Phone)
-    SELECT u.UserId, CASE WHEN u.Role = N'DeliveryAgent' THEN N'DeliveryAgent' ELSE N'Restaurant' END, u.Phone
-    FROM food.Users u
-    WHERE u.Role IN (N'Restaurant', N'DeliveryAgent')
-      AND NOT EXISTS (SELECT 1 FROM food.StaffProfiles sp WHERE sp.UserId = u.UserId);
+        INSERT food.StaffProfiles(UserId, StaffType, Phone)
+        SELECT u.UserId, CASE WHEN u.Role = N''DeliveryAgent'' THEN N''DeliveryAgent'' ELSE N''Restaurant'' END, u.Phone
+        FROM food.Users u
+        WHERE u.Role IN (N''Restaurant'', N''DeliveryAgent'')
+          AND NOT EXISTS (SELECT 1 FROM food.StaffProfiles sp WHERE sp.UserId = u.UserId);
 
-    IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = N'DF_Users_Role')
-        ALTER TABLE food.Users DROP CONSTRAINT DF_Users_Role;
-    IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_Users_Role')
-        ALTER TABLE food.Users DROP CONSTRAINT CK_Users_Role;
-    ALTER TABLE food.Users DROP COLUMN Role;
+        IF EXISTS (SELECT 1 FROM sys.default_constraints WHERE name = N''DF_Users_Role'')
+            ALTER TABLE food.Users DROP CONSTRAINT DF_Users_Role;
+        IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N''CK_Users_Role'')
+            ALTER TABLE food.Users DROP CONSTRAINT CK_Users_Role;
+        ALTER TABLE food.Users DROP COLUMN Role;';
 END;
 GO
 
