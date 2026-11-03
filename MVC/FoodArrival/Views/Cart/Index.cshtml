@@ -18,7 +18,7 @@ else
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 border-top py-3">
                         <div><strong>@line.Name</strong><div class="small text-muted">₹@line.UnitPrice.ToString("0.00") each</div></div>
                         <div class="d-flex align-items-center gap-3">
-                            @using (Html.BeginForm("Update", "Cart", FormMethod.Post, new { @class = "d-flex gap-2 align-items-center" }))
+                            using (Html.BeginForm("Update", "Cart", FormMethod.Post, new { @class = "d-flex gap-2 align-items-center" }))
                             {
                                 @Html.AntiForgeryToken()
                                 @Html.Hidden("menuItemId", line.MenuItemId)
