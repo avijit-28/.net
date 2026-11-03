@@ -584,5 +584,31 @@ namespace FoodArrival.DAL
             }
             catch { return false; }
         }
+
+        public bool ResetPassword(int riderId, string newPassword, out string message)
+        {
+            message = string.Empty;
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand("UPDATE dbo.Riders SET PasswordHash = @Password WHERE RiderId = @Id", conn))
+                {
+                    cmd.Parameters.AddWithValue("@Password", newPassword);
+                    cmd.Parameters.AddWithValue("@Id", riderId);
+                    conn.Open();
+                    int rows = cmd.ExecuteNonQuery();
+                    if (rows > 0)
+                    {
+                        message = "Password reset successfully.";
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+            }
+            return false;
+        }
     }
 }
