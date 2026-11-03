@@ -179,6 +179,10 @@ namespace FoodArrival.Controllers
             string message;
             if (_orderRepo.RejectOrder(orderId, adminId, reason, out message))
             {
+                var order = _orderRepo.GetDetails(orderId);
+                int? custId = order != null ? (int?)order.CustomerId : null;
+                _notifRepo.AddNotification("Customer", custId, "Order Rejected", "Order #FD" + (1000 + orderId) + " was rejected: " + (reason ?? "Unable to fulfill at this time."), "Alert", "/Order/History");
+
                 TempData["Success"] = "Order #FD" + (1000 + orderId) + " rejected.";
             }
             else
