@@ -1,130 +1,180 @@
 using System;
-using System.Configuration;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using FoodArrival.DAL;
 using FoodArrival.Models;
 
 namespace FoodArrival.Controllers
 {
     public class AccountController : Controller
     {
-        private FoodRepository Repository { get { return new FoodRepository(); } }
+        private readonly CustomerRepository _customerRepo = new CustomerRepository();
 
-        [AllowAnonymous]
-        public ActionResult Login(string returnUrl)
+        [HttpGet]
+        public ActionResult Register()
         {
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
+            if (Session["CustomerId"] != null)
+            {
+                return RedirectToAction("Index", "Food");
+            }
+            return View(new RegisterViewModel());
         }
 
-        [HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
-        public ActionResult Login(LoginViewModel model)
-        {
-            if (!ModelState.IsValid) return View(model);
-            AccountRecord account;
-            try { account = Repository.FindAccount(model.Email.Trim()); }
-            catch (ConfigurationErrorsException)
-            {
-                ModelState.AddModelError("", "Database connection is not configured. Add the FoodDeliveryDB connection string in Web.config.");
-                return View(model);
-            }
-            catch (System.Data.SqlClient.SqlException)
-            {
-                ModelState.AddModelError("", "FoodArrival could not connect to the database. Check the FoodDeliveryDB connection and run the database script.");
-                return View(model);
-            }
-            if (account == null || !VerifyPassword(model.Password, account.PasswordHash))
-            {
-                ModelState.AddModelError("", "Email or password is incorrect.");
-                return View(model);
-            }
-            var ticket = new FormsAuthenticationTicket(1, account.UserId.ToString(), DateTime.Now,
-                DateTime.Now.AddHours(model.RememberMe ? 24 : 8), model.RememberMe, account.Role + "|" + (account.StaffType ?? ""));
-            var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket))
-            {
-                HttpOnly = true,
-                Secure = Request.IsSecureConnection,
-                SameSite = SameSiteMode.Lax
-            };
-            Response.Cookies.Add(cookie);
-            if (Url.IsLocalUrl(model.ReturnUrl)) return Redirect(model.ReturnUrl);
-            if (account.Role == "Staff" && account.StaffType == "Restaurant") return RedirectToAction("Index", "RestaurantDashboard");
-            if (account.Role == "Staff" && account.StaffType == "DeliveryAgent") return RedirectToAction("Index", "Delivery");
-            if (account.Role == "Admin") return RedirectToAction("Index", "Admin");
-            return RedirectToAction("Index", "Restaurants");
-        }
-
-        [AllowAnonymous]
-        public ActionResult Register() { return View(new RegisterViewModel { RequestedAccountType = "Customer" }); }
-
-        [HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Register(RegisterViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
-            try
+            if (!ModelState.IsValid)
             {
-                if (!new[] { "Customer", "Staff" }.Contains(model.RequestedAccountType))
-                    ModelState.AddModelError("RequestedAccountType", "Choose Customer or Staff.");
-                if (model.RequestedAccountType == "Staff" && !new[] { "Restaurant", "DeliveryAgent" }.Contains(model.RequestedStaffType))
-                    ModelState.AddModelError("RequestedStaffType", "Choose the staff area you work in.");
-                if (!ModelState.IsValid) return View(model);
-                var id = Repository.Register(model.FullName.Trim(), model.Email.Trim(), model.Phone.Trim(), HashPassword(model.Password),
-                    model.RequestedAccountType, model.RequestedStaffType, model.RequestNote);
-                var ticket = new FormsAuthenticationTicket(1, id.ToString(), DateTime.Now, DateTime.Now.AddHours(8), false, "Customer|");
-                Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket))
+                return View(model);
+            }
+
+            var customer = new Customer
+            {
+                CustomerName = model.CustomerName,
+                Email = model.Email.Trim().ToLower(),
+                PasswordHash = model.Password, // matches DB plain-text/hash convention
+                PhoneNumber = model.PhoneNumber,
+                Address = model.Address
+            };
+
+            string message;
+            int customerId;
+            if (_customerRepo.Insert(customer, out message, out customerId))
+            {
+                // Auto sign in
+                customer.CustomerId = customerId;
+                SetUserSession(customer);
+
+                FormsAuthentication.SetAuthCookie(customer.Email, false);
+                TempData["Success"] = "Welcome to FoodReady, " + customer.CustomerName + "! Your account has been created.";
+                return RedirectToAction("Index", "Food");
+            }
+
+            ModelState.AddModelError("", message);
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult Login(string returnUrl)
+        {
+            if (Session["CustomerId"] != null)
+            {
+                return RedirectToAction("Index", "Food");
+            }
+            ViewBag.ReturnUrl = returnUrl;
+            return View(new LoginViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Login(LoginViewModel model, string returnUrl)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var customer = _customerRepo.Login(model.Email.Trim().ToLower(), model.Password);
+            if (customer != null)
+            {
+                SetUserSession(customer);
+
+                var ticket = new FormsAuthenticationTicket(
+                    1,
+                    customer.Email,
+                    DateTime.Now,
+                    DateTime.Now.AddDays(7),
+                    model.RememberMe,
+                    "Customer",
+                    FormsAuthentication.FormsCookiePath);
+
+                string encTicket = FormsAuthentication.Encrypt(ticket);
+                var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, encTicket)
                 {
-                    HttpOnly = true, Secure = Request.IsSecureConnection, SameSite = SameSiteMode.Lax
-                });
-                if (model.RequestedAccountType == "Staff")
-                    TempData["Notice"] = "Your customer account is ready. Your " + model.RequestedStaffType + " staff request is pending administrator approval.";
-                return RedirectToAction("Index", "Restaurants");
+                    HttpOnly = true
+                };
+                if (model.RememberMe)
+                {
+                    cookie.Expires = ticket.Expiration;
+                }
+                Response.Cookies.Add(cookie);
+
+                TempData["Success"] = "Welcome back, " + customer.CustomerName + "!";
+
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
+                return RedirectToAction("Index", "Food");
             }
-            catch (System.Data.SqlClient.SqlException ex)
-            {
-                ModelState.AddModelError("", ex.Number == 2601 || ex.Number == 2627 ? "An account with that email already exists." : "The account could not be created. Check the database connection and try again.");
-                return View(model);
-            }
-            catch (ConfigurationErrorsException)
-            {
-                ModelState.AddModelError("", "Database connection is not configured. Add the FoodDeliveryDB connection string in Web.config.");
-                return View(model);
-            }
+
+            ModelState.AddModelError("", "Invalid email or password.");
+            ViewBag.ReturnUrl = returnUrl;
+            return View(model);
         }
 
-        [HttpPost, ValidateAntiForgeryToken]
-        public ActionResult LogOff()
+        public ActionResult Logout()
         {
+            Session.Clear();
             FormsAuthentication.SignOut();
-            return RedirectToAction("Index", "Restaurants");
+            TempData["Success"] = "You have been logged out successfully.";
+            return RedirectToAction("Index", "Home");
         }
 
-        private static string HashPassword(string password)
+        [HttpGet]
+        public ActionResult Profile()
         {
-            var salt = new byte[16];
-            using (var rng = RandomNumberGenerator.Create()) rng.GetBytes(salt);
-            const int iterations = 150000;
-            byte[] hash;
-            using (var derive = new Rfc2898DeriveBytes(password, salt, iterations)) hash = derive.GetBytes(32);
-            return iterations + ":" + Convert.ToBase64String(salt) + ":" + Convert.ToBase64String(hash);
-        }
-
-        private static bool VerifyPassword(string password, string stored)
-        {
-            try
+            if (Session["CustomerId"] == null)
             {
-                var parts = stored.Split(':');
-                var iterations = Int32.Parse(parts[0]);
-                var salt = Convert.FromBase64String(parts[1]);
-                var expected = Convert.FromBase64String(parts[2]);
-                byte[] actual;
-                using (var derive = new Rfc2898DeriveBytes(password, salt, iterations)) actual = derive.GetBytes(expected.Length);
-                var difference = expected.Length ^ actual.Length;
-                for (var i = 0; i < expected.Length && i < actual.Length; i++) difference |= expected[i] ^ actual[i];
-                return difference == 0;
+                return RedirectToAction("Login", new { returnUrl = Url.Action("Profile") });
             }
-            catch { return false; }
+
+            int customerId = Convert.ToInt32(Session["CustomerId"]);
+            var customer = _customerRepo.GetById(customerId);
+            if (customer == null)
+            {
+                return RedirectToAction("Logout");
+            }
+
+            return View(customer);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Profile(Customer model)
+        {
+            if (Session["CustomerId"] == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            int customerId = Convert.ToInt32(Session["CustomerId"]);
+            model.CustomerId = customerId;
+
+            string message;
+            if (_customerRepo.Update(model, out message))
+            {
+                Session["CustomerName"] = model.CustomerName;
+                Session["CustomerPhone"] = model.PhoneNumber;
+                Session["CustomerAddress"] = model.Address;
+                TempData["Success"] = "Profile updated successfully.";
+                return RedirectToAction("Profile");
+            }
+
+            ModelState.AddModelError("", message);
+            return View(model);
+        }
+
+        private void SetUserSession(Customer customer)
+        {
+            Session["CustomerId"] = customer.CustomerId;
+            Session["CustomerName"] = customer.CustomerName;
+            Session["CustomerEmail"] = customer.Email;
+            Session["CustomerPhone"] = customer.PhoneNumber;
+            Session["CustomerAddress"] = customer.Address;
+            Session["UserRole"] = "Customer";
         }
     }
 }
