@@ -1,3 +1,4 @@
+﻿using FoodArrival.Attributes;
 using System;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -29,7 +30,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult Login(LoginViewModel model)
         {
             if (string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
@@ -86,7 +87,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult SetStatus(string status)
         {
             if (!IsRiderAuthenticated()) return RedirectToAction("Login");
@@ -105,7 +106,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult ApplyAffiliation(int restaurantId)
         {
             if (!IsRiderAuthenticated()) return RedirectToAction("Login");
@@ -127,7 +128,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult AcceptDelivery(int orderId)
         {
             if (!IsRiderAuthenticated())
@@ -156,7 +157,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult CompleteDelivery(int orderId)
         {
             if (!IsRiderAuthenticated())
@@ -202,7 +203,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public new ActionResult Profile(Rider model)
         {
             if (!IsRiderAuthenticated())
