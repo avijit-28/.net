@@ -1,0 +1,12 @@
+@model FoodArrival.Models.OrderDetailsViewModel
+@{
+    ViewBag.Title = "Track order";
+}
+<p class="mb-3"><a href="@Url.Action("Index")">← Your orders</a></p>
+<div class="surface-card p-4 p-lg-5">
+    <p class="eyebrow">Order @Model.Order.OrderNumber</p><div class="d-flex flex-column flex-sm-row justify-content-between gap-3"><div><h1 class="section-heading">@Model.Order.RestaurantName</h1><p class="text-muted">Placed @Model.Order.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, h:mm tt")</p></div><span class="status-pill status-@Model.Order.OrderStatus.ToLowerInvariant()">@Model.Order.OrderStatus</span></div>
+    <h2 class="h5 fw-bold mt-4">Items</h2>
+    @foreach (var item in Model.Items) { <div class="d-flex justify-content-between border-top py-2"><span>@item.Quantity × @item.ItemName</span><span>₹@item.LineTotal.ToString("0.00")</span></div> }
+    <div class="border-top pt-3 mt-2"><div class="d-flex justify-content-between"><span>Subtotal</span><span>₹@Model.Order.Subtotal.ToString("0.00")</span></div><div class="d-flex justify-content-between"><span>Delivery</span><span>₹@Model.Order.DeliveryFee.ToString("0.00")</span></div><div class="d-flex justify-content-between"><span>Tax</span><span>₹@Model.Order.TaxAmount.ToString("0.00")</span></div><div class="d-flex justify-content-between fw-bold fs-5 mt-2"><span>Total</span><span>₹@Model.Order.TotalAmount.ToString("0.00")</span></div></div>
+    <div class="row g-4 mt-3"><div class="col-md-6"><h2 class="h6 fw-bold">Delivery to</h2><p class="mb-0">@Model.RecipientName<br />@Model.Address<br />@Model.City · @Model.Phone</p></div><div class="col-md-6"><h2 class="h6 fw-bold">Payment</h2><p class="mb-1">@Model.PaymentMethod · @Model.PaymentStatus</p><p class="small text-muted">Payment is recorded as pending. No payment gateway is connected.</p><h2 class="h6 fw-bold">Delivery</h2><p>@(Model.DeliveryStatus ?? "Waiting for restaurant preparation")</p></div></div>
+</div>
