@@ -23,33 +23,31 @@
                     </p>
                 </div>
 
-                <!-- Scooter Rider Illustration (Image 2 representation) -->
-                <div class="my-4 text-center position-relative">
-                    <svg viewBox="0 0 400 220" width="100%" height="180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Path line -->
-                        <path d="M 40 180 Q 150 140, 220 160 T 360 100" stroke="rgba(255,255,255,0.4)" stroke-width="3" stroke-dasharray="6 6" fill="none" />
-                        <!-- Target pin -->
-                        <g transform="translate(345, 70)">
-                            <path d="M15 0C6.7 0 0 6.7 0 15C0 26.2 15 42 15 42C15 42 30 26.2 30 15C30 6.7 23.3 0 15 0Z" fill="#FFE600" />
-                            <circle cx="15" cy="15" r="6" fill="#FF5E1E" />
-                        </g>
-                        <!-- Scooter and rider silhouette -->
-                        <g transform="translate(140, 95) scale(0.9)">
-                            <!-- Scooter body -->
-                            <ellipse cx="40" cy="70" rx="16" ry="16" fill="#FFFFFF" />
-                            <ellipse cx="40" cy="70" rx="7" ry="7" fill="#FF5E1E" />
-                            <ellipse cx="120" cy="70" rx="16" ry="16" fill="#FFFFFF" />
-                            <ellipse cx="120" cy="70" rx="7" ry="7" fill="#FF5E1E" />
-                            <path d="M40 70 L70 70 L95 50 L120 70" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M100 50 L115 20 L105 18" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" />
-                            <!-- Delivery box on back -->
-                            <rect x="25" y="25" width="30" height="30" rx="4" fill="#FFE600" />
-                            <!-- Rider body -->
-                            <circle cx="95" cy="12" r="10" fill="#FFFFFF" />
-                            <path d="M90 22 L85 45 L72 55" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-                            <path d="M92 25 L108 30 L112 22" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-                        </g>
-                    </svg>
+                <!-- Delivery Rider & Food Graphic (Matching Screen 2) -->
+                <div class="my-3 text-center position-relative">
+                    <div class="p-2 rounded-4" style="background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(4px);">
+                        <img src="@Url.Content("~/Content/images/hero-rider-food.png")"
+                             alt="Join FoodReady Community"
+                             class="img-fluid"
+                             style="max-height: 240px; width: auto; object-fit: contain; filter: drop-shadow(0 12px 20px rgba(0,0,0,0.22));"
+                             onerror="this.src='@Url.Content("~/Content/images/hero-rider-food.jpg")'" />
+                    </div>
+
+                    <!-- Highlight Badges -->
+                    <div class="d-flex flex-column gap-2 mt-3 text-start small">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill text-warning"></i>
+                            <span>Express 25-35 min multi-restaurant delivery</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-shield-check text-warning"></i>
+                            <span>Verified partner kitchens & certified riders</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-geo-alt-fill text-warning"></i>
+                            <span>Live GPS delivery tracking & SMS updates</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mt-auto pt-3 border-top border-white border-opacity-25 text-white-50 small">
