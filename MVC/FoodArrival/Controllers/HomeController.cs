@@ -22,9 +22,14 @@ namespace FoodArrival.Controllers
             ViewBag.Categories = new List<string> { "All items", "Pizza", "Burger", "Indian", "Chinese", "Drinks", "Snacks" };
 
             // Check notifications for current user/role
-            string role = Session["UserRole"]?.ToString() ?? "All";
+            string role = Session["UserRole"]?.ToString();
             int? userId = null;
-            if (role == "Customer") userId = Session["CustomerId"] != null ? (int?)Convert.ToInt32(Session["CustomerId"]) : null;
+            if (role == "Customer" && Session["CustomerId"] != null) userId = Convert.ToInt32(Session["CustomerId"]);
+            else if (role == "Rider" && Session["RiderId"] != null) userId = Convert.ToInt32(Session["RiderId"]);
+            else if (role == "Restaurant" && Session["RestaurantId"] != null) userId = Convert.ToInt32(Session["RestaurantId"]);
+            else if (role == "RestaurantStaff" && Session["StaffId"] != null) userId = Convert.ToInt32(Session["StaffId"]);
+            else if (role == "Admin" && Session["AdminId"] != null) userId = Convert.ToInt32(Session["AdminId"]);
+
             ViewBag.Notifications = _notifRepo.GetNotifications(role, userId);
 
             return View(allItems);
@@ -33,12 +38,13 @@ namespace FoodArrival.Controllers
         [HttpGet]
         public ActionResult GetNotifications()
         {
-            string role = Session["UserRole"]?.ToString() ?? "All";
+            string role = Session["UserRole"]?.ToString();
             int? userId = null;
-            if (role == "Customer" && Session["CustomerId"] != null)
-            {
-                userId = Convert.ToInt32(Session["CustomerId"]);
-            }
+            if (role == "Customer" && Session["CustomerId"] != null) userId = Convert.ToInt32(Session["CustomerId"]);
+            else if (role == "Rider" && Session["RiderId"] != null) userId = Convert.ToInt32(Session["RiderId"]);
+            else if (role == "Restaurant" && Session["RestaurantId"] != null) userId = Convert.ToInt32(Session["RestaurantId"]);
+            else if (role == "RestaurantStaff" && Session["StaffId"] != null) userId = Convert.ToInt32(Session["StaffId"]);
+            else if (role == "Admin" && Session["AdminId"] != null) userId = Convert.ToInt32(Session["AdminId"]);
 
             var list = _notifRepo.GetNotifications(role, userId);
             int unreadCount = list.Count(x => !x.IsRead);
@@ -51,7 +57,7 @@ namespace FoodArrival.Controllers
                 type = x.NotificationType,
                 isRead = x.IsRead,
                 time = x.CreatedAt.ToString("hh:mm tt"),
-                url = x.TargetUrl ?? "/Order/History"
+                url = x.TargetUrl ?? (role == "Rider" ? "/Rider/Dashboard" : (role == "Restaurant" ? "/Restaurant/Dashboard" : (role == "RestaurantStaff" ? "/Staff/Dashboard" : (role == "Admin" ? "/Admin/Dashboard" : "/Order/History"))))
             });
 
             return Json(new { success = true, unreadCount = unreadCount, notifications = result }, JsonRequestBehavior.AllowGet);
@@ -60,12 +66,13 @@ namespace FoodArrival.Controllers
         [HttpPost]
         public ActionResult MarkNotificationsRead()
         {
-            string role = Session["UserRole"]?.ToString() ?? "All";
+            string role = Session["UserRole"]?.ToString();
             int? userId = null;
-            if (role == "Customer" && Session["CustomerId"] != null)
-            {
-                userId = Convert.ToInt32(Session["CustomerId"]);
-            }
+            if (role == "Customer" && Session["CustomerId"] != null) userId = Convert.ToInt32(Session["CustomerId"]);
+            else if (role == "Rider" && Session["RiderId"] != null) userId = Convert.ToInt32(Session["RiderId"]);
+            else if (role == "Restaurant" && Session["RestaurantId"] != null) userId = Convert.ToInt32(Session["RestaurantId"]);
+            else if (role == "RestaurantStaff" && Session["StaffId"] != null) userId = Convert.ToInt32(Session["StaffId"]);
+            else if (role == "Admin" && Session["AdminId"] != null) userId = Convert.ToInt32(Session["AdminId"]);
 
             _notifRepo.MarkAllAsRead(role, userId);
             return Json(new { success = true });
