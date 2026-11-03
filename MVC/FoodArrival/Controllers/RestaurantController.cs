@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -13,10 +14,12 @@ namespace FoodArrival.Controllers
         private readonly RestaurantRepository _restRepo = new RestaurantRepository();
         private readonly NotificationRepository _notifRepo = new NotificationRepository();
         private readonly FoodItemRepository _foodRepo = new FoodItemRepository();
+        private readonly StaffRepository _staffRepo = new StaffRepository();
+        private readonly RiderRepository _riderRepo = new RiderRepository();
 
         private bool IsRestaurantAuthenticated()
         {
-            return Session["RestaurantId"] != null;
+            return Session["RestaurantId"] != null && Session["UserRole"]?.ToString() == "Restaurant";
         }
 
         [HttpGet]
@@ -33,12 +36,14 @@ namespace FoodArrival.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
             {
+                ModelState.AddModelError("", "Please enter restaurant email/username and password.");
                 return View(model);
             }
 
-            var rest = _restRepo.Login(model.Email.Trim().ToLower(), model.Password);
+            string verificationMsg;
+            var rest = _restRepo.Login(model.Email.Trim().ToLower(), model.Password, out verificationMsg);
             if (rest != null)
             {
                 Session["RestaurantId"] = rest.RestaurantId;
@@ -51,7 +56,14 @@ namespace FoodArrival.Controllers
                 return RedirectToAction("Dashboard");
             }
 
-            ModelState.AddModelError("", "Invalid restaurant partner email or password.");
+            if (!string.IsNullOrEmpty(verificationMsg))
+            {
+                ModelState.AddModelError("", verificationMsg);
+            }
+            else
+            {
+                ModelState.AddModelError("", "Invalid restaurant credentials or inactive account.");
+            }
             return View(model);
         }
 
@@ -64,7 +76,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpGet]
-        public ActionResult Dashboard()
+        public ActionResult Dashboard(string section = "orders")
         {
             if (!IsRestaurantAuthenticated())
             {
@@ -72,65 +84,26 @@ namespace FoodArrival.Controllers
             }
 
             int restId = Convert.ToInt32(Session["RestaurantId"]);
+            var restaurant = _restRepo.GetById(restId);
             var orders = _restRepo.GetOrders(restId);
-            ViewBag.AvailableItems = _foodRepo.GetAvailable();
-            ViewBag.Restaurant = _restRepo.GetById(restId);
+            var menuItems = _foodRepo.GetByRestaurant(restId);
+            var staffList = _staffRepo.GetByRestaurant(restId);
+            var proposedDishes = _staffRepo.GetPendingDishes(restId);
+            var affiliatedRiders = _riderRepo.GetRestaurantRiders(restId, null);
+            var transactions = _restRepo.GetTransactions(restId);
+
+            ViewBag.ActiveSection = section.ToLower();
+            ViewBag.Restaurant = restaurant;
+            ViewBag.MenuItems = menuItems;
+            ViewBag.StaffList = staffList;
+            ViewBag.ProposedDishes = proposedDishes;
+            ViewBag.AffiliatedRiders = affiliatedRiders;
+            ViewBag.Transactions = transactions;
+
             return View(orders);
         }
 
-        [HttpGet]
-        public ActionResult Details()
-        {
-            if (!IsRestaurantAuthenticated())
-            {
-                return RedirectToAction("Login");
-            }
-
-            int restId = Convert.ToInt32(Session["RestaurantId"]);
-            var rest = _restRepo.GetById(restId);
-            if (rest == null)
-            {
-                return RedirectToAction("Logout");
-            }
-
-            return View(rest);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Details(Restaurant model, HttpPostedFileBase bannerImage)
-        {
-            if (!IsRestaurantAuthenticated())
-            {
-                return RedirectToAction("Login");
-            }
-
-            int restId = Convert.ToInt32(Session["RestaurantId"]);
-            model.RestaurantId = restId;
-
-            if (bannerImage != null && bannerImage.ContentLength > 0)
-            {
-                string fileName = Path.GetFileName(bannerImage.FileName);
-                string uniqueName = Guid.NewGuid().ToString("N").Substring(0, 8) + "_" + fileName;
-                string dirPath = Server.MapPath("~/Content/images");
-                if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
-                string targetPath = Path.Combine(dirPath, uniqueName);
-                bannerImage.SaveAs(targetPath);
-                model.ImageUrl = "/Content/images/" + uniqueName;
-            }
-
-            string message;
-            if (_restRepo.Update(model, out message))
-            {
-                Session["RestaurantName"] = model.RestaurantName;
-                TempData["Success"] = "Restaurant details updated successfully.";
-                return RedirectToAction("Details");
-            }
-
-            ModelState.AddModelError("", message);
-            return View(model);
-        }
-
+        // --- ORDER PROGRESSION WORKFLOW ---
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UpdateStatus(int orderId, string status)
@@ -142,7 +115,6 @@ namespace FoodArrival.Controllers
 
             _restRepo.UpdateDeliveryStatus(orderId, status);
 
-            // Trigger notification
             if (status == "ReadyForPickup")
             {
                 _notifRepo.AddNotification("Rider", null, "Order Ready for Pickup!", "Order #FD" + (1000 + orderId) + " is prepared and ready for delivery pickup.", "Order", "/Rider/Dashboard");
@@ -154,7 +126,230 @@ namespace FoodArrival.Controllers
             }
 
             TempData["Success"] = "Order #FD" + (1000 + orderId) + " status updated to " + status + ".";
-            return RedirectToAction("Dashboard");
+            return RedirectToAction("Dashboard", new { section = "orders" });
+        }
+
+        // --- MENU MANAGEMENT ---
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddDish(FoodItem item, HttpPostedFileBase imageFile)
+        {
+            if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
+
+            int restId = Convert.ToInt32(Session["RestaurantId"]);
+            item.RestaurantId = restId;
+            item.IsVerified = true;
+            item.VerifiedByRole = "Restaurant";
+            item.VerifiedBy = restId;
+
+            if (imageFile != null && imageFile.ContentLength > 0)
+            {
+                string fileName = Path.GetFileName(imageFile.FileName);
+                string uniqueName = "dish_" + Guid.NewGuid().ToString("N").Substring(0, 8) + "_" + fileName;
+                string dirPath = Server.MapPath("~/Content/images");
+                if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
+                string targetPath = Path.Combine(dirPath, uniqueName);
+                imageFile.SaveAs(targetPath);
+                item.ImageUrl = "/Content/images/" + uniqueName;
+            }
+            else
+            {
+                item.ImageUrl = "/Content/images/margherita.jpg";
+            }
+
+            string message;
+            int newId;
+            if (_foodRepo.Insert(item, out message, out newId))
+            {
+                TempData["Success"] = $"Dish '{item.ItemName}' added to restaurant menu.";
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            return RedirectToAction("Dashboard", new { section = "menu" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ToggleDishAvailability(int id)
+        {
+            if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
+
+            var item = _foodRepo.GetById(id);
+            if (item != null)
+            {
+                item.IsAvailable = !item.IsAvailable;
+                string msg;
+                _foodRepo.Update(item, out msg);
+                TempData["Success"] = $"'{item.ItemName}' is now {(item.IsAvailable ? "In Stock" : "Out of Stock")}.";
+            }
+
+            return RedirectToAction("Dashboard", new { section = "menu" });
+        }
+
+        // --- STAFF PMS & VERIFICATION ---
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ApproveStaff(int staffId)
+        {
+            if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
+
+            int restId = Convert.ToInt32(Session["RestaurantId"]);
+            string message;
+            if (_staffRepo.VerifyStaff(staffId, "Restaurant", restId, out message))
+            {
+                TempData["Success"] = "Kitchen staff approved and enabled.";
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            return RedirectToAction("Dashboard", new { section = "staff" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RejectStaff(int staffId)
+        {
+            if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
+
+            string message;
+            if (_staffRepo.RejectStaff(staffId, out message))
+            {
+                TempData["Success"] = "Staff application rejected.";
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            return RedirectToAction("Dashboard", new { section = "staff" });
+        }
+
+        // --- STAFF-PROPOSED DISH APPROVAL ---
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ApproveProposedDish(int foodItemId)
+        {
+            if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
+
+            int restId = Convert.ToInt32(Session["RestaurantId"]);
+            string message;
+            if (_staffRepo.VerifyDish(foodItemId, "Restaurant", restId, out message))
+            {
+                TempData["Success"] = "Dish approved! It is now live on your active menu.";
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            return RedirectToAction("Dashboard", new { section = "proposed" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RejectProposedDish(int foodItemId)
+        {
+            if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
+
+            string message;
+            if (_staffRepo.RejectDish(foodItemId, out message))
+            {
+                TempData["Success"] = "Dish proposal rejected.";
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            return RedirectToAction("Dashboard", new { section = "proposed" });
+        }
+
+        // --- RIDER AFFILIATIONS ---
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ApproveRider(int affiliationId)
+        {
+            if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
+
+            int restId = Convert.ToInt32(Session["RestaurantId"]);
+            string message;
+            if (_riderRepo.VerifyAffiliation(affiliationId, "Restaurant", restId, out message))
+            {
+                TempData["Success"] = "Rider verified and linked for deliveries from your kitchen.";
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            return RedirectToAction("Dashboard", new { section = "riders" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RejectRider(int affiliationId)
+        {
+            if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
+
+            string message;
+            if (_riderRepo.RejectAffiliation(affiliationId, out message))
+            {
+                TempData["Success"] = "Rider affiliation request declined.";
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            return RedirectToAction("Dashboard", new { section = "riders" });
+        }
+
+        // --- RESTAURANT PROFILE & DETAILS ---
+        [HttpGet]
+        public ActionResult Details()
+        {
+            if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
+
+            int restId = Convert.ToInt32(Session["RestaurantId"]);
+            var rest = _restRepo.GetById(restId);
+            return View(rest);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Details(Restaurant model, HttpPostedFileBase bannerImage)
+        {
+            if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
+
+            int restId = Convert.ToInt32(Session["RestaurantId"]);
+            model.RestaurantId = restId;
+
+            if (bannerImage != null && bannerImage.ContentLength > 0)
+            {
+                string fileName = Path.GetFileName(bannerImage.FileName);
+                string uniqueName = "rest_" + Guid.NewGuid().ToString("N").Substring(0, 8) + "_" + fileName;
+                string dirPath = Server.MapPath("~/Content/images");
+                if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
+                string targetPath = Path.Combine(dirPath, uniqueName);
+                bannerImage.SaveAs(targetPath);
+                model.ImageUrl = "/Content/images/" + uniqueName;
+            }
+
+            string message;
+            if (_restRepo.Update(model, out message))
+            {
+                Session["RestaurantName"] = model.RestaurantName;
+                TempData["Success"] = "Restaurant profile updated successfully.";
+                return RedirectToAction("Details");
+            }
+
+            ModelState.AddModelError("", message);
+            return View(model);
         }
     }
 }
