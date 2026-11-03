@@ -702,6 +702,84 @@ BEGIN
 END;
 GO
 
+CREATE OR ALTER PROCEDURE food.usp_Admin_UserList
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT UserId, FullName, Email, Role, IsActive, CreatedAt
+    FROM food.Users
+    ORDER BY CreatedAt DESC;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE food.usp_Admin_UserUpdate
+    @ActorUserId INT,
+    @UserId INT,
+    @Role NVARCHAR(20),
+    @IsActive BIT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @ActorUserId AND Role = N'Admin' AND IsActive = 1)
+        THROW 51070, 'Only an active administrator can manage accounts.', 1;
+    IF @Role NOT IN (N'Customer', N'Restaurant', N'DeliveryAgent', N'Admin')
+        THROW 51071, 'Role is invalid.', 1;
+    IF @UserId = @ActorUserId AND (@Role <> N'Admin' OR @IsActive = 0)
+        THROW 51072, 'Administrators cannot disable or demote their own account.', 1;
+    UPDATE food.Users SET Role = @Role, IsActive = @IsActive WHERE UserId = @UserId;
+    IF @@ROWCOUNT = 0 THROW 51073, 'User was not found.', 1;
+    SELECT UserId, FullName, Email, Role, IsActive FROM food.Users WHERE UserId = @UserId;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE food.usp_Admin_RestaurantList
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT r.RestaurantId, r.OwnerUserId, u.FullName AS OwnerName, r.Name, r.Cuisine, r.AddressLine, r.City, r.IsActive
+    FROM food.Restaurants r INNER JOIN food.Users u ON u.UserId = r.OwnerUserId
+    ORDER BY r.Name;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE food.usp_Admin_RestaurantSave
+    @ActorUserId INT,
+    @RestaurantId INT = NULL,
+    @OwnerUserId INT,
+    @Name NVARCHAR(160),
+    @Cuisine NVARCHAR(80),
+    @AddressLine NVARCHAR(250),
+    @City NVARCHAR(100),
+    @Description NVARCHAR(1000) = NULL,
+    @IsActive BIT = 1
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @ActorUserId AND Role = N'Admin' AND IsActive = 1)
+        THROW 51074, 'Only an active administrator can manage restaurants.', 1;
+    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @OwnerUserId AND Role = N'Restaurant' AND IsActive = 1)
+        THROW 51075, 'Restaurant owner must be an active restaurant account.', 1;
+    IF NULLIF(LTRIM(RTRIM(@Name)), N'') IS NULL OR NULLIF(LTRIM(RTRIM(@Cuisine)), N'') IS NULL
+       OR NULLIF(LTRIM(RTRIM(@AddressLine)), N'') IS NULL OR NULLIF(LTRIM(RTRIM(@City)), N'') IS NULL
+        THROW 51076, 'Name, cuisine, address, and city are required.', 1;
+    IF @RestaurantId IS NULL
+    BEGIN
+        INSERT food.Restaurants(OwnerUserId, Name, Cuisine, AddressLine, City, Description, IsActive)
+        VALUES (@OwnerUserId, @Name, @Cuisine, @AddressLine, @City, @Description, @IsActive);
+        SET @RestaurantId = CONVERT(INT, SCOPE_IDENTITY());
+    END
+    ELSE
+    BEGIN
+        UPDATE food.Restaurants
+        SET OwnerUserId = @OwnerUserId, Name = @Name, Cuisine = @Cuisine, AddressLine = @AddressLine,
+            City = @City, Description = @Description, IsActive = @IsActive
+        WHERE RestaurantId = @RestaurantId;
+        IF @@ROWCOUNT = 0 THROW 51077, 'Restaurant was not found.', 1;
+    END;
+    SELECT @RestaurantId AS RestaurantId;
+END;
+GO
+
 /* 10. Optional demo seed data - uncomment and replace sample password hashes before use.
    PasswordHash values below are intentionally placeholders and cannot be used to log in.
 */
