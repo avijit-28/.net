@@ -418,6 +418,8 @@ CREATE OR ALTER PROCEDURE food.usp_Order_CustomerList
 AS
 BEGIN
     SET NOCOUNT ON;
+    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @CustomerUserId AND Role = N'Customer' AND IsActive = 1)
+        THROW 51021, 'Active customer account was not found.', 1;
     SELECT o.OrderId, o.OrderNumber, o.RestaurantId, r.Name AS RestaurantName,
            o.Subtotal, o.DeliveryFee, o.TaxAmount, o.TotalAmount, o.OrderStatus, o.CreatedAt,
            da.Status AS DeliveryStatus
@@ -435,6 +437,8 @@ CREATE OR ALTER PROCEDURE food.usp_Order_CustomerDetails
 AS
 BEGIN
     SET NOCOUNT ON;
+    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @CustomerUserId AND Role = N'Customer' AND IsActive = 1)
+        THROW 51022, 'Active customer account was not found.', 1;
     IF NOT EXISTS (SELECT 1 FROM food.Orders WHERE OrderId = @OrderId AND CustomerUserId = @CustomerUserId)
         THROW 51020, 'Order was not found for this customer.', 1;
     SELECT o.OrderId, o.OrderNumber, o.RestaurantId, r.Name AS RestaurantName,
@@ -542,6 +546,8 @@ CREATE OR ALTER PROCEDURE food.usp_Delivery_AgentList
 AS
 BEGIN
     SET NOCOUNT ON;
+    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @AgentUserId AND Role = N'DeliveryAgent' AND IsActive = 1)
+        THROW 51053, 'Active delivery agent account was not found.', 1;
     SELECT da.AssignmentId, da.OrderId, o.OrderNumber, da.Status, da.AssignedAt, da.PickedUpAt, da.DeliveredAt,
            r.Name AS RestaurantName, r.AddressLine AS PickupAddress,
            o.DeliveryRecipient, o.DeliveryPhone, o.DeliveryAddressLine, o.DeliveryAddressLine2, o.DeliveryCity, o.DeliveryPostalCode
@@ -611,6 +617,8 @@ CREATE OR ALTER PROCEDURE food.usp_Review_Create
 AS
 BEGIN
     SET NOCOUNT ON;
+    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @CustomerUserId AND Role = N'Customer' AND IsActive = 1)
+        THROW 51054, 'Active customer account was not found.', 1;
     IF @Rating NOT BETWEEN 1 AND 5 THROW 51050, 'Rating must be from 1 through 5.', 1;
     IF NOT EXISTS (SELECT 1 FROM food.Orders WHERE OrderId = @OrderId AND CustomerUserId = @CustomerUserId AND OrderStatus = N'Delivered')
         THROW 51051, 'Only the customer of a delivered order may review it.', 1;
