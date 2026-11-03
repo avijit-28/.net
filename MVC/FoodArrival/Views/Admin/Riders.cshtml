@@ -172,6 +172,17 @@
                                             <div><i class="bi bi-telephone text-muted me-1"></i> @rider.PhoneNumber</div>
                                             <div class="small text-muted"><i class="bi bi-envelope text-muted me-1"></i> @rider.Email</div>
                                         </td>
+                                        <td class="text-end">
+                                            @using (Html.BeginForm("ResetUserPassword", "Admin", FormMethod.Post, new { onsubmit = "return confirm('Reset this rider\\'s password to a secure temporary password?');", @class = "d-inline" }))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="role" value="Rider" />
+                                                <input type="hidden" name="id" value="@rider.RiderId" />
+                                                <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-2 py-1" title="Reset rider password securely" style="font-size: 0.75rem;">
+                                                    <i class="bi bi-key-fill me-1"></i> Reset Password
+                                                </button>
+                                            }
+                                        </td>
                                     </tr>
                                 }
                             }
