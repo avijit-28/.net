@@ -1,0 +1,18 @@
+@model FoodArrival.Models.AdminDashboardViewModel
+@{
+    ViewBag.Title = "Admin operations";
+}
+<p class="eyebrow mb-1">Operations</p><h1 class="section-heading mb-4">Ready for delivery</h1>
+<section class="surface-card p-4">
+    @if (!Model.ReadyOrders.Any()) { <div class="empty-state"><h2 class="h5">No orders are waiting for assignment</h2><p class="text-muted mb-0">Orders marked ready by a restaurant will appear here.</p></div> }
+    @foreach (var order in Model.ReadyOrders)
+    {
+        <div class="d-flex flex-column flex-md-row justify-content-between gap-3 border-bottom py-3"><div><strong>@order.OrderNumber</strong><div class="small text-muted">@order.RestaurantName · @order.City</div></div>
+            @if (Model.Agents.Any())
+            {
+                using (Html.BeginForm("Assign", "Admin", FormMethod.Post, new { @class = "d-flex gap-2" })) { @Html.AntiForgeryToken() @Html.Hidden("orderId", order.OrderId) @Html.DropDownList("agentUserId", Model.Agents, "Choose delivery agent", new { @class = "form-select" }) <button class="btn btn-dark text-nowrap" type="submit">Assign</button> }
+            }
+            else { <span class="text-muted small">No active delivery agent accounts are available.</span> }
+        </div>
+    }
+</section>
