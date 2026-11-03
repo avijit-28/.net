@@ -12,6 +12,7 @@ namespace FoodArrival.Controllers
         public ActionResult Index()
         {
             var repo = new FoodRepository();
+            var restaurants = repo.GetAdminRestaurants();
             var agents = new List<SelectListItem>();
             foreach (var agent in repo.GetActiveAgents()) agents.Add(new SelectListItem { Value = agent.Key.ToString(), Text = agent.Value });
             var users = repo.GetAdminUsers();
@@ -21,9 +22,32 @@ namespace FoodArrival.Controllers
             {
                 Orders = repo.GetAdminOrders(),
                 ReadyOrders = repo.GetReadyOrders(), Agents = agents, Users = users,
-                Restaurants = repo.GetAdminRestaurants(), RestaurantOwners = owners,
+                Restaurants = restaurants, MenuItems = repo.GetAdminMenuItems(),
+                RestaurantChoices = restaurants.Select(x => new SelectListItem { Value = x.RestaurantId.ToString(), Text = x.Name }).ToList(),
+                RestaurantOwners = owners,
                 NewRestaurant = new AdminRestaurantViewModel { IsActive = true }
             });
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult SaveMenuItem(MenuItem model)
+        {
+            if (String.IsNullOrWhiteSpace(model.Name) || model.Price <= 0 || model.RestaurantId <= 0)
+            {
+                TempData["Error"] = "Choose a restaurant and provide a menu name and positive price.";
+                return RedirectToAction("Index");
+            }
+            try { new FoodRepository().SaveAdminMenuItem(Int32.Parse(User.Identity.Name), model); TempData["Notice"] = "Menu item saved."; }
+            catch (Exception ex) { TempData["Error"] = ex.Message; }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public ActionResult SetMenuAvailability(int menuItemId, bool isAvailable)
+        {
+            try { new FoodRepository().SetAdminMenuAvailability(Int32.Parse(User.Identity.Name), menuItemId, isAvailable); TempData["Notice"] = "Menu availability updated."; }
+            catch (Exception ex) { TempData["Error"] = ex.Message; }
+            return RedirectToAction("Index");
         }
 
         [HttpPost, ValidateAntiForgeryToken]
