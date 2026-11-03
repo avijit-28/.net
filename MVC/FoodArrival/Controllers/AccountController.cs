@@ -129,6 +129,8 @@ namespace FoodArrival.Controllers
                 int restaurantId;
                 if (_restRepo.Register(restaurant, out message, out restaurantId))
                 {
+                    _notifRepo.AddNotification("Restaurant", restaurantId, "Registration Submitted",
+                        $"Welcome '{restaurant.RestaurantName}'! Your kitchen is registered with ID #{restaurantId} and is pending administrator verification.", "Info", "/Restaurant/Dashboard");
                     _notifRepo.AddNotification("Admin", null, "New Restaurant Registered",
                         $"'{restaurant.RestaurantName}' registered by {restaurant.OwnerName} (ID: #{restaurantId}). Requires verification.", "Approval", "/Admin/Dashboard");
 
