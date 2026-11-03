@@ -70,8 +70,51 @@ namespace FoodArrival.Controllers
 
             int riderId = Convert.ToInt32(Session["RiderId"]);
             ViewBag.AvailableDeliveries = _riderRepo.GetAvailableDeliveries();
+            ViewBag.Rider = _riderRepo.GetById(riderId);
             var myDeliveries = _riderRepo.GetMyDeliveries(riderId);
             return View(myDeliveries);
+        }
+
+        [HttpGet]
+        public ActionResult Profile()
+        {
+            if (!IsRiderAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            int riderId = Convert.ToInt32(Session["RiderId"]);
+            var rider = _riderRepo.GetById(riderId);
+            if (rider == null)
+            {
+                return RedirectToAction("Logout");
+            }
+
+            return View(rider);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Profile(Rider model)
+        {
+            if (!IsRiderAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            int riderId = Convert.ToInt32(Session["RiderId"]);
+            model.RiderId = riderId;
+
+            string message;
+            if (_riderRepo.Update(model, out message))
+            {
+                Session["RiderName"] = model.RiderName;
+                TempData["Success"] = "Rider profile updated successfully.";
+                return RedirectToAction("Profile");
+            }
+
+            ModelState.AddModelError("", message);
+            return View(model);
         }
 
         [HttpPost]
