@@ -1,0 +1,646 @@
+@model FoodArrival.Models.PaymentGatewayViewModel
+@{
+    ViewBag.Title = "FoodReady Secure Payment Gateway";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .payment-container {
+        max-width: 1080px;
+        margin: 30px auto 60px;
+    }
+    .payment-header {
+        background: linear-gradient(135deg, #FF6600, #FF8800);
+        color: #fff;
+        border-radius: 20px 20px 0 0;
+        padding: 24px 32px;
+    }
+    .payment-card-body {
+        background: #fff;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        border: 1px solid #FFE6D5;
+        border-top: none;
+    }
+    .payment-tab-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 20px;
+        border-radius: 14px;
+        border: 2px solid #F1F5F9;
+        background: #F8FAFC;
+        color: #334155;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        text-align: left;
+        width: 100%;
+        margin-bottom: 12px;
+    }
+    .payment-tab-btn:hover {
+        background: #FFF7ED;
+        border-color: #FFD8A8;
+        color: #FF6600;
+    }
+    .payment-tab-btn.active {
+        background: #FFF5EB;
+        border-color: #FF6600;
+        color: #FF6600;
+        box-shadow: 0 4px 14px rgba(255, 102, 0, 0.15);
+    }
+    .payment-tab-btn i {
+        font-size: 1.4rem;
+    }
+    .qr-frame {
+        width: 220px;
+        height: 220px;
+        border: 3px solid #FF6600;
+        border-radius: 18px;
+        padding: 12px;
+        background: #fff;
+        box-shadow: 0 6px 24px rgba(255, 102, 0, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    .mock-credit-card {
+        background: linear-gradient(135deg, #1E293B, #0F172A);
+        border-radius: 16px;
+        padding: 24px;
+        color: #fff;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.25);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 24px;
+    }
+    .mock-credit-card::before {
+        content: '';
+        position: absolute;
+        width: 240px;
+        height: 240px;
+        background: radial-gradient(circle, rgba(255, 102, 0, 0.3) 0%, transparent 70%);
+        top: -60px;
+        right: -60px;
+        border-radius: 50%;
+    }
+    .card-chip {
+        width: 44px;
+        height: 32px;
+        background: linear-gradient(135deg, #FCD34D, #D97706);
+        border-radius: 6px;
+        margin-bottom: 20px;
+    }
+    .card-number-display {
+        font-family: 'Courier New', monospace;
+        font-size: 1.25rem;
+        letter-spacing: 2px;
+        font-weight: bold;
+        margin-bottom: 18px;
+    }
+    .bank-tile {
+        border: 2px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 14px 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #fff;
+    }
+    .bank-tile:hover {
+        border-color: #FF6600;
+        background: #FFF7ED;
+    }
+    .bank-tile.selected {
+        border-color: #FF6600;
+        background: #FFF5EB;
+        box-shadow: 0 2px 8px rgba(255, 102, 0, 0.2);
+    }
+    .summary-card {
+        background: #F8FAFC;
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid #E2E8F0;
+    }
+    .btn-pay-action {
+        background: linear-gradient(135deg, #10B981, #059669);
+        color: #fff;
+        font-size: 1.15rem;
+        font-weight: 700;
+        padding: 16px;
+        border-radius: 14px;
+        border: none;
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        transition: all 0.25s ease;
+    }
+    .btn-pay-action:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        box-shadow: 0 10px 28px rgba(16, 185, 129, 0.4);
+        transform: translateY(-2px);
+        color: #fff;
+    }
+    .btn-fail-action {
+        background: #FEE2E2;
+        color: #DC2626;
+        border: 1px solid #FECACA;
+        font-weight: 600;
+        border-radius: 12px;
+        padding: 10px;
+        transition: all 0.2s ease;
+    }
+    .btn-fail-action:hover {
+        background: #FCA5A5;
+        color: #991B1B;
+    }
+    /* Processing Overlay */
+    #processingModal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(6px);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+    .spinner-orange {
+        width: 60px;
+        height: 60px;
+        border: 5px solid #FFEDD5;
+        border-top-color: #FF6600;
+        border-radius: 50%;
+        animation: spin 0.9s linear infinite;
+    }
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="container payment-container">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-4 mb-4 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <strong>Payment Issue:</strong> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Payment Header -->
+    <div class="payment-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3">
+            <div class="bg-white text-danger rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                <i class="bi bi-shield-lock-fill fs-4 text-warning"></i>
+            </div>
+            <div>
+                <h4 class="fw-bold mb-0 text-white">FoodReady Dummy Payment Gateway</h4>
+                <div class="text-white-50 small">Order #@Model.OrderNumber • End-to-End Encrypted 256-Bit SSL</div>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-2 bg-white bg-opacity-25 px-3 py-2 rounded-pill text-white small">
+            <i class="bi bi-clock-history"></i>
+            <span>Session expires in: <strong id="sessionTimer">04:59</strong></span>
+        </div>
+    </div>
+
+    <!-- Main Payment Body -->
+    <div class="payment-card-body p-4 p-md-5">
+        <div class="row g-4">
+            <!-- Left: Payment Options Tabs -->
+            <div class="col-lg-3 col-md-4">
+                <h6 class="fw-bold text-muted text-uppercase small mb-3">Select Payment Method</h6>
+                
+                <button type="button" class="payment-tab-btn active" onclick="switchPaymentTab('upi', this)">
+                    <i class="bi bi-qr-code text-warning"></i>
+                    <div>
+                        <div>UPI / QR Code</div>
+                        <div class="small text-muted" style="font-size: 0.75rem;">GPay, PhonePe, Paytm</div>
+                    </div>
+                </button>
+
+                <button type="button" class="payment-tab-btn" onclick="switchPaymentTab('card', this)">
+                    <i class="bi bi-credit-card-2-front text-primary"></i>
+                    <div>
+                        <div>Cards</div>
+                        <div class="small text-muted" style="font-size: 0.75rem;">Credit & Debit Cards</div>
+                    </div>
+                </button>
+
+                <button type="button" class="payment-tab-btn" onclick="switchPaymentTab('netbanking', this)">
+                    <i class="bi bi-bank text-success"></i>
+                    <div>
+                        <div>Net Banking</div>
+                        <div class="small text-muted" style="font-size: 0.75rem;">All Major Banks</div>
+                    </div>
+                </button>
+
+                <button type="button" class="payment-tab-btn" onclick="switchPaymentTab('cod', this)">
+                    <i class="bi bi-cash-stack text-secondary"></i>
+                    <div>
+                        <div>Cash on Delivery</div>
+                        <div class="small text-muted" style="font-size: 0.75rem;">Pay upon food delivery</div>
+                    </div>
+                </button>
+
+                <div class="mt-4 pt-3 border-top text-center">
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill small">
+                        <i class="bi bi-shield-check me-1"></i> PCI-DSS Certified
+                    </span>
+                </div>
+            </div>
+
+            <!-- Middle: Payment Inputs Screen -->
+            <div class="col-lg-5 col-md-8">
+                <!-- TAB 1: UPI / QR CODE -->
+                <div id="tab-upi" class="payment-pane">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-qr-code text-warning"></i> Scan & Pay via UPI
+                    </h5>
+                    
+                    <div class="d-flex flex-column align-items-center justify-content-center text-center p-3 bg-light rounded-4 border mb-4">
+                        <div class="qr-frame mb-3 position-relative">
+                            <!-- Simulated SVG QR Code -->
+                            <svg width="190" height="190" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="100" height="100" fill="white"/>
+                                <!-- QR Corner 1 -->
+                                <rect x="5" y="5" width="28" height="28" rx="4" fill="#1E293B"/>
+                                <rect x="9" y="9" width="20" height="20" rx="2" fill="white"/>
+                                <rect x="13" y="13" width="12" height="12" rx="2" fill="#FF6600"/>
+                                <!-- QR Corner 2 -->
+                                <rect x="67" y="5" width="28" height="28" rx="4" fill="#1E293B"/>
+                                <rect x="71" y="9" width="20" height="20" rx="2" fill="white"/>
+                                <rect x="75" y="13" width="12" height="12" rx="2" fill="#FF6600"/>
+                                <!-- QR Corner 3 -->
+                                <rect x="5" y="67" width="28" height="28" rx="4" fill="#1E293B"/>
+                                <rect x="9" y="71" width="20" height="20" rx="2" fill="white"/>
+                                <rect x="13" y="75" width="12" height="12" rx="2" fill="#FF6600"/>
+                                <!-- Patterns -->
+                                <rect x="38" y="10" width="8" height="8" fill="#1E293B"/>
+                                <rect x="50" y="10" width="8" height="8" fill="#1E293B"/>
+                                <rect x="38" y="22" width="6" height="6" fill="#1E293B"/>
+                                <rect x="50" y="24" width="8" height="6" fill="#1E293B"/>
+                                <rect x="10" y="38" width="6" height="8" fill="#1E293B"/>
+                                <rect x="22" y="38" width="8" height="6" fill="#1E293B"/>
+                                <rect x="38" y="38" width="24" height="24" rx="12" fill="#FF6600"/>
+                                <text x="50" y="53" font-size="12" fill="white" font-weight="bold" text-anchor="middle">FR</text>
+                                <rect x="68" y="38" width="8" height="8" fill="#1E293B"/>
+                                <rect x="82" y="38" width="8" height="6" fill="#1E293B"/>
+                                <rect x="38" y="68" width="8" height="8" fill="#1E293B"/>
+                                <rect x="52" y="72" width="6" height="8" fill="#1E293B"/>
+                                <rect x="68" y="68" width="8" height="8" fill="#1E293B"/>
+                                <rect x="80" y="75" width="10" height="8" fill="#1E293B"/>
+                            </svg>
+                        </div>
+                        <div class="fw-bold text-dark">Scan with any UPI App</div>
+                        <div class="text-muted small">Google Pay • PhonePe • Paytm • BHIM • Amazon Pay</div>
+                    </div>
+
+                    <div class="text-center my-3">
+                        <span class="px-3 bg-white text-muted small position-relative" style="top: -12px;">OR ENTER UPI ID</span>
+                        <hr class="mt-0" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Virtual Payment Address (VPA / UPI ID)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-at"></i></span>
+                            <input type="text" id="inputUpiId" class="form-control" value="@Model.DefaultUpiId" placeholder="e.g. mobile@okhdfcbank" />
+                            <button type="button" class="btn btn-outline-secondary" onclick="alert('UPI ID Verified!')">Verify</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: CREDIT / DEBIT CARDS -->
+                <div id="tab-card" class="payment-pane" style="display: none;">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-credit-card-2-front text-primary"></i> Credit or Debit Card
+                    </h5>
+
+                    <!-- Interactive Mock Card -->
+                    <div class="mock-credit-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="card-chip"></div>
+                            <span class="badge bg-warning text-dark px-3 py-1 fw-bold">FoodReady Pay</span>
+                        </div>
+                        <div class="card-number-display" id="cardDisplayNumber">•••• •••• •••• 4242</div>
+                        <div class="d-flex justify-content-between text-uppercase small text-white-50">
+                            <div>
+                                <div style="font-size: 0.65rem;">CARD HOLDER</div>
+                                <div class="text-white fw-bold" id="cardDisplayName">@(string.IsNullOrEmpty(Model.CustomerName) ? "CARDHOLDER NAME" : Model.CustomerName.ToUpper())</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.65rem;">EXPIRES</div>
+                                <div class="text-white fw-bold" id="cardDisplayExpiry">12/28</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Card Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-credit-card"></i></span>
+                            <input type="text" id="inputCardNumber" class="form-control" placeholder="4532 •••• •••• 4242" maxlength="19" value="4532 8921 7384 4242" oninput="formatCardNumber(this)" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Name on Card</label>
+                        <input type="text" id="inputCardName" class="form-control" value="@Model.CustomerName" placeholder="Full name as printed on card" oninput="document.getElementById('cardDisplayName').innerText = this.value.toUpperCase() || 'CARDHOLDER NAME'" />
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-7">
+                            <label class="form-label small fw-bold text-muted">Expiry Date</label>
+                            <input type="text" id="inputCardExpiry" class="form-control" placeholder="MM/YY" maxlength="5" value="12/28" oninput="document.getElementById('cardDisplayExpiry').innerText = this.value || 'MM/YY'" />
+                        </div>
+                        <div class="col-5">
+                            <label class="form-label small fw-bold text-muted">CVV</label>
+                            <input type="password" id="inputCardCvv" class="form-control" placeholder="123" maxlength="3" value="888" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: NET BANKING -->
+                <div id="tab-netbanking" class="payment-pane" style="display: none;">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-bank text-success"></i> Net Banking
+                    </h5>
+                    <label class="form-label small fw-bold text-muted mb-2">Popular Indian Banks</label>
+                    <div class="row g-2 mb-3">
+                        <div class="col-4">
+                            <div class="bank-tile selected" onclick="selectBank('HDFC Bank', this)">
+                                <i class="bi bi-building fs-5 text-primary"></i>
+                                <div class="small fw-bold mt-1">HDFC</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="bank-tile" onclick="selectBank('State Bank of India', this)">
+                                <i class="bi bi-building fs-5 text-info"></i>
+                                <div class="small fw-bold mt-1">SBI</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="bank-tile" onclick="selectBank('ICICI Bank', this)">
+                                <i class="bi bi-building fs-5 text-danger"></i>
+                                <div class="small fw-bold mt-1">ICICI</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="bank-tile" onclick="selectBank('Axis Bank', this)">
+                                <i class="bi bi-building fs-5 text-warning"></i>
+                                <div class="small fw-bold mt-1">Axis</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="bank-tile" onclick="selectBank('Kotak Mahindra Bank', this)">
+                                <i class="bi bi-building fs-5 text-danger"></i>
+                                <div class="small fw-bold mt-1">Kotak</div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="bank-tile" onclick="selectBank('Punjab National Bank', this)">
+                                <i class="bi bi-building fs-5 text-success"></i>
+                                <div class="small fw-bold mt-1">PNB</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">All Other Banks</label>
+                        <select id="selectOtherBank" class="form-select" onchange="document.querySelectorAll('.bank-tile').forEach(t=>t.classList.remove('selected'))">
+                            <option value="">-- Choose Other Bank --</option>
+                            <option value="Bank of Baroda">Bank of Baroda</option>
+                            <option value="Canara Bank">Canara Bank</option>
+                            <option value="Union Bank of India">Union Bank of India</option>
+                            <option value="IndusInd Bank">IndusInd Bank</option>
+                            <option value="IDFC FIRST Bank">IDFC FIRST Bank</option>
+                            <option value="Yes Bank">Yes Bank</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- TAB 4: CASH ON DELIVERY -->
+                <div id="tab-cod" class="payment-pane" style="display: none;">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-cash-stack text-secondary"></i> Cash on Delivery (COD)
+                    </h5>
+                    <div class="alert alert-warning rounded-4 border-0 p-3 mb-4">
+                        <div class="d-flex gap-3">
+                            <i class="bi bi-info-circle-fill fs-4 text-warning"></i>
+                            <div>
+                                <div class="fw-bold">Doorstep Settlement</div>
+                                <div class="small text-muted">You can pay in cash or scan the delivery partner's QR code when your food arrives.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-check p-3 bg-light rounded-3 border">
+                        <input class="form-check-input ms-0 me-2" type="checkbox" id="codConfirmation" checked />
+                        <label class="form-check-label small fw-bold text-dark" for="codConfirmation">
+                            I confirm I will pay &#8377;@Model.TotalAmount.ToString("N0") upon receiving the delivery.
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Order Summary & Trigger Buttons -->
+            <div class="col-lg-4">
+                <div class="summary-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0 text-dark">Order Summary</h6>
+                        <span class="badge bg-light text-muted border">#@Model.OrderNumber</span>
+                    </div>
+
+                    <div class="small text-muted mb-2">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i> Delivery to:
+                        <div class="text-dark fw-bold">@Model.DeliveryAddress</div>
+                    </div>
+
+                    <hr class="my-3" />
+
+                    <!-- Items list -->
+                    <div class="mb-3" style="max-height: 140px; overflow-y: auto;">
+                        @foreach (var itm in Model.Items)
+                        {
+                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                <span>@itm.ItemName <span class="fw-bold text-dark">x@itm.Quantity</span></span>
+                                <span class="text-dark">&#8377;@itm.SubTotal.ToString("F0")</span>
+                            </div>
+                        }
+                    </div>
+
+                    <hr class="my-3" />
+
+                    <div class="d-flex justify-content-between small text-muted mb-2">
+                        <span>Items Subtotal</span>
+                        <span class="text-dark fw-bold">&#8377;@Model.Subtotal.ToString("N0")</span>
+                    </div>
+                    <div class="d-flex justify-content-between small text-muted mb-2">
+                        <span>Delivery Partner Fee</span>
+                        <span class="text-dark fw-bold">&#8377;@Model.DeliveryFee.ToString("N0")</span>
+                    </div>
+                    <div class="d-flex justify-content-between small text-muted mb-3">
+                        <span>Platform & Packaging</span>
+                        <span class="text-dark fw-bold">&#8377;@Model.PlatformFee.ToString("N0")</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center p-3 bg-white rounded-3 border mb-4">
+                        <span class="fs-6 fw-bold text-dark">Total Payable</span>
+                        <span class="fs-4 fw-bold text-success">&#8377;@Model.TotalAmount.ToString("N0")</span>
+                    </div>
+
+                    <!-- Hidden Payment Form for POST -->
+                    @using (Html.BeginForm("ProcessPayment", "Payment", FormMethod.Post, new { id = "paymentForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="orderId" value="@Model.OrderId" />
+                        <input type="hidden" name="paymentMethod" id="formPaymentMethod" value="UPI" />
+                        <input type="hidden" name="upiId" id="formUpiId" value="@Model.DefaultUpiId" />
+                        <input type="hidden" name="cardNumber" id="formCardNumber" value="4532-4242" />
+                        <input type="hidden" name="simulateFailure" id="formSimulateFailure" value="false" />
+
+                        <!-- Main Pay Button -->
+                        <button type="button" class="btn-pay-action w-100 d-flex align-items-center justify-content-center gap-2 mb-2" onclick="executePayment(false)">
+                            <i class="bi bi-lock-fill"></i>
+                            <span>Pay &#8377;@Model.TotalAmount.ToString("N0") Now</span>
+                        </button>
+
+                        <!-- Simulator Option for Failure -->
+                        <button type="button" class="btn-fail-action w-100 d-flex align-items-center justify-content-center gap-2 small" onclick="executePayment(true)" title="Tests bank rejection scenario">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Simulate Bank Failure (Test Decline)</span>
+                        </button>
+                    }
+
+                    <div class="text-center mt-3">
+                        @using (Html.BeginForm("CancelOrder", "Payment", FormMethod.Post, new { @class = "d-inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="orderId" value="@Model.OrderId" />
+                            <button type="submit" class="btn btn-link text-muted small p-0 text-decoration-none" onclick="return confirm('Cancel this order and return to cart?')">
+                                <i class="bi bi-arrow-left me-1"></i> Cancel & Return to Cart
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Realistic Processing Modal -->
+<div id="processingModal">
+    <div class="bg-white rounded-4 p-5 text-center shadow-lg" style="max-width: 440px; width: 90%;">
+        <div class="spinner-orange mx-auto mb-4"></div>
+        <h5 class="fw-bold mb-2 text-dark" id="processTitle">Connecting to Gateway...</h5>
+        <p class="text-muted small mb-3" id="processSubtext">Please do not refresh or close this browser window.</p>
+        <div class="progress" style="height: 6px;">
+            <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" id="processBar" style="width: 25%;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var currentMethod = 'UPI';
+
+    function switchPaymentTab(tab, btn) {
+        document.querySelectorAll('.payment-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+
+        document.querySelectorAll('.payment-pane').forEach(function(p){ p.style.display = 'none'; });
+        document.getElementById('tab-' + tab).style.display = 'block';
+
+        if (tab === 'upi') currentMethod = 'UPI';
+        else if (tab === 'card') currentMethod = 'Card';
+        else if (tab === 'netbanking') currentMethod = 'NetBanking';
+        else if (tab === 'cod') currentMethod = 'CashOnDelivery';
+
+        document.getElementById('formPaymentMethod').value = currentMethod;
+    }
+
+    function formatCardNumber(input) {
+        var val = input.value.replace(/\D/g, '').substring(0, 16);
+        var formatted = val.match(/.{1,4}/g)?.join(' ') || val;
+        input.value = formatted;
+        document.getElementById('cardDisplayNumber').innerText = formatted || '•••• •••• •••• 4242';
+    }
+
+    function selectBank(name, el) {
+        document.querySelectorAll('.bank-tile').forEach(function(t){ t.classList.remove('selected'); });
+        el.classList.add('selected');
+        document.getElementById('selectOtherBank').value = '';
+    }
+
+    function executePayment(simulateFail) {
+        var modal = document.getElementById('processingModal');
+        var bar = document.getElementById('processBar');
+        var title = document.getElementById('processTitle');
+        var subtext = document.getElementById('processSubtext');
+
+        modal.style.display = 'flex';
+
+        if (simulateFail) {
+            title.textContent = "Simulating Bank Gateway...";
+            subtext.textContent = "Contacting issuing bank authorization network...";
+            bar.style.width = "40%";
+
+            setTimeout(function () {
+                bar.style.width = "75%";
+                title.textContent = "Receiving Gateway Response...";
+            }, 800);
+
+            setTimeout(function () {
+                document.getElementById('formSimulateFailure').value = 'true';
+                document.getElementById('paymentForm').submit();
+            }, 1600);
+            return;
+        }
+
+        // Success Simulation Flow
+        title.textContent = "Authorizing " + currentMethod + " Payment...";
+        subtext.textContent = "Securing 256-bit connection with FoodReady Gateway...";
+        bar.style.width = "35%";
+
+        setTimeout(function () {
+            bar.style.width = "70%";
+            title.textContent = "Verifying Credentials & Balance...";
+            subtext.textContent = "Almost there! Confirming transaction with bank...";
+        }, 800);
+
+        setTimeout(function () {
+            bar.style.width = "100%";
+            bar.className = "progress-bar bg-success";
+            title.innerHTML = '<i class="bi bi-check-circle-fill text-success me-2"></i> Payment Approved!';
+            subtext.textContent = "Order confirmed! Redirecting to Live Food Tracking...";
+        }, 1700);
+
+        setTimeout(function () {
+            document.getElementById('formPaymentMethod').value = currentMethod;
+            document.getElementById('formUpiId').value = document.getElementById('inputUpiId')?.value || '';
+            document.getElementById('formCardNumber').value = document.getElementById('inputCardNumber')?.value || '';
+            document.getElementById('formSimulateFailure').value = 'false';
+            document.getElementById('paymentForm').submit();
+        }, 2300);
+    }
+
+    // 5-minute countdown timer
+    (function () {
+        var duration = 5 * 60;
+        var timerDisplay = document.getElementById('sessionTimer');
+        var timer = setInterval(function () {
+            var minutes = parseInt(duration / 60, 10);
+            var seconds = parseInt(duration % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            if (timerDisplay) timerDisplay.textContent = minutes + ":" + seconds;
+
+            if (--duration < 0) {
+                clearInterval(timer);
+                alert("Payment session expired. Redirecting back to food menu.");
+                window.location.href = '/Food/Index';
+            }
+        }, 1000);
+    })();
+</script>
