@@ -211,6 +211,14 @@ namespace FoodArrival.Controllers
             int orderId;
             if (_orderRepo.CreateOrder(customerId, cart, out message, out orderId))
             {
+                decimal orderTotal = cart.Sum(x => x.SubTotal);
+                string customerName = Session["CustomerName"]?.ToString() ?? "Customer";
+
+                // Broadcast notifications across roles
+                _notifRepo.AddNotification("Customer", customerId, "Order Placed Successfully", "We received your Order #FD" + (1000 + orderId) + ". Currently Pending approval.", "Order", "/Order/History");
+                _notifRepo.AddNotification("Restaurant", null, "New Order Received!", "Order #FD" + (1000 + orderId) + " placed by " + customerName + " (Total: ₹" + orderTotal.ToString("F0") + ").", "Order", "/Restaurant/Dashboard");
+                _notifRepo.AddNotification("Admin", null, "New Pending Order", "Order #FD" + (1000 + orderId) + " is pending. Subject to 5-min auto-reject.", "Alert", "/Admin/Orders?tab=pending");
+
                 Session["Cart"] = new List<CartItem>(); // Empty the cart
                 TempData["Success"] = "Order #FD" + (1000 + orderId) + " placed successfully! Status: Pending.";
                 return RedirectToAction("History");
