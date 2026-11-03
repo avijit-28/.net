@@ -42,7 +42,7 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h2 class="fw-bold mb-0">My Orders</h2>
-                    <p class="text-muted small mb-0">Track and view receipts of your past orders</p>
+                    <p class="text-muted small mb-0">Track live deliveries and view order receipts</p>
                 </div>
                 <a href="@Url.Action("Index", "Food")" class="btn btn-primary-food btn-sm">
                     <i class="bi bi-plus-circle me-1"></i> New Order
@@ -55,28 +55,42 @@
                     @foreach (var order in Model)
                     {
                         string badgeClass = "status-pending";
-                        if (order.OrderStatus == "Accepted") { badgeClass = "status-accepted"; }
-                        else if (order.OrderStatus == "Rejected") { badgeClass = "status-rejected"; }
+                        if (order.OrderStatus == "Accepted" || order.OrderStatus == "Confirmed" || order.OrderStatus == "Delivered") { badgeClass = "status-accepted"; }
+                        else if (order.OrderStatus == "Rejected" || order.OrderStatus == "Cancelled") { badgeClass = "status-rejected"; }
+
+                        string orderNum = !string.IsNullOrEmpty(order.OrderNumber) ? order.OrderNumber : "FD" + (1000 + order.OrderId);
 
                         <div class="card border-0 shadow-sm rounded-4 p-3 p-md-4">
                             <div class="row align-items-center g-3">
                                 <div class="col-md-3">
-                                    <h6 class="fw-bold mb-1 text-dark">Order #FD@(1000 + order.OrderId)</h6>
+                                    <h6 class="fw-bold mb-1 text-dark">Order #@orderNum</h6>
                                     <span class="text-muted small">
                                         <i class="bi bi-calendar3 me-1"></i> @order.OrderedAt.ToString("dd MMM yyyy, hh:mm tt")
                                     </span>
+                                    @if (!string.IsNullOrEmpty(order.RestaurantNames))
+                                    {
+                                        <div class="small text-primary mt-1 fw-semibold">
+                                            <i class="bi bi-shop me-1"></i> @order.RestaurantNames
+                                        </div>
+                                    }
                                 </div>
                                 <div class="col-md-3">
                                     <span class="text-muted small d-block">Total Amount</span>
                                     <span class="fw-bold fs-5 text-dark">&#8377;@order.TotalAmount.ToString("F0")</span>
+                                    @if (!string.IsNullOrEmpty(order.Items))
+                                    {
+                                        <div class="small text-muted text-truncate" style="max-width: 180px;" title="@order.Items">
+                                            @order.Items
+                                        </div>
+                                    }
                                 </div>
                                 <div class="col-md-3 text-md-center">
                                     <span class="status-badge @badgeClass">
-                                        @if (order.OrderStatus == "Accepted")
+                                        @if (order.OrderStatus == "Accepted" || order.OrderStatus == "Confirmed" || order.OrderStatus == "Delivered")
                                         {
                                             <i class="bi bi-check-circle-fill"></i>
                                         }
-                                        else if (order.OrderStatus == "Rejected")
+                                        else if (order.OrderStatus == "Rejected" || order.OrderStatus == "Cancelled")
                                         {
                                             <i class="bi bi-x-circle-fill"></i>
                                         }
@@ -86,14 +100,15 @@
                                         }
                                         @order.OrderStatus
                                     </span>
-                                    @if (order.OrderStatus == "Rejected" && !string.IsNullOrEmpty(order.RejectionReason))
+                                    @if ((order.OrderStatus == "Rejected" || order.OrderStatus == "Cancelled") && !string.IsNullOrEmpty(order.RejectionReason))
                                     {
                                         <div class="text-danger small mt-1" style="font-size: 0.75rem;">@order.RejectionReason</div>
                                     }
                                 </div>
                                 <div class="col-md-3 text-md-end">
-                                    <a href="@Url.Action("Details", "Order", new { id = order.OrderId })" class="btn btn-outline-food btn-sm px-3">
-                                        View Details
+                                    <!-- Tracking Button instead of View Details as requested -->
+                                    <a href="@Url.Action("Track", "OrderTracking", new { orderId = order.OrderId })" class="btn btn-primary-food btn-sm px-3 fw-bold shadow-sm">
+                                        <i class="bi bi-geo-alt-fill me-1"></i> Track Order
                                     </a>
                                 </div>
                             </div>
@@ -103,13 +118,13 @@
             }
             else
             {
-                <div class="text-center py-5 bg-white rounded-4 shadow-sm border p-5">
-                    <i class="bi bi-receipt-cutoff text-muted display-3"></i>
-                    <h4 class="fw-bold mt-3">No Orders Placed Yet</h4>
-                    <p class="text-muted">You haven't placed any orders yet. Discover delicious food and place your first order!</p>
-                    <a href="@Url.Action("Index", "Food")" class="btn btn-primary-food px-4 py-2 mt-2">
-                        Browse Menu
-                    </a>
+                <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+                    <i class="bi bi-bag-x display-3 text-muted mb-3"></i>
+                    <h4 class="fw-bold">No Orders Yet</h4>
+                    <p class="text-muted">You haven't placed any food orders yet. Explore our delicious menu!</p>
+                    <div class="mt-2">
+                        <a href="@Url.Action("Index", "Food")" class="btn btn-primary-food">Browse Menu</a>
+                    </div>
                 </div>
             }
         </div>
