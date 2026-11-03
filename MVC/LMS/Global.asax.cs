@@ -12,6 +12,8 @@ namespace LMS
     {
         protected void Application_Start()
         {
+            LMS.Helpers.EnvHelper.Load();
+
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
