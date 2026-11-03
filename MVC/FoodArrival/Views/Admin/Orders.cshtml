@@ -14,28 +14,36 @@
         <div class="col-lg-2 col-md-3">
             <div class="admin-sidebar sticky-top" style="top: 85px;">
                 <div class="d-flex align-items-center gap-2 mb-4 px-2">
-                    <span class="badge bg-warning text-dark fw-bold px-2 py-1">Admin Panel</span>
+                    <span class="badge bg-warning text-dark fw-bold px-2 py-1"><i class="bi bi-shield-lock-fill me-1"></i> Admin Panel</span>
                 </div>
-                <div class="nav flex-column">
+                <div class="nav flex-column gap-1">
                     <a href="@Url.Action("Dashboard", "Admin")" class="admin-nav-item">
                         <i class="bi bi-speedometer2"></i>
                         <span>Dashboard</span>
                     </a>
-                    <a href="@Url.Action("FoodItems", "Admin")" class="admin-nav-item">
-                        <i class="bi bi-egg-fried"></i>
-                        <span>Food Items</span>
+                    <a href="@Url.Action("Approvals", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>Approvals</span>
                     </a>
                     <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="admin-nav-item active">
                         <i class="bi bi-card-checklist"></i>
                         <span>Orders</span>
                     </a>
-                    <a href="@Url.Action("Dashboard", "Admin")" class="admin-nav-item">
-                        <i class="bi bi-people"></i>
-                        <span>Customers</span>
+                    <a href="@Url.Action("FoodItems", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-egg-fried"></i>
+                        <span>Food Menu</span>
                     </a>
-                    <a href="@Url.Action("Dashboard", "Admin")" class="admin-nav-item">
-                        <i class="bi bi-graph-up"></i>
-                        <span>Reports</span>
+                    <a href="@Url.Action("Riders", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-bicycle"></i>
+                        <span>Rider Fleet</span>
+                    </a>
+                    <a href="@Url.Action("Transactions", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-cash-stack"></i>
+                        <span>Transactions</span>
+                    </a>
+                    <a href="@Url.Action("Bulletins", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-megaphone-fill"></i>
+                        <span>Bulletins</span>
                     </a>
                     <hr class="border-secondary my-3" />
                     <a href="@Url.Action("Logout", "Admin")" class="admin-nav-item text-danger">
@@ -53,9 +61,18 @@
                     <h2 class="fw-bold mb-0">Order Management</h2>
                     <p class="text-muted small mb-0">Review incoming orders and process acceptances or rejections in real time</p>
                 </div>
-                <a href="@Url.Action("Orders", "Admin", new { tab = activeTab })" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
-                    <i class="bi bi-arrow-clockwise"></i> Refresh
-                </a>
+                <div class="d-flex gap-2">
+                    @using (Html.BeginForm("TriggerAutoReject", "Admin", FormMethod.Post, new { @class = "d-inline" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-stopwatch-fill me-1"></i> Scan Auto-Reject (>5m)
+                        </button>
+                    }
+                    <a href="@Url.Action("Orders", "Admin", new { tab = activeTab })" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </a>
+                </div>
             </div>
 
             @if (ViewBag.AutoRejectedNotice != null)
@@ -66,20 +83,20 @@
                 </div>
             }
 
-            <!-- Filter Tabs -->
+            <!-- Filter Tabs (Faithfully matching Template Panel 9) -->
             <div class="d-flex gap-2 mb-4">
                 <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="btn @(activeTab == "pending" ? "btn-warning text-dark fw-bold shadow-sm" : "btn-light border") px-4 py-2 rounded-pill">
-                    Pending <span class="badge bg-dark text-white rounded-pill ms-1">@pendingCount</span>
+                    Pending (@pendingCount)
                 </a>
                 <a href="@Url.Action("Orders", "Admin", new { tab = "accepted" })" class="btn @(activeTab == "accepted" ? "btn-success text-white fw-bold shadow-sm" : "btn-light border") px-4 py-2 rounded-pill">
-                    Accepted <span class="badge bg-white text-success rounded-pill ms-1">@acceptedCount</span>
+                    Accepted (@acceptedCount)
                 </a>
                 <a href="@Url.Action("Orders", "Admin", new { tab = "rejected" })" class="btn @(activeTab == "rejected" ? "btn-danger text-white fw-bold shadow-sm" : "btn-light border") px-4 py-2 rounded-pill">
-                    Rejected <span class="badge bg-white text-danger rounded-pill ms-1">@rejectedCount</span>
+                    Rejected (@rejectedCount)
                 </a>
             </div>
 
-            <!-- Orders Table -->
+            <!-- Orders Table (Faithfully matching Template Panel 9) -->
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
                 <div class="table-responsive">
                     <table class="table align-middle mb-0 custom-table">
@@ -87,7 +104,6 @@
                             <tr>
                                 <th>Order ID</th>
                                 <th>Customer</th>
-                                <th>Items</th>
                                 <th>Amount</th>
                                 <th>Order Time</th>
                                 @if (activeTab == "pending")
@@ -100,7 +116,7 @@
                                 }
                                 else
                                 {
-                                    <th>Processed Time</th>
+                                    <th>Status</th>
                                 }
                             </tr>
                         </thead>
@@ -110,62 +126,58 @@
                                 foreach (var order in Model)
                                 {
                                     <tr>
-                                        <td>
-                                            <a href="@Url.Action("Details", "Order", new { id = order.OrderId })" class="fw-bold text-dark text-decoration-none">
-                                                #FD@(1000 + order.OrderId)
-                                            </a>
+                                        <td class="fw-bold text-dark">
+                                            FD@(1000 + order.OrderId)
+                                            <div class="small text-muted fw-normal">@(string.IsNullOrEmpty(order.Items) ? "" : order.Items)</div>
                                         </td>
                                         <td>
-                                            <div class="fw-bold text-dark">@order.CustomerName</div>
-                                            <div class="text-muted small">@order.Email</div>
+                                            <div class="fw-semibold text-dark">@order.CustomerName</div>
+                                            <div class="small text-muted">@order.PhoneNumber</div>
                                         </td>
-                                        <td class="text-muted small">
-                                            @(string.IsNullOrEmpty(order.Items) ? "-" : order.Items)
-                                        </td>
-                                        <td class="fw-bold fs-6 text-dark">
-                                            &#8377;@order.TotalAmount.ToString("F0")
-                                        </td>
-                                        <td class="text-muted small">
-                                            @order.OrderedAt.ToString("dd MMM, hh:mm tt")
-                                        </td>
+                                        <td class="fw-bold text-dark">&#8377;@order.TotalAmount.ToString("F0")</td>
+                                        <td class="text-muted">@order.OrderedAt.ToString("hh:mm tt")</td>
 
                                         @if (activeTab == "pending")
                                         {
                                             <td class="text-center">
                                                 <div class="d-flex justify-content-center gap-2">
-                                                    @using (Html.BeginForm("AcceptOrder", "Admin", FormMethod.Post, new { @class = "d-inline" }))
+                                                    @using (Html.BeginForm("AcceptOrder", "Admin", new { orderId = order.OrderId }, FormMethod.Post, new { @class = "d-inline" }))
                                                     {
                                                         @Html.AntiForgeryToken()
-                                                        <input type="hidden" name="orderId" value="@order.OrderId" />
-                                                        <button type="submit" class="btn btn-success btn-sm px-3 fw-bold rounded-pill">
-                                                            <i class="bi bi-check-lg"></i> Accept
+                                                        <button type="submit" class="btn btn-success btn-sm px-3 fw-bold rounded-2">
+                                                            Accept
                                                         </button>
                                                     }
 
-                                                    <button type="button" class="btn btn-danger btn-sm px-3 fw-bold rounded-pill" data-bs-toggle="modal" data-bs-target="#rejectModal-@order.OrderId">
-                                                        <i class="bi bi-x-lg"></i> Reject
+                                                    <button type="button" class="btn btn-danger btn-sm px-3 fw-bold rounded-2" data-bs-toggle="modal" data-bs-target="#rejectModal-@order.OrderId">
+                                                        Reject
                                                     </button>
                                                 </div>
 
                                                 <!-- Reject Reason Modal -->
-                                                <div class="modal fade" id="rejectModal-@order.OrderId" tabindex="-1">
-                                                    <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal fade" id="rejectModal-@order.OrderId" tabindex="-1" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered modal-sm">
                                                         <div class="modal-content rounded-4 border-0 shadow">
+                                                            <div class="modal-header border-bottom">
+                                                                <h6 class="modal-title fw-bold text-danger">Reject Order #FD@(1000 + order.OrderId)</h6>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                            </div>
                                                             @using (Html.BeginForm("RejectOrder", "Admin", FormMethod.Post))
                                                             {
                                                                 @Html.AntiForgeryToken()
                                                                 <input type="hidden" name="orderId" value="@order.OrderId" />
-                                                                <div class="modal-header border-0 pb-0">
-                                                                    <h5 class="modal-title fw-bold">Reject Order #FD@(1000 + order.OrderId)</h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                                </div>
                                                                 <div class="modal-body text-start">
-                                                                    <p class="text-muted small">Please provide an optional reason for rejecting this order:</p>
-                                                                    <textarea name="reason" class="form-control" rows="3" placeholder="e.g. Item out of stock, kitchen closed, address unreachable"></textarea>
+                                                                    <label class="form-label small text-muted">Reason for rejection:</label>
+                                                                    <select name="reason" class="form-select form-select-sm mb-2">
+                                                                        <option value="Restaurant Out of Stock">Restaurant Out of Stock</option>
+                                                                        <option value="Delivery Partner Unavailable">Delivery Partner Unavailable</option>
+                                                                        <option value="Kitchen Peak Overload">Kitchen Peak Overload</option>
+                                                                        <option value="Address Outside Service Zone">Address Outside Service Zone</option>
+                                                                    </select>
                                                                 </div>
-                                                                <div class="modal-footer border-0 pt-0">
-                                                                    <button type="button" class="btn btn-light rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
-                                                                    <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold">Confirm Reject</button>
+                                                                <div class="modal-footer border-top p-2">
+                                                                    <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                                                    <button type="submit" class="btn btn-danger btn-sm fw-bold">Confirm Reject</button>
                                                                 </div>
                                                             }
                                                         </div>
@@ -175,14 +187,16 @@
                                         }
                                         else if (activeTab == "rejected")
                                         {
-                                            <td class="text-danger small">
-                                                @(string.IsNullOrEmpty(order.RejectionReason) ? "Order rejected." : order.RejectionReason)
+                                            <td>
+                                                <span class="text-danger small fw-semibold">
+                                                    @(string.IsNullOrEmpty(order.RejectionReason) ? "Auto-rejected (> 5 mins)" : order.RejectionReason)
+                                                </span>
                                             </td>
                                         }
                                         else
                                         {
-                                            <td class="text-muted small">
-                                                @(order.ProcessedAt.HasValue ? order.ProcessedAt.Value.ToString("dd MMM, hh:mm tt") : "-")
+                                            <td>
+                                                <span class="status-badge status-accepted">Accepted</span>
                                             </td>
                                         }
                                     </tr>
@@ -191,9 +205,9 @@
                             else
                             {
                                 <tr>
-                                    <td colspan="6" class="text-center py-5 text-muted">
-                                        <i class="bi bi-inbox display-4 text-muted"></i>
-                                        <p class="mt-2 mb-0">No @activeTab orders in the system.</p>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="bi bi-inbox display-6 text-muted d-block mb-2"></i>
+                                        No @activeTab orders in the queue.
                                     </td>
                                 </tr>
                             }
