@@ -57,7 +57,6 @@ namespace FoodArrival.Controllers
                 Session["RoleTitle"] = staff.RoleTitle;
                 Session["UserRole"] = "RestaurantStaff";
 
-                FormsAuthentication.SetAuthCookie(staff.Email, false);
                 TempData["Success"] = $"Welcome to your PMS Portal, {staff.StaffName}! (ID: {staff.StaffCode})";
                 return RedirectToAction("Dashboard");
             }
