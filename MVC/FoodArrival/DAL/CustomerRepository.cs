@@ -8,59 +8,136 @@ namespace FoodArrival.DAL
 {
     public class CustomerRepository
     {
+        public bool CheckDuplication(string username, string email, out string message)
+        {
+            message = string.Empty;
+            string checkSql = @"
+                SELECT 'Username already taken' AS Reason FROM dbo.Customers WHERE LOWER(Username) = @Username
+                UNION ALL
+                SELECT 'Email already registered' FROM dbo.Customers WHERE LOWER(Email) = @Email
+                UNION ALL
+                SELECT 'Username already taken' FROM dbo.Restaurants WHERE LOWER(Username) = @Username
+                UNION ALL
+                SELECT 'Email already registered' FROM dbo.Restaurants WHERE LOWER(Email) = @Email
+                UNION ALL
+                SELECT 'Username already taken' FROM dbo.Riders WHERE LOWER(Username) = @Username
+                UNION ALL
+                SELECT 'Email already registered' FROM dbo.Riders WHERE LOWER(Email) = @Email
+                UNION ALL
+                SELECT 'Username already taken' FROM dbo.RestaurantStaff WHERE LOWER(Username) = @Username
+                UNION ALL
+                SELECT 'Email already registered' FROM dbo.RestaurantStaff WHERE LOWER(Email) = @Email
+                UNION ALL
+                SELECT 'Username already taken' FROM dbo.Admins WHERE LOWER(Username) = @Username";
+
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand(checkSql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Username", (username ?? string.Empty).Trim().ToLower());
+                    cmd.Parameters.AddWithValue("@Email", (email ?? string.Empty).Trim().ToLower());
+                    conn.Open();
+                    var reason = cmd.ExecuteScalar()?.ToString();
+                    if (!string.IsNullOrEmpty(reason))
+                    {
+                        message = reason;
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return true;
+            }
+
+            return false;
+        }
+
         public bool Insert(Customer customer, out string message, out int customerId)
         {
             message = string.Empty;
             customerId = 0;
 
-            var parameters = new[]
+            if (CheckDuplication(customer.Username, customer.Email, out message))
             {
-                new SqlParameter("@CustomerName", customer.CustomerName ?? string.Empty),
-                new SqlParameter("@Email", customer.Email ?? string.Empty),
-                new SqlParameter("@PasswordHash", customer.PasswordHash ?? string.Empty),
-                new SqlParameter("@PhoneNumber", (object)customer.PhoneNumber ?? DBNull.Value),
-                new SqlParameter("@Address", (object)customer.Address ?? DBNull.Value)
-            };
+                return false;
+            }
 
-            var dt = DbHelper.ExecuteDataTable("dbo.sp_Customer_Insert", parameters);
-            if (dt.Rows.Count > 0)
+            string sql = @"
+                INSERT INTO dbo.Customers (CustomerName, Username, Email, PasswordHash, PhoneNumber, Address)
+                VALUES (@CustomerName, @Username, @Email, @PasswordHash, @PhoneNumber, @Address);
+                SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+            try
             {
-                int result = Convert.ToInt32(dt.Rows[0]["Result"]);
-                message = dt.Rows[0]["Message"].ToString();
-                if (result == 1)
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand(sql, conn))
                 {
-                    if (dt.Rows[0]["CustomerId"] != DBNull.Value)
-                    {
-                        customerId = Convert.ToInt32(dt.Rows[0]["CustomerId"]);
-                    }
+                    cmd.Parameters.AddWithValue("@CustomerName", customer.CustomerName ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@Username", (customer.Username ?? customer.Email).Trim().ToLower());
+                    cmd.Parameters.AddWithValue("@Email", customer.Email.Trim().ToLower());
+                    cmd.Parameters.AddWithValue("@PasswordHash", customer.PasswordHash ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", (object)customer.PhoneNumber ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Address", (object)customer.Address ?? DBNull.Value);
+
+                    conn.Open();
+                    customerId = Convert.ToInt32(cmd.ExecuteScalar());
+                    message = "Customer registered successfully.";
                     return true;
                 }
             }
-            return false;
+            catch (SqlException ex)
+            {
+                if (ex.Number == 2627 || ex.Number == 2601)
+                {
+                    message = "Email or Username already exists.";
+                }
+                else
+                {
+                    message = ex.Message;
+                }
+                return false;
+            }
         }
 
-        public Customer Login(string email, string password)
+        public Customer Login(string loginId, string password)
         {
-            var parameters = new[]
-            {
-                new SqlParameter("@Email", email ?? string.Empty),
-                new SqlParameter("@PasswordHash", password ?? string.Empty)
-            };
+            string sql = @"
+                SELECT CustomerId, CustomerName, Username, Email, PhoneNumber, Address, IsActive
+                FROM dbo.Customers
+                WHERE (LOWER(Email) = @LoginId OR LOWER(Username) = @LoginId)
+                  AND PasswordHash = @Password
+                  AND IsActive = 1";
 
-            var dt = DbHelper.ExecuteDataTable("dbo.sp_Customer_Login", parameters);
-            if (dt.Rows.Count > 0)
+            try
             {
-                var row = dt.Rows[0];
-                return new Customer
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand(sql, conn))
                 {
-                    CustomerId = Convert.ToInt32(row["CustomerId"]),
-                    CustomerName = row["CustomerName"].ToString(),
-                    Email = row["Email"].ToString(),
-                    PhoneNumber = row["PhoneNumber"] != DBNull.Value ? row["PhoneNumber"].ToString() : null,
-                    Address = row["Address"] != DBNull.Value ? row["Address"].ToString() : null,
-                    IsActive = true
-                };
+                    cmd.Parameters.AddWithValue("@LoginId", (loginId ?? string.Empty).Trim().ToLower());
+                    cmd.Parameters.AddWithValue("@Password", password ?? string.Empty);
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Customer
+                            {
+                                CustomerId = Convert.ToInt32(reader["CustomerId"]),
+                                CustomerName = reader["CustomerName"].ToString(),
+                                Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : null,
+                                Email = reader["Email"].ToString(),
+                                PhoneNumber = reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : null,
+                                Address = reader["Address"] != DBNull.Value ? reader["Address"].ToString() : null,
+                                IsActive = true
+                            };
+                        }
+                    }
+                }
             }
+            catch { }
             return null;
         }
 
