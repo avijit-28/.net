@@ -350,6 +350,64 @@ namespace FoodArrival.Models
             }
         }
 
+        public IList<AdminUserViewModel> GetAdminUsers()
+        {
+            var result = new List<AdminUserViewModel>();
+            using (var connection = OpenConnection())
+            using (var command = Procedure(connection, "food.usp_Admin_UserList"))
+            using (var reader = command.ExecuteReader()) while (reader.Read()) result.Add(new AdminUserViewModel
+            {
+                UserId = Convert.ToInt32(reader["UserId"]), FullName = Text(reader, "FullName"), Email = Text(reader, "Email"),
+                Role = Text(reader, "Role"), IsActive = Convert.ToBoolean(reader["IsActive"])
+            });
+            return result;
+        }
+
+        public void UpdateUserRole(int adminId, int userId, string role, bool isActive)
+        {
+            using (var connection = OpenConnection())
+            using (var command = Procedure(connection, "food.usp_Admin_UserUpdate"))
+            {
+                command.Parameters.Add("@ActorUserId", SqlDbType.Int).Value = adminId;
+                command.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                command.Parameters.Add("@Role", SqlDbType.NVarChar, 20).Value = role;
+                command.Parameters.Add("@IsActive", SqlDbType.Bit).Value = isActive;
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public IList<AdminRestaurantViewModel> GetAdminRestaurants()
+        {
+            var result = new List<AdminRestaurantViewModel>();
+            using (var connection = OpenConnection())
+            using (var command = Procedure(connection, "food.usp_Admin_RestaurantList"))
+            using (var reader = command.ExecuteReader()) while (reader.Read()) result.Add(new AdminRestaurantViewModel
+            {
+                RestaurantId = Convert.ToInt32(reader["RestaurantId"]), OwnerUserId = Convert.ToInt32(reader["OwnerUserId"]),
+                Name = Text(reader, "Name"), Cuisine = Text(reader, "Cuisine"), AddressLine = Text(reader, "AddressLine"),
+                City = Text(reader, "City"), IsActive = Convert.ToBoolean(reader["IsActive"])
+            });
+            return result;
+        }
+
+        public int SaveRestaurant(int adminId, AdminRestaurantViewModel restaurant)
+        {
+            using (var connection = OpenConnection())
+            using (var command = Procedure(connection, "food.usp_Admin_RestaurantSave"))
+            {
+                command.Parameters.Add("@ActorUserId", SqlDbType.Int).Value = adminId;
+                command.Parameters.Add("@RestaurantId", SqlDbType.Int).Value = restaurant.RestaurantId == 0 ? (object)DBNull.Value : restaurant.RestaurantId;
+                command.Parameters.Add("@OwnerUserId", SqlDbType.Int).Value = restaurant.OwnerUserId;
+                command.Parameters.Add("@Name", SqlDbType.NVarChar, 160).Value = restaurant.Name;
+                command.Parameters.Add("@Cuisine", SqlDbType.NVarChar, 80).Value = restaurant.Cuisine;
+                command.Parameters.Add("@AddressLine", SqlDbType.NVarChar, 250).Value = restaurant.AddressLine;
+                command.Parameters.Add("@City", SqlDbType.NVarChar, 100).Value = restaurant.City;
+                command.Parameters.Add("@Description", SqlDbType.NVarChar, 1000).Value = (object)restaurant.Description ?? DBNull.Value;
+                command.Parameters.Add("@IsActive", SqlDbType.Bit).Value = restaurant.IsActive;
+                return Convert.ToInt32(command.ExecuteScalar());
+            }
+        }
+
         public int Register(string name, string email, string phone, string passwordHash)
         {
             using (var connection = OpenConnection())
