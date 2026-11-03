@@ -59,7 +59,7 @@
                             </div>
 
                             <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-2 border-top gap-2">
-                                <span class="fw-bold text-danger fs-5">₹@order.TotalAmount.ToString("F0")</span>
+                                <span class="fw-bold text-danger fs-5">&#8377;@order.TotalAmount.ToString("F0")</span>
                                 <div class="d-flex gap-2">
                                     @using (Html.BeginForm("UpdateStatus", "Restaurant", FormMethod.Post, new { @class = "d-inline" }))
                                     {
@@ -116,7 +116,7 @@
                                     <span class="text-muted" style="font-size: 0.75rem;">@f.Category</span>
                                 </div>
                             </div>
-                            <span class="fw-bold text-dark small">₹@f.Price.ToString("F0")</span>
+                            <span class="fw-bold text-dark small">&#8377;@f.Price.ToString("F0")</span>
                         </div>
                     }
                 </div>
