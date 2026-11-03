@@ -1,0 +1,248 @@
+@model IEnumerable<FoodArrival.Models.FoodItem>
+@{
+    ViewBag.Title = "Restaurant Staff PMS & Kitchen Hub - FoodReady";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var staff = ViewBag.Staff as FoodArrival.Models.RestaurantStaff;
+    var kitchenOrders = ViewBag.KitchenOrders as List<FoodArrival.Models.Order> ?? new List<FoodArrival.Models.Order>();
+}
+
+<div class="container py-4">
+    <!-- Staff PMS Header Banner -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 text-white" style="background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%);">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill">Staff PMS Portal</span>
+                    <span class="badge bg-white text-primary fw-bold px-3 py-1 rounded-pill">ID: @(staff?.StaffCode ?? Session["StaffCode"])</span>
+                </div>
+                <h2 class="fw-bold mb-1">@(staff?.StaffName ?? Session["StaffName"]) - @(staff?.RoleTitle ?? "Kitchen Staff")</h2>
+                <p class="text-white-50 mb-0">
+                    <i class="bi bi-shop me-1"></i> Kitchen: <strong>@Session["RestaurantName"]</strong> | Performance Rating: <i class="bi bi-star-fill text-warning"></i> @(staff?.PerformanceRating.ToString("F1") ?? "4.9")/5.0
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-warning rounded-pill px-4 fw-bold text-dark shadow-sm" data-bs-toggle="modal" data-bs-target="#proposeDishModal">
+                    <i class="bi bi-plus-circle me-1"></i> Propose New Dish
+                </button>
+                <a href="@Url.Action("Logout", "Staff")" class="btn btn-outline-light rounded-pill px-3">
+                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Staff PMS Metrics Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 text-center bg-white">
+                <div class="text-muted small fw-bold text-uppercase mb-1">Generated Staff ID</div>
+                <div class="fw-bold fs-5 text-primary">@(staff?.StaffCode ?? Session["StaffCode"])</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 text-center bg-white">
+                <div class="text-muted small fw-bold text-uppercase mb-1">Orders Prepared</div>
+                <div class="fw-bold fs-4 text-success">@(staff?.OrdersPrepared ?? 0)</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 text-center bg-white">
+                <div class="text-muted small fw-bold text-uppercase mb-1">Shift Status</div>
+                <div class="fw-bold fs-5 text-success"><i class="bi bi-check-circle-fill me-1"></i> On Duty (Active)</div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 text-center bg-white">
+                <div class="text-muted small fw-bold text-uppercase mb-1">PMS Efficiency</div>
+                <div class="fw-bold fs-4 text-warning">98.4%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left: Kitchen Order Queue (Active cooking & food readiness) -->
+        <div class="col-lg-7">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-receipt text-danger"></i>
+                    <span>Kitchen Prep Queue (@kitchenOrders.Count)</span>
+                </h4>
+                <a href="@Url.Action("Dashboard", "Staff")" class="btn btn-outline-secondary btn-sm rounded-pill">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                </a>
+            </div>
+
+            @if (kitchenOrders != null && kitchenOrders.Any())
+            {
+                <div class="d-flex flex-column gap-3">
+                    @foreach (var ord in kitchenOrders)
+                    {
+                        <div class="card border-0 shadow-sm rounded-4 p-3 border-start border-4 @(ord.DeliveryStatus == "ReadyForPickup" ? "border-success" : "border-warning")">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="fw-bold mb-0">Order #FD@(1000 + ord.OrderId)</h6>
+                                    <span class="text-muted small">Customer: @ord.CustomerName | Placed: @ord.OrderedAt.ToString("hh:mm tt")</span>
+                                </div>
+                                <span class="badge @(ord.DeliveryStatus == "ReadyForPickup" ? "bg-success" : "bg-warning text-dark") rounded-pill px-3 py-1">
+                                    @(string.IsNullOrEmpty(ord.DeliveryStatus) ? "Pending Prep" : ord.DeliveryStatus)
+                                </span>
+                            </div>
+
+                            <div class="p-2 bg-light rounded-3 my-2 small">
+                                <strong>Items:</strong> @(string.IsNullOrEmpty(ord.Items) ? "Standard Food Items" : ord.Items)
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                                <span class="fw-bold text-dark">&#8377;@ord.TotalAmount.ToString("F0")</span>
+                                <div class="d-flex gap-2">
+                                    @using (Html.BeginForm("UpdateOrderStatus", "Staff", FormMethod.Post, new { @class = "d-inline" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="orderId" value="@ord.OrderId" />
+                                        <input type="hidden" name="status" value="Preparing" />
+                                        <button type="submit" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold @(ord.DeliveryStatus == "Preparing" ? "disabled" : "")">
+                                            <i class="bi bi-fire me-1"></i> Cooking
+                                        </button>
+                                    }
+
+                                    @using (Html.BeginForm("UpdateOrderStatus", "Staff", FormMethod.Post, new { @class = "d-inline" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="orderId" value="@ord.OrderId" />
+                                        <input type="hidden" name="status" value="ReadyForPickup" />
+                                        <button type="submit" class="btn btn-success btn-sm rounded-pill px-3 fw-bold @(ord.DeliveryStatus == "ReadyForPickup" ? "disabled" : "")">
+                                            <i class="bi bi-bag-check me-1"></i> Food Ready
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+                    <i class="bi bi-check-circle-fill display-4 text-success mb-3"></i>
+                    <h5 class="fw-bold">No Active Kitchen Orders</h5>
+                    <p class="text-muted small mb-0">Incoming customer orders will appear here automatically.</p>
+                </div>
+            }
+        </div>
+
+        <!-- Right: My Proposed Dishes (with Owner Verification Status) -->
+        <div class="col-lg-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-egg-fried text-warning"></i>
+                    <span>My Proposed Dishes</span>
+                </h4>
+                <button type="button" class="btn btn-outline-food btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#proposeDishModal">
+                    <i class="bi bi-plus-lg"></i> Propose
+                </button>
+            </div>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="d-flex flex-column gap-3">
+                    @foreach (var dish in Model)
+                    {
+                        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="@dish.ImageUrl" alt="@dish.ItemName" class="rounded-3 shadow-sm" style="width: 60px; height: 60px; object-fit: cover;" onerror="this.src='/Content/images/margherita.jpg'" />
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h6 class="fw-bold mb-0 text-dark">@dish.ItemName</h6>
+                                        @if (dish.IsVerified)
+                                        {
+                                            <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-2 py-1 small">
+                                                <i class="bi bi-check-circle-fill me-1"></i> Approved & Active
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning bg-opacity-25 text-dark rounded-pill px-2 py-1 small">
+                                                <i class="bi bi-hourglass-split me-1"></i> Pending Owner Approval
+                                            </span>
+                                        }
+                                    </div>
+                                    <div class="text-muted small">@dish.Category &bull; &#8377;@dish.Price.ToString("F0")</div>
+                                    <div class="text-muted small text-truncate" style="max-width: 260px;">@dish.Description</div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="card border-0 shadow-sm rounded-4 p-4 text-center bg-white">
+                    <i class="bi bi-lightbulb display-5 text-warning mb-2"></i>
+                    <h6 class="fw-bold">No Dishes Proposed Yet</h6>
+                    <p class="text-muted small mb-3">As kitchen staff, you can propose creative new recipes to the restaurant owner for inclusion in the menu.</p>
+                    <button type="button" class="btn btn-primary-food btn-sm rounded-pill mx-auto" data-bs-toggle="modal" data-bs-target="#proposeDishModal">
+                        Propose First Dish
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Propose New Dish -->
+<div class="modal fade" id="proposeDishModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header text-white" style="background: linear-gradient(135deg, #FF7A18, #FF5E1E);">
+                <h5 class="modal-title fw-bold"><i class="bi bi-egg-fried me-2"></i> Propose New Dish to Menu</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            @using (Html.BeginForm("ProposeDish", "Staff", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-body p-4">
+                    <div class="alert alert-info py-2 small mb-3">
+                        <i class="bi bi-info-circle-fill me-1"></i> Dishes proposed by staff must be verified and approved by the restaurant owner before becoming visible to customers.
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Dish / Item Name</label>
+                        <input type="text" name="ItemName" class="form-control" placeholder="e.g. Smoky Peri-Peri Chicken Burger" required />
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Price (&#8377;)</label>
+                            <input type="number" step="1" name="Price" class="form-control" placeholder="299" required />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Category</label>
+                            <select name="Category" class="form-select">
+                                <option value="Pizza">Pizza</option>
+                                <option value="Burger">Burger</option>
+                                <option value="Indian">Indian</option>
+                                <option value="Chinese">Chinese</option>
+                                <option value="Drinks">Drinks</option>
+                                <option value="Snacks" selected>Snacks</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Description / Ingredients</label>
+                        <textarea name="Description" class="form-control" rows="2" placeholder="Describe the recipe and special flavors"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Dish Photo</label>
+                        <input type="file" name="dishImage" class="form-control" accept="image/*" />
+                    </div>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary-food px-4 fw-bold">Submit for Owner Approval</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
