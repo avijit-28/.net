@@ -927,6 +927,61 @@ BEGIN
 END;
 GO
 
+/* Auto-reject unhandled customer orders after five minutes.  This procedure is
+   called when the administrator opens the order board; it is safe to run
+   repeatedly and only changes orders still in Placed state. */
+CREATE OR ALTER PROCEDURE food.usp_Order_AutoReject
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE food.Orders
+       SET OrderStatus = N'Rejected',
+           UpdatedAt = SYSUTCDATETIME()
+     WHERE OrderStatus = N'Placed'
+       AND CreatedAt <= DATEADD(MINUTE, -5, SYSUTCDATETIME());
+    SELECT @@ROWCOUNT AS RejectedOrders;
+END;
+GO
+
+/* Admin order board: auto-reject first, then return every order for the
+   Pending/Accepted/Rejected operational queues. */
+CREATE OR ALTER PROCEDURE food.usp_Admin_OrderList
+AS
+BEGIN
+    SET NOCOUNT ON;
+    EXEC food.usp_Order_AutoReject;
+    SELECT o.OrderId, o.OrderNumber, o.RestaurantId, r.Name AS RestaurantName,
+           o.CustomerUserId, u.FullName AS CustomerName,
+           o.Subtotal, o.DeliveryFee, o.TaxAmount, o.TotalAmount,
+           o.OrderStatus, o.CreatedAt
+    FROM food.Orders o
+    INNER JOIN food.Restaurants r ON r.RestaurantId = o.RestaurantId
+    INNER JOIN food.Users u ON u.UserId = o.CustomerUserId
+    WHERE o.OrderStatus IN (N'Placed', N'Accepted', N'Rejected')
+    ORDER BY CASE o.OrderStatus WHEN N'Placed' THEN 0 WHEN N'Accepted' THEN 1 ELSE 2 END,
+             o.CreatedAt DESC;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE food.usp_Admin_OrderSetStatus
+    @ActorUserId INT,
+    @OrderId BIGINT,
+    @NewStatus NVARCHAR(20)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF NOT EXISTS (SELECT 1 FROM food.vw_UserAccess WHERE UserId = @ActorUserId AND RoleName = N'Admin' AND IsActive = 1)
+        THROW 51070, 'Only an active administrator can process orders.', 1;
+    IF @NewStatus NOT IN (N'Accepted', N'Rejected')
+        THROW 51071, 'Choose Accepted or Rejected.', 1;
+    UPDATE food.Orders
+       SET OrderStatus = @NewStatus, UpdatedAt = SYSUTCDATETIME()
+     WHERE OrderId = @OrderId AND OrderStatus = N'Placed';
+    IF @@ROWCOUNT = 0 THROW 51072, 'Order does not exist or is no longer pending.', 1;
+    SELECT OrderId, OrderStatus FROM food.Orders WHERE OrderId = @OrderId;
+END;
+GO
+
 CREATE OR ALTER PROCEDURE food.usp_Admin_AgentList
 AS
 BEGIN
