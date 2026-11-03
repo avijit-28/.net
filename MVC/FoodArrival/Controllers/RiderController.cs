@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web.Mvc;
 using System.Web.Security;
 using FoodArrival.DAL;
@@ -9,11 +9,12 @@ namespace FoodArrival.Controllers
     public class RiderController : Controller
     {
         private readonly RiderRepository _riderRepo = new RiderRepository();
+        private readonly RestaurantRepository _restRepo = new RestaurantRepository();
         private readonly NotificationRepository _notifRepo = new NotificationRepository();
 
         private bool IsRiderAuthenticated()
         {
-            return Session["RiderId"] != null;
+            return Session["RiderId"] != null && Session["UserRole"]?.ToString() == "Rider";
         }
 
         [HttpGet]
@@ -30,8 +31,9 @@ namespace FoodArrival.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Login(LoginViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
             {
+                ModelState.AddModelError("", "Please enter Rider email/username and password.");
                 return View(model);
             }
 
@@ -48,7 +50,7 @@ namespace FoodArrival.Controllers
                 return RedirectToAction("Dashboard");
             }
 
-            ModelState.AddModelError("", "Invalid rider email or password.");
+            ModelState.AddModelError("", "Invalid rider email/username or password.");
             return View(model);
         }
 
@@ -69,52 +71,59 @@ namespace FoodArrival.Controllers
             }
 
             int riderId = Convert.ToInt32(Session["RiderId"]);
-            ViewBag.AvailableDeliveries = _riderRepo.GetAvailableDeliveries();
-            ViewBag.Rider = _riderRepo.GetById(riderId);
-            var myDeliveries = _riderRepo.GetMyDeliveries(riderId);
-            return View(myDeliveries);
-        }
-
-        [HttpGet]
-        public new ActionResult Profile()
-        {
-            if (!IsRiderAuthenticated())
-            {
-                return RedirectToAction("Login");
-            }
-
-            int riderId = Convert.ToInt32(Session["RiderId"]);
             var rider = _riderRepo.GetById(riderId);
-            if (rider == null)
-            {
-                return RedirectToAction("Logout");
-            }
+            var myDeliveries = _riderRepo.GetMyDeliveries(riderId);
+            var availableDeliveries = _riderRepo.GetAvailableDeliveries();
+            var affiliations = _riderRepo.GetRiderAffiliations(riderId);
+            var allRestaurants = _restRepo.GetAllVerified();
 
-            return View(rider);
+            ViewBag.Rider = rider;
+            ViewBag.AvailableDeliveries = availableDeliveries;
+            ViewBag.Affiliations = affiliations;
+            ViewBag.AllRestaurants = allRestaurants;
+
+            return View(myDeliveries);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public new ActionResult Profile(Rider model)
+        public ActionResult SetStatus(string status)
         {
-            if (!IsRiderAuthenticated())
-            {
-                return RedirectToAction("Login");
-            }
+            if (!IsRiderAuthenticated()) return RedirectToAction("Login");
 
             int riderId = Convert.ToInt32(Session["RiderId"]);
-            model.RiderId = riderId;
-
-            string message;
-            if (_riderRepo.Update(model, out message))
+            var rider = _riderRepo.GetById(riderId);
+            if (rider != null)
             {
-                Session["RiderName"] = model.RiderName;
-                TempData["Success"] = "Rider profile updated successfully.";
-                return RedirectToAction("Profile");
+                rider.CurrentStatus = status ?? "Available";
+                string msg;
+                _riderRepo.Update(rider, out msg);
+                TempData["Success"] = $"Your live status updated to: {rider.CurrentStatus}";
             }
 
-            ModelState.AddModelError("", message);
-            return View(model);
+            return RedirectToAction("Dashboard");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ApplyAffiliation(int restaurantId)
+        {
+            if (!IsRiderAuthenticated()) return RedirectToAction("Login");
+
+            int riderId = Convert.ToInt32(Session["RiderId"]);
+            string message;
+            if (_riderRepo.AddAffiliation(riderId, restaurantId, out message))
+            {
+                _notifRepo.AddNotification("Restaurant", restaurantId, "New Rider Affiliation Request",
+                    $"{Session["RiderName"]} requested to partner with your restaurant. Pending verification.", "Rider", "/Restaurant/Dashboard");
+                TempData["Success"] = message;
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            return RedirectToAction("Dashboard");
         }
 
         [HttpPost]
@@ -164,6 +173,48 @@ namespace FoodArrival.Controllers
             }
 
             return RedirectToAction("Dashboard");
+        }
+
+        [HttpGet]
+        public new ActionResult Profile()
+        {
+            if (!IsRiderAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            int riderId = Convert.ToInt32(Session["RiderId"]);
+            var rider = _riderRepo.GetById(riderId);
+            if (rider == null)
+            {
+                return RedirectToAction("Logout");
+            }
+
+            return View(rider);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public new ActionResult Profile(Rider model)
+        {
+            if (!IsRiderAuthenticated())
+            {
+                return RedirectToAction("Login");
+            }
+
+            int riderId = Convert.ToInt32(Session["RiderId"]);
+            model.RiderId = riderId;
+
+            string message;
+            if (_riderRepo.Update(model, out message))
+            {
+                Session["RiderName"] = model.RiderName;
+                TempData["Success"] = "Rider profile updated successfully.";
+                return RedirectToAction("Profile");
+            }
+
+            ModelState.AddModelError("", message);
+            return View(model);
         }
     }
 }
