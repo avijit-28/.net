@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -11,20 +10,38 @@ namespace FoodArrival
 {
     public class MvcApplication : System.Web.HttpApplication
     {
-        protected void Application_PostAuthenticateRequest()
+        protected void Application_AuthenticateRequest(object sender, EventArgs e)
         {
-            // Do not bind Context.User to email to prevent cross-account AntiForgery token identity mismatches
-            // when testing or switching between Customer, Rider, Staff, and Admin roles in the same browser session.
-            if (Context.User == null || !Context.User.Identity.IsAuthenticated)
+            // Clear any lingering Forms auth cookies to protect AntiForgery token validation
+            if (Request.Cookies[".ASPXAUTH"] != null)
             {
-                Context.User = new GenericPrincipal(new GenericIdentity(string.Empty), new string[0]);
+                var deadCookie = new HttpCookie(".ASPXAUTH", string.Empty)
+                {
+                    Expires = DateTime.Now.AddDays(-1),
+                    Path = "/"
+                };
+                Response.Cookies.Add(deadCookie);
             }
+
+            // In our session-based multi-role system, keep Context.User identity name empty
+            // so AntiForgeryToken strictly validates tokens without throwing identity-mismatch exceptions across roles.
+            Context.User = new GenericPrincipal(new GenericIdentity(string.Empty), new string[0]);
+        }
+
+        protected void Application_PostAuthenticateRequest(object sender, EventArgs e)
+        {
+            Context.User = new GenericPrincipal(new GenericIdentity(string.Empty), new string[0]);
         }
 
         protected void Application_Error(object sender, EventArgs e)
         {
             var ex = Server.GetLastError();
-            if (ex is HttpAntiForgeryException || (ex != null && ex.InnerException is HttpAntiForgeryException))
+            if (ex is HttpUnhandledException && ex.InnerException != null)
+            {
+                ex = ex.InnerException;
+            }
+
+            if (ex is HttpAntiForgeryException)
             {
                 Server.ClearError();
                 Response.Clear();
