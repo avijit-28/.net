@@ -1,8 +1,15 @@
 @model IEnumerable<FoodArrival.Models.Order>
 @{
-    ViewBag.Title = "Rider Delivery Hub - FoodReady";
+    ViewBag.Title = "Rider Delivery Portal - FoodReady";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var rider = ViewBag.Rider as FoodArrival.Models.Rider;
     var available = ViewBag.AvailableDeliveries as List<FoodArrival.Models.Order> ?? new List<FoodArrival.Models.Order>();
+    var affiliations = ViewBag.Affiliations as List<FoodArrival.Models.RiderAffiliation> ?? new List<FoodArrival.Models.RiderAffiliation>();
+    var allRestaurants = ViewBag.AllRestaurants as List<FoodArrival.Models.Restaurant> ?? new List<FoodArrival.Models.Restaurant>();
+
+    int completedCount = Model.Count(o => o.DeliveryStatus == "Delivered");
+    decimal estimatedEarnings = completedCount * 40.00m; // 40 INR per completed delivery
 }
 
 <div class="container py-4">
@@ -10,56 +17,180 @@
     <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 text-white" style="background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);">
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
             <div>
-                <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold mb-2">Delivery Partner</span>
-                <h2 class="fw-bold mb-1">Rider: @Session["RiderName"]</h2>
-                <p class="text-white-50 mb-0"><i class="bi bi-geo-alt-fill me-1"></i> Active Routing & Food Drop-offs</p>
+                <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold mb-2">
+                    <i class="bi bi-bicycle me-1"></i> Delivery Partner Portal
+                </span>
+                <h2 class="fw-bold mb-1">@(rider?.RiderName ?? Session["RiderName"])</h2>
+                <p class="text-white-50 mb-0">
+                    Vehicle: <strong>@(rider?.VehicleType ?? "Motorbike")</strong> &bull; 
+                    License: <strong>@(string.IsNullOrEmpty(rider?.LicenseNumber) ? "None (Bicycle)" : rider.LicenseNumber)</strong> &bull; 
+                    Live Status: <span class="badge bg-warning text-dark">@(rider?.CurrentStatus ?? "Available")</span>
+                </p>
             </div>
-            <div class="d-flex gap-2">
-                <a href="@Url.Action("Dashboard", "Rider")" class="btn btn-light rounded-pill px-3 fw-bold">
-                    <i class="bi bi-arrow-clockwise me-1"></i> Refresh Orders
-                </a>
-                <a href="@Url.Action("Logout", "Rider")" class="btn btn-outline-light rounded-pill px-3">
+            <div class="d-flex flex-wrap gap-2">
+                @using (Html.BeginForm("SetStatus", "Rider", FormMethod.Post, new { @class = "d-inline" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="status" value="@(rider?.CurrentStatus == "Available" ? "Offline" : "Available")" />
+                    <button type="submit" class="btn @(rider?.CurrentStatus == "Available" ? "btn-light" : "btn-success") rounded-pill px-3 fw-bold">
+                        <i class="bi bi-power me-1"></i> @(rider?.CurrentStatus == "Available" ? "Go Offline" : "Go Online (Available)")
+                    </button>
+                }
+                <button type="button" class="btn btn-outline-light rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#affiliateModal">
+                    <i class="bi bi-plus-circle me-1"></i> Partner with Restaurant
+                </button>
+                <a href="@Url.Action("Logout", "Rider")" class="btn btn-dark rounded-pill px-3">
                     <i class="bi bi-box-arrow-right me-1"></i> Logout
                 </a>
             </div>
         </div>
     </div>
 
-    <div class="row g-4">
-        <!-- Available for Pickup -->
-        <div class="col-lg-6">
-            <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
-                <i class="bi bi-bell-fill text-warning"></i>
+    <!-- Quick Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #E0F2FE; color: #0284C7;">
+                    <i class="bi bi-bicycle"></i>
+                </div>
+                <div>
+                    <div class="stat-number text-dark">@available.Count</div>
+                    <div class="stat-label">Ready for Pickup</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #FFF3E0; color: #E65100;">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+                <div>
+                    <div class="stat-number text-warning">@Model.Count(o => o.DeliveryStatus == "OutForDelivery")</div>
+                    <div class="stat-label">In-Transit Deliveries</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #E8F5E9; color: #2E7D32;">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+                <div>
+                    <div class="stat-number text-success">@completedCount</div>
+                    <div class="stat-label">Completed Deliveries</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card" style="background: linear-gradient(135deg, #1A202C, #2D3748); color: #FFFFFF;">
+                <div class="stat-icon" style="background: rgba(255,255,255,0.1); color: #FFE600;">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+                <div>
+                    <div class="stat-number" style="color: #FFE600;">&#8377;@estimatedEarnings.ToString("N0")</div>
+                    <div class="stat-label text-white-50">Estimated Earnings</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Workflow: Active Orders & Deliveries -->
+    <div class="row g-4 mb-4">
+        <!-- Left: My Active & Assigned Deliveries -->
+        <div class="col-lg-7">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                <i class="bi bi-box-seam text-primary"></i>
+                <span>My Assigned Orders</span>
+            </h5>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="d-flex flex-column gap-3">
+                    @foreach (var order in Model)
+                    {
+                        <div class="card border-0 shadow-sm rounded-4 p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h5 class="fw-bold mb-0">Order #FD@(1000 + order.OrderId)</h5>
+                                    <span class="text-muted small">Customer: <strong>@order.CustomerName</strong> (@order.PhoneNumber)</span>
+                                </div>
+                                <span class="badge @(order.DeliveryStatus == "Delivered" ? "bg-success" : "bg-primary") rounded-pill px-3 py-2">
+                                    @(order.DeliveryStatus == "Delivered" ? "Delivered" : "Out for Delivery")
+                                </span>
+                            </div>
+
+                            <div class="p-3 bg-light rounded-3 my-2">
+                                <div class="small text-muted mb-1"><i class="bi bi-geo-alt-fill text-danger me-1"></i> Delivery Address:</div>
+                                <div class="fw-bold text-dark">@order.DeliveryAddress</div>
+                                <div class="small text-muted mt-2"><strong>Items:</strong> @order.Items</div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                                <span class="fw-bold text-dark fs-5">&#8377;@order.TotalAmount.ToString("F0")</span>
+                                @if (order.DeliveryStatus == "OutForDelivery")
+                                {
+                                    using (Html.BeginForm("CompleteDelivery", "Rider", FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                        <button type="submit" class="btn btn-success btn-sm rounded-pill px-3 fw-bold">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Mark as Delivered
+                                        </button>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-success small fw-bold"><i class="bi bi-check2-all me-1"></i> Trip Complete</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 bg-white rounded-4 shadow-sm p-4 text-muted">
+                    <i class="bi bi-box display-5 text-muted"></i>
+                    <h6 class="fw-bold mt-3">No Active Delivery in Progress</h6>
+                    <p class="small text-muted">Claim an order from the available pickup list on the right.</p>
+                </div>
+            }
+        </div>
+
+        <!-- Right: Ready for Pickup Deliveries -->
+        <div class="col-lg-5">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                <i class="bi bi-clock-history text-warning"></i>
                 <span>Ready for Pickup (@available.Count)</span>
-            </h4>
+            </h5>
 
             @if (available.Any())
             {
                 <div class="d-flex flex-column gap-3">
                     @foreach (var order in available)
                     {
-                        <div class="card border-0 shadow-sm rounded-4 p-4 border-start border-4 border-info">
+                        <div class="card border-0 shadow-sm rounded-4 p-3 border-start border-4 border-warning">
                             <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="fw-bold mb-0 text-dark">Order #FD@(1000 + order.OrderId)</h5>
-                                <span class="badge bg-info text-dark rounded-pill px-3 py-1">Ready for Delivery</span>
+                                <div>
+                                    <h6 class="fw-bold mb-0">Order #FD@(1000 + order.OrderId)</h6>
+                                    <span class="small text-muted">To: @order.CustomerName</span>
+                                </div>
+                                <span class="fw-bold text-dark">&#8377;@order.TotalAmount.ToString("F0")</span>
                             </div>
-
-                            <p class="text-muted small mb-2"><i class="bi bi-clock me-1"></i> Placed at @order.OrderedAt.ToString("hh:mm tt")</p>
-
-                            <div class="p-3 bg-light rounded-3 my-2 small">
-                                <div class="mb-1"><strong>Deliver To:</strong> @order.CustomerName</div>
-                                <div class="mb-1 text-danger"><strong>Address:</strong> <i class="bi bi-geo-alt-fill me-1"></i>@(string.IsNullOrEmpty(order.Address) ? "Central City area" : order.Address)</div>
-                                <div><strong>Phone:</strong> <a href="tel:@order.PhoneNumber" class="text-decoration-none">@(string.IsNullOrEmpty(order.PhoneNumber) ? "9876543210" : order.PhoneNumber)</a></div>
+                            <div class="small text-muted mb-2">
+                                <i class="bi bi-geo-alt me-1"></i> @order.DeliveryAddress
                             </div>
-
-                            <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
-                                <span class="fw-bold fs-5 text-dark">&#8377;@order.TotalAmount.ToString("F0")</span>
+                            <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                                <span class="badge bg-light text-dark border">Ready in Kitchen</span>
                                 @using (Html.BeginForm("AcceptDelivery", "Rider", FormMethod.Post))
                                 {
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="orderId" value="@order.OrderId" />
-                                    <button type="submit" class="btn btn-primary-food rounded-pill px-4 fw-bold">
-                                        <i class="bi bi-scooter me-1"></i> Accept Delivery
+                                    <button type="submit" class="btn btn-primary-food btn-sm rounded-pill px-3 fw-bold">
+                                        <i class="bi bi-hand-index-thumb me-1"></i> Accept Trip
                                     </button>
                                 }
                             </div>
@@ -69,70 +200,97 @@
             }
             else
             {
-                <div class="text-center py-5 bg-white rounded-4 shadow-sm p-4">
-                    <i class="bi bi-check2-circle display-4 text-success"></i>
-                    <h5 class="fw-bold mt-3">All Caught Up!</h5>
-                    <p class="text-muted small">No pending orders waiting for pickup at the moment.</p>
+                <div class="text-center py-4 bg-white rounded-4 shadow-sm p-3 text-muted">
+                    <i class="bi bi-cup-hot display-6 text-muted"></i>
+                    <p class="small mt-2 mb-0">No orders currently waiting for rider pickup.</p>
                 </div>
             }
         </div>
+    </div>
 
-        <!-- My Active & Completed Deliveries -->
-        <div class="col-lg-6">
-            <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
-                <i class="bi bi-scooter text-primary"></i>
-                <span>My Assigned Trips</span>
-            </h4>
-
-            @if (Model != null && Model.Any())
-            {
-                <div class="d-flex flex-column gap-3">
-                    @foreach (var order in Model)
+    <!-- Partnered Restaurants Affiliations Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+        <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+            <h6 class="fw-bold text-dark mb-0"><i class="bi bi-shop text-primary me-2"></i> My Partnered Restaurants (@affiliations.Count)</h6>
+            <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#affiliateModal">
+                <i class="bi bi-plus-lg me-1"></i> Affiliate with New Restaurant
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0 custom-table">
+                <thead>
+                    <tr>
+                        <th>Restaurant</th>
+                        <th>Status</th>
+                        <th>Affiliated Date</th>
+                        <th>Verification Info</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (affiliations.Any())
                     {
-                        bool isDelivered = order.DeliveryStatus == "Delivered";
-                        <div class="card border-0 shadow-sm rounded-4 p-4 @(isDelivered ? "border-start border-4 border-success bg-light" : "border-start border-4 border-warning")">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="fw-bold mb-0">Order #FD@(1000 + order.OrderId)</h5>
-                                <span class="badge @(isDelivered ? "bg-success" : "bg-warning text-dark") rounded-pill px-3 py-1">
-                                    @(isDelivered ? "Delivered" : "Out for Delivery")
-                                </span>
-                            </div>
-
-                            <div class="small text-muted mb-2">
-                                Customer: <strong>@order.CustomerName</strong> (<a href="tel:@order.PhoneNumber">@order.PhoneNumber</a>)
-                            </div>
-                            <div class="small text-dark mb-3">
-                                <i class="bi bi-geo-alt-fill text-danger me-1"></i> @order.Address
-                            </div>
-
-                            <div class="d-flex justify-content-between align-items-center pt-2 border-top">
-                                <span class="fw-bold text-dark">&#8377;@order.TotalAmount.ToString("F0")</span>
-                                @if (!isDelivered)
-                                {
-                                    using (Html.BeginForm("CompleteDelivery", "Rider", FormMethod.Post))
+                        foreach (var aff in affiliations)
+                        {
+                            <tr>
+                                <td class="fw-bold text-dark">@aff.RestaurantName</td>
+                                <td>
+                                    @if (aff.IsVerified)
                                     {
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="orderId" value="@order.OrderId" />
-                                        <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold">
-                                            <i class="bi bi-check-circle-fill me-1"></i> Mark Delivered
-                                        </button>
+                                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Verified & Active</span>
                                     }
-                                }
-                                else
-                                {
-                                    <span class="text-success small fw-bold"><i class="bi bi-check-all fs-5 me-1"></i> Trip Completed</span>
-                                }
-                            </div>
-                        </div>
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i> Awaiting Verification</span>
+                                    }
+                                </td>
+                                <td class="small text-muted">@aff.AffiliatedAt.ToString("dd MMM yyyy")</td>
+                                <td class="small text-muted">
+                                    @(aff.IsVerified ? $"Verified by {aff.VerifiedByRole}" : "Under review by Restaurant Owner or Admin")
+                                </td>
+                            </tr>
+                        }
                     }
-                </div>
-            }
-            else
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">You are not yet linked to any partner restaurants.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Partner with Another Restaurant -->
+<div class="modal fade" id="affiliateModal" tabindex="-1" aria-labelledby="affiliateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold" id="affiliateModalLabel"><i class="bi bi-shop text-primary me-2"></i> Partner with Another Restaurant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Html.BeginForm("ApplyAffiliation", "Rider", FormMethod.Post))
             {
-                <div class="text-center py-5 bg-white rounded-4 shadow-sm p-4">
-                    <i class="bi bi-bicycle display-4 text-muted"></i>
-                    <h5 class="fw-bold mt-3">No Active Trips</h5>
-                    <p class="text-muted small">Accept an order from the left column to begin your delivery.</p>
+                @Html.AntiForgeryToken()
+                <div class="modal-body p-4">
+                    <p class="small text-muted mb-3">
+                        Riders can partner with multiple restaurants to receive more delivery requests. Each affiliation is verified individually by the restaurant owner or platform admin.
+                    </p>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Select Restaurant to Partner With <span class="text-danger">*</span></label>
+                        <select name="restaurantId" class="form-select" required>
+                            <option value="">-- Choose Partner Restaurant --</option>
+                            @foreach (var r in allRestaurants)
+                            {
+                                <option value="@r.RestaurantId">@r.RestaurantName - @r.Cuisine (@r.Address)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary-food fw-bold px-4">Submit Application</button>
                 </div>
             }
         </div>
