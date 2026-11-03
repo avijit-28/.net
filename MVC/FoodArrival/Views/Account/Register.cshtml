@@ -1,38 +1,110 @@
 @model FoodArrival.Models.RegisterViewModel
 @{
-    ViewBag.Title = "Create account";
+    ViewBag.Title = "Customer Registration - FoodReady";
 }
-<div class="row justify-content-center"><div class="col-md-8 col-lg-6">
-    <div class="form-panel">
-        <p class="eyebrow mb-1">Start with a good meal</p><h1 class="section-heading h2 mb-4">Create your account</h1>
-        @using (Html.BeginForm("Register", "Account", FormMethod.Post))
-        {
-            @Html.AntiForgeryToken()
-            @Html.ValidationSummary(false)
-            <div class="mb-3">@Html.LabelFor(x => x.FullName, new { @class = "form-label" }) @Html.TextBoxFor(x => x.FullName, new { @class = "form-control", autocomplete = "name" }) @Html.ValidationMessageFor(x => x.FullName)</div>
-            <div class="mb-3">@Html.LabelFor(x => x.Email, new { @class = "form-label" }) @Html.TextBoxFor(x => x.Email, new { @class = "form-control", autocomplete = "email" }) @Html.ValidationMessageFor(x => x.Email)</div>
-            <div class="mb-3">@Html.LabelFor(x => x.Phone, new { @class = "form-label" }) @Html.TextBoxFor(x => x.Phone, new { @class = "form-control", autocomplete = "tel" }) @Html.ValidationMessageFor(x => x.Phone)</div>
-            <div class="mb-3"><label class="form-label" for="RequestedAccountType">I want to register as</label>@Html.DropDownListFor(x => x.RequestedAccountType, new SelectList(new[] { new { Value = "Customer", Text = "Customer" }, new { Value = "Staff", Text = "Staff (approval required)" } }, "Value", "Text", Model.RequestedAccountType), new { @class = "form-select", id = "RequestedAccountType" })</div>
-            <div id="staffRequestFields" class="border rounded-3 p-3 mb-3" style="display:none">
-                <p class="small text-muted">Staff accounts are reviewed by an administrator. You can use customer features while your request is pending.</p>
-                <div class="mb-3"><label class="form-label" for="RequestedStaffType">Staff area</label>@Html.DropDownListFor(x => x.RequestedStaffType, new SelectList(new[] { new { Value = "Restaurant", Text = "Restaurant staff" }, new { Value = "DeliveryAgent", Text = "Delivery agent" } }, "Value", "Text"), "Choose staff area", new { @class = "form-select", id = "RequestedStaffType" }) @Html.ValidationMessageFor(x => x.RequestedStaffType)</div>
-                <div><label class="form-label" for="RequestNote">Request note (optional)</label>@Html.TextAreaFor(x => x.RequestNote, new { @class = "form-control", rows = 2 })</div>
+
+<div class="container py-5">
+    <div class="auth-container">
+        <div class="row g-0">
+            <!-- Left Promo Banner -->
+            <div class="col-lg-5 auth-hero-side text-center">
+                <div class="mb-4">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2C9.5 2 7.5 3.8 7.1 6.1C5.3 6.6 4 8.2 4 10.2C4 12.3 5.5 14 7.5 14.3V18C7.5 19.1 8.4 20 9.5 20H14.5C15.6 20 16.5 19.1 16.5 18V14.3C18.5 14 20 12.3 20 10.2C20 8.2 18.7 6.6 16.9 6.1C16.5 3.8 14.5 2 12 2Z" fill="#FFFFFF" />
+                        <path d="M9 11V16M12 10V16M15 11V16" stroke="#FF5E1E" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <h2 class="fw-bold mb-3">Join FoodReady</h2>
+                <p class="text-white-50 mb-4">
+                    Create an account and start ordering your favorite food!
+                </p>
+                <div class="py-4">
+                    <i class="bi bi-scooter display-1 text-white opacity-75"></i>
+                </div>
+                <p class="small text-white-50 mt-auto mb-0">
+                    Already have an account? <a href="@Url.Action("Login", "Account")" class="text-white fw-bold text-decoration-underline">Login here</a>
+                </p>
             </div>
-            <div class="mb-3">@Html.LabelFor(x => x.Password, new { @class = "form-label" }) @Html.PasswordFor(x => x.Password, new { @class = "form-control", autocomplete = "new-password" }) @Html.ValidationMessageFor(x => x.Password)<div class="form-text">Use at least 8 characters.</div></div>
-            <div class="mb-4">@Html.LabelFor(x => x.ConfirmPassword, new { @class = "form-label" }) @Html.PasswordFor(x => x.ConfirmPassword, new { @class = "form-control", autocomplete = "new-password" }) @Html.ValidationMessageFor(x => x.ConfirmPassword)</div>
-            <button class="btn btn-dark w-100" type="submit">Create account</button>
-        }
+
+            <!-- Right Registration Form -->
+            <div class="col-lg-7 auth-form-card">
+                <div class="text-center mb-4">
+                    <div class="stat-icon items mx-auto mb-2" style="width: 48px; height: 48px;">
+                        <i class="bi bi-person-plus-fill"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark">Create Account</h3>
+                    <p class="text-muted small">Fill in the details below to register</p>
+                </div>
+
+                @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "needs-validation" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3 small" })
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Full Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+                            @Html.TextBoxFor(m => m.CustomerName, new { @class = "form-control border-start-0", placeholder = "e.g. Rahul Das" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.CustomerName, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control border-start-0", type = "email", placeholder = "e.g. rahul@example.com" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Phone Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-telephone text-muted"></i></span>
+                            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control border-start-0", placeholder = "e.g. 9876543210" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Delivery Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-geo-alt text-muted"></i></span>
+                            @Html.TextBoxFor(m => m.Address, new { @class = "form-control border-start-0", placeholder = "Flat / House No, Street, City" })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger small" })
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control border-start-0", placeholder = "Password" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-shield-lock text-muted"></i></span>
+                                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control border-start-0", placeholder = "Confirm Password" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger small" })
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-food w-100 py-2 fs-6 fw-bold shadow">
+                        Sign Up
+                    </button>
+
+                    <div class="text-center mt-3 small text-muted">
+                        Already have an account? <a href="@Url.Action("Login", "Account")" class="text-primary fw-bold">Login</a>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
-</div></div>
-@section scripts {
-    <script>
-        (function () {
-            var type = document.getElementById('RequestedAccountType');
-            var staff = document.getElementById('staffRequestFields');
-            function update() { staff.style.display = type.value === 'Staff' ? 'block' : 'none'; }
-            type.addEventListener('change', update);
-            update();
-        }());
-    </script>
-    @Scripts.Render("~/bundles/jqueryval")
-}
+</div>
