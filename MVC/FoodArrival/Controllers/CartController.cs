@@ -9,6 +9,7 @@ namespace FoodArrival.Controllers
     {
         public ActionResult Index()
         {
+            RefreshCart();
             ViewBag.Total = CartSession.Total(Session);
             return View(CartSession.Get(Session));
         }
@@ -49,16 +50,18 @@ namespace FoodArrival.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize]
+        [Authorize(Roles = "Customer")]
         public ActionResult Checkout()
         {
+            RefreshCart();
             if (!CartSession.Get(Session).Any()) return RedirectToAction("Index");
             return View(new CheckoutViewModel { PaymentMethod = "Cash" });
         }
 
-        [HttpPost, Authorize, ValidateAntiForgeryToken]
+        [HttpPost, Authorize(Roles = "Customer"), ValidateAntiForgeryToken]
         public ActionResult Checkout(CheckoutViewModel model)
         {
+            RefreshCart();
             var cart = CartSession.Get(Session);
             if (!cart.Any()) return RedirectToAction("Index");
             if (!new[] { "Cash", "Card", "UPI", "Other" }.Contains(model.PaymentMethod)) ModelState.AddModelError("PaymentMethod", "Choose a valid payment method.");
@@ -72,12 +75,31 @@ namespace FoodArrival.Controllers
             catch (Exception ex) { ModelState.AddModelError("", ex.Message); return View(model); }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Customer")]
         public ActionResult Confirmation(long id)
         {
             var order = new FoodRepository().GetCustomerOrder(Int32.Parse(User.Identity.Name), id);
             if (order == null) return HttpNotFound();
             return View(order);
+        }
+
+        private void RefreshCart()
+        {
+            var cart = CartSession.Get(Session);
+            if (!cart.Any()) return;
+            try
+            {
+                var page = new FoodRepository().GetRestaurant(cart[0].RestaurantId, null, false);
+                if (page == null) { cart.Clear(); TempData["Error"] = "That restaurant is no longer available. Your cart was cleared."; return; }
+                foreach (var line in cart.ToList())
+                {
+                    var current = page.Menu.FirstOrDefault(x => x.MenuItemId == line.MenuItemId);
+                    if (current == null) cart.Remove(line);
+                    else { line.Name = current.Name; line.UnitPrice = current.Price; }
+                }
+                if (!cart.Any()) TempData["Error"] = "Those items are no longer available. Your cart was cleared.";
+            }
+            catch (Exception ex) { TempData["Error"] = ex.Message; }
         }
     }
 }
