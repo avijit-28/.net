@@ -206,6 +206,8 @@ namespace FoodArrival.Controllers
                 int riderId;
                 if (_riderRepo.Register(rider, model.SelectedRestaurantId.Value, out message, out riderId))
                 {
+                    _notifRepo.AddNotification("Rider", riderId, "Rider Application Submitted",
+                        $"Welcome {rider.RiderName}! Your rider application ({rider.VehicleType}) is pending verification.", "Info", "/Rider/Dashboard");
                     _notifRepo.AddNotification("Restaurant", model.SelectedRestaurantId.Value, "New Rider Affiliation Request",
                         $"{rider.RiderName} requested to deliver for your restaurant ({rider.VehicleType}). Pending verification.", "Rider", "/Restaurant/Dashboard");
                     _notifRepo.AddNotification("Admin", null, "New Rider Registered",
