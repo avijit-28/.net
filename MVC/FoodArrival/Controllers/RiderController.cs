@@ -11,6 +11,7 @@ namespace FoodArrival.Controllers
         private readonly RiderRepository _riderRepo = new RiderRepository();
         private readonly RestaurantRepository _restRepo = new RestaurantRepository();
         private readonly NotificationRepository _notifRepo = new NotificationRepository();
+        private readonly OrderRepository _orderRepo = new OrderRepository();
 
         private bool IsRiderAuthenticated()
         {
