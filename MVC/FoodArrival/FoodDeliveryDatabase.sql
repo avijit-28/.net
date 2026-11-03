@@ -653,9 +653,9 @@ CREATE OR ALTER PROCEDURE food.usp_Delivery_Assign
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @ActorUserId AND Role = N'Admin' AND IsActive = 1)
+    IF NOT EXISTS (SELECT 1 FROM food.vw_UserAccess WHERE UserId = @ActorUserId AND RoleName = N'Admin' AND IsActive = 1)
         THROW 51040, 'Only an active administrator can assign deliveries.', 1;
-    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @AgentUserId AND Role = N'DeliveryAgent' AND IsActive = 1)
+    IF NOT EXISTS (SELECT 1 FROM food.vw_UserAccess WHERE UserId = @AgentUserId AND RoleName = N'Staff' AND StaffType = N'DeliveryAgent' AND IsActive = 1)
         THROW 51041, 'Active delivery agent was not found.', 1;
     IF NOT EXISTS (SELECT 1 FROM food.Orders WHERE OrderId = @OrderId AND OrderStatus = N'Ready')
         THROW 51042, 'Only ready orders can be assigned.', 1;
@@ -688,7 +688,7 @@ CREATE OR ALTER PROCEDURE food.usp_Delivery_AgentList
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @AgentUserId AND Role = N'DeliveryAgent' AND IsActive = 1)
+    IF NOT EXISTS (SELECT 1 FROM food.vw_UserAccess WHERE UserId = @AgentUserId AND RoleName = N'Staff' AND StaffType = N'DeliveryAgent' AND IsActive = 1)
         THROW 51053, 'Active delivery agent account was not found.', 1;
     SELECT da.AssignmentId, da.OrderId, o.OrderNumber, da.Status, da.AssignedAt, da.PickedUpAt, da.DeliveredAt,
            r.Name AS RestaurantName, r.AddressLine AS PickupAddress,
@@ -759,7 +759,7 @@ CREATE OR ALTER PROCEDURE food.usp_Review_Create
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @CustomerUserId AND Role = N'Customer' AND IsActive = 1)
+    IF NOT EXISTS (SELECT 1 FROM food.vw_UserAccess WHERE UserId = @CustomerUserId AND RoleName = N'Customer' AND IsActive = 1)
         THROW 51054, 'Active customer account was not found.', 1;
     IF @Rating NOT BETWEEN 1 AND 5 THROW 51050, 'Rating must be from 1 through 5.', 1;
     IF NOT EXISTS (SELECT 1 FROM food.Orders WHERE OrderId = @OrderId AND CustomerUserId = @CustomerUserId AND OrderStatus = N'Delivered')
@@ -779,18 +779,41 @@ CREATE OR ALTER PROCEDURE food.usp_Account_Register
     @FullName NVARCHAR(120),
     @Email NVARCHAR(254),
     @Phone NVARCHAR(30),
-    @PasswordHash NVARCHAR(500)
+    @PasswordHash NVARCHAR(500),
+    @RequestedAccountType NVARCHAR(20) = N'Customer',
+    @RequestedStaffType NVARCHAR(30) = NULL,
+    @RequestNote NVARCHAR(500) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
     IF NULLIF(LTRIM(RTRIM(@FullName)), N'') IS NULL OR NULLIF(LTRIM(RTRIM(@Email)), N'') IS NULL
        OR NULLIF(LTRIM(RTRIM(@PasswordHash)), N'') IS NULL
         THROW 51060, 'Name, email, and password hash are required.', 1;
+    IF @RequestedAccountType NOT IN (N'Customer', N'Staff')
+        THROW 51063, 'Public registration supports Customer accounts and Staff requests only.', 1;
+    IF @RequestedAccountType = N'Staff' AND @RequestedStaffType NOT IN (N'Restaurant', N'DeliveryAgent')
+        THROW 51064, 'Choose Restaurant or DeliveryAgent as the requested staff type.', 1;
     IF EXISTS (SELECT 1 FROM food.Users WHERE Email = @Email)
         THROW 51061, 'An account with this email already exists.', 1;
-    INSERT food.Users(FullName, Email, Phone, PasswordHash, Role)
-    VALUES (@FullName, LOWER(LTRIM(RTRIM(@Email))), @Phone, @PasswordHash, N'Customer');
-    SELECT CONVERT(INT, SCOPE_IDENTITY()) AS UserId;
+    DECLARE @UserId INT, @RoleId SMALLINT;
+    SELECT @RoleId = RoleId FROM food.Roles WHERE RoleName = N'Customer';
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        INSERT food.Users(FullName, Email, Phone, PasswordHash)
+        VALUES (@FullName, LOWER(LTRIM(RTRIM(@Email))), @Phone, @PasswordHash);
+        SET @UserId = CONVERT(INT, SCOPE_IDENTITY());
+        INSERT food.UserRoles(UserId, RoleId) VALUES (@UserId, @RoleId);
+        IF @RequestedAccountType = N'Staff'
+            INSERT food.AccountRoleRequests(UserId, RequestedRole, RequestedStaffType, RequestNote)
+            VALUES (@UserId, N'Staff', @RequestedStaffType, @RequestNote);
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH;
+    SELECT @UserId AS UserId;
 END;
 GO
 
@@ -799,8 +822,8 @@ CREATE OR ALTER PROCEDURE food.usp_Account_FindByEmail
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT UserId, FullName, Email, PasswordHash, Role
-    FROM food.Users
+    SELECT UserId, FullName, Email, PasswordHash, RoleName AS Role, StaffType
+    FROM food.vw_UserAccess
     WHERE Email = LOWER(LTRIM(RTRIM(@Email))) AND IsActive = 1;
 END;
 GO
@@ -834,7 +857,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @UserId AND Role = N'Customer' AND IsActive = 1)
+    IF NOT EXISTS (SELECT 1 FROM food.vw_UserAccess WHERE UserId = @UserId AND RoleName = N'Customer' AND IsActive = 1)
         THROW 51080, 'Active customer account was not found.', 1;
     IF NULLIF(LTRIM(RTRIM(@RecipientName)), N'') IS NULL OR NULLIF(LTRIM(RTRIM(@Phone)), N'') IS NULL
        OR NULLIF(LTRIM(RTRIM(@AddressLine)), N'') IS NULL OR NULLIF(LTRIM(RTRIM(@City)), N'') IS NULL
@@ -864,9 +887,10 @@ CREATE OR ALTER PROCEDURE food.usp_Restaurant_OwnedList
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT RestaurantId, Name, Cuisine, City, IsActive
-    FROM food.Restaurants
-    WHERE OwnerUserId = @OwnerUserId
+    SELECT r.RestaurantId, r.Name, r.Cuisine, r.City, r.IsActive
+    FROM food.Restaurants r
+    INNER JOIN food.vw_UserAccess access ON access.UserId = r.OwnerUserId
+    WHERE r.OwnerUserId = @OwnerUserId AND access.RoleName = N'Staff' AND access.StaffType = N'Restaurant' AND access.IsActive = 1
     ORDER BY Name;
 END;
 GO
@@ -877,8 +901,9 @@ CREATE OR ALTER PROCEDURE food.usp_Menu_OwnerList
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Restaurants r INNER JOIN food.Users u ON u.UserId = r.OwnerUserId
-                   WHERE r.RestaurantId = @RestaurantId AND r.OwnerUserId = @ActorUserId AND u.Role = N'Restaurant' AND u.IsActive = 1)
+    IF NOT EXISTS (SELECT 1 FROM food.Restaurants r INNER JOIN food.vw_UserAccess access ON access.UserId = r.OwnerUserId
+                   WHERE r.RestaurantId = @RestaurantId AND r.OwnerUserId = @ActorUserId
+                     AND access.RoleName = N'Staff' AND access.StaffType = N'Restaurant' AND access.IsActive = 1)
         THROW 51062, 'Actor does not own this restaurant.', 1;
     SELECT MenuItemId, Name, Description, Category, Price, IsVegetarian, IsAvailable
     FROM food.MenuItems WHERE RestaurantId = @RestaurantId
@@ -905,8 +930,8 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SELECT UserId, FullName
-    FROM food.Users
-    WHERE Role = N'DeliveryAgent' AND IsActive = 1
+    FROM food.vw_UserAccess
+    WHERE RoleName = N'Staff' AND StaffType = N'DeliveryAgent' AND IsActive = 1
     ORDER BY FullName;
 END;
 GO
