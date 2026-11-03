@@ -30,6 +30,9 @@ namespace FoodArrival
 
         protected void Application_Start()
         {
+            // Suppress identity heuristic check to prevent HttpAntiForgeryException during account switches or multi-role sessions
+            System.Web.Helpers.AntiForgeryConfig.SuppressIdentityHeuristicChecks = true;
+
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
