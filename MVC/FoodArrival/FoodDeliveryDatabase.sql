@@ -1053,15 +1053,25 @@ GO
    PasswordHash values below are intentionally placeholders and cannot be used to log in.
 */
 /*
+DECLARE @CustomerRoleId SMALLINT = (SELECT RoleId FROM food.Roles WHERE RoleName = N'Customer');
+DECLARE @StaffRoleId SMALLINT = (SELECT RoleId FROM food.Roles WHERE RoleName = N'Staff');
+DECLARE @DemoCustomerId INT, @DemoOwnerId INT;
+
 IF NOT EXISTS (SELECT 1 FROM food.Users WHERE Email = N'demo.customer@example.test')
-    INSERT food.Users(FullName, Email, PasswordHash, Role)
-    VALUES (N'Demo Customer', N'demo.customer@example.test', N'REPLACE_WITH_REAL_PASSWORD_HASH', N'Customer');
+BEGIN
+    INSERT food.Users(FullName, Email, PasswordHash)
+    VALUES (N'Demo Customer', N'demo.customer@example.test', N'REPLACE_WITH_REAL_PASSWORD_HASH');
+    SET @DemoCustomerId = CONVERT(INT, SCOPE_IDENTITY());
+    INSERT food.UserRoles(UserId, RoleId) VALUES (@DemoCustomerId, @CustomerRoleId);
+END;
 
 IF NOT EXISTS (SELECT 1 FROM food.Users WHERE Email = N'demo.restaurant@example.test')
 BEGIN
-    INSERT food.Users(FullName, Email, PasswordHash, Role)
-    VALUES (N'Demo Restaurant Owner', N'demo.restaurant@example.test', N'REPLACE_WITH_REAL_PASSWORD_HASH', N'Restaurant');
-    DECLARE @DemoOwnerId INT = SCOPE_IDENTITY();
+    INSERT food.Users(FullName, Email, PasswordHash)
+    VALUES (N'Demo Restaurant Owner', N'demo.restaurant@example.test', N'REPLACE_WITH_REAL_PASSWORD_HASH');
+    SET @DemoOwnerId = CONVERT(INT, SCOPE_IDENTITY());
+    INSERT food.UserRoles(UserId, RoleId) VALUES (@DemoOwnerId, @StaffRoleId);
+    INSERT food.StaffProfiles(UserId, StaffType) VALUES (@DemoOwnerId, N'Restaurant');
     INSERT food.Restaurants(OwnerUserId, Name, Cuisine, AddressLine, City)
     VALUES (@DemoOwnerId, N'Sample Kitchen', N'Indian', N'10 Market Road', N'Bengaluru');
     DECLARE @DemoRestaurantId INT = SCOPE_IDENTITY();
