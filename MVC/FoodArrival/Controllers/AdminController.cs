@@ -54,7 +54,6 @@ namespace FoodArrival.Controllers
                 Session["AdminEmail"] = admin.Email;
                 Session["UserRole"] = "Admin";
 
-                FormsAuthentication.SetAuthCookie(admin.Email, false);
                 TempData["Success"] = "Welcome, Admin " + admin.AdminName + "!";
                 return RedirectToAction("Dashboard");
             }
