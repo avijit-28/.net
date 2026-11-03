@@ -5,7 +5,7 @@ using FoodArrival.Models;
 
 namespace FoodArrival.Controllers
 {
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "RestaurantStaff")]
     public class RestaurantDashboardController : Controller
     {
         public ActionResult Index()
