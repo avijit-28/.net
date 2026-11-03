@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FoodArrival.Models
 {
@@ -11,18 +12,27 @@ namespace FoodArrival.Models
         public decimal UnitPrice { get; set; }
         public int Quantity { get; set; }
         public string ImageUrl { get; set; }
+        public int RestaurantId { get; set; } = 1;
+        public string RestaurantName { get; set; } = "FoodReady Kitchen";
+        public string Category { get; set; } = "Snacks";
         public decimal SubTotal => UnitPrice * Quantity;
     }
 
     public class CartViewModel
     {
         public List<CartItem> Items { get; set; } = new List<CartItem>();
-        public decimal Subtotal { get; set; }
-        public decimal DeliveryFee { get; set; } = 40.00m;
-        public decimal TotalAmount { get; set; }
+        public decimal Subtotal => Items.Sum(i => i.SubTotal);
+        public decimal DeliveryFee => Items.Any() ? 40.00m : 0.00m;
+        public decimal PlatformFee => Items.Any() ? 15.00m : 0.00m;
+        public decimal TotalAmount => Subtotal + DeliveryFee + PlatformFee;
         public string CustomerName { get; set; }
         public string PhoneNumber { get; set; }
         public string DeliveryAddress { get; set; }
+        public string PaymentMethod { get; set; } = "UPI";
+
+        public int UniqueRestaurantCount => Items.Select(i => i.RestaurantId).Distinct().Count();
+        public IEnumerable<IGrouping<string, CartItem>> GroupedByRestaurant =>
+            Items.GroupBy(i => !string.IsNullOrEmpty(i.RestaurantName) ? i.RestaurantName : "Restaurant #" + i.RestaurantId);
     }
 
     public class AdminDashboardViewModel
