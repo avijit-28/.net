@@ -57,7 +57,7 @@ namespace FoodArrival.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult Register() { return View(new RegisterViewModel()); }
+        public ActionResult Register() { return View(new RegisterViewModel { RequestedAccountType = "Customer" }); }
 
         [HttpPost, AllowAnonymous, ValidateAntiForgeryToken]
         public ActionResult Register(RegisterViewModel model)
