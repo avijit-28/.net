@@ -12,6 +12,7 @@ namespace FoodArrival.Controllers
         private readonly OrderRepository _orderRepo = new OrderRepository();
         private readonly FoodItemRepository _foodRepo = new FoodItemRepository();
         private readonly CustomerRepository _customerRepo = new CustomerRepository();
+        private readonly NotificationRepository _notifRepo = new NotificationRepository();
 
         private List<CartItem> GetCart()
         {
