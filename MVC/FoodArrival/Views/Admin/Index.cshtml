@@ -39,7 +39,7 @@
         @foreach (var user in Model.Users)
         {
             <div class="border-top py-3"><div class="d-flex justify-content-between gap-2"><div><strong>@user.FullName</strong><div class="small text-muted">@user.Email · #@user.UserId</div></div><span class="status-pill">@(user.IsActive ? user.Role : "Inactive")</span></div>
-                @using (Html.BeginForm("UpdateUser", "Admin", FormMethod.Post, new { @class = "d-flex flex-wrap gap-2 mt-2" }))
+                using (Html.BeginForm("UpdateUser", "Admin", FormMethod.Post, new { @class = "d-flex flex-wrap gap-2 mt-2" }))
                 {
                     @Html.AntiForgeryToken() @Html.Hidden("userId", user.UserId)
                     @Html.DropDownList("role", new SelectList(new[] { "Customer", "Restaurant", "DeliveryAgent", "Admin" }, user.Role), new { @class = "form-select", style = "max-width:190px" })
@@ -55,7 +55,7 @@
     @foreach (var restaurant in Model.Restaurants)
     {
         <div class="d-flex justify-content-between align-items-center border-top py-3"><div><strong>@restaurant.Name</strong><div class="small text-muted">@restaurant.Cuisine · @restaurant.City · Owner #@restaurant.OwnerUserId</div></div><span class="status-pill">@(restaurant.IsActive ? "Active" : "Inactive")</span></div>
-        @using (Html.BeginForm("SaveRestaurant", "Admin", FormMethod.Post, new { @class = "row g-2 mb-3" }))
+        using (Html.BeginForm("SaveRestaurant", "Admin", FormMethod.Post, new { @class = "row g-2 mb-3" }))
         {
             @Html.AntiForgeryToken() @Html.Hidden("RestaurantId", restaurant.RestaurantId)
             <div class="col-md-2"><label class="visually-hidden" for="owner-@restaurant.RestaurantId">Owner</label>@Html.DropDownList("OwnerUserId", new SelectList(Model.RestaurantOwners, "Value", "Text", restaurant.OwnerUserId), new { @class = "form-select", id = "owner-" + restaurant.RestaurantId })</div>
