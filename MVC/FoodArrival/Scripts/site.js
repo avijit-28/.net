@@ -1,4 +1,4 @@
-// FoodReady Site JavaScript
+﻿// FoodReady Site JavaScript
 $(document).ready(function () {
     // Quick Add to Cart via AJAX
     $(document).on('click', '.btn-add-to-cart', function (e) {
