@@ -334,7 +334,7 @@ namespace FoodArrival.Models
             using (var connection = OpenConnection())
             using (var command = Procedure(connection, "food.usp_Admin_OrderList"))
             using (var reader = command.ExecuteReader())
-                while (reader.Read())
+                if (reader.NextResult()) while (reader.Read())
                 {
                     var order = ReadOrder(reader);
                     order.CustomerName = Text(reader, "CustomerName");
