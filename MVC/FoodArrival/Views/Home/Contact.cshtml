@@ -192,8 +192,7 @@
                     <p class="text-muted small mb-4">Your message goes directly to the <strong>FoodReady Central Administration Desk</strong> for instant assistance.</p>
                 }
 
-                @using (Html.BeginForm("SendMessage", "Home", FormMethod.Post))
-                {
+                <form action="@Url.Action("SendMessage", "Home")" method="post">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="SenderRole" value="@Model.SenderRole" />
 
@@ -262,7 +261,7 @@
                     <button type="submit" class="btn btn-primary-food w-100 py-3 fs-6 fw-bold shadow-sm" style="background: linear-gradient(135deg, #FF7A18, #FF5E1E); border-radius: 12px;">
                         <i class="bi bi-send-fill me-1"></i> Send Support Message
                     </button>
-                }
+                </form>
             </div>
         </div>
     </div>
