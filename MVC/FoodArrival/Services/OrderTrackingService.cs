@@ -338,16 +338,15 @@ namespace FoodArrival.Services
         {
             var steps = new List<TimelineStep>();
 
-            // Define the 9 canonical stages:
+            // Define the 8 canonical stages:
             // 1. Order Placed
             // 2. Payment Confirmed
-            // 3. Restaurant Confirmed
-            // 4. Preparing
-            // 5. Ready for Pickup
-            // 6. Rider Assigned
-            // 7. Picked Up
-            // 8. Out for Delivery
-            // 9. Delivered
+            // 3. Preparing Food
+            // 4. Ready for Pickup
+            // 5. Rider Assigned
+            // 6. Picked Up
+            // 7. Out for Delivery
+            // 8. Delivered
 
             int currentStepIndex = 1;
             string status = vm.OverallStatus;
@@ -356,13 +355,12 @@ namespace FoodArrival.Services
             bool anyOut = vm.SubOrders.Any(s => s.DeliveryStatus == "OutForDelivery" || s.DeliveryStatus == "Delivered");
             bool allDelivered = vm.SubOrders.Any() && vm.SubOrders.All(s => s.DeliveryStatus == "Delivered");
 
-            if (status == "Delivered" || allDelivered) currentStepIndex = 9;
-            else if (status == "OutForDelivery" || anyOut) currentStepIndex = 8;
-            else if (anyPickedUp) currentStepIndex = 7;
-            else if (anyRiderAssigned) currentStepIndex = 6;
-            else if (vm.SubOrders.Any(s => s.PreparationStatus == "ReadyForPickup")) currentStepIndex = 5;
-            else if (vm.SubOrders.Any(s => s.PreparationStatus == "Preparing")) currentStepIndex = 4;
-            else if (status == "Confirmed" || vm.SubOrders.Any()) currentStepIndex = 3;
+            if (status == "Delivered" || allDelivered) currentStepIndex = 8;
+            else if (status == "OutForDelivery" || anyOut) currentStepIndex = 7;
+            else if (anyPickedUp) currentStepIndex = 6;
+            else if (anyRiderAssigned) currentStepIndex = 5;
+            else if (vm.SubOrders.Any(s => s.PreparationStatus == "ReadyForPickup" || s.DeliveryStatus == "ReadyForPickup")) currentStepIndex = 4;
+            else if (vm.SubOrders.Any(s => s.PreparationStatus == "Preparing" || s.PreparationStatus == "Confirmed") || status == "Preparing" || status == "Accepted") currentStepIndex = 3;
             else if (vm.PaymentStatus == "Success" || vm.PaymentStatus == "Paid") currentStepIndex = 2;
             else currentStepIndex = 1;
 
@@ -370,7 +368,6 @@ namespace FoodArrival.Services
             {
                 "Order Placed",
                 "Payment Confirmed",
-                "Restaurant Confirmed",
                 "Preparing Food",
                 "Ready for Pickup",
                 "Rider Assigned",
@@ -383,7 +380,6 @@ namespace FoodArrival.Services
             {
                 "Your order request has been received by FoodReady.",
                 "Payment verified securely through transaction gateway.",
-                "Kitchens verified items and accepted order.",
                 "Chefs are preparing your meal with fresh ingredients.",
                 "Packed hot & sealed with tamper-proof security tape.",
                 "Delivery partners dispatched to restaurant pickup points.",
@@ -396,7 +392,6 @@ namespace FoodArrival.Services
             {
                 "bi-bag-check-fill",
                 "bi-credit-card-2-front-fill",
-                "bi-shop",
                 "bi-fire",
                 "bi-box-seam-fill",
                 "bi-person-badge-fill",
@@ -405,7 +400,7 @@ namespace FoodArrival.Services
                 "bi-check-circle-fill"
             };
 
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i < 8; i++)
             {
                 int stepNum = i + 1;
                 string state = "Pending";
