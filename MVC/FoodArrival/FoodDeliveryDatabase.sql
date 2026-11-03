@@ -655,6 +655,60 @@ BEGIN
 END;
 GO
 
+CREATE OR ALTER PROCEDURE food.usp_Address_List
+    @UserId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT AddressId, Label, RecipientName, Phone, AddressLine, AddressLine2, City,
+           StateOrRegion, PostalCode, DeliveryInstructions, IsDefault
+    FROM food.Addresses
+    WHERE UserId = @UserId
+    ORDER BY IsDefault DESC, CreatedAt DESC;
+END;
+GO
+
+CREATE OR ALTER PROCEDURE food.usp_Address_Save
+    @UserId INT,
+    @Label NVARCHAR(50) = NULL,
+    @RecipientName NVARCHAR(120),
+    @Phone NVARCHAR(30),
+    @AddressLine NVARCHAR(250),
+    @AddressLine2 NVARCHAR(250) = NULL,
+    @City NVARCHAR(100),
+    @StateOrRegion NVARCHAR(100) = NULL,
+    @PostalCode NVARCHAR(20) = NULL,
+    @DeliveryInstructions NVARCHAR(500) = NULL,
+    @IsDefault BIT = 0
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+    IF NOT EXISTS (SELECT 1 FROM food.Users WHERE UserId = @UserId AND Role = N'Customer' AND IsActive = 1)
+        THROW 51080, 'Active customer account was not found.', 1;
+    IF NULLIF(LTRIM(RTRIM(@RecipientName)), N'') IS NULL OR NULLIF(LTRIM(RTRIM(@Phone)), N'') IS NULL
+       OR NULLIF(LTRIM(RTRIM(@AddressLine)), N'') IS NULL OR NULLIF(LTRIM(RTRIM(@City)), N'') IS NULL
+        THROW 51081, 'Recipient, phone, street address, and city are required.', 1;
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        IF @IsDefault = 1 OR NOT EXISTS (SELECT 1 FROM food.Addresses WHERE UserId = @UserId AND IsDefault = 1)
+            UPDATE food.Addresses SET IsDefault = 0 WHERE UserId = @UserId;
+        INSERT food.Addresses(UserId, Label, RecipientName, Phone, AddressLine, AddressLine2, City, StateOrRegion,
+                              PostalCode, DeliveryInstructions, IsDefault)
+        VALUES (@UserId, @Label, @RecipientName, @Phone, @AddressLine, @AddressLine2, @City, @StateOrRegion,
+                @PostalCode, @DeliveryInstructions,
+                CASE WHEN @IsDefault = 1 OR NOT EXISTS (SELECT 1 FROM food.Addresses WHERE UserId = @UserId) THEN 1 ELSE 0 END);
+        DECLARE @AddressId INT = CONVERT(INT, SCOPE_IDENTITY());
+        COMMIT TRANSACTION;
+        SELECT @AddressId AS AddressId;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH;
+END;
+GO
+
 CREATE OR ALTER PROCEDURE food.usp_Restaurant_OwnedList
     @OwnerUserId INT
 AS
