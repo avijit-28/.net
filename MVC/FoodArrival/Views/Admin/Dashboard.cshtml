@@ -1,0 +1,256 @@
+@model FoodArrival.Models.AdminDashboardViewModel
+@{
+    ViewBag.Title = "Admin Dashboard - FoodReady";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4 px-lg-5">
+    <div class="row g-4">
+        <!-- Admin Left Sidebar -->
+        <div class="col-lg-2 col-md-3">
+            <div class="admin-sidebar sticky-top" style="top: 85px;">
+                <div class="d-flex align-items-center gap-2 mb-4 px-2">
+                    <span class="badge bg-warning text-dark fw-bold px-2 py-1">Admin Panel</span>
+                </div>
+                <div class="nav flex-column">
+                    <a href="@Url.Action("Dashboard", "Admin")" class="admin-nav-item active">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="@Url.Action("FoodItems", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-egg-fried"></i>
+                        <span>Food Items</span>
+                    </a>
+                    <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="admin-nav-item">
+                        <i class="bi bi-card-checklist"></i>
+                        <span>Orders</span>
+                    </a>
+                    <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="admin-nav-item">
+                        <i class="bi bi-people"></i>
+                        <span>Customers</span>
+                    </a>
+                    <a href="@Url.Action("Dashboard", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Reports</span>
+                    </a>
+                    <hr class="border-secondary my-3" />
+                    <a href="@Url.Action("Logout", "Admin")" class="admin-nav-item text-danger">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Main Content -->
+        <div class="col-lg-10 col-md-9">
+            <!-- Header Bar -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-0">Dashboard</h2>
+                    <p class="text-muted small mb-0">Welcome back, @Session["AdminName"] | Real-time Operations Overview</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="@Url.Action("Orders", "Admin")" class="btn btn-primary-food btn-sm">
+                        <i class="bi bi-bell-fill me-1"></i> Review Orders (@Model.PendingOrders Pending)
+                    </a>
+                    <a href="@Url.Action("FoodItems", "Admin")" class="btn btn-outline-food btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i> Add Food Item
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stat Cards Row -->
+            <div class="row g-3 mb-4">
+                <div class="col-xl col-md-4 col-sm-6">
+                    <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="text-decoration-none">
+                        <div class="stat-card">
+                            <div class="stat-icon pending">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div>
+                                <div class="stat-number text-warning">@Model.PendingOrders</div>
+                                <div class="stat-label">Pending Orders</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-xl col-md-4 col-sm-6">
+                    <a href="@Url.Action("Orders", "Admin", new { tab = "accepted" })" class="text-decoration-none">
+                        <div class="stat-card">
+                            <div class="stat-icon accepted">
+                                <i class="bi bi-check2-circle"></i>
+                            </div>
+                            <div>
+                                <div class="stat-number text-success">@Model.AcceptedOrders</div>
+                                <div class="stat-label">Accepted Orders</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-xl col-md-4 col-sm-6">
+                    <a href="@Url.Action("Orders", "Admin", new { tab = "rejected" })" class="text-decoration-none">
+                        <div class="stat-card">
+                            <div class="stat-icon rejected">
+                                <i class="bi bi-x-circle"></i>
+                            </div>
+                            <div>
+                                <div class="stat-number text-danger">@Model.RejectedOrders</div>
+                                <div class="stat-label">Rejected Orders</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-xl col-md-6 col-sm-6">
+                    <a href="@Url.Action("FoodItems", "Admin")" class="text-decoration-none">
+                        <div class="stat-card">
+                            <div class="stat-icon items">
+                                <i class="bi bi-egg-fried"></i>
+                            </div>
+                            <div>
+                                <div class="stat-number text-dark">@Model.AvailableFoodItems</div>
+                                <div class="stat-label">Food Items</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-xl col-md-6 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon customers">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div>
+                            <div class="stat-number text-dark">@Model.ActiveCustomers</div>
+                            <div class="stat-label">Customers</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Orders Chart & Insights -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4 p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h5 class="fw-bold mb-0">Today's Orders Velocity</h5>
+                                <p class="text-muted small mb-0">Orders progression throughout the day</p>
+                            </div>
+                            <span class="badge bg-light text-muted border">Live Chart</span>
+                        </div>
+                        
+                        <!-- Visual SVG Chart matching Template -->
+                        <div class="p-3" style="background: #FAFAFA; border-radius: 16px;">
+                            <svg viewBox="0 0 700 200" class="w-100" style="overflow: visible;">
+                                <defs>
+                                    <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#FF5E1E" stop-opacity="0.35" />
+                                        <stop offset="100%" stop-color="#FF5E1E" stop-opacity="0.0" />
+                                    </linearGradient>
+                                </defs>
+                                <!-- Grid Lines -->
+                                <line x1="0" y1="40" x2="700" y2="40" stroke="#E2E8F0" stroke-dasharray="4" />
+                                <line x1="0" y1="90" x2="700" y2="90" stroke="#E2E8F0" stroke-dasharray="4" />
+                                <line x1="0" y1="140" x2="700" y2="140" stroke="#E2E8F0" stroke-dasharray="4" />
+                                <line x1="0" y1="180" x2="700" y2="180" stroke="#CBD5E0" />
+
+                                <!-- Chart Area -->
+                                <path d="M 0,160 Q 120,170 200,120 T 400,90 T 550,50 T 700,70 L 700,180 L 0,180 Z" fill="url(#chartGradient)" />
+                                <!-- Chart Line -->
+                                <path d="M 0,160 Q 120,170 200,120 T 400,90 T 550,50 T 700,70" fill="none" stroke="#FF5E1E" stroke-width="4" stroke-linecap="round" />
+
+                                <!-- Points -->
+                                <circle cx="200" cy="120" r="5" fill="#FFFFFF" stroke="#FF5E1E" stroke-width="3" />
+                                <circle cx="400" cy="90" r="5" fill="#FFFFFF" stroke="#FF5E1E" stroke-width="3" />
+                                <circle cx="550" cy="50" r="5" fill="#FFFFFF" stroke="#FF5E1E" stroke-width="3" />
+                                <circle cx="700" cy="70" r="5" fill="#FFFFFF" stroke="#FF5E1E" stroke-width="3" />
+                            </svg>
+                            <div class="d-flex justify-content-between text-muted small mt-2 px-1">
+                                <span>10 AM</span>
+                                <span>12 PM</span>
+                                <span>2 PM</span>
+                                <span>4 PM</span>
+                                <span>6 PM</span>
+                                <span>8 PM</span>
+                                <span>Now</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                        <h5 class="fw-bold mb-3">Auto-Reject Workflow</h5>
+                        <div class="p-3 bg-light rounded-3 mb-3 border">
+                            <div class="d-flex align-items-center gap-2 mb-2 text-warning fw-bold">
+                                <i class="bi bi-stopwatch-fill fs-5"></i>
+                                <span>5-Minute Rule Active</span>
+                            </div>
+                            <p class="small text-muted mb-0">
+                                Any order remaining in <strong>Pending</strong> state for more than 5 minutes is automatically updated to <strong>Rejected</strong> by the system.
+                            </p>
+                        </div>
+
+                        <div class="mt-auto">
+                            <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="btn btn-warning w-100 fw-bold py-2">
+                                <i class="bi bi-arrow-repeat me-1"></i> Process Pending Orders
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders Preview Table -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Recent Order Activity</h5>
+                    <a href="@Url.Action("Orders", "Admin")" class="btn btn-outline-food btn-sm">View All Orders</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0 custom-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RecentOrders != null && Model.RecentOrders.Any())
+                            {
+                                foreach (var order in Model.RecentOrders)
+                                {
+                                    string badgeClass = "status-pending";
+                                    if (order.OrderStatus == "Accepted") { badgeClass = "status-accepted"; }
+                                    else if (order.OrderStatus == "Rejected") { badgeClass = "status-rejected"; }
+
+                                    <tr>
+                                        <td class="fw-bold text-dark">#FD@(1000 + order.OrderId)</td>
+                                        <td>@order.CustomerName</td>
+                                        <td class="text-muted small">@(string.IsNullOrEmpty(order.Items) ? "-" : order.Items)</td>
+                                        <td class="fw-bold text-dark">₹@order.TotalAmount.ToString("F0")</td>
+                                        <td><span class="status-badge @badgeClass">@order.OrderStatus</span></td>
+                                        <td class="text-muted small">@order.OrderedAt.ToString("hh:mm tt")</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">No recent orders yet.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
