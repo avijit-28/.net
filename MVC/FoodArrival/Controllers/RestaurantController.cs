@@ -52,7 +52,6 @@ namespace FoodArrival.Controllers
                 Session["RestaurantEmail"] = rest.Email;
                 Session["UserRole"] = "Restaurant";
 
-                FormsAuthentication.SetAuthCookie(rest.Email, false);
                 TempData["Success"] = "Welcome, " + rest.RestaurantName + " Kitchen Partner!";
                 return RedirectToAction("Dashboard");
             }
