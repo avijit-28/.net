@@ -285,7 +285,8 @@ CREATE OR ALTER PROCEDURE food.usp_MenuItem_Save
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Restaurants WHERE RestaurantId = @RestaurantId AND OwnerUserId = @ActorUserId)
+    IF NOT EXISTS (SELECT 1 FROM food.Restaurants r INNER JOIN food.Users u ON u.UserId = r.OwnerUserId
+                   WHERE r.RestaurantId = @RestaurantId AND r.OwnerUserId = @ActorUserId AND u.Role = N'Restaurant' AND u.IsActive = 1)
         THROW 51002, 'Actor does not own this restaurant.', 1;
     IF NULLIF(LTRIM(RTRIM(@Name)), N'') IS NULL OR @Price <= 0
         THROW 51003, 'Menu item name and a positive price are required.', 1;
@@ -320,7 +321,8 @@ BEGIN
     SET IsAvailable = @IsAvailable, UpdatedAt = SYSUTCDATETIME()
     FROM food.MenuItems mi
     INNER JOIN food.Restaurants r ON r.RestaurantId = mi.RestaurantId
-    WHERE mi.MenuItemId = @MenuItemId AND r.OwnerUserId = @ActorUserId;
+    INNER JOIN food.Users u ON u.UserId = r.OwnerUserId
+    WHERE mi.MenuItemId = @MenuItemId AND r.OwnerUserId = @ActorUserId AND u.Role = N'Restaurant' AND u.IsActive = 1;
     IF @@ROWCOUNT = 0 THROW 51005, 'Menu item was not found for this restaurant owner.', 1;
     SELECT @MenuItemId AS MenuItemId, @IsAvailable AS IsAvailable;
 END;
@@ -459,7 +461,8 @@ CREATE OR ALTER PROCEDURE food.usp_Order_RestaurantList
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Restaurants WHERE RestaurantId = @RestaurantId AND OwnerUserId = @ActorUserId)
+    IF NOT EXISTS (SELECT 1 FROM food.Restaurants r INNER JOIN food.Users u ON u.UserId = r.OwnerUserId
+                   WHERE r.RestaurantId = @RestaurantId AND r.OwnerUserId = @ActorUserId AND u.Role = N'Restaurant' AND u.IsActive = 1)
         THROW 51030, 'Actor does not own this restaurant.', 1;
     SELECT o.OrderId, o.OrderNumber, o.CustomerUserId, u.FullName AS CustomerName,
            o.DeliveryRecipient, o.DeliveryPhone, o.DeliveryAddressLine, o.DeliveryCity,
@@ -481,7 +484,8 @@ BEGIN
         THROW 51031, 'Restaurant status is not allowed.', 1;
     IF NOT EXISTS
        (SELECT 1 FROM food.Orders o INNER JOIN food.Restaurants r ON r.RestaurantId = o.RestaurantId
-        WHERE o.OrderId = @OrderId AND r.OwnerUserId = @ActorUserId)
+        INNER JOIN food.Users u ON u.UserId = r.OwnerUserId
+        WHERE o.OrderId = @OrderId AND r.OwnerUserId = @ActorUserId AND u.Role = N'Restaurant' AND u.IsActive = 1)
         THROW 51032, 'Order was not found for this restaurant owner.', 1;
 
     UPDATE food.Orders
@@ -669,7 +673,8 @@ CREATE OR ALTER PROCEDURE food.usp_Menu_OwnerList
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF NOT EXISTS (SELECT 1 FROM food.Restaurants WHERE RestaurantId = @RestaurantId AND OwnerUserId = @ActorUserId)
+    IF NOT EXISTS (SELECT 1 FROM food.Restaurants r INNER JOIN food.Users u ON u.UserId = r.OwnerUserId
+                   WHERE r.RestaurantId = @RestaurantId AND r.OwnerUserId = @ActorUserId AND u.Role = N'Restaurant' AND u.IsActive = 1)
         THROW 51062, 'Actor does not own this restaurant.', 1;
     SELECT MenuItemId, Name, Description, Category, Price, IsVegetarian, IsAvailable
     FROM food.MenuItems WHERE RestaurantId = @RestaurantId
