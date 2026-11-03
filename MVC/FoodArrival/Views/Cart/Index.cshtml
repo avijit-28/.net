@@ -18,14 +18,12 @@ else
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 border-top py-3">
                         <div><strong>@line.Name</strong><div class="small text-muted">₹@line.UnitPrice.ToString("0.00") each</div></div>
                         <div class="d-flex align-items-center gap-3">
-                            using (Html.BeginForm("Update", "Cart", FormMethod.Post, new { @class = "d-flex gap-2 align-items-center" }))
-                            {
-                                @Html.AntiForgeryToken()
-                                @Html.Hidden("menuItemId", line.MenuItemId)
+                            <form action="@Url.Action("Update", "Cart")" method="post" class="d-flex gap-2 align-items-center">
+                                @Html.AntiForgeryToken()<input type="hidden" name="menuItemId" value="@line.MenuItemId" />
                                 <label class="visually-hidden" for="qty-@line.MenuItemId">Quantity for @line.Name</label>
                                 <input class="form-control form-control-sm" id="qty-@line.MenuItemId" name="quantity" type="number" min="0" max="50" value="@line.Quantity" style="width:72px" />
                                 <button class="btn btn-outline-secondary btn-sm" type="submit">Update</button>
-                            }
+                            </form>
                             <strong>₹@line.LineTotal.ToString("0.00")</strong>
                         </div>
                     </div>
