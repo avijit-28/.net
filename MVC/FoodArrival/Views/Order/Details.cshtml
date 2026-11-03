@@ -87,8 +87,8 @@
                             <tr>
                                 <td class="fw-bold text-dark">@item.ItemName</td>
                                 <td class="text-center">x @item.Quantity</td>
-                                <td class="text-end text-muted">₹@item.UnitPrice.ToString("F2")</td>
-                                <td class="text-end fw-bold text-dark">₹@item.SubTotal.ToString("F2")</td>
+                                <td class="text-end text-muted">&#8377;@item.UnitPrice.ToString("F2")</td>
+                                <td class="text-end fw-bold text-dark">&#8377;@item.SubTotal.ToString("F2")</td>
                             </tr>
                         }
                     }
@@ -96,7 +96,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-end fw-bold border-top-0 pt-3">Total Amount:</td>
-                        <td class="text-end fw-bold fs-5 text-danger border-top-0 pt-3">₹@Model.TotalAmount.ToString("F2")</td>
+                        <td class="text-end fw-bold fs-5 text-danger border-top-0 pt-3">&#8377;@Model.TotalAmount.ToString("F2")</td>
                     </tr>
                 </tfoot>
             </table>
