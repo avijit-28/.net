@@ -13,18 +13,24 @@ namespace FoodArrival
     {
         protected void Application_PostAuthenticateRequest()
         {
-            var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
-            if (cookie == null || String.IsNullOrEmpty(cookie.Value)) return;
-            try
+            // Do not bind Context.User to email to prevent cross-account AntiForgery token identity mismatches
+            // when testing or switching between Customer, Rider, Staff, and Admin roles in the same browser session.
+            if (Context.User == null || !Context.User.Identity.IsAuthenticated)
             {
-                var ticket = FormsAuthentication.Decrypt(cookie.Value);
-                if (ticket == null || ticket.Expired) return;
-                var role = ticket.UserData ?? "Customer";
-                Context.User = new GenericPrincipal(new FormsIdentity(ticket), new string[] { role });
+                Context.User = new GenericPrincipal(new GenericIdentity(string.Empty), new string[0]);
             }
-            catch (Exception)
+        }
+
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            var ex = Server.GetLastError();
+            if (ex is HttpAntiForgeryException || (ex != null && ex.InnerException is HttpAntiForgeryException))
             {
+                Server.ClearError();
+                Response.Clear();
                 FormsAuthentication.SignOut();
+                Session.Clear();
+                Response.Redirect("~/Account/Login");
             }
         }
 
