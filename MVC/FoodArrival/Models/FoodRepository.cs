@@ -358,12 +358,14 @@ namespace FoodArrival.Models
             using (var reader = command.ExecuteReader()) while (reader.Read()) result.Add(new AdminUserViewModel
             {
                 UserId = Convert.ToInt32(reader["UserId"]), FullName = Text(reader, "FullName"), Email = Text(reader, "Email"),
-                Role = Text(reader, "Role"), IsActive = Convert.ToBoolean(reader["IsActive"])
+                Role = Text(reader, "Role"), StaffType = Text(reader, "StaffType"),
+                PendingRoleRequestId = reader["PendingRoleRequestId"] == DBNull.Value ? (int?)null : Convert.ToInt32(reader["PendingRoleRequestId"]),
+                RequestedStaffType = Text(reader, "RequestedStaffType"), IsActive = Convert.ToBoolean(reader["IsActive"])
             });
             return result;
         }
 
-        public void UpdateUserRole(int adminId, int userId, string role, bool isActive)
+        public void UpdateUserRole(int adminId, int userId, string role, string staffType, bool isActive)
         {
             using (var connection = OpenConnection())
             using (var command = Procedure(connection, "food.usp_Admin_UserUpdate"))
@@ -371,6 +373,7 @@ namespace FoodArrival.Models
                 command.Parameters.Add("@ActorUserId", SqlDbType.Int).Value = adminId;
                 command.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
                 command.Parameters.Add("@Role", SqlDbType.NVarChar, 20).Value = role;
+                command.Parameters.Add("@StaffType", SqlDbType.NVarChar, 30).Value = (object)staffType ?? DBNull.Value;
                 command.Parameters.Add("@IsActive", SqlDbType.Bit).Value = isActive;
                 command.ExecuteNonQuery();
             }
@@ -408,7 +411,7 @@ namespace FoodArrival.Models
             }
         }
 
-        public int Register(string name, string email, string phone, string passwordHash)
+        public int Register(string name, string email, string phone, string passwordHash, string requestedAccountType, string requestedStaffType, string requestNote)
         {
             using (var connection = OpenConnection())
             using (var command = Procedure(connection, "food.usp_Account_Register"))
@@ -417,6 +420,9 @@ namespace FoodArrival.Models
                 command.Parameters.Add("@Email", SqlDbType.NVarChar, 254).Value = email;
                 command.Parameters.Add("@Phone", SqlDbType.NVarChar, 30).Value = phone;
                 command.Parameters.Add("@PasswordHash", SqlDbType.NVarChar, 500).Value = passwordHash;
+                command.Parameters.Add("@RequestedAccountType", SqlDbType.NVarChar, 20).Value = requestedAccountType;
+                command.Parameters.Add("@RequestedStaffType", SqlDbType.NVarChar, 30).Value = (object)requestedStaffType ?? DBNull.Value;
+                command.Parameters.Add("@RequestNote", SqlDbType.NVarChar, 500).Value = (object)requestNote ?? DBNull.Value;
                 return Convert.ToInt32(command.ExecuteScalar());
             }
         }
@@ -430,7 +436,7 @@ namespace FoodArrival.Models
                 using (var reader = command.ExecuteReader()) if (reader.Read()) return new AccountRecord
                 {
                     UserId = Convert.ToInt32(reader["UserId"]), FullName = Text(reader, "FullName"),
-                    Email = Text(reader, "Email"), PasswordHash = Text(reader, "PasswordHash"), Role = Text(reader, "Role")
+                    Email = Text(reader, "Email"), PasswordHash = Text(reader, "PasswordHash"), Role = Text(reader, "Role"), StaffType = Text(reader, "StaffType")
                 };
             }
             return null;
@@ -496,6 +502,7 @@ namespace FoodArrival.Models
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public string Role { get; set; }
+        public string StaffType { get; set; }
     }
 
     public class DeliveryAssignmentViewModel
