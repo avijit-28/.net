@@ -26,6 +26,16 @@ namespace FoodArrival.DAL
                 item.Category = row["Category"].ToString();
             }
 
+            if (row.Table.Columns.Contains("RestaurantId") && row["RestaurantId"] != DBNull.Value)
+            {
+                item.RestaurantId = Convert.ToInt32(row["RestaurantId"]);
+            }
+
+            if (row.Table.Columns.Contains("RestaurantName") && row["RestaurantName"] != DBNull.Value)
+            {
+                item.RestaurantName = row["RestaurantName"].ToString();
+            }
+
             if (row.Table.Columns.Contains("CreatedAt") && row["CreatedAt"] != DBNull.Value)
             {
                 item.CreatedAt = Convert.ToDateTime(row["CreatedAt"]);
