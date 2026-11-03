@@ -1,3 +1,4 @@
+﻿using FoodArrival.Attributes;
 using System;
 using System.IO;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult Login(LoginViewModel model)
         {
             if (string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
@@ -105,7 +106,7 @@ namespace FoodArrival.Controllers
 
         // --- ORDER PROGRESSION WORKFLOW ---
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult UpdateStatus(int orderId, string status)
         {
             if (!IsRestaurantAuthenticated())
@@ -145,7 +146,7 @@ namespace FoodArrival.Controllers
 
         // --- MENU MANAGEMENT ---
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult AddDish(FoodItem item, HttpPostedFileBase imageFile)
         {
             if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
@@ -186,7 +187,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult ToggleDishAvailability(int id)
         {
             if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
@@ -205,7 +206,7 @@ namespace FoodArrival.Controllers
 
         // --- STAFF PMS & VERIFICATION ---
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult ApproveStaff(int staffId)
         {
             if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
@@ -225,7 +226,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult RejectStaff(int staffId)
         {
             if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
@@ -245,7 +246,7 @@ namespace FoodArrival.Controllers
 
         // --- STAFF-PROPOSED DISH APPROVAL ---
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult ApproveProposedDish(int foodItemId)
         {
             if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
@@ -265,7 +266,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult RejectProposedDish(int foodItemId)
         {
             if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
@@ -285,7 +286,7 @@ namespace FoodArrival.Controllers
 
         // --- RIDER AFFILIATIONS ---
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult ApproveRider(int affiliationId)
         {
             if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
@@ -305,7 +306,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult RejectRider(int affiliationId)
         {
             if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
@@ -335,7 +336,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult Details(Restaurant model, HttpPostedFileBase bannerImage)
         {
             if (!IsRestaurantAuthenticated()) return RedirectToAction("Login");
