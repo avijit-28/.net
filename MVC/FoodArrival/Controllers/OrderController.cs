@@ -1,3 +1,4 @@
+﻿using FoodArrival.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -177,7 +178,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateCustomAntiForgeryToken]
         public ActionResult PlaceOrder(string deliveryAddress, string phoneNumber)
         {
             if (Session["CustomerId"] == null)
