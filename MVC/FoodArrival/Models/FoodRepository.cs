@@ -132,7 +132,7 @@ namespace FoodArrival.Models
             }
         }
 
-        public long PlaceOrder(int customerId, int restaurantId, CheckoutViewModel checkout, IList<CartLine> lines)
+        public long PlaceOrder(int customerId, int restaurantId, CheckoutViewModel checkout, IList<CartLine> lines, int? addressId)
         {
             var items = lines.Select(x => new { menuItemId = x.MenuItemId, quantity = x.Quantity }).ToArray();
             var json = new JavaScriptSerializer().Serialize(items);
@@ -141,7 +141,7 @@ namespace FoodArrival.Models
             {
                 command.Parameters.Add("@CustomerUserId", SqlDbType.Int).Value = customerId;
                 command.Parameters.Add("@RestaurantId", SqlDbType.Int).Value = restaurantId;
-                command.Parameters.Add("@AddressId", SqlDbType.Int).Value = DBNull.Value;
+                command.Parameters.Add("@AddressId", SqlDbType.Int).Value = (object)addressId ?? DBNull.Value;
                 command.Parameters.Add("@DeliveryRecipient", SqlDbType.NVarChar, 120).Value = checkout.RecipientName;
                 command.Parameters.Add("@DeliveryPhone", SqlDbType.NVarChar, 30).Value = checkout.Phone;
                 command.Parameters.Add("@DeliveryAddressLine", SqlDbType.NVarChar, 250).Value = checkout.AddressLine;
@@ -446,6 +446,45 @@ namespace FoodArrival.Models
                 command.Parameters.Add("@Rating", SqlDbType.TinyInt).Value = rating;
                 command.Parameters.Add("@Comment", SqlDbType.NVarChar, 1000).Value = (object)comment ?? DBNull.Value;
                 command.ExecuteNonQuery();
+            }
+        }
+
+        public IList<AddressViewModel> GetAddresses(int userId)
+        {
+            var result = new List<AddressViewModel>();
+            using (var connection = OpenConnection())
+            using (var command = Procedure(connection, "food.usp_Address_List"))
+            {
+                command.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                using (var reader = command.ExecuteReader()) while (reader.Read()) result.Add(new AddressViewModel
+                {
+                    AddressId = Convert.ToInt32(reader["AddressId"]), Label = Text(reader, "Label"),
+                    RecipientName = Text(reader, "RecipientName"), Phone = Text(reader, "Phone"),
+                    AddressLine = Text(reader, "AddressLine"), AddressLine2 = Text(reader, "AddressLine2"),
+                    City = Text(reader, "City"), PostalCode = Text(reader, "PostalCode"),
+                    Instructions = Text(reader, "DeliveryInstructions"), IsDefault = Convert.ToBoolean(reader["IsDefault"])
+                });
+            }
+            return result;
+        }
+
+        public int SaveAddress(int userId, CheckoutViewModel address)
+        {
+            using (var connection = OpenConnection())
+            using (var command = Procedure(connection, "food.usp_Address_Save"))
+            {
+                command.Parameters.Add("@UserId", SqlDbType.Int).Value = userId;
+                command.Parameters.Add("@Label", SqlDbType.NVarChar, 50).Value = "Delivery address";
+                command.Parameters.Add("@RecipientName", SqlDbType.NVarChar, 120).Value = address.RecipientName;
+                command.Parameters.Add("@Phone", SqlDbType.NVarChar, 30).Value = address.Phone;
+                command.Parameters.Add("@AddressLine", SqlDbType.NVarChar, 250).Value = address.AddressLine;
+                command.Parameters.Add("@AddressLine2", SqlDbType.NVarChar, 250).Value = (object)address.AddressLine2 ?? DBNull.Value;
+                command.Parameters.Add("@City", SqlDbType.NVarChar, 100).Value = address.City;
+                command.Parameters.Add("@StateOrRegion", SqlDbType.NVarChar, 100).Value = DBNull.Value;
+                command.Parameters.Add("@PostalCode", SqlDbType.NVarChar, 20).Value = (object)address.PostalCode ?? DBNull.Value;
+                command.Parameters.Add("@DeliveryInstructions", SqlDbType.NVarChar, 500).Value = (object)address.Instructions ?? DBNull.Value;
+                command.Parameters.Add("@IsDefault", SqlDbType.Bit).Value = !GetAddresses(userId).Any();
+                return Convert.ToInt32(command.ExecuteScalar());
             }
         }
     }
