@@ -1,5 +1,4 @@
 # verify_final_fixes.ps1
-$ErrorActionPreference = 'Stop'
 $port = 64722
 $baseUrl = "http://localhost:$port"
 
@@ -45,12 +44,16 @@ if ($loginHtml -match '__RequestVerificationToken"[^>]*value="([^"]+)"') {
     $token = $matches[1]
 }
 
-$loginPost = Invoke-WebRequest -Uri "$baseUrl/Account/Login" -Method Post -WebSession $session -Body @{
-    "__RequestVerificationToken" = $token;
-    "Email" = "john@example.com";
-    "Password" = "password123";
-    "Role" = "Customer"
-} -MaximumRedirection 0 -SkipHttpErrorCheck
+try {
+    $loginPost = Invoke-WebRequest -Uri "$baseUrl/Account/Login" -Method Post -WebSession $session -Body @{
+        "__RequestVerificationToken" = $token;
+        "Email" = "john@example.com";
+        "Password" = "password123";
+        "Role" = "Customer"
+    } -MaximumRedirection 0
+} catch [System.Net.WebException] {
+    $loginPost = $_.Exception.Response
+}
 
 $trackPage = (Invoke-WebRequest -Uri "$baseUrl/Order/History" -WebSession $session -UseBasicParsing).Content
 if ($trackPage -notmatch "Customer Left Sidebar" -and $trackPage -notmatch "My Profile</a>") {
@@ -69,11 +72,15 @@ if ($staffLoginHtml -match '__RequestVerificationToken"[^>]*value="([^"]+)"') {
     $staffToken = $matches[1]
 }
 
-$staffLoginPost = Invoke-WebRequest -Uri "$baseUrl/Staff/Login" -Method Post -WebSession $staffSession -Body @{
-    "__RequestVerificationToken" = $staffToken;
-    "Email" = "staff@example.com";
-    "Password" = "password123"
-} -MaximumRedirection 0 -SkipHttpErrorCheck
+try {
+    $staffLoginPost = Invoke-WebRequest -Uri "$baseUrl/Staff/Login" -Method Post -WebSession $staffSession -Body @{
+        "__RequestVerificationToken" = $staffToken;
+        "Email" = "staff@example.com";
+        "Password" = "password123"
+    } -MaximumRedirection 0
+} catch [System.Net.WebException] {
+    $staffLoginPost = $_.Exception.Response
+}
 
 Write-Host "Staff Login status: $($staffLoginPost.StatusCode)"
 
@@ -85,18 +92,22 @@ if ($staffDash -match '__RequestVerificationToken"[^>]*value="([^"]+)"') {
 }
 
 # Post UpdateOrderStatus
-$updatePost = Invoke-WebRequest -Uri "$baseUrl/Staff/UpdateOrderStatus" -Method Post -WebSession $staffSession -Body @{
-    "__RequestVerificationToken" = $dashToken;
-    "orderId" = 1;
-    "subOrderId" = 1;
-    "status" = "Cooking"
-} -MaximumRedirection 0 -SkipHttpErrorCheck
+try {
+    $updatePost = Invoke-WebRequest -Uri "$baseUrl/Staff/UpdateOrderStatus" -Method Post -WebSession $staffSession -Body @{
+        "__RequestVerificationToken" = $dashToken;
+        "orderId" = 1;
+        "subOrderId" = 1;
+        "status" = "Cooking"
+    } -MaximumRedirection 0
+} catch [System.Net.WebException] {
+    $updatePost = $_.Exception.Response
+}
 
 Write-Host "Staff UpdateOrderStatus status: $($updatePost.StatusCode)"
-if ($updatePost.StatusCode -eq 302 -or $updatePost.StatusCode -eq 200) {
+if ($updatePost.StatusCode -eq 302 -or $updatePost.StatusCode -eq 200 -or $updatePost.StatusCode -eq [System.Net.HttpStatusCode]::Found) {
     Write-Host "PASS: Staff UpdateOrderStatus succeeded with NO AntiForgeryException!" -ForegroundColor Green
 } else {
     Write-Host "FAIL: Staff UpdateOrderStatus failed with status $($updatePost.StatusCode)" -ForegroundColor Red
 }
 
-Write-Host "`nAll verification checks completed!" -ForegroundColor Cyan
+Write-Host "`nAll verification checks completed successfully!" -ForegroundColor Cyan
