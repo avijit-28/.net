@@ -20,54 +20,141 @@
         <div class="row g-4">
             <!-- Left Items List -->
             <div class="col-lg-8">
-                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                    <div class="table-responsive">
-                        <table class="table align-middle mb-0 cart-table">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th style="width: 100px;">Item</th>
-                                    <th>Details</th>
-                                    <th class="text-center" style="width: 140px;">Quantity</th>
-                                    <th class="text-end" style="width: 120px;">Price</th>
-                                    <th class="text-center" style="width: 60px;"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.Items)
-                                {
-                                    <tr id="cart-row-@item.FoodItemId">
-                                        <td>
-                                            <img src="@item.ImageUrl" alt="@item.ItemName" class="rounded-3 shadow-sm" style="width: 70px; height: 70px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=120&q=80'" />
-                                        </td>
-                                        <td>
-                                            <h6 class="fw-bold mb-1">@item.ItemName</h6>
-                                            <span class="text-muted small">&#8377;@item.UnitPrice.ToString("F0") each</span>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="qty-picker">
-                                                <button type="button" class="qty-btn" onclick="var el = $('#cart-qty-@item.FoodItemId'); var val = parseInt(el.val())||1; if(val>1){ el.val(val-1).trigger('change'); }"><i class="bi bi-dash"></i></button>
-                                                <input type="text" id="cart-qty-@item.FoodItemId" class="qty-input cart-qty-input" data-id="@item.FoodItemId" value="@item.Quantity" readonly />
-                                                <button type="button" class="qty-btn" onclick="var el = $('#cart-qty-@item.FoodItemId'); var val = parseInt(el.val())||1; el.val(val+1).trigger('change');"><i class="bi bi-plus"></i></button>
-                                            </div>
-                                        </td>
-                                        <td class="text-end fw-bold text-dark" id="item-subtotal-@item.FoodItemId">
-                                            &#8377;@item.SubTotal.ToString("F0")
-                                        </td>
-                                        <td class="text-center">
-                                            @using (Html.BeginForm("RemoveFromCart", "Order", FormMethod.Post, new { @class = "d-inline" }))
-                                            {
-                                                <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
-                                                <button type="submit" class="btn btn-link text-danger p-0" title="Remove item">
-                                                    <i class="bi bi-trash3 fs-5"></i>
-                                                </button>
-                                            }
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                @if (Model.MultiRestaurantGroups != null && Model.MultiRestaurantGroups.Count > 1)
+                {
+                    <div class="alert alert-warning border-0 shadow-sm rounded-4 p-3 mb-3 d-flex align-items-center gap-3">
+                        <div class="rounded-circle p-2 bg-white text-warning shadow-sm">
+                            <i class="bi bi-diagram-3-fill fs-4 text-warning"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark">Multi-Restaurant Order (@Model.MultiRestaurantGroups.Count Kitchens)</div>
+                            <small class="text-muted">You have selected items across multiple restaurants. FoodReady's intelligent routing engine will allocate optimal rider(s) to guarantee fast and hot delivery!</small>
+                        </div>
                     </div>
-                </div>
+                }
+
+                @if (Model.MultiRestaurantGroups != null && Model.MultiRestaurantGroups.Any())
+                {
+                    foreach (var group in Model.MultiRestaurantGroups)
+                    {
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                            <div class="p-3 bg-light border-bottom d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-warning bg-opacity-25 text-dark p-2 rounded-circle">
+                                        <i class="bi bi-shop text-danger fs-6"></i>
+                                    </span>
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-dark">@group.RestaurantName</h6>
+                                        <small class="text-muted">Sub-order kitchen &bull; Ready in ~15-20 min</small>
+                                    </div>
+                                </div>
+                                <span class="badge bg-white text-dark border shadow-sm px-3 py-2 fw-bold">
+                                    @group.Items.Sum(x => x.Quantity) items &bull; &#8377;@group.RestaurantSubtotal.ToString("F0")
+                                </span>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0 cart-table">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th style="width: 80px;">Item</th>
+                                            <th>Dish</th>
+                                            <th class="text-center" style="width: 140px;">Quantity</th>
+                                            <th class="text-end" style="width: 120px;">Price</th>
+                                            <th class="text-center" style="width: 60px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in group.Items)
+                                        {
+                                            <tr id="cart-row-@item.FoodItemId">
+                                                <td>
+                                                    <img src="@item.ImageUrl" alt="@item.ItemName" class="rounded-3 shadow-sm" style="width: 60px; height: 60px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=120&q=80'" />
+                                                </td>
+                                                <td>
+                                                    <h6 class="fw-bold mb-0">@item.ItemName</h6>
+                                                    <span class="text-muted small">&#8377;@item.UnitPrice.ToString("F0") each</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="qty-picker">
+                                                        <button type="button" class="qty-btn" onclick="var el = $('#cart-qty-@item.FoodItemId'); var val = parseInt(el.val())||1; if(val>1){ el.val(val-1).trigger('change'); }"><i class="bi bi-dash"></i></button>
+                                                        <input type="text" id="cart-qty-@item.FoodItemId" class="qty-input cart-qty-input" data-id="@item.FoodItemId" value="@item.Quantity" readonly />
+                                                        <button type="button" class="qty-btn" onclick="var el = $('#cart-qty-@item.FoodItemId'); var val = parseInt(el.val())||1; el.val(val+1).trigger('change');"><i class="bi bi-plus"></i></button>
+                                                    </div>
+                                                </td>
+                                                <td class="text-end fw-bold text-dark" id="item-subtotal-@item.FoodItemId">
+                                                    &#8377;@item.SubTotal.ToString("F0")
+                                                </td>
+                                                <td class="text-center">
+                                                    @using (Html.BeginForm("RemoveFromCart", "Order", FormMethod.Post, new { @class = "d-inline" }))
+                                                    {
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
+                                                        <button type="submit" class="btn btn-link text-danger p-0" title="Remove item">
+                                                            <i class="bi bi-trash3 fs-5"></i>
+                                                        </button>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0 cart-table">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th style="width: 100px;">Item</th>
+                                        <th>Details</th>
+                                        <th class="text-center" style="width: 140px;">Quantity</th>
+                                        <th class="text-end" style="width: 120px;">Price</th>
+                                        <th class="text-center" style="width: 60px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Items)
+                                    {
+                                        <tr id="cart-row-@item.FoodItemId">
+                                            <td>
+                                                <img src="@item.ImageUrl" alt="@item.ItemName" class="rounded-3 shadow-sm" style="width: 70px; height: 70px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=120&q=80'" />
+                                            </td>
+                                            <td>
+                                                <h6 class="fw-bold mb-1">@item.ItemName</h6>
+                                                <span class="text-muted small">&#8377;@item.UnitPrice.ToString("F0") each</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="qty-picker">
+                                                    <button type="button" class="qty-btn" onclick="var el = $('#cart-qty-@item.FoodItemId'); var val = parseInt(el.val())||1; if(val>1){ el.val(val-1).trigger('change'); }"><i class="bi bi-dash"></i></button>
+                                                    <input type="text" id="cart-qty-@item.FoodItemId" class="qty-input cart-qty-input" data-id="@item.FoodItemId" value="@item.Quantity" readonly />
+                                                    <button type="button" class="qty-btn" onclick="var el = $('#cart-qty-@item.FoodItemId'); var val = parseInt(el.val())||1; el.val(val+1).trigger('change');"><i class="bi bi-plus"></i></button>
+                                                </div>
+                                            </td>
+                                            <td class="text-end fw-bold text-dark" id="item-subtotal-@item.FoodItemId">
+                                                &#8377;@item.SubTotal.ToString("F0")
+                                            </td>
+                                            <td class="text-center">
+                                                @using (Html.BeginForm("RemoveFromCart", "Order", FormMethod.Post, new { @class = "d-inline" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="foodItemId" value="@item.FoodItemId" />
+                                                    <button type="submit" class="btn btn-link text-danger p-0" title="Remove item">
+                                                        <i class="bi bi-trash3 fs-5"></i>
+                                                    </button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
 
                 <div class="mt-3">
                     <a href="@Url.Action("Index", "Food")" class="text-decoration-none text-muted small fw-bold">
