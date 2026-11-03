@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -443,8 +443,10 @@ namespace FoodArrival.DAL
         {
             var list = new List<Order>();
             string sql = @"
-                SELECT o.OrderId, o.CustomerId, c.CustomerName, c.PhoneNumber, c.Address, o.TotalAmount, 
-                       o.OrderStatus, o.DeliveryStatus, o.OrderedAt, r.RestaurantName,
+                SELECT o.OrderId, o.CustomerId, c.CustomerName, c.PhoneNumber, 
+                       ISNULL(o.DeliveryAddress, c.Address) AS Address, o.TotalAmount, 
+                       o.OrderStatus, o.DeliveryStatus, o.OrderedAt, 
+                       ISNULL(r.RestaurantName, 'FoodReady Kitchen') AS RestaurantName,
                        STUFF((
                            SELECT ', ' + f.ItemName + ' x' + CAST(od.Quantity AS NVARCHAR(10))
                            FROM dbo.OrderDetails od
@@ -455,8 +457,16 @@ namespace FoodArrival.DAL
                 FROM dbo.Orders o
                 INNER JOIN dbo.Customers c ON o.CustomerId = c.CustomerId
                 LEFT JOIN dbo.Restaurants r ON o.RestaurantId = r.RestaurantId
-                WHERE o.OrderStatus = 'Accepted' 
-                  AND (o.RiderId IS NULL OR o.DeliveryStatus IN ('ReadyForPickup', 'PendingPickup'))
+                WHERE o.OrderStatus NOT IN ('Cancelled', 'Rejected')
+                  AND o.DeliveryStatus != 'Delivered'
+                  AND (
+                      o.DeliveryStatus IN ('ReadyForPickup', 'PendingPickup', 'Pending', 'Accepted')
+                      OR EXISTS (
+                          SELECT 1 FROM dbo.OrderSubOrders oso 
+                          WHERE oso.OrderId = o.OrderId 
+                            AND oso.PreparationStatus = 'ReadyForPickup'
+                      )
+                  )
                 ORDER BY o.OrderedAt ASC";
 
             try
@@ -494,7 +504,8 @@ namespace FoodArrival.DAL
         {
             var list = new List<Order>();
             string sql = @"
-                SELECT o.OrderId, o.CustomerId, c.CustomerName, c.PhoneNumber, c.Address, o.TotalAmount, 
+                SELECT o.OrderId, o.CustomerId, c.CustomerName, c.PhoneNumber, 
+                       ISNULL(o.DeliveryAddress, c.Address) AS Address, o.TotalAmount, 
                        o.OrderStatus, o.DeliveryStatus, o.OrderedAt, o.ProcessedAt,
                        STUFF((
                            SELECT ', ' + f.ItemName + ' x' + CAST(od.Quantity AS NVARCHAR(10))
@@ -505,8 +516,16 @@ namespace FoodArrival.DAL
                        ).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS Items
                 FROM dbo.Orders o
                 INNER JOIN dbo.Customers c ON o.CustomerId = c.CustomerId
-                WHERE o.RiderId = @RiderId
-                ORDER BY o.OrderedAt DESC";
+                WHERE (
+                    o.RiderId = @RiderId 
+                    OR EXISTS (
+                        SELECT 1 FROM dbo.OrderSubOrders oso 
+                        WHERE oso.OrderId = o.OrderId AND oso.RiderId = @RiderId
+                    )
+                )
+                AND o.OrderStatus NOT IN ('Cancelled', 'Rejected')
+                AND (o.DeliveryStatus != 'Delivered' OR o.OrderedAt >= DATEADD(day, -1, GETDATE()))
+                ORDER BY CASE WHEN o.DeliveryStatus = 'Delivered' THEN 1 ELSE 0 END, o.OrderedAt DESC";
 
             try
             {
@@ -547,6 +566,11 @@ namespace FoodArrival.DAL
                 UPDATE dbo.Orders 
                 SET RiderId = @RiderId, DeliveryStatus = 'OutForDelivery' 
                 WHERE OrderId = @OrderId;
+
+                UPDATE dbo.OrderSubOrders
+                SET RiderId = @RiderId, DeliveryStatus = 'OutForDelivery'
+                WHERE OrderId = @OrderId;
+
                 UPDATE dbo.Riders SET CurrentStatus = 'On Delivery' WHERE RiderId = @RiderId;";
 
             try
@@ -567,8 +591,13 @@ namespace FoodArrival.DAL
         {
             string sql = @"
                 UPDATE dbo.Orders 
-                SET DeliveryStatus = 'Delivered' 
-                WHERE OrderId = @OrderId AND RiderId = @RiderId;
+                SET DeliveryStatus = 'Delivered', OrderStatus = 'Accepted', ProcessedAt = GETDATE() 
+                WHERE OrderId = @OrderId;
+
+                UPDATE dbo.OrderSubOrders
+                SET DeliveryStatus = 'Delivered', DeliveredAt = GETDATE()
+                WHERE OrderId = @OrderId;
+
                 UPDATE dbo.Riders SET CurrentStatus = 'Available' WHERE RiderId = @RiderId;";
 
             try
@@ -576,7 +605,6 @@ namespace FoodArrival.DAL
                 using (var conn = DbHelper.GetConnection())
                 using (var cmd = new SqlCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@RiderId", riderId);
                     cmd.Parameters.AddWithValue("@OrderId", orderId);
                     conn.Open();
                     return cmd.ExecuteNonQuery() > 0;
