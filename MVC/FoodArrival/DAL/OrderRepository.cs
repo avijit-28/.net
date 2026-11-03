@@ -115,9 +115,9 @@ namespace FoodArrival.DAL
                             {
                                 string insertDetailSql = @"
                                     INSERT INTO dbo.OrderDetails 
-                                    (OrderId, SubOrderId, FoodItemId, Quantity, UnitPrice, SubTotal)
+                                    (OrderId, SubOrderId, FoodItemId, Quantity, UnitPrice)
                                     VALUES 
-                                    (@OrderId, @SubOrderId, @FoodItemId, @Quantity, @UnitPrice, @SubTotal);";
+                                    (@OrderId, @SubOrderId, @FoodItemId, @Quantity, @UnitPrice);";
 
                                 using (var cmdDetail = new SqlCommand(insertDetailSql, conn, tran))
                                 {
@@ -126,7 +126,6 @@ namespace FoodArrival.DAL
                                     cmdDetail.Parameters.AddWithValue("@FoodItemId", item.FoodItemId);
                                     cmdDetail.Parameters.AddWithValue("@Quantity", item.Quantity);
                                     cmdDetail.Parameters.AddWithValue("@UnitPrice", item.UnitPrice);
-                                    cmdDetail.Parameters.AddWithValue("@SubTotal", item.SubTotal);
                                     cmdDetail.ExecuteNonQuery();
                                 }
                             }
