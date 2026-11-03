@@ -106,6 +106,7 @@ namespace FoodArrival.Models
         public string OrderStatus { get; set; }
         public DateTime CreatedAt { get; set; }
         public string DeliveryStatus { get; set; }
+        public string CustomerName { get; set; }
     }
 
     public class OrderLine
@@ -198,6 +199,7 @@ namespace FoodArrival.Models
 
     public class AdminDashboardViewModel
     {
+        public IList<OrderSummary> Orders { get; set; }
         public IList<ReadyOrderViewModel> ReadyOrders { get; set; }
         public IList<System.Web.Mvc.SelectListItem> Agents { get; set; }
         public IList<AdminUserViewModel> Users { get; set; }
