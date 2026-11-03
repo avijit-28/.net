@@ -11,12 +11,36 @@ namespace FoodArrival.DAL
         public List<Notification> GetNotifications(string role = "All", int? userId = null)
         {
             var list = new List<Notification>();
-            string sql = @"
-                SELECT TOP 15 NotificationId, UserId, UserRole, Title, Message, NotificationType, IsRead, CreatedAt, TargetUrl
-                FROM dbo.Notifications
-                WHERE (UserRole = 'All' OR UserRole = @Role)
-                  AND (@UserId IS NULL OR UserId IS NULL OR UserId = @UserId)
-                ORDER BY CreatedAt DESC";
+            if (string.IsNullOrWhiteSpace(role) || role.Equals("All", StringComparison.OrdinalIgnoreCase) || role.Equals("Guest", StringComparison.OrdinalIgnoreCase))
+            {
+                // Unauthenticated visitors do not receive private notifications
+                return list;
+            }
+
+            string sql;
+            if (role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                // Admin views platform administrative notifications
+                sql = @"
+                    SELECT TOP 15 NotificationId, UserId, UserRole, Title, Message, NotificationType, IsRead, CreatedAt, TargetUrl
+                    FROM dbo.Notifications
+                    WHERE UserRole = 'Admin'
+                    ORDER BY CreatedAt DESC";
+            }
+            else
+            {
+                // For Customer, Rider, Restaurant Owner, and Staff: STRICTLY show ONLY their own personal notifications!
+                if (!userId.HasValue || userId.Value <= 0)
+                {
+                    return list;
+                }
+
+                sql = @"
+                    SELECT TOP 15 NotificationId, UserId, UserRole, Title, Message, NotificationType, IsRead, CreatedAt, TargetUrl
+                    FROM dbo.Notifications
+                    WHERE UserRole = @Role AND UserId = @UserId
+                    ORDER BY CreatedAt DESC";
+            }
 
             try
             {
@@ -24,7 +48,10 @@ namespace FoodArrival.DAL
                 using (var cmd = new SqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@Role", (object)role ?? "All");
-                    cmd.Parameters.AddWithValue("@UserId", (object)userId ?? DBNull.Value);
+                    if (userId.HasValue)
+                    {
+                        cmd.Parameters.AddWithValue("@UserId", userId.Value);
+                    }
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
                     {
