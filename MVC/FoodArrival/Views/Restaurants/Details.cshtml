@@ -34,7 +34,7 @@ else
                 @if (!String.IsNullOrWhiteSpace(item.Category)) { <span class="small text-muted">@item.Category</span> }
             </div>
             <div class="d-flex flex-column align-items-end gap-2"><span class="menu-price">₹@item.Price.ToString("0.00")</span>
-                @using (Html.BeginForm("Add", "Cart", FormMethod.Post, new { @class = "d-flex gap-2" }))
+                using (Html.BeginForm("Add", "Cart", FormMethod.Post, new { @class = "d-flex gap-2" }))
                 {
                     @Html.AntiForgeryToken()
                     @Html.Hidden("restaurantId", Model.Restaurant.RestaurantId)
