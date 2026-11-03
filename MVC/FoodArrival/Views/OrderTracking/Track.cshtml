@@ -1,0 +1,525 @@
+@model FoodArrival.Models.OrderTrackingViewModel
+@{
+    ViewBag.Title = "Track Order #" + Model.OrderNumber + " - FoodReady";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" class="text-decoration-none text-muted">Home</a></li>
+            <li class="breadcrumb-item"><a href="@Url.Action("History", "Order")" class="text-decoration-none text-muted">My Orders</a></li>
+            <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Track Order #@Model.OrderNumber</li>
+        </ol>
+    </nav>
+
+    <!-- 1. ORDER HEADER BANNER -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 text-white position-relative overflow-hidden" 
+         style="background: linear-gradient(135deg, #FF7A18 0%, #FF5E1E 100%);">
+        <div class="row align-items-center g-3">
+            <div class="col-lg-8">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                    <span class="badge bg-white text-dark rounded-pill px-3 py-1 fw-bold">
+                        <i class="bi bi-bag-check-fill text-danger me-1"></i> FoodReady Order
+                    </span>
+                    <span class="badge bg-dark rounded-pill px-3 py-1">
+                        #@Model.OrderNumber
+                    </span>
+                    <span class="badge bg-warning text-dark rounded-pill px-3 py-1 fw-bold" id="headerStatusBadge">
+                        @Model.OverallStatus
+                    </span>
+                </div>
+                <h1 class="fw-bold mb-1 display-6">Live Order Tracking</h1>
+                <p class="text-white-50 mb-0">
+                    Placed: <strong>@Model.OrderedAt.ToString("dd MMM yyyy, hh:mm tt")</strong> &bull; 
+                    Delivery to: <strong>@Model.DeliveryAddress</strong>
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="p-3 bg-white bg-opacity-10 rounded-4 d-inline-block text-center text-lg-end">
+                    <div class="small text-white-50 text-uppercase fw-bold">Estimated Delivery</div>
+                    <div class="display-6 fw-bold text-white mb-0" id="headerEtaMinutes">
+                        @if (Model.IsDelivered)
+                        {
+                            <span>Delivered</span>
+                        }
+                        else
+                        {
+                            <span>@(Model.EstimatedDeliveryTime?.ToString("hh:mm tt") ?? "30 mins")</span>
+                        }
+                    </div>
+                    @if (!Model.IsDelivered)
+                    {
+                        <div class="small text-warning fw-bold mt-1" id="headerEtaCountdown">
+                            <i class="bi bi-hourglass-split me-1"></i> Approximately @Model.OverallETAMinutes mins remaining
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELAY ALERT (IF DETECTED) -->
+    @if (Model.IsDelayed)
+    {
+        <div class="alert alert-warning border-0 shadow-sm rounded-4 p-3 mb-4 d-flex align-items-center gap-3">
+            <div class="rounded-circle p-2 bg-warning text-dark fs-4">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div>
+                <h6 class="fw-bold text-dark mb-0">&#9888; Delivery Taking Longer Than Expected</h6>
+                <div class="small text-muted">
+                    Your order is delayed by ~@Model.DelayMinutes minutes. Reason: @(Model.DelayReason ?? "Peak kitchen workload"). Rest assured our delivery partners are rushing your food fresh!
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- 2. OVERALL ORDER 9-STEP VISUAL TIMELINE -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-4 bg-white">
+        <h5 class="fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+            <i class="bi bi-signpost-split text-primary"></i>
+            <span>Order Progress Timeline</span>
+        </h5>
+
+        <div class="tracking-timeline-wrap">
+            <div class="row g-2 text-center position-relative">
+                @foreach (var step in Model.TimelineSteps)
+                {
+                    string circleClass = "bg-light text-muted border";
+                    string textClass = "text-muted";
+                    if (step.State == "Completed")
+                    {
+                        circleClass = "bg-success text-white border-success";
+                        textClass = "text-dark fw-bold";
+                    }
+                    else if (step.State == "Current")
+                    {
+                        circleClass = "bg-warning text-dark border-warning shadow";
+                        textClass = "text-primary fw-bold";
+                    }
+
+                    <div class="col-sm col-4 mb-3">
+                        <div class="timeline-step-circle mx-auto mb-2 d-flex align-items-center justify-content-center rounded-circle @circleClass" 
+                             style="width: 44px; height: 44px; font-size: 1.1rem;">
+                            @if (step.State == "Completed")
+                            {
+                                <i class="bi bi-check-lg"></i>
+                            }
+                            else
+                            {
+                                <i class="bi @step.Icon"></i>
+                            }
+                        </div>
+                        <div class="small @textClass" style="font-size: 0.8rem; line-height: 1.2;">
+                            @step.Title
+                        </div>
+                        @if (!string.IsNullOrEmpty(step.TimeDisplay))
+                        {
+                            <div class="text-muted small mt-1" style="font-size: 0.7rem;">@step.TimeDisplay</div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. LIVE ROUTE MAP & MULTI-RESTAURANT DISPATCH SECTION -->
+    <div class="row g-4 mb-4">
+        <!-- Left: Multi-Restaurant Tracking Cards -->
+        <div class="col-lg-7">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                <i class="bi bi-shop text-danger"></i>
+                <span>Kitchen Sub-Orders & Dispatch Status (@Model.SubOrders.Count Restaurants)</span>
+            </h5>
+
+            <div class="d-flex flex-column gap-3">
+                @foreach (var sub in Model.SubOrders)
+                {
+                    string subBorder = "border-start border-4 border-warning";
+                    if (sub.DeliveryStatus == "Delivered") { subBorder = "border-start border-4 border-success"; }
+                    else if (sub.DeliveryStatus == "OutForDelivery") { subBorder = "border-start border-4 border-primary"; }
+
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white @subBorder">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <span class="badge bg-light text-dark border mb-1">
+                                    <i class="bi bi-geo-alt-fill text-danger me-1"></i> Stop #@sub.PickupSequence
+                                </span>
+                                <h5 class="fw-bold text-dark mb-0">@sub.RestaurantName</h5>
+                                <div class="small text-muted">@sub.Cuisine &bull; @sub.RestaurantAddress</div>
+                            </div>
+                            <span class="badge @(sub.DeliveryStatus == "Delivered" ? "bg-success" : (sub.DeliveryStatus == "OutForDelivery" ? "bg-primary" : "bg-dark")) rounded-pill px-3 py-1">
+                                @(sub.DeliveryStatus == "Delivered" ? "Delivered" : (sub.DeliveryStatus == "OutForDelivery" ? "Out for Delivery" : sub.PreparationStatus))
+                            </span>
+                        </div>
+
+                        <!-- Sub-Order Items List -->
+                        <div class="p-3 bg-light rounded-3 my-2">
+                            <div class="small text-uppercase fw-bold text-muted mb-1">Items in this Kitchen Sub-Order:</div>
+                            <div class="d-flex flex-wrap gap-2">
+                                @if (sub.Items.Any())
+                                {
+                                    foreach (var itm in sub.Items)
+                                    {
+                                        <span class="badge bg-white text-dark border px-2 py-1">
+                                            @itm.ItemName &times; @itm.Quantity (&#8377;@itm.SubTotal.ToString("F0"))
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="small text-muted">Food Combo Package</span>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Sub-Order Dispatch & Rider Card -->
+                        <div class="d-flex flex-wrap justify-content-between align-items-center mt-2 pt-2 border-top gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center bg-primary text-white" style="width: 38px; height: 38px;">
+                                    <i class="bi bi-bicycle"></i>
+                                </div>
+                                <div>
+                                    <div class="small fw-bold text-dark">
+                                        @(string.IsNullOrEmpty(sub.RiderName) ? "Allocating Nearest Rider..." : sub.RiderName)
+                                    </div>
+                                    <div class="text-muted small" style="font-size: 0.75rem;">
+                                        @(string.IsNullOrEmpty(sub.RiderVehicle) ? "Optimizing route batch" : $"{sub.RiderVehicle} • ⭐ {sub.RiderRating:F1}")
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-end">
+                                <div class="fw-bold text-dark small">
+                                    Subtotal: &#8377;@sub.SubTotal.ToString("F0")
+                                </div>
+                                <div class="small text-warning fw-bold">
+                                    <i class="bi bi-clock me-1"></i> ETA: @sub.MinutesToDelivery mins
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Right: Live Delivery Visual Map & Rider Card -->
+        <div class="col-lg-5">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                <i class="bi bi-map-fill text-warning"></i>
+                <span>Live Delivery Route</span>
+            </h5>
+
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-3">
+                <!-- Visual Delivery Route Path Diagram -->
+                <div class="p-3 rounded-4 mb-3" style="background: #FFFBF8; border: 1.5px dashed #FFD4C2;">
+                    <div class="d-flex align-items-center justify-content-between text-center position-relative">
+                        <!-- Restaurant Pins -->
+                        @foreach (var pin in Model.DeliveryMap.RestaurantPins)
+                        {
+                            <div class="px-1">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-1 bg-white border border-danger shadow-sm" style="width: 36px; height: 36px; color: #FF5E1E;">
+                                    <i class="bi bi-shop"></i>
+                                </div>
+                                <div class="fw-bold text-dark" style="font-size: 0.75rem;">Stop #@pin.PickupSequence</div>
+                                <div class="text-muted" style="font-size: 0.65rem;">@pin.RestaurantName.Split(' ')[0]</div>
+                            </div>
+                        }
+
+                        <!-- Direction arrow -->
+                        <i class="bi bi-arrow-right text-muted fs-5"></i>
+
+                        <!-- Rider Pin -->
+                        <div class="px-1">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-1 bg-primary text-white shadow" style="width: 40px; height: 40px;">
+                                <i class="bi bi-scooter fs-5"></i>
+                            </div>
+                            <div class="fw-bold text-primary" style="font-size: 0.75rem;">Rider</div>
+                            <div class="text-muted" style="font-size: 0.65rem;">En Route</div>
+                        </div>
+
+                        <!-- Direction arrow -->
+                        <i class="bi bi-arrow-right text-muted fs-5"></i>
+
+                        <!-- Customer Pin -->
+                        <div class="px-1">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-1 bg-success text-white shadow-sm" style="width: 36px; height: 36px;">
+                                <i class="bi bi-house-door-fill"></i>
+                            </div>
+                            <div class="fw-bold text-success" style="font-size: 0.75rem;">You</div>
+                            <div class="text-muted" style="font-size: 0.65rem;">Customer</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Metrics -->
+                <div class="row g-2 text-center pt-2 border-top">
+                    <div class="col-6 border-end">
+                        <span class="text-muted small">Remaining Distance</span>
+                        <h5 class="fw-bold text-dark mb-0">@Model.DeliveryMap.RemainingDistanceKm km</h5>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted small">Estimated Time</span>
+                        <h5 class="fw-bold text-warning mb-0">~@Model.OverallETAMinutes mins</h5>
+                    </div>
+                </div>
+
+                <div class="small text-muted mt-3 text-center">
+                    <i class="bi bi-shield-check text-success me-1"></i> Real-time GPS tracking active. Auto-refreshes every 12 seconds.
+                </div>
+            </div>
+
+            <!-- Assigned Rider Information Card -->
+            @if (Model.AssignedRiders.Any())
+            {
+                var rider = Model.AssignedRiders.First();
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center bg-dark text-white fw-bold fs-4" style="width: 52px; height: 52px;">
+                                @(rider.RiderName.Substring(0, 1))
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0 text-dark">@rider.RiderName</h6>
+                                <div class="small text-muted">
+                                    <i class="bi bi-motorcycle me-1 text-primary"></i> @rider.VehicleType &bull;
+                                    <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i>@rider.Rating</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="badge bg-success-subtle text-success border border-success px-3 py-1">
+                            @rider.Status
+                        </span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a href="tel:18002004567" class="btn btn-outline-food btn-sm w-100 rounded-pill">
+                            <i class="bi bi-telephone-fill me-1"></i> Contact Desk
+                        </a>
+                        <a href="@Url.Action("Contact", "Home")" class="btn btn-outline-secondary btn-sm w-100 rounded-pill">
+                            <i class="bi bi-chat-dots-fill me-1"></i> Help & Support
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- 4. ORDER SUMMARY & FINANCIAL BREAKDOWN -->
+    <div class="row g-4 mb-4">
+        <!-- Order Items -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-receipt text-primary me-2"></i> Order Items Summary</h5>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0 custom-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Kitchen / Restaurant</th>
+                                <th>Category</th>
+                                <th>Qty</th>
+                                <th>Unit Price</th>
+                                <th class="text-end">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var itm in Model.OrderItems)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <img src="@itm.ImageUrl" alt="@itm.ItemName" class="rounded-3" style="width: 44px; height: 44px; object-fit: cover;" onerror="this.src='/Content/images/margherita.jpg'" />
+                                            <span class="fw-bold text-dark">@itm.ItemName</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-light text-dark border">@itm.RestaurantName</span></td>
+                                    <td><span class="badge bg-light text-dark border">@itm.Category</span></td>
+                                    <td class="fw-bold">@itm.Quantity</td>
+                                    <td>&#8377;@itm.UnitPrice.ToString("F0")</td>
+                                    <td class="fw-bold text-dark text-end">&#8377;@itm.SubTotal.ToString("F0")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Breakdown -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-credit-card-2-front text-success me-2"></i> Payment Details</h5>
+                
+                <div class="d-flex justify-content-between mb-2 text-muted small">
+                    <span>Food Subtotal</span>
+                    <span class="fw-bold text-dark">&#8377;@Model.SubTotal.ToString("F0")</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 text-muted small">
+                    <span>Delivery Fee (Optimized Route)</span>
+                    <span class="fw-bold text-dark">&#8377;@Model.DeliveryFee.ToString("F0")</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 text-muted small">
+                    <span>Platform Service Fee</span>
+                    <span class="fw-bold text-dark">&#8377;@Model.PlatformFee.ToString("F0")</span>
+                </div>
+                <hr class="my-2" />
+                <div class="d-flex justify-content-between mb-3 fw-bold fs-5 text-dark">
+                    <span>Total Paid</span>
+                    <span class="text-danger">&#8377;@Model.TotalAmount.ToString("F0")</span>
+                </div>
+
+                <div class="p-2 bg-light rounded-3 d-flex justify-content-between align-items-center mb-3">
+                    <span class="small text-muted"><i class="bi bi-check-circle-fill text-success me-1"></i> Payment Status</span>
+                    <span class="badge bg-success">@Model.PaymentStatus (@Model.PaymentMethod)</span>
+                </div>
+
+                <!-- Customer Action Buttons -->
+                <div class="d-flex flex-column gap-2">
+                    @if (Model.CanCancel)
+                    {
+                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                            <i class="bi bi-x-circle me-1"></i> Cancel Order
+                        </button>
+                    }
+                    @if (Model.IsDelivered)
+                    {
+                        <button type="button" class="btn btn-warning btn-sm rounded-pill py-2 fw-bold" data-bs-toggle="modal" data-bs-target="#ratingModal">
+                            <i class="bi bi-star-fill me-1"></i> Rate Food & Delivery
+                        </button>
+                        <a href="@Url.Action("Index", "Food")" class="btn btn-primary-food btn-sm rounded-pill py-2 fw-bold text-center">
+                            <i class="bi bi-arrow-repeat me-1"></i> Reorder Items
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Cancel Order -->
+@if (Model.CanCancel)
+{
+    <div class="modal fade" id="cancelModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-octagon me-2"></i> Cancel Order #@Model.OrderNumber</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                @using (Html.BeginForm("Cancel", "OrderTracking", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="orderId" value="@Model.OrderId" />
+                    <div class="modal-body p-4">
+                        <p class="small text-muted">
+                            Cancellation is only permitted prior to kitchen preparation. Please tell us why you wish to cancel:
+                        </p>
+                        <select name="reason" class="form-select mb-3">
+                            <option value="Changed my mind">Changed my mind</option>
+                            <option value="Placed order by mistake">Placed order by mistake</option>
+                            <option value="Delivery time too long">Delivery time too long</option>
+                            <option value="Wrong delivery address">Wrong delivery address</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer border-top">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Keep Order</button>
+                        <button type="submit" class="btn btn-danger fw-bold px-4">Confirm Cancellation</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Modal: Rate Order, Restaurant & Rider -->
+<div class="modal fade" id="ratingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom">
+                <h5 class="modal-title fw-bold text-dark"><i class="bi bi-star-fill text-warning me-2"></i> Rate Your Experience</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            @using (Html.BeginForm("Rate", "OrderTracking", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="OrderId" value="@Model.OrderId" />
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Food Quality & Taste (1-5)</label>
+                        <select name="FoodRating" class="form-select">
+                            <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733; Excellent (5 Stars)</option>
+                            <option value="4">&#9733;&#9733;&#9733;&#9733;&#9734; Very Good (4 Stars)</option>
+                            <option value="3">&#9733;&#9733;&#9733;&#9734;&#9734; Average (3 Stars)</option>
+                            <option value="2">&#9733;&#9733;&#9734;&#9734;&#9734; Poor (2 Stars)</option>
+                            <option value="1">&#9733;&#9734;&#9734;&#9734;&#9734; Terrible (1 Star)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Restaurant Packaging & Accuracy (1-5)</label>
+                        <select name="RestaurantRating" class="form-select">
+                            <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733; 5 Stars</option>
+                            <option value="4">&#9733;&#9733;&#9733;&#9733;&#9734; 4 Stars</option>
+                            <option value="3">&#9733;&#9733;&#9733;&#9734;&#9734; 3 Stars</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Rider Politeness & Speed (1-5)</label>
+                        <select name="RiderRating" class="form-select">
+                            <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733; 5 Stars</option>
+                            <option value="4">&#9733;&#9733;&#9733;&#9733;&#9734; 4 Stars</option>
+                            <option value="3">&#9733;&#9733;&#9733;&#9734;&#9734; 3 Stars</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Review Comments</label>
+                        <textarea name="ReviewText" class="form-control" rows="3" placeholder="Food was hot and packed neatly..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary-food fw-bold px-4">Submit Rating</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- AUTO-POLLING SCRIPT (12-Second Refresh, Stops on Delivered/Cancelled) -->
+<script>
+    (function () {
+        var isFinal = @(Model.IsDelivered || Model.OverallStatus == "Cancelled" || Model.OverallStatus == "Rejected" ? "true" : "false");
+        if (isFinal) return;
+
+        var orderId = @Model.OrderId;
+        var pollInterval = setInterval(function () {
+            fetch('/OrderTracking/LiveStatus?orderId=' + orderId)
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.success) return;
+
+                    // Update Status text
+                    var statusBadge = document.getElementById('headerStatusBadge');
+                    if (statusBadge) statusBadge.textContent = data.status;
+
+                    // Update ETA
+                    var etaElem = document.getElementById('headerEtaCountdown');
+                    if (etaElem) {
+                        etaElem.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Approximately ' + data.etaMinutes + ' mins remaining';
+                    }
+
+                    // Stop if finished
+                    if (data.isDelivered || data.status === 'Delivered' || data.status === 'Cancelled') {
+                        clearInterval(pollInterval);
+                        window.location.reload();
+                    }
+                })
+                .catch(function (err) { console.error('Polling error:', err); });
+        }, 12000);
+    })();
+</script>
