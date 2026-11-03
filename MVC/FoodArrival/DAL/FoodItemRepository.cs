@@ -175,5 +175,43 @@ namespace FoodArrival.DAL
             }
             return false;
         }
+
+        public List<FoodItem> GetByRestaurant(int restaurantId)
+        {
+            var list = new List<FoodItem>();
+            string sql = @"
+                SELECT FoodItemId, ItemName, Description, Price, ImageUrl, IsAvailable, Category, IsVerified, CreatedAt
+                FROM dbo.FoodItems
+                WHERE (RestaurantId = @RestaurantId OR RestaurantId IS NULL)
+                ORDER BY FoodItemId DESC";
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@RestaurantId", restaurantId);
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            list.Add(new FoodItem
+                            {
+                                FoodItemId = Convert.ToInt32(reader["FoodItemId"]),
+                                ItemName = reader["ItemName"].ToString(),
+                                Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() : null,
+                                Price = Convert.ToDecimal(reader["Price"]),
+                                ImageUrl = reader["ImageUrl"] != DBNull.Value ? reader["ImageUrl"].ToString() : null,
+                                IsAvailable = Convert.ToBoolean(reader["IsAvailable"]),
+                                Category = reader["Category"] != DBNull.Value ? reader["Category"].ToString() : "Snacks",
+                                IsVerified = Convert.ToBoolean(reader["IsVerified"])
+                            });
+                        }
+                    }
+                }
+            }
+            catch { }
+            return list;
+        }
     }
 }
