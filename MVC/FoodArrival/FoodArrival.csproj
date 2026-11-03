@@ -125,8 +125,13 @@
     <Compile Include="Controllers\FoodController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\RestaurantController.cs" />
+    <Compile Include="Controllers\RiderController.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Admin.cs" />
+    <Compile Include="Models\Restaurant.cs" />
+    <Compile Include="Models\Rider.cs" />
+    <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\FoodItem.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\OrderDetail.cs" />
@@ -137,6 +142,9 @@
     <Compile Include="DAL\FoodItemRepository.cs" />
     <Compile Include="DAL\OrderRepository.cs" />
     <Compile Include="DAL\AdminRepository.cs" />
+    <Compile Include="DAL\RestaurantRepository.cs" />
+    <Compile Include="DAL\RiderRepository.cs" />
+    <Compile Include="DAL\NotificationRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -209,6 +217,10 @@
     <Content Include="Views\Admin\Dashboard.cshtml" />
     <Content Include="Views\Admin\FoodItems.cshtml" />
     <Content Include="Views\Admin\Orders.cshtml" />
+    <Content Include="Views\Restaurant\Login.cshtml" />
+    <Content Include="Views\Restaurant\Dashboard.cshtml" />
+    <Content Include="Views\Rider\Login.cshtml" />
+    <Content Include="Views\Rider\Dashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
