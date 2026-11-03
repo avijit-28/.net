@@ -6,6 +6,13 @@ Build a responsive food delivery website on the existing ASP.NET MVC 5 starter p
 
 The supplied archives and PDF are examples for reference. Their specific setup steps, tables, and workflows are not requirements unless adopted in this plan.
 
+## Account roles and registration
+
+- Roles are normalized in `food.Roles` and `food.UserRoles`; a user has one active application role at a time. Customer, Staff, and Admin are the supported roles.
+- Customer registration is self-service. A public Staff registration creates a customer account and a pending request in `food.AccountRoleRequests`; it does not grant staff permissions.
+- Staff profiles distinguish restaurant staff from delivery agents. An administrator reviews and approves staff requests, assigns the staff type, and can later change roles or deactivate accounts.
+- Admin is never offered on the public registration form. Bootstrap the first administrator using a database administrator connection; after that, admin access is assigned from the protected admin screen.
+
 ## Roles and journeys
 
 ### Customer
@@ -87,7 +94,7 @@ The script exposes procedures for restaurant search, menu browsing, menu-item ad
 1. Open `FoodArrival.slnx` in Visual Studio.
 2. In SSMS, run `FoodDeliveryDatabase.sql` against a SQL Server instance. The optional demo section is commented out by default.
 3. Configure a local `FoodDeliveryDB` connection string in the development environment; do not commit production credentials.
-4. Register a customer account, then use an administrative SQL connection to promote the first admin account. Promote restaurant owners and delivery agents through the Admin screen, and add restaurants there.
+4. Register a customer account, bootstrap the first admin account as described below, then use the admin screen to approve staff requests and add restaurants.
 5. Build and run using IIS Express. Online payment processing is not enabled; order payment records remain pending.
 
 ### First administrator bootstrap
@@ -96,8 +103,14 @@ After registering the first account, run this once in SSMS using a database admi
 
 ```sql
 USE FoodDeliveryDB;
-UPDATE food.Users SET Role = N'Admin' WHERE Email = N'admin@example.com';
+DECLARE @UserId INT = (SELECT UserId FROM food.Users WHERE Email = N'admin@example.com');
+DECLARE @AdminRoleId SMALLINT = (SELECT RoleId FROM food.Roles WHERE RoleName = N'Admin');
+IF @UserId IS NULL THROW 51090, 'Register the bootstrap account first.', 1;
+BEGIN TRANSACTION;
+UPDATE food.UserRoles SET IsActive = 0 WHERE UserId = @UserId AND IsActive = 1;
+INSERT food.UserRoles(UserId, RoleId, IsActive) VALUES (@UserId, @AdminRoleId, 1);
+COMMIT TRANSACTION;
 ```
 
-The account can then sign in and assign roles to other registered accounts through the Admin screen.
+The account can then sign in, approve Staff requests, manage user roles, create restaurants, and assign delivery agents through the Admin screen. Public registration does not create Admin accounts.
 
