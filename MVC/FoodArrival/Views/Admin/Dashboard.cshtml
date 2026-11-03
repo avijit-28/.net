@@ -235,7 +235,7 @@
                                         <td class="fw-bold text-dark">#FD@(1000 + order.OrderId)</td>
                                         <td>@order.CustomerName</td>
                                         <td class="text-muted small">@(string.IsNullOrEmpty(order.Items) ? "-" : order.Items)</td>
-                                        <td class="fw-bold text-dark">₹@order.TotalAmount.ToString("F0")</td>
+                                        <td class="fw-bold text-dark">&#8377;@order.TotalAmount.ToString("F0")</td>
                                         <td><span class="status-badge @badgeClass">@order.OrderStatus</span></td>
                                         <td class="text-muted small">@order.OrderedAt.ToString("hh:mm tt")</td>
                                     </tr>
