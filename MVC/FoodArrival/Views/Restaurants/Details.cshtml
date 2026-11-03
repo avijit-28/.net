@@ -34,15 +34,12 @@ else
                 @if (!String.IsNullOrWhiteSpace(item.Category)) { <span class="small text-muted">@item.Category</span> }
             </div>
             <div class="d-flex flex-column align-items-end gap-2"><span class="menu-price">₹@item.Price.ToString("0.00")</span>
-                using (Html.BeginForm("Add", "Cart", FormMethod.Post, new { @class = "d-flex gap-2" }))
-                {
-                    @Html.AntiForgeryToken()
-                    @Html.Hidden("restaurantId", Model.Restaurant.RestaurantId)
-                    @Html.Hidden("menuItemId", item.MenuItemId)
+                <form action="@Url.Action("Add", "Cart")" method="post" class="d-flex gap-2">
+                    @Html.AntiForgeryToken()<input type="hidden" name="restaurantId" value="@Model.Restaurant.RestaurantId" /><input type="hidden" name="menuItemId" value="@item.MenuItemId" />
                     <label class="visually-hidden" for="qty-@item.MenuItemId">Quantity for @item.Name</label>
                     <input class="form-control form-control-sm" style="width:68px" id="qty-@item.MenuItemId" name="quantity" type="number" min="1" max="50" value="1" />
                     <button class="btn btn-warning btn-sm" type="submit">Add</button>
-                }
+                </form>
             </div>
         </article>
     }
