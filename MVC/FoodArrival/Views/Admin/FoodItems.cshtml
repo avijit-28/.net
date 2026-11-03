@@ -12,26 +12,34 @@
                 <div class="d-flex align-items-center gap-2 mb-4 px-2">
                     <span class="badge bg-warning text-dark fw-bold px-2 py-1">Admin Panel</span>
                 </div>
-                <div class="nav flex-column">
+                <div class="nav flex-column gap-1">
                     <a href="@Url.Action("Dashboard", "Admin")" class="admin-nav-item">
                         <i class="bi bi-speedometer2"></i>
                         <span>Dashboard</span>
                     </a>
-                    <a href="@Url.Action("FoodItems", "Admin")" class="admin-nav-item active">
-                        <i class="bi bi-egg-fried"></i>
-                        <span>Food Items</span>
+                    <a href="@Url.Action("Approvals", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>Approvals</span>
                     </a>
                     <a href="@Url.Action("Orders", "Admin", new { tab = "pending" })" class="admin-nav-item">
                         <i class="bi bi-card-checklist"></i>
                         <span>Orders</span>
                     </a>
-                    <a href="@Url.Action("Dashboard", "Admin")" class="admin-nav-item">
-                        <i class="bi bi-people"></i>
-                        <span>Customers</span>
+                    <a href="@Url.Action("FoodItems", "Admin")" class="admin-nav-item active">
+                        <i class="bi bi-egg-fried"></i>
+                        <span>Food Menu</span>
                     </a>
-                    <a href="@Url.Action("Dashboard", "Admin")" class="admin-nav-item">
-                        <i class="bi bi-graph-up"></i>
-                        <span>Reports</span>
+                    <a href="@Url.Action("Riders", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-bicycle"></i>
+                        <span>Rider Fleet</span>
+                    </a>
+                    <a href="@Url.Action("Transactions", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-cash-stack"></i>
+                        <span>Transactions</span>
+                    </a>
+                    <a href="@Url.Action("Bulletins", "Admin")" class="admin-nav-item">
+                        <i class="bi bi-megaphone-fill"></i>
+                        <span>Bulletins</span>
                     </a>
                     <hr class="border-secondary my-3" />
                     <a href="@Url.Action("Logout", "Admin")" class="admin-nav-item text-danger">
