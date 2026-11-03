@@ -589,5 +589,48 @@ namespace FoodArrival.Controllers
 
             return RedirectToAction("FoodItems");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ResetUserPassword(string role, int id)
+        {
+            if (!IsAdminAuthenticated()) return RedirectToAction("Login");
+
+            string tempPassword = "Food@" + Guid.NewGuid().ToString("N").Substring(0, 6);
+            bool success = false;
+            string message = "";
+
+            if (role == "Customer")
+            {
+                success = _customerRepo.ResetPassword(id, tempPassword, out message);
+                if (success) _notifRepo.AddNotification("Customer", id, "Password Reset by Administrator", $"Your password was reset to: {tempPassword}. Please change it upon login.", "Alert", "/Account/Profile");
+            }
+            else if (role == "Rider")
+            {
+                success = _riderRepo.ResetPassword(id, tempPassword, out message);
+                if (success) _notifRepo.AddNotification("Rider", id, "Password Reset by Administrator", $"Your password was reset to: {tempPassword}. Please change it upon login.", "Alert", "/Rider/Profile");
+            }
+            else if (role == "Restaurant")
+            {
+                success = _restRepo.ResetPassword(id, tempPassword, out message);
+                if (success) _notifRepo.AddNotification("Restaurant", id, "Password Reset by Administrator", $"Your password was reset to: {tempPassword}. Please change it upon login.", "Alert", "/Restaurant/Dashboard");
+            }
+            else if (role == "RestaurantStaff")
+            {
+                success = _staffRepo.ResetPassword(id, tempPassword, out message);
+                if (success) _notifRepo.AddNotification("RestaurantStaff", id, "Password Reset by Administrator", $"Your password was reset to: {tempPassword}. Please change it upon login.", "Alert", "/Staff/Dashboard");
+            }
+
+            if (success)
+            {
+                TempData["Success"] = $"Password for {role} #{id} reset successfully to: {tempPassword} (Notification dispatched to user).";
+            }
+            else
+            {
+                TempData["Error"] = "Failed to reset password: " + message;
+            }
+
+            return RedirectToAction("Dashboard");
+        }
     }
 }
