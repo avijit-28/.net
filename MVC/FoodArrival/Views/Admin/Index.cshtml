@@ -41,8 +41,8 @@
             <div class="border-top py-3"><div class="d-flex justify-content-between gap-2"><div><strong>@user.FullName</strong><div class="small text-muted">@user.Email · #@user.UserId</div>@if (user.PendingRoleRequestId.HasValue) { <div class="small text-warning-emphasis">Pending staff request: @user.RequestedStaffType</div> }</div><span class="status-pill">@(user.IsActive ? user.Role + (String.IsNullOrEmpty(user.StaffType) ? "" : " · " + user.StaffType) : "Inactive")</span></div>
                 <form action="@Url.Action("UpdateUser", "Admin")" method="post" class="d-flex flex-wrap gap-2 mt-2">
                     @Html.AntiForgeryToken()<input type="hidden" name="userId" value="@user.UserId" />
-                    @Html.DropDownList("role", new SelectList(new[] { "Customer", "Staff", "Admin" }, user.Role), new { @class = "form-select", style = "max-width:150px" })
-                    @Html.DropDownList("staffType", new SelectList(new[] { "Restaurant", "DeliveryAgent" }, user.StaffType ?? user.RequestedStaffType), "Staff area", new { @class = "form-select", style = "max-width:190px" })
+                    @Html.DropDownList("role", new SelectList(new[] { "Customer", "Staff", "Admin" }, user.Role), new { @class = "form-select js-account-role", style = "max-width:150px" })
+                    @Html.DropDownList("staffType", new SelectList(new[] { "Restaurant", "DeliveryAgent" }, user.StaffType ?? user.RequestedStaffType), "Staff area", new { @class = "form-select js-staff-type", style = "max-width:190px" })
                     <div class="form-check align-self-center"><input class="form-check-input" type="checkbox" id="active-@user.UserId" name="isActive" value="true" @(user.IsActive ? "checked" : "") /><input type="hidden" name="isActive" value="false" /><label class="form-check-label" for="active-@user.UserId">Active</label></div>
                     <button class="btn btn-outline-dark btn-sm" type="submit">Save</button>
                 </form>
@@ -67,3 +67,15 @@
         </form>
     }
 </section>
+@section scripts {
+    <script>
+        document.querySelectorAll('.js-account-role').forEach(function (roleSelect) {
+            function updateStaffType() {
+                var staffType = roleSelect.form.querySelector('.js-staff-type');
+                staffType.required = roleSelect.value === 'Staff';
+            }
+            roleSelect.addEventListener('change', updateStaffType);
+            updateStaffType();
+        });
+    </script>
+}
