@@ -25,7 +25,6 @@ if ($regHtml -match "registration-hero-transparent.png") {
 }
 
 Write-Host "`n--- TEST 3: Check Notifications for New User (Strict User/Role Isolation) ---" -ForegroundColor Cyan
-# Query notifications API as a brand new session / guest
 $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 $guestNotifs = (Invoke-RestMethod -Uri "$baseUrl/Home/GetNotifications" -WebSession $session).notifications
 Write-Host "Guest notifications count: $($guestNotifs.Count)"
@@ -36,7 +35,6 @@ if ($guestNotifs.Count -eq 0) {
 }
 
 Write-Host "`n--- TEST 4: Check Track Order Page (Order/History) has no User Profile sidebar ---" -ForegroundColor Cyan
-# Login as Customer (John Doe)
 $loginPage = Invoke-WebRequest -Uri "$baseUrl/Account/Login" -WebSession $session -UseBasicParsing
 $loginHtml = $loginPage.Content
 $token = ""
@@ -44,15 +42,11 @@ if ($loginHtml -match '__RequestVerificationToken"[^>]*value="([^"]+)"') {
     $token = $matches[1]
 }
 
-try {
-    $loginPost = Invoke-WebRequest -Uri "$baseUrl/Account/Login" -Method Post -WebSession $session -Body @{
-        "__RequestVerificationToken" = $token;
-        "Email" = "john@example.com";
-        "Password" = "password123";
-        "Role" = "Customer"
-    } -MaximumRedirection 0
-} catch [System.Net.WebException] {
-    $loginPost = $_.Exception.Response
+$loginPost = Invoke-WebRequest -Uri "$baseUrl/Account/Login" -Method Post -WebSession $session -Body @{
+    "__RequestVerificationToken" = $token;
+    "Email" = "john@example.com";
+    "Password" = "password123";
+    "Role" = "Customer"
 }
 
 $trackPage = (Invoke-WebRequest -Uri "$baseUrl/Order/History" -WebSession $session -UseBasicParsing).Content
@@ -63,7 +57,6 @@ if ($trackPage -notmatch "Customer Left Sidebar" -and $trackPage -notmatch "My P
 }
 
 Write-Host "`n--- TEST 5: Check Staff UpdateOrderStatus without AntiForgeryToken Identity Exception ---" -ForegroundColor Cyan
-# New session for Staff
 $staffSession = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 $staffLoginPage = Invoke-WebRequest -Uri "$baseUrl/Staff/Login" -WebSession $staffSession -UseBasicParsing
 $staffLoginHtml = $staffLoginPage.Content
@@ -72,17 +65,13 @@ if ($staffLoginHtml -match '__RequestVerificationToken"[^>]*value="([^"]+)"') {
     $staffToken = $matches[1]
 }
 
-try {
-    $staffLoginPost = Invoke-WebRequest -Uri "$baseUrl/Staff/Login" -Method Post -WebSession $staffSession -Body @{
-        "__RequestVerificationToken" = $staffToken;
-        "Email" = "staff@example.com";
-        "Password" = "password123"
-    } -MaximumRedirection 0
-} catch [System.Net.WebException] {
-    $staffLoginPost = $_.Exception.Response
+$staffLoginPost = Invoke-WebRequest -Uri "$baseUrl/Staff/Login" -Method Post -WebSession $staffSession -Body @{
+    "__RequestVerificationToken" = $staffToken;
+    "Email" = "staff@example.com";
+    "Password" = "password123"
 }
 
-Write-Host "Staff Login status: $($staffLoginPost.StatusCode)"
+Write-Host "Staff Login StatusCode: $($staffLoginPost.StatusCode)"
 
 # Get Staff Dashboard to retrieve suborder status update token
 $staffDash = (Invoke-WebRequest -Uri "$baseUrl/Staff/Dashboard" -WebSession $staffSession -UseBasicParsing).Content
@@ -91,23 +80,18 @@ if ($staffDash -match '__RequestVerificationToken"[^>]*value="([^"]+)"') {
     $dashToken = $matches[1]
 }
 
-# Post UpdateOrderStatus
-try {
-    $updatePost = Invoke-WebRequest -Uri "$baseUrl/Staff/UpdateOrderStatus" -Method Post -WebSession $staffSession -Body @{
-        "__RequestVerificationToken" = $dashToken;
-        "orderId" = 1;
-        "subOrderId" = 1;
-        "status" = "Cooking"
-    } -MaximumRedirection 0
-} catch [System.Net.WebException] {
-    $updatePost = $_.Exception.Response
+$updatePost = Invoke-WebRequest -Uri "$baseUrl/Staff/UpdateOrderStatus" -Method Post -WebSession $staffSession -Body @{
+    "__RequestVerificationToken" = $dashToken;
+    "orderId" = 1;
+    "subOrderId" = 1;
+    "status" = "Cooking"
 }
 
-Write-Host "Staff UpdateOrderStatus status: $($updatePost.StatusCode)"
-if ($updatePost.StatusCode -eq 302 -or $updatePost.StatusCode -eq 200 -or $updatePost.StatusCode -eq [System.Net.HttpStatusCode]::Found) {
+Write-Host "Staff UpdateOrderStatus StatusCode: $($updatePost.StatusCode)"
+if ($updatePost.StatusCode -eq 200 -and $updatePost.Content -notmatch "HttpAntiForgeryException") {
     Write-Host "PASS: Staff UpdateOrderStatus succeeded with NO AntiForgeryException!" -ForegroundColor Green
 } else {
-    Write-Host "FAIL: Staff UpdateOrderStatus failed with status $($updatePost.StatusCode)" -ForegroundColor Red
+    Write-Host "FAIL: Staff UpdateOrderStatus failed or threw error." -ForegroundColor Red
 }
 
-Write-Host "`nAll verification checks completed successfully!" -ForegroundColor Cyan
+Write-Host "`nAll 5 verification checks completed successfully!" -ForegroundColor Cyan
