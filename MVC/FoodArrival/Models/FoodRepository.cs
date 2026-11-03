@@ -359,7 +359,7 @@ namespace FoodArrival.Models
             {
                 UserId = Convert.ToInt32(reader["UserId"]), FullName = Text(reader, "FullName"), Email = Text(reader, "Email"),
                 Role = Text(reader, "Role"), StaffType = Text(reader, "StaffType"),
-                PendingRoleRequestId = reader["PendingRoleRequestId"] == DBNull.Value ? (int?)null : Convert.ToInt32(reader["PendingRoleRequestId"]),
+                PendingRoleRequestId = reader["PendingRoleRequestId"] == DBNull.Value ? (long?)null : Convert.ToInt64(reader["PendingRoleRequestId"]),
                 RequestedStaffType = Text(reader, "RequestedStaffType"), IsActive = Convert.ToBoolean(reader["IsActive"])
             });
             return result;
