@@ -37,7 +37,11 @@ namespace FoodArrival.Controllers
         public ActionResult UpdateUser(int userId, string role, string staffType, bool isActive)
         {
             if (!new[] { "Customer", "Staff", "Admin" }.Contains(role)) return new HttpStatusCodeResult(400);
-            if (role == "Staff" && !new[] { "Restaurant", "DeliveryAgent" }.Contains(staffType)) return new HttpStatusCodeResult(400);
+            if (role == "Staff" && !new[] { "Restaurant", "DeliveryAgent" }.Contains(staffType))
+            {
+                TempData["Error"] = "Choose a staff area before granting the Staff role.";
+                return RedirectToAction("Index");
+            }
             try { new FoodRepository().UpdateUserRole(Int32.Parse(User.Identity.Name), userId, role, staffType, isActive); TempData["Notice"] = "Account updated."; }
             catch (Exception ex) { TempData["Error"] = ex.Message; }
             return RedirectToAction("Index");
