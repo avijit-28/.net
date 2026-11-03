@@ -213,7 +213,7 @@ namespace FoodArrival.Models
         public string Email { get; set; }
         public string Role { get; set; }
         public string StaffType { get; set; }
-        public int? PendingRoleRequestId { get; set; }
+        public long? PendingRoleRequestId { get; set; }
         public string RequestedStaffType { get; set; }
         public bool IsActive { get; set; }
     }
