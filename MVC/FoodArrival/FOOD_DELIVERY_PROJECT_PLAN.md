@@ -87,5 +87,17 @@ The script exposes procedures for restaurant search, menu browsing, menu-item ad
 1. Open `FoodArrival.slnx` in Visual Studio.
 2. In SSMS, run `FoodDeliveryDatabase.sql` against a SQL Server instance. The optional demo section is commented out by default.
 3. Configure a local `FoodDeliveryDB` connection string in the development environment; do not commit production credentials.
-4. Build and run using IIS Express, then implement phases in order.
+4. Register a customer account, then use an administrative SQL connection to promote the first admin account. Promote restaurant owners and delivery agents through the Admin screen, and add restaurants there.
+5. Build and run using IIS Express. Online payment processing is not enabled; order payment records remain pending.
+
+### First administrator bootstrap
+
+After registering the first account, run this once in SSMS using a database administrator login, replacing the email with that account's address:
+
+```sql
+USE FoodDeliveryDB;
+UPDATE food.Users SET Role = N'Admin' WHERE Email = N'admin@example.com';
+```
+
+The account can then sign in and assign roles to other registered accounts through the Admin screen.
 
