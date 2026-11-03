@@ -328,6 +328,21 @@ namespace FoodArrival.Models
             return result;
         }
 
+        public IList<OrderSummary> GetAdminOrders()
+        {
+            var result = new List<OrderSummary>();
+            using (var connection = OpenConnection())
+            using (var command = Procedure(connection, "food.usp_Admin_OrderList"))
+            using (var reader = command.ExecuteReader())
+                while (reader.Read())
+                {
+                    var order = ReadOrder(reader);
+                    order.CustomerName = Text(reader, "CustomerName");
+                    result.Add(order);
+                }
+            return result;
+        }
+
         public IList<KeyValuePair<int, string>> GetActiveAgents()
         {
             var result = new List<KeyValuePair<int, string>>();
