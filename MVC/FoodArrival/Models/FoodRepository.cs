@@ -435,6 +435,19 @@ namespace FoodArrival.Models
             }
             return null;
         }
+
+        public void CreateReview(int customerId, long orderId, byte rating, string comment)
+        {
+            using (var connection = OpenConnection())
+            using (var command = Procedure(connection, "food.usp_Review_Create"))
+            {
+                command.Parameters.Add("@CustomerUserId", SqlDbType.Int).Value = customerId;
+                command.Parameters.Add("@OrderId", SqlDbType.BigInt).Value = orderId;
+                command.Parameters.Add("@Rating", SqlDbType.TinyInt).Value = rating;
+                command.Parameters.Add("@Comment", SqlDbType.NVarChar, 1000).Value = (object)comment ?? DBNull.Value;
+                command.ExecuteNonQuery();
+            }
+        }
     }
 
     public class AccountRecord
