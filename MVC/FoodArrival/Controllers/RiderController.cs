@@ -46,7 +46,6 @@ namespace FoodArrival.Controllers
                 Session["RiderEmail"] = rider.Email;
                 Session["UserRole"] = "Rider";
 
-                FormsAuthentication.SetAuthCookie(rider.Email, false);
                 TempData["Success"] = "Welcome, Delivery Partner " + rider.RiderName + "!";
                 return RedirectToAction("Dashboard");
             }
