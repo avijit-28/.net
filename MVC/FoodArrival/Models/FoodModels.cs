@@ -175,5 +175,29 @@ namespace FoodArrival.Models
     {
         public IList<ReadyOrderViewModel> ReadyOrders { get; set; }
         public IList<System.Web.Mvc.SelectListItem> Agents { get; set; }
+        public IList<AdminUserViewModel> Users { get; set; }
+        public IList<AdminRestaurantViewModel> Restaurants { get; set; }
+        public AdminRestaurantViewModel NewRestaurant { get; set; }
+    }
+
+    public class AdminUserViewModel
+    {
+        public int UserId { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string Role { get; set; }
+        public bool IsActive { get; set; }
+    }
+
+    public class AdminRestaurantViewModel
+    {
+        public int RestaurantId { get; set; }
+        [Required] public int OwnerUserId { get; set; }
+        [Required, StringLength(160)] public string Name { get; set; }
+        [Required, StringLength(80)] public string Cuisine { get; set; }
+        [Required, StringLength(250)] public string AddressLine { get; set; }
+        [Required, StringLength(100)] public string City { get; set; }
+        public string Description { get; set; }
+        public bool IsActive { get; set; }
     }
 }
