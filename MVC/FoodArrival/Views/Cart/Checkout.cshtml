@@ -1,0 +1,29 @@
+@model FoodArrival.Models.CheckoutViewModel
+@{
+    ViewBag.Title = "Checkout";
+}
+<p class="eyebrow mb-1">One last step</p><h1 class="section-heading mb-4">Delivery details</h1>
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="form-panel">
+            @using (Html.BeginForm("Checkout", "Cart", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(false, "Please review the following:")
+                <div class="mb-3">@Html.LabelFor(x => x.RecipientName, new { @class = "form-label" }) @Html.TextBoxFor(x => x.RecipientName, new { @class = "form-control", autocomplete = "name" }) @Html.ValidationMessageFor(x => x.RecipientName)</div>
+                <div class="mb-3">@Html.LabelFor(x => x.Phone, new { @class = "form-label" }) @Html.TextBoxFor(x => x.Phone, new { @class = "form-control", autocomplete = "tel" }) @Html.ValidationMessageFor(x => x.Phone)</div>
+                <div class="mb-3">@Html.LabelFor(x => x.AddressLine, new { @class = "form-label" }) @Html.TextBoxFor(x => x.AddressLine, new { @class = "form-control", autocomplete = "address-line1" }) @Html.ValidationMessageFor(x => x.AddressLine)</div>
+                <div class="mb-3">@Html.LabelFor(x => x.AddressLine2, new { @class = "form-label" }) @Html.TextBoxFor(x => x.AddressLine2, new { @class = "form-control", autocomplete = "address-line2" })</div>
+                <div class="row"><div class="col-md-7 mb-3">@Html.LabelFor(x => x.City, new { @class = "form-label" }) @Html.TextBoxFor(x => x.City, new { @class = "form-control", autocomplete = "address-level2" }) @Html.ValidationMessageFor(x => x.City)</div><div class="col-md-5 mb-3">@Html.LabelFor(x => x.PostalCode, new { @class = "form-label" }) @Html.TextBoxFor(x => x.PostalCode, new { @class = "form-control", autocomplete = "postal-code" })</div></div>
+                <div class="mb-3">@Html.LabelFor(x => x.Instructions, new { @class = "form-label" }) @Html.TextAreaFor(x => x.Instructions, new { @class = "form-control", rows = 3 })</div>
+                <div class="mb-4"><label class="form-label" for="PaymentMethod">Payment method</label>@Html.DropDownListFor(x => x.PaymentMethod, new SelectList(new[] { "Cash", "UPI", "Card", "Other" }, Model.PaymentMethod), "Choose a method", new { @class = "form-select" })@Html.ValidationMessageFor(x => x.PaymentMethod)<div class="form-text">This app records payment as pending. It does not charge cards or process UPI payments.</div></div>
+                <button type="submit" class="btn btn-dark btn-lg">Place order</button>
+            }
+        </div>
+    </div>
+    <div class="col-lg-5"><div class="surface-card p-4"><h2 class="h5 fw-bold">Your cart</h2>
+        @foreach (var line in FoodArrival.Models.CartSession.Get(Session)) { <div class="d-flex justify-content-between py-2 border-top"><span>@line.Quantity × @line.Name</span><span>₹@line.LineTotal.ToString("0.00")</span></div> }
+        <div class="d-flex justify-content-between border-top pt-3 mt-2"><strong>Subtotal</strong><strong>₹@FoodArrival.Models.CartSession.Total(Session).ToString("0.00")</strong></div><p class="small text-muted mb-0 mt-2">Delivery and tax currently set to ₹0.00.</p>
+    </div></div>
+</div>
+@section scripts { @Scripts.Render("~/bundles/jqueryval") }

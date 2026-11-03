@@ -1,0 +1,46 @@
+@model IList<FoodArrival.Models.CartLine>
+@{
+    ViewBag.Title = "Your cart";
+}
+<p class="eyebrow mb-1">Almost there</p><h1 class="section-heading mb-4">Your cart</h1>
+@if (!Model.Any())
+{
+    <div class="empty-state"><div class="fs-1 mb-2">🛍</div><h2 class="h5">Your cart is ready for something delicious</h2><p class="text-muted">Browse a local kitchen and add a few favorites.</p><a class="btn btn-dark" href="@Url.Action("Index", "Restaurants")">Explore restaurants</a></div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="surface-card p-3 p-md-4">
+                <p class="text-muted">From <strong class="text-dark">@Model[0].RestaurantName</strong></p>
+                @foreach (var line in Model)
+                {
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 border-top py-3">
+                        <div><strong>@line.Name</strong><div class="small text-muted">₹@line.UnitPrice.ToString("0.00") each</div></div>
+                        <div class="d-flex align-items-center gap-3">
+                            @using (Html.BeginForm("Update", "Cart", FormMethod.Post, new { @class = "d-flex gap-2 align-items-center" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("menuItemId", line.MenuItemId)
+                                <label class="visually-hidden" for="qty-@line.MenuItemId">Quantity for @line.Name</label>
+                                <input class="form-control form-control-sm" id="qty-@line.MenuItemId" name="quantity" type="number" min="0" max="50" value="@line.Quantity" style="width:72px" />
+                                <button class="btn btn-outline-secondary btn-sm" type="submit">Update</button>
+                            }
+                            <strong>₹@line.LineTotal.ToString("0.00")</strong>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <aside class="col-lg-4">
+            <div class="surface-card p-4">
+                <h2 class="h5 fw-bold">Order summary</h2>
+                <div class="d-flex justify-content-between border-top pt-3"><span>Subtotal</span><strong>₹@ViewBag.Total.ToString("0.00")</strong></div>
+                <p class="small text-muted mt-3">Delivery fee and any taxes will be shown at checkout.</p>
+                @if (Request.IsAuthenticated) { <a class="btn btn-dark w-100 mt-2" href="@Url.Action("Checkout")">Continue to checkout</a> }
+                else { <a class="btn btn-dark w-100 mt-2" href="@Url.Action("Login", "Account", new { returnUrl = Url.Action("Checkout", "Cart") })">Sign in to checkout</a> }
+                <a class="btn btn-link w-100 mt-2" href="@Url.Action("Details", "Restaurants", new { id = Model[0].RestaurantId })">Add more items</a>
+            </div>
+        </aside>
+    </div>
+}

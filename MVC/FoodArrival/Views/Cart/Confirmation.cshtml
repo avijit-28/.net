@@ -1,0 +1,12 @@
+@model FoodArrival.Models.OrderDetailsViewModel
+@{
+    ViewBag.Title = "Order placed";
+}
+<div class="surface-card p-4 p-lg-5">
+    <p class="eyebrow">Kitchen notified</p><h1 class="section-heading">Your order is on its way to the kitchen.</h1>
+    <p class="text-muted">Order <strong>@Model.Order.OrderNumber</strong> from @Model.Order.RestaurantName</p>
+    <div class="alert alert-info" role="status">Payment status: <strong>@(Model.PaymentStatus ?? "Pending")</strong>. No online payment has been processed by this app.</div>
+    <p>Total: <strong>₹@Model.Order.TotalAmount.ToString("0.00")</strong> · Status: <span class="status-pill">@Model.Order.OrderStatus</span></p>
+    <a class="btn btn-dark" href="@Url.Action("Details", "Orders", new { id = Model.Order.OrderId })">Track your order</a>
+    <a class="btn btn-outline-dark ms-2" href="@Url.Action("Index", "Restaurants")">Continue browsing</a>
+</div>
