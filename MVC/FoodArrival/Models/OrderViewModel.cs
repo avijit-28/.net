@@ -32,6 +32,18 @@ namespace FoodArrival.Models
         public int RejectedOrders { get; set; }
         public int AvailableFoodItems { get; set; }
         public int ActiveCustomers { get; set; }
+        public int TotalRestaurants { get; set; }
+        public int TotalRiders { get; set; }
+        public int TotalStaff { get; set; }
+        public int PendingApprovalsCount { get; set; }
+        public decimal TotalRevenue { get; set; }
+        public decimal PlatformEarnings { get; set; }
         public List<Order> RecentOrders { get; set; } = new List<Order>();
+        public List<Transaction> RecentTransactions { get; set; } = new List<Transaction>();
+        public List<Bulletin> ActiveBulletins { get; set; } = new List<Bulletin>();
+        public List<Restaurant> PendingRestaurants { get; set; } = new List<Restaurant>();
+        public List<RestaurantStaff> PendingStaff { get; set; } = new List<RestaurantStaff>();
+        public List<RiderAffiliation> PendingRiders { get; set; } = new List<RiderAffiliation>();
+        public List<FoodItem> PendingDishes { get; set; } = new List<FoodItem>();
     }
 }
