@@ -5,54 +5,19 @@
     string custName = customer?.CustomerName ?? Session["CustomerName"]?.ToString() ?? "Customer";
 }
 
-<div class="container py-4">
-    <div class="row g-4">
-        @if (customer != null)
-        {
-            <!-- Customer Left Sidebar -->
-            <div class="col-lg-3 col-md-4">
-                <div class="card border-0 shadow-sm rounded-4 p-4 text-center mb-4">
-                    <div class="mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #FF7A18, #FF5E1E); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 2rem; font-weight: bold;">
-                        @(custName.Length > 0 ? custName.Substring(0, 1).ToUpper() : "C")
-                    </div>
-                    <h5 class="fw-bold mb-0">@custName</h5>
-                    <span class="badge bg-light text-muted border rounded-pill mt-1">Customer</span>
-                    <p class="text-muted small mt-2 mb-0">@Session["CustomerEmail"]</p>
-                </div>
+<div class="container py-4" style="max-width: 980px;">
+    <!-- Orders Tracking List Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-geo-alt-fill text-danger me-2"></i>Live Track Orders</h2>
+            <p class="text-muted small mb-0">Track real-time multi-restaurant preparation, rider pickup, and delivery receipts</p>
+        </div>
+        <a href="@Url.Action("Index", "Food")" class="btn btn-primary-food btn-sm">
+            <i class="bi bi-plus-circle me-1"></i> New Order
+        </a>
+    </div>
 
-                <div class="card border-0 shadow-sm rounded-4 p-3">
-                    <div class="nav flex-column">
-                        <a href="@Url.Action("Profile", "Account")" class="category-pill">
-                            <i class="bi bi-person me-2"></i> My Profile
-                        </a>
-                        <a href="@Url.Action("History", "Order")" class="category-pill active">
-                            <i class="bi bi-bag-check me-2"></i> My Orders
-                        </a>
-                        <a href="@Url.Action("Profile", "Account")" class="category-pill">
-                            <i class="bi bi-key me-2"></i> Change Password
-                        </a>
-                        <hr class="my-2" />
-                        <a href="@Url.Action("Logout", "Account")" class="category-pill text-danger">
-                            <i class="bi bi-box-arrow-right me-2"></i> Logout
-                        </a>
-                    </div>
-                </div>
-            </div>
-        }
-
-        <!-- Orders List -->
-        <div class="@(customer != null ? "col-lg-9 col-md-8" : "col-12")">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h2 class="fw-bold mb-0">My Orders</h2>
-                    <p class="text-muted small mb-0">Track live deliveries and view order receipts</p>
-                </div>
-                <a href="@Url.Action("Index", "Food")" class="btn btn-primary-food btn-sm">
-                    <i class="bi bi-plus-circle me-1"></i> New Order
-                </a>
-            </div>
-
-            @if (Model != null && Model.Any())
+    @if (Model != null && Model.Any())
             {
                 <div class="d-flex flex-column gap-3">
                     @foreach (var order in Model)
