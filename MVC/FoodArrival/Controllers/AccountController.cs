@@ -124,7 +124,7 @@ namespace FoodArrival.Controllers
         }
 
         [HttpGet]
-        public ActionResult Profile()
+        public new ActionResult Profile()
         {
             if (Session["CustomerId"] == null)
             {
@@ -143,7 +143,7 @@ namespace FoodArrival.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Profile(Customer model)
+        public new ActionResult Profile(Customer model)
         {
             if (Session["CustomerId"] == null)
             {
