@@ -45,6 +45,82 @@ namespace FoodArrival.DAL
             return null;
         }
 
+        public Rider GetById(int riderId)
+        {
+            string sql = @"
+                SELECT RiderId, RiderName, Email, PhoneNumber, VehicleType, CurrentStatus, IsActive
+                FROM dbo.Riders
+                WHERE RiderId = @RiderId";
+
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@RiderId", riderId);
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Rider
+                            {
+                                RiderId = Convert.ToInt32(reader["RiderId"]),
+                                RiderName = reader["RiderName"].ToString(),
+                                Email = reader["Email"].ToString(),
+                                PhoneNumber = reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : null,
+                                VehicleType = reader["VehicleType"] != DBNull.Value ? reader["VehicleType"].ToString() : "Motorbike",
+                                CurrentStatus = reader["CurrentStatus"] != DBNull.Value ? reader["CurrentStatus"].ToString() : "Available",
+                                IsActive = Convert.ToBoolean(reader["IsActive"])
+                            };
+                        }
+                    }
+                }
+            }
+            catch { }
+            return null;
+        }
+
+        public bool Update(Rider model, out string message)
+        {
+            message = string.Empty;
+            string sql = @"
+                UPDATE dbo.Riders
+                SET RiderName = @RiderName,
+                    PhoneNumber = @PhoneNumber,
+                    VehicleType = @VehicleType,
+                    CurrentStatus = @CurrentStatus
+                WHERE RiderId = @RiderId";
+
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@RiderId", model.RiderId);
+                    cmd.Parameters.AddWithValue("@RiderName", model.RiderName ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", (object)model.PhoneNumber ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@VehicleType", (object)model.VehicleType ?? "Motorbike");
+                    cmd.Parameters.AddWithValue("@CurrentStatus", (object)model.CurrentStatus ?? "Available");
+
+                    conn.Open();
+                    int affected = cmd.ExecuteNonQuery();
+                    if (affected > 0)
+                    {
+                        message = "Rider profile updated successfully.";
+                        return true;
+                    }
+                    message = "Rider not found.";
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
+        }
+
         public List<Order> GetAvailableDeliveries()
         {
             var list = new List<Order>();
