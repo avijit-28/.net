@@ -5,70 +5,93 @@
 }
 
 <div class="container py-5">
-    <div class="auth-container" style="max-width: 850px;">
+    <div class="auth-container shadow-lg rounded-5 overflow-hidden" style="max-width: 880px; margin: 0 auto; background: #FFFFFF;">
         <div class="row g-0">
-            <!-- Left Admin Banner -->
-            <div class="col-lg-5 p-5 text-white d-flex flex-column justify-content-center" style="background: linear-gradient(135deg, #1E2530 0%, #111827 100%);">
+            <!-- Left Admin Banner (Matching Panel 7: Dark theme with Chef Emblem) -->
+            <div class="col-lg-5 p-5 text-white d-flex flex-column justify-content-center position-relative" style="background: linear-gradient(145deg, #1A202C 0%, #0F172A 100%); min-height: 480px;">
                 <div class="mb-4">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                    <!-- Chef Emblem from Template -->
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none">
                         <path d="M12 2C9.5 2 7.5 3.8 7.1 6.1C5.3 6.6 4 8.2 4 10.2C4 12.3 5.5 14 7.5 14.3V18C7.5 19.1 8.4 20 9.5 20H14.5C15.6 20 16.5 19.1 16.5 18V14.3C18.5 14 20 12.3 20 10.2C20 8.2 18.7 6.6 16.9 6.1C16.5 3.8 14.5 2 12 2Z" fill="#FF5E1E" />
                         <path d="M9 11V16M12 10V16M15 11V16" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" />
                     </svg>
                 </div>
-                <h2 class="fw-bold mb-3">Admin Access</h2>
-                <p class="text-white-50 mb-4">
-                    Login to FoodReady Admin Panel to manage menu items, review orders, and monitor real-time sales.
+                <h1 class="fw-bold mb-3" style="font-size: 2.2rem; letter-spacing: -0.5px;">Admin Access</h1>
+                <p class="text-white-50 mb-4" style="line-height: 1.6; font-size: 1.05rem;">
+                    Login to FoodReady Admin Panel to manage items, review orders, verify partners, and monitor real-time platform operations.
                 </p>
-                <div class="py-3">
-                    <i class="bi bi-shield-lock display-3 text-warning opacity-75"></i>
+                <div class="mt-auto pt-3 border-top border-secondary text-white-50 small">
+                    <i class="bi bi-shield-check text-warning me-1"></i> Authorized Administrative Personnel Only
                 </div>
-                <p class="small text-white-50 mt-auto mb-0">
-                    <i class="bi bi-lock-fill me-1"></i> Authorized Personnel Only
-                </p>
             </div>
 
-            <!-- Right Admin Login Form -->
-            <div class="col-lg-7 auth-form-card">
+            <!-- Right Admin Login Card (Faithfully matching Image 7) -->
+            <div class="col-lg-7 p-4 p-md-5 d-flex flex-column justify-content-center bg-white">
                 <div class="text-center mb-4">
-                    <div class="stat-icon pending mx-auto mb-2" style="width: 48px; height: 48px;">
-                        <i class="bi bi-shield-lock-fill"></i>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 56px; height: 56px; background: #FFF3E0; color: #E65100;">
+                        <i class="bi bi-shield-lock-fill fs-2"></i>
                     </div>
-                    <h3 class="fw-bold text-dark">Admin Login</h3>
-                    <p class="text-muted small">Enter your administrative credentials</p>
+                    <h3 class="fw-bold text-dark mb-1">Admin Login</h3>
+                    <p class="text-muted small">Enter your administrative credentials to continue</p>
                 </div>
 
                 @using (Html.BeginForm("Login", "Admin", FormMethod.Post, new { @class = "needs-validation" }))
                 {
                     @Html.AntiForgeryToken()
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3 small" })
+                    @Html.ValidationSummary(true, "", new { @class = "alert alert-danger py-2 small" })
 
+                    <!-- Username / Email -->
                     <div class="mb-3">
-                        <label class="form-label small fw-bold text-muted">Email Address</label>
+                        <label class="form-label small fw-bold text-muted">Admin Username or Email</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control border-start-0", type = "email", placeholder = "admin@example.com" })
+                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-person-badge"></i></span>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control border-start-0 ps-0", placeholder = "avi@123", required = "required" })
                         </div>
                         @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
                     </div>
 
+                    <!-- Password with Eye Toggle -->
                     <div class="mb-4">
                         <label class="form-label small fw-bold text-muted">Password</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
-                            @Html.PasswordFor(m => m.Password, new { @class = "form-control border-start-0", placeholder = "Admin Password" })
+                            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control border-start-0 border-end-0 ps-0", id = "adminPassword", placeholder = "Enter admin password", required = "required" })
+                            <button type="button" class="input-group-text bg-white border-start-0 text-muted" onclick="togglePasswordVisibility('adminPassword', this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
                         </div>
                         @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
                     </div>
 
-                    <button type="submit" class="btn btn-primary-food w-100 py-2 fs-6 fw-bold shadow">
-                        Login to Admin Panel
+                    <!-- Vibrant Orange Login Button -->
+                    <button type="submit" class="btn btn-primary-food w-100 py-2 fs-6 fw-bold shadow-sm" style="background: linear-gradient(135deg, #FF7A18, #FF5E1E); border-radius: 12px; height: 48px;">
+                        Login
                     </button>
 
-                    <div class="mt-4 p-3 bg-light rounded text-center small text-muted border">
-                        <i class="bi bi-key-fill text-warning me-1"></i> <strong>Default Admin:</strong> admin@example.com | <strong>Pass:</strong> admin123
+                    <!-- Official Admin Credentials Pill -->
+                    <div class="mt-4 p-3 bg-light rounded-4 small text-muted border text-center">
+                        <i class="bi bi-key-fill text-warning me-1"></i> <strong>Admin Credentials:</strong> 
+                        <span class="badge bg-dark ms-1">Username: avi@123</span>
+                        <span class="badge bg-dark ms-1">Password: 28072003</span>
                     </div>
                 }
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function togglePasswordVisibility(inputId, btn) {
+        var input = document.getElementById(inputId);
+        var icon = btn.querySelector('i');
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = "password";
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+</script>
