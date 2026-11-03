@@ -251,7 +251,7 @@ namespace FoodArrival.Controllers
 
             int adminId = Convert.ToInt32(Session["AdminId"]);
             string message;
-            if (_staffRepo.VerifyDish(id, "Admin", adminId, out message))
+            if (_staffRepo.ApproveDish(id, "Admin", adminId, out message))
             {
                 TempData["Success"] = message;
             }
