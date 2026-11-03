@@ -30,12 +30,28 @@
     <header>
         <nav class="navbar navbar-expand-lg foodready-navbar sticky-top">
             <div class="container">
-                <a class="navbar-brand brand-logo" href="@Url.Action("Index", "Home")">
+                <a class="navbar-brand brand-logo" href="@(isRestaurant ? Url.Action("Dashboard", "Restaurant") : (isStaff ? Url.Action("Dashboard", "Staff") : (isRider ? Url.Action("Dashboard", "Rider") : (isAdmin ? Url.Action("Dashboard", "Admin") : Url.Action("Index", "Home")))))">
                     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 2C9.5 2 7.5 3.8 7.1 6.1C5.3 6.6 4 8.2 4 10.2C4 12.3 5.5 14 7.5 14.3V18C7.5 19.1 8.4 20 9.5 20H14.5C15.6 20 16.5 19.1 16.5 18V14.3C18.5 14 20 12.3 20 10.2C20 8.2 18.7 6.6 16.9 6.1C16.5 3.8 14.5 2 12 2Z" fill="#FF5E1E" />
                         <path d="M9 11V16M12 10V16M15 11V16" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" />
                     </svg>
                     <span>Food<span class="highlight">Ready</span></span>
+                    @if (isRestaurant)
+                    {
+                        <span class="badge bg-danger ms-2 fw-semibold px-2 py-1 rounded-pill small" style="font-size: 0.7rem;">Kitchen Partner</span>
+                    }
+                    else if (isStaff)
+                    {
+                        <span class="badge bg-primary ms-2 fw-semibold px-2 py-1 rounded-pill small" style="font-size: 0.7rem;">Staff PMS</span>
+                    }
+                    else if (isRider)
+                    {
+                        <span class="badge bg-info text-dark ms-2 fw-semibold px-2 py-1 rounded-pill small" style="font-size: 0.7rem;">Rider Fleet</span>
+                    }
+                    else if (isAdmin)
+                    {
+                        <span class="badge bg-dark ms-2 fw-semibold px-2 py-1 rounded-pill small" style="font-size: 0.7rem;">Admin Console</span>
+                    }
                 </a>
 
                 <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
@@ -44,58 +60,136 @@
 
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" href="@Url.Action("Index", "Home")">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Food" ? "active" : "")" href="@Url.Action("Index", "Food")">Menu</a>
-                        </li>
-
-                        @if (isRider)
+                        @if (isRestaurant)
                         {
+                            <!-- RESTAURANT PARTNER NAVBAR -->
                             <li class="nav-item">
-                                <a class="nav-link nav-link-custom text-info fw-bold @(ViewContext.RouteData.Values["controller"]?.ToString() == "Rider" ? "active" : "")" href="@Url.Action("Dashboard", "Rider")">
-                                    <i class="bi bi-scooter me-1"></i> Rider Trips
+                                <a class="nav-link nav-link-custom text-danger fw-bold @(ViewContext.RouteData.Values["controller"]?.ToString() == "Restaurant" && ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")" href="@Url.Action("Dashboard", "Restaurant")">
+                                    <i class="bi bi-speedometer2 me-1"></i> Kitchen Dashboard
                                 </a>
                             </li>
-                        }
-                        else if (isRestaurant)
-                        {
                             <li class="nav-item">
-                                <a class="nav-link nav-link-custom text-danger fw-bold @(ViewContext.RouteData.Values["controller"]?.ToString() == "Restaurant" ? "active" : "")" href="@Url.Action("Dashboard", "Restaurant")">
-                                    <i class="bi bi-shop me-1"></i> Kitchen Dashboard
+                                <a class="nav-link nav-link-custom fw-bold" href="@Url.Action("Dashboard", "Restaurant")#menu">
+                                    <i class="bi bi-egg-fried me-1"></i> Menu & Dishes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold" href="@Url.Action("Dashboard", "Restaurant")#staff">
+                                    <i class="bi bi-people me-1"></i> Kitchen Staff
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold" href="@Url.Action("Dashboard", "Restaurant")#riders">
+                                    <i class="bi bi-bicycle me-1"></i> Delivery Fleet
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold" href="@Url.Action("Dashboard", "Restaurant")#transactions">
+                                    <i class="bi bi-cash-coin me-1"></i> Payouts
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold" href="@Url.Action("Contact", "Home")">
+                                    <i class="bi bi-headset me-1"></i> Admin Helpdesk
                                 </a>
                             </li>
                         }
                         else if (isStaff)
                         {
+                            <!-- KITCHEN STAFF NAVBAR -->
                             <li class="nav-item">
-                                <a class="nav-link nav-link-custom text-primary fw-bold @(ViewContext.RouteData.Values["controller"]?.ToString() == "Staff" ? "active" : "")" href="@Url.Action("Dashboard", "Staff")">
-                                    <i class="bi bi-person-badge me-1"></i> Kitchen Queue
+                                <a class="nav-link nav-link-custom text-primary fw-bold active" href="@Url.Action("Dashboard", "Staff")">
+                                    <i class="bi bi-fire me-1"></i> Kitchen Prep Queue
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold" href="@Url.Action("Dashboard", "Staff")#proposeDish">
+                                    <i class="bi bi-plus-circle me-1"></i> Propose Dish
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold text-success" href="@Url.Action("Contact", "Home")">
+                                    <i class="bi bi-shop me-1"></i> Contact My Restaurant
+                                </a>
+                            </li>
+                        }
+                        else if (isRider)
+                        {
+                            <!-- DELIVERY RIDER NAVBAR -->
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom text-info fw-bold active" href="@Url.Action("Dashboard", "Rider")">
+                                    <i class="bi bi-scooter me-1"></i> Active Deliveries
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold" href="@Url.Action("Dashboard", "Rider")">
+                                    <i class="bi bi-clock-history me-1"></i> Ready for Pickup
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold" href="@Url.Action("Profile", "Rider")">
+                                    <i class="bi bi-person-badge me-1"></i> Rider Profile
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold text-warning" href="@Url.Action("Contact", "Home")">
+                                    <i class="bi bi-shop me-1"></i> Contact Partner Kitchen
                                 </a>
                             </li>
                         }
                         else if (isAdmin)
                         {
+                            <!-- ADMIN CONSOLE NAVBAR -->
                             <li class="nav-item">
-                                <a class="nav-link nav-link-custom text-warning fw-bold @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")" href="@Url.Action("Dashboard", "Admin")">
-                                    <i class="bi bi-shield-lock-fill me-1"></i> Admin Panel
+                                <a class="nav-link nav-link-custom text-warning fw-bold active" href="@Url.Action("Dashboard", "Admin")">
+                                    <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold" href="@Url.Action("Orders", "Admin")">
+                                    <i class="bi bi-bag-check me-1"></i> Orders
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold" href="@Url.Action("Approvals", "Admin")">
+                                    <i class="bi bi-shop me-1"></i> Restaurants
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold" href="@Url.Action("FoodItems", "Admin")">
+                                    <i class="bi bi-egg-fried me-1"></i> Food Items
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold" href="@Url.Action("Riders", "Admin")">
+                                    <i class="bi bi-bicycle me-1"></i> Riders
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom fw-bold" href="@Url.Action("Transactions", "Admin")">
+                                    <i class="bi bi-wallet2 me-1"></i> Payouts
                                 </a>
                             </li>
                         }
                         else
                         {
+                            <!-- CUSTOMER & GUEST NAVBAR -->
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" href="@Url.Action("Index", "Home")">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Food" ? "active" : "")" href="@Url.Action("Index", "Food")">Menu</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Order" && ViewContext.RouteData.Values["action"]?.ToString() == "History" ? "active" : "")" href="@Url.Action("History", "Order")">Track Order</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "About" ? "active" : "")" href="@Url.Action("About", "Home")">About</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Contact" ? "active" : "")" href="@Url.Action("Contact", "Home")">Contact</a>
+                            </li>
                         }
-
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "About" ? "active" : "")" href="@Url.Action("About", "Home")">About</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Contact" ? "active" : "")" href="@Url.Action("Contact", "Home")">Contact</a>
-                        </li>
                     </ul>
 
                     <div class="d-flex align-items-center gap-3">
@@ -118,13 +212,16 @@
                             </div>
                         </div>
 
-                        <!-- Cart Icon -->
-                        <a href="@Url.Action("PlaceOrder", "Order")" class="position-relative text-dark p-2" title="View Cart">
-                            <i class="bi bi-cart3 fs-4 text-dark"></i>
-                            <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger @(cartCount > 0 ? "" : "d-none")">
-                                @cartCount
-                            </span>
-                        </a>
+                        <!-- Cart Icon (Customers & Guests Only) -->
+                        @if (!isRestaurant && !isStaff && !isRider && !isAdmin)
+                        {
+                            <a href="@Url.Action("PlaceOrder", "Order")" class="position-relative text-dark p-2" title="View Cart">
+                                <i class="bi bi-cart3 fs-4 text-dark"></i>
+                                <span id="cart-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger @(cartCount > 0 ? "" : "d-none")">
+                                    @cartCount
+                                </span>
+                            </a>
+                        }
 
                         @if (isCustomer)
                         {
