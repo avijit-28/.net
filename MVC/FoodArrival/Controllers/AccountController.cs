@@ -160,6 +160,8 @@ namespace FoodArrival.Controllers
                 int staffId;
                 if (_staffRepo.Register(staff, out message, out staffId))
                 {
+                    _notifRepo.AddNotification("RestaurantStaff", staffId, "Staff Registration Submitted",
+                        $"Welcome {staff.StaffName}! Your Staff ID is {staff.StaffCode}. Pending restaurant/admin approval.", "Info", "/Staff/Dashboard");
                     _notifRepo.AddNotification("Restaurant", staff.RestaurantId, "New Staff Registration",
                         $"{staff.StaffName} registered as {staff.RoleTitle} (Staff ID: {staff.StaffCode}). Pending verification.", "Staff", "/Restaurant/Dashboard");
                     _notifRepo.AddNotification("Admin", null, "New Staff Registered",
