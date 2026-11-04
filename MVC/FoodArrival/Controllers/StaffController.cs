@@ -89,7 +89,7 @@ namespace FoodArrival.Controllers
 
             var staff = _staffRepo.GetById(staffId);
             ViewBag.Staff = staff;
-            ViewBag.KitchenOrders = _restRepo.GetOrders(restId);
+            ViewBag.KitchenOrders = _restRepo.GetOrders(restId, excludePickedUp: true);
             var myDishes = _staffRepo.GetStaffDishes(staffId);
 
             return View(myDishes);
