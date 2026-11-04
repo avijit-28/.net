@@ -32,6 +32,7 @@ namespace FoodArrival.Models
         public int? RiderId { get; set; }
         public string RiderName { get; set; }
         public string DeliveryStatus { get; set; } = "Pending"; // Pending, Accepted, Preparing, ReadyForPickup, OutForDelivery, Delivered
+        public string DeliveryOtp { get; set; } // 6-digit verification code to confirm handover
         public int SubOrderCount { get; set; } = 1;
 
         public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
