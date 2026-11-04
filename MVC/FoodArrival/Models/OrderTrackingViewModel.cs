@@ -65,7 +65,7 @@ namespace FoodArrival.Models
 
         // Customer permissions
         public bool CanCancel => OverallStatus == "Pending" || (OverallStatus == "Confirmed" && (DateTime.Now - OrderedAt).TotalMinutes <= 2);
-        public bool IsDelivered => OverallStatus == "Delivered";
+        public bool IsDelivered => OverallStatus == "Delivered" || DeliveryStatus == "Delivered";
     }
 
     public class TimelineStep
