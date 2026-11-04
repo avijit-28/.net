@@ -194,6 +194,14 @@
     <Compile Include="Models\KnowledgeChunk.cs" />
     <Compile Include="Models\ChatSession.cs" />
     <Compile Include="Models\ChatMessage.cs" />
+    <Compile Include="Models\AI\AiDocument.cs" />
+    <Compile Include="Models\AI\AiDocumentChunk.cs" />
+    <Compile Include="Models\AI\AiChatSession.cs" />
+    <Compile Include="Models\AI\AiChatMessage.cs" />
+    <Compile Include="Models\AI\AiChatSource.cs" />
+    <Compile Include="Models\AI\AiUsageLog.cs" />
+    <Compile Include="Models\AI\AiFeedback.cs" />
+    <Compile Include="Models\AI\AiIndexingJob.cs" />
     <Compile Include="Models\Question.cs" />
     <Compile Include="Models\QuestionOption.cs" />
     <Compile Include="Models\Quiz.cs" />
