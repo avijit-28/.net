@@ -11,6 +11,7 @@ namespace FoodArrival.Models
         public string CustomerName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public string CustomerPhone { get { return PhoneNumber; } set { PhoneNumber = value; } }
         public string Address { get; set; }
         public string DeliveryAddress { get; set; }
         public decimal TotalAmount { get; set; }
@@ -19,6 +20,7 @@ namespace FoodArrival.Models
         public string PaymentMethod { get; set; } = "UPI"; // UPI, Card, NetBanking, COD
         public string OrderStatus { get; set; } = "Pending";
         public DateTime OrderedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get { return OrderedAt; } set { OrderedAt = value; } }
         public DateTime? ProcessedAt { get; set; }
         public int? ProcessedBy { get; set; }
         public string RejectionReason { get; set; }
@@ -34,6 +36,8 @@ namespace FoodArrival.Models
         public string DeliveryStatus { get; set; } = "Pending"; // Pending, Accepted, Preparing, ReadyForPickup, OutForDelivery, Delivered
         public string DeliveryOtp { get; set; } // 6-digit verification code to confirm handover
         public int SubOrderCount { get; set; } = 1;
+        public string SubOrderPreparationStatus { get; set; }
+        public decimal? SubOrderAmount { get; set; }
 
         public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
         public List<OrderSubOrder> SubOrders { get; set; } = new List<OrderSubOrder>();
