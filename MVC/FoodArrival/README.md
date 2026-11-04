@@ -4,7 +4,7 @@ FoodArrival is a multi-role food ordering and delivery web application built wit
 
 ## Documentation
 
-- [Workflow and architecture (PDF)](README.pdf)
+- [Workflow and architecture (PDF)](FoodArrival_Workflow_Architecture.pdf)
 - [Project implementation plan](FOOD_DELIVERY_PROJECT_PLAN.md) — a planning document; some parts describe a target design and may differ from the current implementation.
 
 ## Technology
