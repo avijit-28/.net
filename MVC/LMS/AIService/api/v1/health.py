@@ -2,20 +2,18 @@
 Health and telemetry endpoint for AIService.
 """
 from fastapi import APIRouter
-from vectorstore.qdrant_manager import QdrantManager
-from embeddings.local_embedder import LocalEmbedder
+from vectorstore.qdrant_manager import qdrant
+from embeddings.local_embedder import embedder
 from config import settings
-import os
 
 router = APIRouter(prefix="/health", tags=["Health"])
 
 @router.get("")
-async def get_health():
+def get_health():
     """
     Returns live health of vectorstore, embedding engine, and configuration.
     """
-    qdrant = QdrantManager.get_instance()
-    count = qdrant.count()
+    count = qdrant.get_collection_vector_count()
 
     return {
         "status": "healthy",
@@ -28,7 +26,7 @@ async def get_health():
         },
         "embedding_model": {
             "model_name": settings.EMBEDDING_MODEL_NAME,
-            "dimension": settings.EMBEDDING_DIM
+            "dimension": embedder.dimension
         },
         "llm": {
             "primary": settings.DEFAULT_LLM_PROVIDER,
