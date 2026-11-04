@@ -9,7 +9,7 @@ namespace WebApiPractice.Controllers
 {
     public class ValuesController : ApiController
     {
-        private readonly List<string> _values = new List<string> { "Nishat", "AVijit", "Komal", "Anubhaw" };
+        private readonly List<string> _values = new List<string> { "N", "AVijit", "K", "An" };
 
 
         // GET api/values
