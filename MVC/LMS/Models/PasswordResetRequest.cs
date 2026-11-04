@@ -30,6 +30,8 @@ namespace LMS.Models
         [StringLength(30)]
         public string Status { get; set; } = "Pending"; // Pending, Approved, Rejected, Completed
 
+        public bool IsApproved { get; set; } = false;
+
         [StringLength(100)]
         public string ResetToken { get; set; }
 

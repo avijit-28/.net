@@ -818,6 +818,7 @@ namespace LMS.Controllers
             var req = await _db.PasswordResetRequests.Include(r => r.User).FirstOrDefaultAsync(r => r.RequestId == id);
             if (req != null)
             {
+                req.IsApproved = true;
                 req.Status = "Approved";
                 req.ApprovedByAdminId = User.Identity.GetUserId();
                 req.ApprovedDate = DateTime.UtcNow;
@@ -852,6 +853,53 @@ namespace LMS.Controllers
             return RedirectToAction("PasswordResets");
         }
 
+        // POST: Admin/TogglePasswordResetApproval
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> TogglePasswordResetApproval(int id)
+        {
+            var req = await _db.PasswordResetRequests.Include(r => r.User).FirstOrDefaultAsync(r => r.RequestId == id);
+            if (req != null)
+            {
+                req.IsApproved = !req.IsApproved;
+                req.Status = req.IsApproved ? "Approved" : "Pending";
+                req.ApprovedByAdminId = req.IsApproved ? User.Identity.GetUserId() : null;
+                req.ApprovedDate = req.IsApproved ? DateTime.UtcNow : (DateTime?)null;
+
+                if (req.IsApproved)
+                {
+                    req.TokenExpiry = DateTime.UtcNow.AddDays(3);
+                    if (string.IsNullOrEmpty(req.ResetToken))
+                    {
+                        req.ResetToken = Guid.NewGuid().ToString("N");
+                    }
+
+                    _db.Notifications.Add(new Notification
+                    {
+                        UserId = req.UserId,
+                        Title = "Password Reset Approved",
+                        Message = "Your password reset request has been approved by the administrator. You can now set your new password on the recovery page.",
+                        NotificationType = "PasswordResetApproved",
+                        IsRead = false,
+                        CreatedDate = DateTime.UtcNow
+                    });
+                }
+                else
+                {
+                    req.AdminNotes = "Approval toggled to pending by administrator";
+                }
+
+                await _db.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Approval status for {req.Email} toggled to {(req.IsApproved ? "APPROVED" : "PENDING")}.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Password reset request record not found.";
+            }
+
+            return RedirectToAction("PasswordResets");
+        }
+
         // POST: Admin/RejectPasswordReset
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -860,6 +908,7 @@ namespace LMS.Controllers
             var req = await _db.PasswordResetRequests.Include(r => r.User).FirstOrDefaultAsync(r => r.RequestId == id);
             if (req != null)
             {
+                req.IsApproved = false;
                 req.Status = "Rejected";
                 req.ApprovedByAdminId = User.Identity.GetUserId();
                 req.ApprovedDate = DateTime.UtcNow;

@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace LMS.ViewModels
@@ -70,6 +71,36 @@ namespace LMS.ViewModels
         [Display(Name = "Reason / Verification Notes for Administrator")]
         [StringLength(500, ErrorMessage = "Notes cannot exceed 500 characters.")]
         public string Reason { get; set; }
+    }
+
+    public class PasswordRecoveryFlowViewModel
+    {
+        [Required(ErrorMessage = "Email address is required.")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
+        [Display(Name = "Registered Email Address")]
+        public string Email { get; set; }
+
+        [Display(Name = "Reason for Password Recovery")]
+        [StringLength(500, ErrorMessage = "Reason cannot exceed 500 characters.")]
+        public string Reason { get; set; }
+
+        public string Status { get; set; } // Pending, Approved, Rejected, Completed
+        public bool IsApproved { get; set; }
+        public DateTime? RequestDate { get; set; }
+        public string AdminNotes { get; set; }
+        public string ResetToken { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "New Password")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least {2} characters long.")]
+        public string NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm New Password")]
+        [Compare("NewPassword", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
+
+        public string ActiveTab { get; set; } = "request"; // "request" or "status"
     }
 
     public class ResetPasswordViewModel

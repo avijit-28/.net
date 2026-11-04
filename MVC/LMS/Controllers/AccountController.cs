@@ -280,47 +280,98 @@ namespace LMS.Controllers
 
         // GET: /Account/ForgotPassword
         [AllowAnonymous]
-        public ActionResult ForgotPassword()
+        public async Task<ActionResult> ForgotPassword(string email = null, string tab = null)
         {
-            return View();
+            var model = new PasswordRecoveryFlowViewModel
+            {
+                ActiveTab = tab ?? (string.IsNullOrEmpty(email) ? "request" : "status")
+            };
+
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                email = email.Trim();
+                model.Email = email;
+
+                var req = await _db.PasswordResetRequests
+                    .Where(r => r.Email == email)
+                    .OrderByDescending(r => r.RequestDate)
+                    .FirstOrDefaultAsync();
+
+                if (req != null)
+                {
+                    model.Status = req.Status;
+                    model.IsApproved = req.IsApproved || req.Status == "Approved";
+                    model.Reason = req.RequestReason;
+                    model.AdminNotes = req.AdminNotes;
+                    model.RequestDate = req.RequestDate;
+                    model.ResetToken = req.ResetToken;
+                    model.ActiveTab = "status";
+                }
+                else
+                {
+                    ViewBag.StatusCheckMessage = "No password reset request found for this email. You can submit a new recovery request below.";
+                    model.ActiveTab = "request";
+                }
+            }
+
+            return View(model);
         }
 
-        // POST: /Account/ForgotPassword
+        // POST: /Account/ForgotPassword (Submit Recovery Request)
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        public async Task<ActionResult> ForgotPassword(PasswordRecoveryFlowViewModel model)
         {
-            if (!ModelState.IsValid)
+            model.ActiveTab = "request";
+
+            if (string.IsNullOrWhiteSpace(model.Email))
             {
+                ModelState.AddModelError("Email", "Email address is required.");
                 return View(model);
             }
 
-            var email = model.Email?.Trim();
+            var email = model.Email.Trim();
             var user = await UserManager.FindByEmailAsync(email);
             if (user == null)
             {
-                // To maintain security, show confirmation without revealing non-existence
-                return RedirectToAction("ForgotPasswordConfirmation");
+                TempData["SuccessMessage"] = "If an account exists with this email address, your request has been logged and forwarded to administrators for review.";
+                return RedirectToAction("ForgotPassword", new { email = email, tab = "status" });
             }
 
             var roles = await UserManager.GetRolesAsync(user.Id);
             string role = roles.FirstOrDefault() ?? user.RequestedRole ?? "Student";
 
-            // Create Password Reset Request
-            var resetRequest = new PasswordResetRequest
-            {
-                UserId = user.Id,
-                Email = user.Email,
-                Role = role,
-                RequestReason = model.Reason,
-                RequestDate = DateTime.UtcNow,
-                Status = "Pending",
-                ResetToken = Guid.NewGuid().ToString("N"),
-                TokenExpiry = DateTime.UtcNow.AddDays(2)
-            };
+            // Check if there is an existing pending request
+            var existingReq = await _db.PasswordResetRequests
+                .Where(r => r.UserId == user.Id && r.Status == "Pending")
+                .OrderByDescending(r => r.RequestDate)
+                .FirstOrDefaultAsync();
 
-            _db.PasswordResetRequests.Add(resetRequest);
+            if (existingReq != null)
+            {
+                existingReq.RequestReason = model.Reason;
+                existingReq.RequestDate = DateTime.UtcNow;
+                existingReq.IsApproved = false;
+                existingReq.Status = "Pending";
+            }
+            else
+            {
+                var resetRequest = new PasswordResetRequest
+                {
+                    UserId = user.Id,
+                    Email = user.Email,
+                    Role = role,
+                    RequestReason = model.Reason,
+                    RequestDate = DateTime.UtcNow,
+                    Status = "Pending",
+                    IsApproved = false,
+                    ResetToken = Guid.NewGuid().ToString("N"),
+                    TokenExpiry = DateTime.UtcNow.AddDays(3)
+                };
+                _db.PasswordResetRequests.Add(resetRequest);
+            }
+
             await _db.SaveChangesAsync();
 
             // Notify Administrators
@@ -339,7 +390,7 @@ namespace LMS.Controllers
                         {
                             UserId = adminId,
                             Title = "Password Reset Request",
-                            Message = $"User '{user.FullName}' ({user.Email}, Role: {role}) requested a password reset. Awaiting admin verification in Approvals.",
+                            Message = $"User '{user.FullName}' ({user.Email}, Role: {role}) requested password recovery. Reason: {model.Reason ?? "Not specified"}",
                             NotificationType = "PasswordReset",
                             IsRead = false,
                             CreatedDate = DateTime.UtcNow
@@ -350,7 +401,133 @@ namespace LMS.Controllers
             }
             catch { }
 
-            return RedirectToAction("ForgotPasswordConfirmation");
+            TempData["SuccessMessage"] = "Your password recovery request was successfully submitted to the administrator. You can check the approval status below at any time.";
+            return RedirectToAction("ForgotPassword", new { email = email, tab = "status" });
+        }
+
+        // POST: /Account/CheckResetStatus (AJAX endpoint)
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<JsonResult> CheckResetStatus(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return Json(new { success = false, message = "Please provide a valid email address." });
+            }
+
+            email = email.Trim();
+            var req = await _db.PasswordResetRequests
+                .Where(r => r.Email == email)
+                .OrderByDescending(r => r.RequestDate)
+                .FirstOrDefaultAsync();
+
+            if (req == null)
+            {
+                return Json(new
+                {
+                    success = true,
+                    found = false,
+                    message = "No password reset request found for this email. Please submit a request first."
+                });
+            }
+
+            return Json(new
+            {
+                success = true,
+                found = true,
+                email = req.Email,
+                status = req.Status,
+                isApproved = req.IsApproved || req.Status == "Approved",
+                reason = req.RequestReason ?? "No reason specified",
+                adminNotes = req.AdminNotes ?? "",
+                requestDate = req.RequestDate.ToString("MMM dd, yyyy hh:mm tt"),
+                token = req.ResetToken ?? ""
+            });
+        }
+
+        // POST: /Account/SetNewPassword (When approved by admin)
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> SetNewPassword(PasswordRecoveryFlowViewModel model)
+        {
+            model.ActiveTab = "status";
+
+            if (string.IsNullOrWhiteSpace(model.Email))
+            {
+                ModelState.AddModelError("", "Email is required.");
+                return View("ForgotPassword", model);
+            }
+
+            if (string.IsNullOrWhiteSpace(model.NewPassword) || model.NewPassword.Length < 6)
+            {
+                ModelState.AddModelError("NewPassword", "New password must be at least 6 characters long.");
+                return View("ForgotPassword", model);
+            }
+
+            if (model.NewPassword != model.ConfirmPassword)
+            {
+                ModelState.AddModelError("ConfirmPassword", "The password and confirmation password do not match.");
+                return View("ForgotPassword", model);
+            }
+
+            var email = model.Email.Trim();
+            var req = await _db.PasswordResetRequests
+                .Include(r => r.User)
+                .Where(r => r.Email == email)
+                .OrderByDescending(r => r.RequestDate)
+                .FirstOrDefaultAsync();
+
+            if (req == null || (!req.IsApproved && req.Status != "Approved"))
+            {
+                ModelState.AddModelError("", "Your request is not approved by an administrator yet. Please check again after administrator approval.");
+                return View("ForgotPassword", model);
+            }
+
+            var user = req.User ?? await UserManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "User account could not be found.");
+                return View("ForgotPassword", model);
+            }
+
+            var removeResult = await UserManager.RemovePasswordAsync(user.Id);
+            var addResult = await UserManager.AddPasswordAsync(user.Id, model.NewPassword);
+
+            if (addResult.Succeeded)
+            {
+                req.Status = "Completed";
+                req.IsApproved = false;
+
+                _db.Notifications.Add(new Notification
+                {
+                    UserId = user.Id,
+                    Title = "Password Changed",
+                    Message = "Your account password has been successfully updated via administrator-approved recovery.",
+                    NotificationType = "Security",
+                    IsRead = false,
+                    CreatedDate = DateTime.UtcNow
+                });
+
+                await _db.SaveChangesAsync();
+
+                // Automatically log the user in!
+                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                TempData["SuccessMessage"] = $"Your password has been reset successfully! Welcome back, {user.FullName}.";
+
+                var roles = await UserManager.GetRolesAsync(user.Id);
+                if (roles.Contains("Admin")) return RedirectToAction("Index", "Admin");
+                if (roles.Contains("Instructor")) return RedirectToAction("Index", "Instructor");
+                return RedirectToAction("Index", "Student");
+            }
+
+            foreach (var err in addResult.Errors)
+            {
+                ModelState.AddModelError("", err);
+            }
+
+            return View("ForgotPassword", model);
         }
 
         // GET: /Account/ForgotPasswordConfirmation
