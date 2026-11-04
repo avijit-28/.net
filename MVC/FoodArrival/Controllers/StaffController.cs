@@ -156,24 +156,22 @@ namespace FoodArrival.Controllers
             int? custId = order != null ? (int?)order.CustomerId : null;
             int? riderId = order != null ? order.RiderId : null;
 
-            // If not directly on master order, check sub-orders for assigned rider
+            // If not directly on master order, check sub-orders for assigned rider via Stored Procedure
             if (!riderId.HasValue)
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new System.Data.SqlClient.SqlCommand("SELECT TOP 1 RiderId FROM dbo.OrderSubOrders WHERE OrderId = @OrderId AND RiderId IS NOT NULL", conn))
+                using (var cmd = new SqlCommand("dbo.sp_Order_SyncAssignedRider", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@OrderId", orderId);
+                    var outRider = new SqlParameter("@AssignedRiderId", SqlDbType.Int) { Direction = ParameterDirection.Output };
+                    cmd.Parameters.Add(outRider);
                     conn.Open();
-                    var rObj = cmd.ExecuteScalar();
-                    if (rObj != null && rObj != DBNull.Value)
+                    cmd.ExecuteNonQuery();
+
+                    if (outRider.Value != DBNull.Value && outRider.Value != null)
                     {
-                        riderId = Convert.ToInt32(rObj);
-                        using (var cmdSync = new System.Data.SqlClient.SqlCommand("UPDATE dbo.Orders SET RiderId = @RiderId WHERE OrderId = @OrderId AND RiderId IS NULL", conn))
-                        {
-                            cmdSync.Parameters.AddWithValue("@RiderId", riderId.Value);
-                            cmdSync.Parameters.AddWithValue("@OrderId", orderId);
-                            cmdSync.ExecuteNonQuery();
-                        }
+                        riderId = Convert.ToInt32(outRider.Value);
                     }
                 }
             }
@@ -186,12 +184,19 @@ namespace FoodArrival.Controllers
                 if (allocRes.IsSuccessful)
                 {
                     using (var conn = DbHelper.GetConnection())
-                    using (var cmd = new System.Data.SqlClient.SqlCommand("SELECT TOP 1 RiderId FROM dbo.OrderSubOrders WHERE OrderId = @OrderId AND RiderId IS NOT NULL", conn))
+                    using (var cmd = new SqlCommand("dbo.sp_Order_SyncAssignedRider", conn))
                     {
+                        cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@OrderId", orderId);
+                        var outRider = new SqlParameter("@AssignedRiderId", SqlDbType.Int) { Direction = ParameterDirection.Output };
+                        cmd.Parameters.Add(outRider);
                         conn.Open();
-                        var rObj = cmd.ExecuteScalar();
-                        if (rObj != null && rObj != DBNull.Value) riderId = Convert.ToInt32(rObj);
+                        cmd.ExecuteNonQuery();
+
+                        if (outRider.Value != DBNull.Value && outRider.Value != null)
+                        {
+                            riderId = Convert.ToInt32(outRider.Value);
+                        }
                     }
                 }
             }
