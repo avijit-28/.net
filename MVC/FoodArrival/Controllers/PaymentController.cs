@@ -244,9 +244,12 @@ namespace FoodArrival.Controllers
             if (order != null && order.CustomerId == customerId && order.PaymentStatus == "Pending")
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand("UPDATE dbo.Orders SET OrderStatus = 'Cancelled', DeliveryStatus = 'Cancelled' WHERE OrderId = @OrderId", conn))
+                using (var cmd = new SqlCommand("dbo.sp_Order_UpdateMasterStatus", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@OrderId", orderId);
+                    cmd.Parameters.AddWithValue("@OrderStatus", "Cancelled");
+                    cmd.Parameters.AddWithValue("@DeliveryStatus", "Cancelled");
                     conn.Open();
                     cmd.ExecuteNonQuery();
                 }
