@@ -302,6 +302,11 @@
                                     <i class="bi bi-receipt me-1"></i> Receipts
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "ChatBot" ? "active" : "")" href="@Url.Action("Index", "ChatBot")">
+                                    <i class="bi bi-robot me-1 text-cyan"></i> AI Advisor
+                                </a>
+                            </li>
                         }
                     </ul>
 
