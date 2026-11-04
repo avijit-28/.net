@@ -422,15 +422,16 @@ namespace FoodArrival.DAL
                             list.Add(new Order
                             {
                                 OrderId = Convert.ToInt32(reader["OrderId"]),
-                                OrderNumber = reader["OrderNumber"].ToString(),
-                                CustomerName = reader["CustomerName"].ToString(),
-                                CustomerPhone = reader["CustomerPhone"].ToString(),
-                                DeliveryAddress = reader["DeliveryAddress"].ToString(),
+                                OrderNumber = HasColumn(reader, "OrderNumber") && reader["OrderNumber"] != DBNull.Value ? reader["OrderNumber"].ToString() : ("FR" + (100000 + Convert.ToInt32(reader["OrderId"]))),
+                                CustomerName = HasColumn(reader, "CustomerName") && reader["CustomerName"] != DBNull.Value ? reader["CustomerName"].ToString() : "Customer",
+                                CustomerPhone = HasColumn(reader, "CustomerPhone") && reader["CustomerPhone"] != DBNull.Value ? reader["CustomerPhone"].ToString() : (HasColumn(reader, "PhoneNumber") && reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : string.Empty),
+                                DeliveryAddress = HasColumn(reader, "DeliveryAddress") && reader["DeliveryAddress"] != DBNull.Value ? reader["DeliveryAddress"].ToString() : (HasColumn(reader, "Address") && reader["Address"] != DBNull.Value ? reader["Address"].ToString() : string.Empty),
                                 TotalAmount = Convert.ToDecimal(reader["TotalAmount"]),
-                                OrderStatus = reader["OrderStatus"].ToString(),
-                                DeliveryStatus = reader["DeliveryStatus"].ToString(),
-                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"]),
-                                RestaurantName = reader["RestaurantName"] == DBNull.Value ? string.Empty : reader["RestaurantName"].ToString()
+                                OrderStatus = HasColumn(reader, "OrderStatus") && reader["OrderStatus"] != DBNull.Value ? reader["OrderStatus"].ToString() : "Accepted",
+                                DeliveryStatus = HasColumn(reader, "DeliveryStatus") && reader["DeliveryStatus"] != DBNull.Value ? reader["DeliveryStatus"].ToString() : "ReadyForPickup",
+                                CreatedAt = HasColumn(reader, "CreatedAt") && reader["CreatedAt"] != DBNull.Value ? Convert.ToDateTime(reader["CreatedAt"]) : (HasColumn(reader, "OrderedAt") && reader["OrderedAt"] != DBNull.Value ? Convert.ToDateTime(reader["OrderedAt"]) : DateTime.Now),
+                                RestaurantName = HasColumn(reader, "RestaurantName") && reader["RestaurantName"] != DBNull.Value ? reader["RestaurantName"].ToString() : "Partner Kitchen",
+                                Items = HasColumn(reader, "Items") && reader["Items"] != DBNull.Value ? reader["Items"].ToString() : string.Empty
                             });
                         }
                     }
@@ -458,15 +459,17 @@ namespace FoodArrival.DAL
                             list.Add(new Order
                             {
                                 OrderId = Convert.ToInt32(reader["OrderId"]),
-                                OrderNumber = reader["OrderNumber"].ToString(),
-                                CustomerName = reader["CustomerName"].ToString(),
-                                CustomerPhone = reader["CustomerPhone"].ToString(),
-                                DeliveryAddress = reader["DeliveryAddress"].ToString(),
+                                OrderNumber = HasColumn(reader, "OrderNumber") && reader["OrderNumber"] != DBNull.Value ? reader["OrderNumber"].ToString() : ("FR" + (100000 + Convert.ToInt32(reader["OrderId"]))),
+                                CustomerName = HasColumn(reader, "CustomerName") && reader["CustomerName"] != DBNull.Value ? reader["CustomerName"].ToString() : "Customer",
+                                CustomerPhone = HasColumn(reader, "CustomerPhone") && reader["CustomerPhone"] != DBNull.Value ? reader["CustomerPhone"].ToString() : (HasColumn(reader, "PhoneNumber") && reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : string.Empty),
+                                DeliveryAddress = HasColumn(reader, "DeliveryAddress") && reader["DeliveryAddress"] != DBNull.Value ? reader["DeliveryAddress"].ToString() : (HasColumn(reader, "Address") && reader["Address"] != DBNull.Value ? reader["Address"].ToString() : string.Empty),
                                 TotalAmount = Convert.ToDecimal(reader["TotalAmount"]),
-                                OrderStatus = reader["OrderStatus"].ToString(),
-                                DeliveryStatus = reader["DeliveryStatus"].ToString(),
-                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"]),
-                                RestaurantName = reader["RestaurantName"] == DBNull.Value ? string.Empty : reader["RestaurantName"].ToString()
+                                OrderStatus = HasColumn(reader, "OrderStatus") && reader["OrderStatus"] != DBNull.Value ? reader["OrderStatus"].ToString() : "Accepted",
+                                DeliveryStatus = HasColumn(reader, "DeliveryStatus") && reader["DeliveryStatus"] != DBNull.Value ? reader["DeliveryStatus"].ToString() : "OutForDelivery",
+                                CreatedAt = HasColumn(reader, "CreatedAt") && reader["CreatedAt"] != DBNull.Value ? Convert.ToDateTime(reader["CreatedAt"]) : (HasColumn(reader, "OrderedAt") && reader["OrderedAt"] != DBNull.Value ? Convert.ToDateTime(reader["OrderedAt"]) : DateTime.Now),
+                                RestaurantName = HasColumn(reader, "RestaurantName") && reader["RestaurantName"] != DBNull.Value ? reader["RestaurantName"].ToString() : "Partner Kitchen",
+                                DeliveryOtp = HasColumn(reader, "DeliveryOtp") && reader["DeliveryOtp"] != DBNull.Value ? reader["DeliveryOtp"].ToString() : null,
+                                Items = HasColumn(reader, "Items") && reader["Items"] != DBNull.Value ? reader["Items"].ToString() : string.Empty
                             });
                         }
                     }
