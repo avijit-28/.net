@@ -3,7 +3,12 @@
     ViewBag.Title = "Restaurant Staff PMS & Kitchen Hub - FoodReady";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var staff = ViewBag.Staff as FoodArrival.Models.RestaurantStaff;
-    var kitchenOrders = ViewBag.KitchenOrders as List<FoodArrival.Models.Order> ?? new List<FoodArrival.Models.Order>();
+    var allOrders = ViewBag.KitchenOrders as List<FoodArrival.Models.Order> ?? new List<FoodArrival.Models.Order>();
+    // The kitchen prep queue must ONLY show orders actively being prepared or waiting in the kitchen.
+    // Once a rider picks up the order (OutForDelivery, PickedUp, Delivered), it has left the kitchen and must not be shown.
+    var kitchenOrders = allOrders
+        .Where(o => o.DeliveryStatus != "OutForDelivery" && o.DeliveryStatus != "PickedUp" && o.DeliveryStatus != "Delivered")
+        .ToList();
 }
 
 <div class="container py-4">
