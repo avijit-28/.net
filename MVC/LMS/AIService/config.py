@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     GROQ_MODEL: str = Field(default="llama-3.1-8b-instant", env="GROQ_MODEL")
 
     DEFAULT_LLM_PROVIDER: str = Field(default="gemini", env="DEFAULT_LLM_PROVIDER")
+    FAILOVER_LLM_PROVIDER: str = Field(default="groq", env="FAILOVER_LLM_PROVIDER")
 
     # Local Embeddings
     EMBEDDING_MODEL: str = Field(default="BAAI/bge-small-en-v1.5", env="EMBEDDING_MODEL")
