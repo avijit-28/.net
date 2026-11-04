@@ -49,7 +49,7 @@ namespace FoodArrival.DAL
             return false;
         }
 
-        public bool Insert(Rider rider, out string message, out int riderId)
+        public bool Register(Rider rider, int restaurantId, out string message, out int riderId)
         {
             message = string.Empty;
             riderId = 0;
@@ -69,29 +69,36 @@ namespace FoodArrival.DAL
                     cmd.Parameters.AddWithValue("@Username", (rider.Username ?? rider.Email).Trim().ToLower());
                     cmd.Parameters.AddWithValue("@Email", rider.Email.Trim().ToLower());
                     cmd.Parameters.AddWithValue("@PasswordHash", rider.PasswordHash ?? string.Empty);
-                    cmd.Parameters.AddWithValue("@PhoneNumber", rider.PhoneNumber ?? string.Empty);
-                    cmd.Parameters.AddWithValue("@VehicleType", rider.VehicleType ?? "Motorbike");
+                    cmd.Parameters.AddWithValue("@PhoneNumber", (object)rider.PhoneNumber ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@VehicleType", (object)rider.VehicleType ?? "Motorbike");
                     cmd.Parameters.AddWithValue("@LicenseNumber", (object)rider.LicenseNumber ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@LicenseDocumentUrl", (object)rider.LicenseDocumentUrl ?? DBNull.Value);
 
-                    var idParam = new SqlParameter("@RiderId", SqlDbType.Int)
+                    var outRiderId = new SqlParameter("@RiderId", SqlDbType.Int)
                     {
                         Direction = ParameterDirection.Output
                     };
-                    cmd.Parameters.Add(idParam);
+                    cmd.Parameters.Add(outRiderId);
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
 
-                    if (idParam.Value != DBNull.Value && idParam.Value != null)
+                    if (outRiderId.Value != DBNull.Value && outRiderId.Value != null)
                     {
-                        riderId = Convert.ToInt32(idParam.Value);
+                        riderId = Convert.ToInt32(outRiderId.Value);
                     }
-                    message = "Rider profile registered successfully. You can now affiliate with partner restaurants.";
-                    return true;
                 }
+
+                if (riderId > 0 && restaurantId > 0)
+                {
+                    string affMsg;
+                    AddAffiliation(riderId, restaurantId, out affMsg);
+                }
+
+                message = $"Rider account registered successfully! Your account and restaurant partner affiliation are pending verification by the restaurant or admin.";
+                return true;
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 message = ex.Message;
                 return false;
@@ -110,31 +117,33 @@ namespace FoodArrival.DAL
                     cmd.Parameters.AddWithValue("@RiderId", riderId);
                     cmd.Parameters.AddWithValue("@RestaurantId", restaurantId);
 
-                    var affIdParam = new SqlParameter("@AffiliationId", SqlDbType.Int)
+                    var outAffId = new SqlParameter("@AffiliationId", SqlDbType.Int)
                     {
                         Direction = ParameterDirection.Output
                     };
-                    var existsParam = new SqlParameter("@AlreadyExists", SqlDbType.Bit)
+                    cmd.Parameters.Add(outAffId);
+
+                    var outExists = new SqlParameter("@AlreadyExists", SqlDbType.Bit)
                     {
                         Direction = ParameterDirection.Output
                     };
-                    cmd.Parameters.Add(affIdParam);
-                    cmd.Parameters.Add(existsParam);
+                    cmd.Parameters.Add(outExists);
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
 
-                    if (existsParam.Value != DBNull.Value && Convert.ToBoolean(existsParam.Value))
+                    bool alreadyExists = outExists.Value != DBNull.Value && Convert.ToBoolean(outExists.Value);
+                    if (alreadyExists)
                     {
-                        message = "You have already registered/requested affiliation with this restaurant.";
+                        message = "You have already applied or are affiliated with this restaurant.";
                         return false;
                     }
 
-                    message = "Affiliation request submitted. Pending verification by the restaurant or administrator.";
+                    message = "Affiliation application submitted. Pending review and approval.";
                     return true;
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 message = ex.Message;
                 return false;
@@ -160,18 +169,49 @@ namespace FoodArrival.DAL
                             {
                                 RiderId = Convert.ToInt32(reader["RiderId"]),
                                 RiderName = reader["RiderName"].ToString(),
-                                Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : null,
+                                Username = reader["Username"].ToString(),
                                 Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"].ToString(),
-                                VehicleType = reader["VehicleType"].ToString(),
-                                LicenseNumber = reader["LicenseNumber"] != DBNull.Value ? reader["LicenseNumber"].ToString() : null,
-                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : null,
+                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
+                                VehicleType = reader["VehicleType"] == DBNull.Value ? "Motorbike" : reader["VehicleType"].ToString(),
+                                LicenseNumber = reader["LicenseNumber"] == DBNull.Value ? string.Empty : reader["LicenseNumber"].ToString(),
+                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] == DBNull.Value ? string.Empty : reader["LicenseDocumentUrl"].ToString(),
                                 CurrentStatus = reader["CurrentStatus"].ToString(),
-                                IsActive = Convert.ToBoolean(reader["IsActive"]),
-                                Latitude = reader["Latitude"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Latitude"]) : null,
-                                Longitude = reader["Longitude"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Longitude"]) : null,
-                                MaxCapacity = reader["MaxCapacity"] != DBNull.Value ? (int?)Convert.ToInt32(reader["MaxCapacity"]) : null,
-                                Rating = reader["Rating"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Rating"]) : null
+                                IsActive = Convert.ToBoolean(reader["IsActive"])
+                            };
+                        }
+                    }
+                }
+            }
+            catch { }
+            return null;
+        }
+
+        public Rider GetById(int riderId)
+        {
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand("dbo.sp_Rider_GetById", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@RiderId", riderId);
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Rider
+                            {
+                                RiderId = Convert.ToInt32(reader["RiderId"]),
+                                RiderName = reader["RiderName"].ToString(),
+                                Username = reader["Username"].ToString(),
+                                Email = reader["Email"].ToString(),
+                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
+                                VehicleType = reader["VehicleType"] == DBNull.Value ? "Motorbike" : reader["VehicleType"].ToString(),
+                                LicenseNumber = reader["LicenseNumber"] == DBNull.Value ? string.Empty : reader["LicenseNumber"].ToString(),
+                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] == DBNull.Value ? string.Empty : reader["LicenseDocumentUrl"].ToString(),
+                                CurrentStatus = reader["CurrentStatus"].ToString(),
+                                IsActive = Convert.ToBoolean(reader["IsActive"])
                             };
                         }
                     }
@@ -199,15 +239,14 @@ namespace FoodArrival.DAL
                             {
                                 RiderId = Convert.ToInt32(reader["RiderId"]),
                                 RiderName = reader["RiderName"].ToString(),
-                                Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : null,
+                                Username = reader["Username"].ToString(),
                                 Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"].ToString(),
-                                VehicleType = reader["VehicleType"].ToString(),
-                                LicenseNumber = reader["LicenseNumber"] != DBNull.Value ? reader["LicenseNumber"].ToString() : null,
-                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : null,
+                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
+                                VehicleType = reader["VehicleType"] == DBNull.Value ? "Motorbike" : reader["VehicleType"].ToString(),
+                                LicenseNumber = reader["LicenseNumber"] == DBNull.Value ? string.Empty : reader["LicenseNumber"].ToString(),
+                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] == DBNull.Value ? string.Empty : reader["LicenseDocumentUrl"].ToString(),
                                 CurrentStatus = reader["CurrentStatus"].ToString(),
-                                IsActive = Convert.ToBoolean(reader["IsActive"]),
-                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"])
+                                IsActive = Convert.ToBoolean(reader["IsActive"])
                             });
                         }
                     }
@@ -217,44 +256,33 @@ namespace FoodArrival.DAL
             return list;
         }
 
-        public Rider GetById(int id)
+        public bool Update(Rider model, out string message)
         {
+            message = string.Empty;
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand("dbo.sp_Rider_GetById", conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_Update", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@RiderId", id);
+                    cmd.Parameters.AddWithValue("@RiderId", model.RiderId);
+                    cmd.Parameters.AddWithValue("@RiderName", model.RiderName ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", (object)model.PhoneNumber ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@VehicleType", (object)model.VehicleType ?? "Motorbike");
+                    cmd.Parameters.AddWithValue("@LicenseNumber", (object)model.LicenseNumber ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@LicenseDocumentUrl", (object)model.LicenseDocumentUrl ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@CurrentStatus", (object)model.CurrentStatus ?? "Available");
                     conn.Open();
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            return new Rider
-                            {
-                                RiderId = Convert.ToInt32(reader["RiderId"]),
-                                RiderName = reader["RiderName"].ToString(),
-                                Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : null,
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"].ToString(),
-                                VehicleType = reader["VehicleType"].ToString(),
-                                LicenseNumber = reader["LicenseNumber"] != DBNull.Value ? reader["LicenseNumber"].ToString() : null,
-                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : null,
-                                CurrentStatus = reader["CurrentStatus"].ToString(),
-                                IsActive = Convert.ToBoolean(reader["IsActive"]),
-                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"]),
-                                Latitude = reader["Latitude"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Latitude"]) : null,
-                                Longitude = reader["Longitude"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Longitude"]) : null,
-                                MaxCapacity = reader["MaxCapacity"] != DBNull.Value ? (int?)Convert.ToInt32(reader["MaxCapacity"]) : null,
-                                Rating = reader["Rating"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Rating"]) : null
-                            };
-                        }
-                    }
+                    cmd.ExecuteNonQuery();
+                    message = "Rider profile updated successfully.";
+                    return true;
                 }
             }
-            catch { }
-            return null;
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
         }
 
         public List<RiderAffiliation> GetRiderAffiliations(int riderId)
@@ -278,13 +306,14 @@ namespace FoodArrival.DAL
                                 RiderId = Convert.ToInt32(reader["RiderId"]),
                                 RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
                                 RestaurantName = reader["RestaurantName"].ToString(),
-                                OwnerName = reader["OwnerName"].ToString(),
-                                RestaurantAddress = reader["RestaurantAddress"] != DBNull.Value ? reader["RestaurantAddress"].ToString() : null,
-                                RestaurantPhone = reader["RestaurantPhone"] != DBNull.Value ? reader["RestaurantPhone"].ToString() : null,
+                                OwnerName = reader["OwnerName"] == DBNull.Value ? string.Empty : reader["OwnerName"].ToString(),
+                                RestaurantAddress = reader["RestaurantAddress"] == DBNull.Value ? string.Empty : reader["RestaurantAddress"].ToString(),
+                                RestaurantPhone = reader["RestaurantPhone"] == DBNull.Value ? string.Empty : reader["RestaurantPhone"].ToString(),
                                 IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                VerifiedByRole = reader["VerifiedByRole"] != DBNull.Value ? reader["VerifiedByRole"].ToString() : null,
-                                VerifiedAt = reader["VerifiedAt"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["VerifiedAt"]) : null,
-                                CreatedAt = Convert.ToDateTime(reader["AffiliatedAt"])
+                                VerifiedByRole = reader["VerifiedByRole"] == DBNull.Value ? string.Empty : reader["VerifiedByRole"].ToString(),
+                                VerifiedBy = reader["VerifiedBy"] == DBNull.Value ? (int?)null : Convert.ToInt32(reader["VerifiedBy"]),
+                                VerifiedAt = reader["VerifiedAt"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["VerifiedAt"]),
+                                AffiliatedAt = Convert.ToDateTime(reader["AffiliatedAt"])
                             });
                         }
                     }
@@ -294,16 +323,17 @@ namespace FoodArrival.DAL
             return list;
         }
 
-        public List<RiderAffiliation> GetRestaurantRiders(int restaurantId)
+        public List<RiderAffiliation> GetRestaurantRiders(int? restaurantId = null, bool? onlyPending = null)
         {
             var list = new List<RiderAffiliation>();
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand("dbo.sp_Rider_GetByRestaurant", conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_GetRestaurantRiders", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@RestaurantId", restaurantId);
+                    cmd.Parameters.AddWithValue("@RestaurantId", (object)restaurantId ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@OnlyPending", (object)onlyPending ?? DBNull.Value);
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -313,53 +343,24 @@ namespace FoodArrival.DAL
                             {
                                 AffiliationId = Convert.ToInt32(reader["AffiliationId"]),
                                 RiderId = Convert.ToInt32(reader["RiderId"]),
-                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
                                 RiderName = reader["RiderName"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"].ToString(),
-                                VehicleType = reader["VehicleType"].ToString(),
-                                LicenseNumber = reader["LicenseNumber"] != DBNull.Value ? reader["LicenseNumber"].ToString() : null,
-                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : null,
-                                CurrentStatus = reader["CurrentStatus"].ToString(),
-                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                VerifiedByRole = reader["VerifiedByRole"] != DBNull.Value ? reader["VerifiedByRole"].ToString() : null,
-                                VerifiedAt = reader["VerifiedAt"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["VerifiedAt"]) : null,
-                                CreatedAt = Convert.ToDateTime(reader["AffiliatedAt"])
-                            });
-                        }
-                    }
-                }
-            }
-            catch { }
-            return list;
-        }
-
-        public List<RiderAffiliation> GetPendingAffiliations()
-        {
-            var list = new List<RiderAffiliation>();
-            try
-            {
-                using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand("dbo.sp_Rider_GetPendingAffiliations", conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    conn.Open();
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            list.Add(new RiderAffiliation
-                            {
-                                AffiliationId = Convert.ToInt32(reader["AffiliationId"]),
-                                RiderId = Convert.ToInt32(reader["RiderId"]),
+                                Username = reader["Username"].ToString(),
+                                Email = reader["Email"].ToString(),
+                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
+                                VehicleType = reader["VehicleType"] == DBNull.Value ? "Motorbike" : reader["VehicleType"].ToString(),
+                                LicenseNumber = reader["LicenseNumber"] == DBNull.Value ? string.Empty : reader["LicenseNumber"].ToString(),
+                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] == DBNull.Value ? string.Empty : reader["LicenseDocumentUrl"].ToString(),
+                                CurrentStatus = reader["CurrentStatus"] == DBNull.Value ? "Available" : reader["CurrentStatus"].ToString(),
                                 RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
-                                RiderName = reader["RiderName"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"].ToString(),
-                                VehicleType = reader["VehicleType"].ToString(),
-                                LicenseNumber = reader["LicenseNumber"] != DBNull.Value ? reader["LicenseNumber"].ToString() : null,
-                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : null,
                                 RestaurantName = reader["RestaurantName"].ToString(),
+                                OwnerName = reader["OwnerName"] == DBNull.Value ? string.Empty : reader["OwnerName"].ToString(),
+                                RestaurantAddress = reader["RestaurantAddress"] == DBNull.Value ? string.Empty : reader["RestaurantAddress"].ToString(),
+                                RestaurantPhone = reader["RestaurantPhone"] == DBNull.Value ? string.Empty : reader["RestaurantPhone"].ToString(),
                                 IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                CreatedAt = Convert.ToDateTime(reader["AffiliatedAt"])
+                                VerifiedByRole = reader["VerifiedByRole"] == DBNull.Value ? string.Empty : reader["VerifiedByRole"].ToString(),
+                                VerifiedBy = reader["VerifiedBy"] == DBNull.Value ? (int?)null : Convert.ToInt32(reader["VerifiedBy"]),
+                                VerifiedAt = reader["VerifiedAt"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["VerifiedAt"]),
+                                AffiliatedAt = Convert.ToDateTime(reader["AffiliatedAt"])
                             });
                         }
                     }
@@ -369,8 +370,9 @@ namespace FoodArrival.DAL
             return list;
         }
 
-        public bool VerifyAffiliation(int affiliationId, bool isApproved)
+        public bool VerifyAffiliation(int affiliationId, string role, int userId, out string message)
         {
+            message = string.Empty;
             try
             {
                 using (var conn = DbHelper.GetConnection())
@@ -378,29 +380,43 @@ namespace FoodArrival.DAL
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@AffiliationId", affiliationId);
-                    cmd.Parameters.AddWithValue("@IsApproved", isApproved);
+                    cmd.Parameters.AddWithValue("@VerifiedByRole", role ?? "Admin");
+                    cmd.Parameters.AddWithValue("@VerifiedBy", userId);
+                    cmd.Parameters.AddWithValue("@IsApproved", true);
                     conn.Open();
-                    return cmd.ExecuteNonQuery() > 0;
+                    cmd.ExecuteNonQuery();
+                    message = "Rider affiliation successfully verified!";
+                    return true;
                 }
             }
-            catch { return false; }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
         }
 
-        public bool RemoveAffiliation(int riderId, int restaurantId)
+        public bool RejectAffiliation(int affiliationId, out string message)
         {
+            message = string.Empty;
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand("dbo.sp_Rider_RemoveAffiliation", conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_RejectAffiliation", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@RiderId", riderId);
-                    cmd.Parameters.AddWithValue("@RestaurantId", restaurantId);
+                    cmd.Parameters.AddWithValue("@AffiliationId", affiliationId);
                     conn.Open();
-                    return cmd.ExecuteNonQuery() > 0;
+                    cmd.ExecuteNonQuery();
+                    message = "Rider affiliation rejected and removed.";
+                    return true;
                 }
             }
-            catch { return false; }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
         }
 
         public List<Order> GetAvailableDeliveries()
@@ -420,17 +436,15 @@ namespace FoodArrival.DAL
                             list.Add(new Order
                             {
                                 OrderId = Convert.ToInt32(reader["OrderId"]),
-                                CustomerId = Convert.ToInt32(reader["CustomerId"]),
+                                OrderNumber = reader["OrderNumber"].ToString(),
                                 CustomerName = reader["CustomerName"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : null,
-                                Address = reader["Address"] != DBNull.Value ? reader["Address"].ToString() : null,
-                                DeliveryAddress = reader["Address"] != DBNull.Value ? reader["Address"].ToString() : null,
+                                CustomerPhone = reader["CustomerPhone"].ToString(),
+                                DeliveryAddress = reader["DeliveryAddress"].ToString(),
                                 TotalAmount = Convert.ToDecimal(reader["TotalAmount"]),
                                 OrderStatus = reader["OrderStatus"].ToString(),
                                 DeliveryStatus = reader["DeliveryStatus"].ToString(),
-                                OrderedAt = Convert.ToDateTime(reader["OrderedAt"]),
-                                RestaurantName = reader["RestaurantName"].ToString(),
-                                Items = reader["Items"] != DBNull.Value ? reader["Items"].ToString() : "Items"
+                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"]),
+                                RestaurantName = reader["RestaurantName"] == DBNull.Value ? string.Empty : reader["RestaurantName"].ToString()
                             });
                         }
                     }
@@ -458,17 +472,15 @@ namespace FoodArrival.DAL
                             list.Add(new Order
                             {
                                 OrderId = Convert.ToInt32(reader["OrderId"]),
-                                CustomerId = Convert.ToInt32(reader["CustomerId"]),
+                                OrderNumber = reader["OrderNumber"].ToString(),
                                 CustomerName = reader["CustomerName"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : null,
-                                Address = reader["Address"] != DBNull.Value ? reader["Address"].ToString() : null,
-                                DeliveryAddress = reader["Address"] != DBNull.Value ? reader["Address"].ToString() : null,
+                                CustomerPhone = reader["CustomerPhone"].ToString(),
+                                DeliveryAddress = reader["DeliveryAddress"].ToString(),
                                 TotalAmount = Convert.ToDecimal(reader["TotalAmount"]),
                                 OrderStatus = reader["OrderStatus"].ToString(),
                                 DeliveryStatus = reader["DeliveryStatus"].ToString(),
-                                OrderedAt = Convert.ToDateTime(reader["OrderedAt"]),
-                                ProcessedAt = reader["ProcessedAt"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["ProcessedAt"]) : null,
-                                Items = reader["Items"] != DBNull.Value ? reader["Items"].ToString() : "Items"
+                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"]),
+                                RestaurantName = reader["RestaurantName"] == DBNull.Value ? string.Empty : reader["RestaurantName"].ToString()
                             });
                         }
                     }
@@ -486,8 +498,8 @@ namespace FoodArrival.DAL
                 using (var cmd = new SqlCommand("dbo.sp_Rider_AcceptDelivery", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@RiderId", riderId);
                     cmd.Parameters.AddWithValue("@OrderId", orderId);
+                    cmd.Parameters.AddWithValue("@RiderId", riderId);
                     conn.Open();
                     return cmd.ExecuteNonQuery() > 0;
                 }
@@ -498,19 +510,6 @@ namespace FoodArrival.DAL
         public bool CompleteDelivery(int orderId, int riderId, string enteredOtp, out string errorMessage)
         {
             errorMessage = string.Empty;
-            if (string.IsNullOrWhiteSpace(enteredOtp))
-            {
-                errorMessage = "Please enter the 6-digit delivery OTP provided by the customer.";
-                return false;
-            }
-
-            enteredOtp = enteredOtp.Trim();
-            if (enteredOtp.Length != 6)
-            {
-                errorMessage = "Delivery OTP must be exactly 6 digits.";
-                return false;
-            }
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
@@ -519,55 +518,44 @@ namespace FoodArrival.DAL
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@OrderId", orderId);
                     cmd.Parameters.AddWithValue("@RiderId", riderId);
-                    cmd.Parameters.AddWithValue("@EnteredOtp", enteredOtp);
+                    cmd.Parameters.AddWithValue("@EnteredOtp", (object)enteredOtp ?? DBNull.Value);
 
-                    var errParam = new SqlParameter("@ErrorMessage", SqlDbType.NVarChar, 300)
+                    var outMsg = new SqlParameter("@ErrorMessage", SqlDbType.NVarChar, 300)
                     {
                         Direction = ParameterDirection.Output
                     };
-                    var successParam = new SqlParameter("@IsSuccess", SqlDbType.Bit)
+                    cmd.Parameters.Add(outMsg);
+
+                    var outSuccess = new SqlParameter("@IsSuccess", SqlDbType.Bit)
                     {
                         Direction = ParameterDirection.Output
                     };
-                    cmd.Parameters.Add(errParam);
-                    cmd.Parameters.Add(successParam);
+                    cmd.Parameters.Add(outSuccess);
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
 
-                    bool isSuccess = successParam.Value != DBNull.Value && Convert.ToBoolean(successParam.Value);
+                    bool isSuccess = outSuccess.Value != DBNull.Value && Convert.ToBoolean(outSuccess.Value);
                     if (!isSuccess)
                     {
-                        errorMessage = errParam.Value != DBNull.Value ? errParam.Value.ToString() : "Delivery verification failed.";
+                        errorMessage = outMsg.Value?.ToString() ?? "Invalid Delivery OTP. Delivery not confirmed.";
                         return false;
                     }
+
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                errorMessage = "Database error verifying OTP: " + ex.Message;
+                errorMessage = ex.Message;
                 return false;
             }
         }
 
         public bool CompleteDelivery(int orderId, int riderId)
         {
-            string msg;
-            try
-            {
-                using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand("dbo.sp_Order_GetDeliveryOtp", conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@OrderId", orderId);
-                    conn.Open();
-                    var obj = cmd.ExecuteScalar();
-                    string otp = obj != null && obj != DBNull.Value ? obj.ToString() : "";
-                    return CompleteDelivery(orderId, riderId, otp, out msg);
-                }
-            }
-            catch { return false; }
+            string err;
+            return CompleteDelivery(orderId, riderId, null, out err);
         }
 
         public bool ResetPassword(int riderId, string newPassword, out string message)
