@@ -93,6 +93,7 @@ namespace LMS.Controllers
 
                 _db.Courses.Add(course);
                 _db.SaveChanges();
+                TriggerRagIndexRefresh();
 
                 TempData["SuccessMessage"] = "Course created successfully!";
                 return RedirectToAction("Modules", new { courseId = course.CourseId });
@@ -153,6 +154,7 @@ namespace LMS.Controllers
                 course.Status = model.Status;
 
                 _db.SaveChanges();
+                TriggerRagIndexRefresh();
                 TempData["SuccessMessage"] = "Course updated successfully!";
                 return RedirectToAction("Courses");
             }
@@ -979,6 +981,25 @@ namespace LMS.Controllers
         private static string EscapeCsv(string s)
         {
             return s?.Replace("\"", "\"\"") ?? "";
+        }
+
+        private void TriggerRagIndexRefresh()
+        {
+            System.Threading.Tasks.Task.Run(async () =>
+            {
+                try
+                {
+                    using (var db = new ApplicationDbContext())
+                    {
+                        var rag = new RagKnowledgeService(db);
+                        await rag.RebuildIndexAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceWarning("RAG automatic refresh warning: " + ex.Message);
+                }
+            });
         }
 
         protected override void Dispose(bool disposing)

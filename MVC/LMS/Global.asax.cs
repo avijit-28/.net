@@ -42,8 +42,8 @@ namespace LMS
             var baseException = exception?.GetBaseException();
             if (exception is HttpAntiForgeryException || 
                 baseException is HttpAntiForgeryException ||
-                (exception?.Message != null && exception.Message.Contains("anti-forgery")) ||
-                (baseException?.Message != null && baseException.Message.Contains("anti-forgery")))
+                (exception?.Message != null && exception.Message.IndexOf("anti-forgery", StringComparison.OrdinalIgnoreCase) >= 0) ||
+                (baseException?.Message != null && baseException.Message.IndexOf("anti-forgery", StringComparison.OrdinalIgnoreCase) >= 0))
             {
                 Server.ClearError();
                 try
@@ -53,7 +53,8 @@ namespace LMS
                 }
                 catch { }
 
-                Response.Redirect("~/Account/Login?antiforgery=renew");
+                Response.Redirect("~/Account/Login?antiforgery=renew", false);
+                Context.ApplicationInstance.CompleteRequest();
                 return;
             }
         }

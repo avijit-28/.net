@@ -3082,3 +3082,100 @@ body.page-ai-assistant .text-muted,
 body.page-chatbot .text-muted {
     color: #94A3B8 !important;
 }
+
+/* ==========================================================================
+   Comprehensive Dark Contrast & Light Box Eliminators
+   ========================================================================== */
+
+/* Course Details: Curriculum, Exam Box & Reviews Glass Dark Styling */
+body.page-course-details .curriculum-section,
+body.page-course-details .reviews-section,
+body.page-course-details .card-custom,
+body.page-course-details .card.bg-light,
+body.page-course-details .card.border-secondary-subtle,
+body.page-course-details .bg-light {
+    background: rgba(6, 35, 48, 0.95) !important;
+    border: 1px solid rgba(39, 184, 214, 0.25) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-course-details .curriculum-section h4,
+body.page-course-details .reviews-section h4,
+body.page-course-details .card-custom h4,
+body.page-course-details .card-custom h5,
+body.page-course-details .card-custom h6,
+body.page-course-details .card-custom .text-dark,
+body.page-course-details .text-dark {
+    color: #FFFFFF !important;
+}
+
+body.page-course-details .curriculum-section .text-muted,
+body.page-course-details .reviews-section .text-muted,
+body.page-course-details .card-custom .text-muted,
+body.page-course-details .card-custom .text-secondary,
+body.page-course-details .text-muted,
+body.page-course-details .text-secondary {
+    color: #94A3B8 !important;
+}
+
+body.page-course-details .reviews-section .border-bottom {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.page-course-details .card.card-custom.bg-light.text-muted {
+    background: rgba(11, 52, 69, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #E2E8F0 !important;
+}
+
+/* Studio & Table Action Button Hover Inversion Fix (No Solid White Hover) */
+.studio-action-btn:hover,
+.btn-outline-light:hover,
+body.page-admin-dashboard .btn-outline-light:hover,
+body.page-admin-management .btn-outline-light:hover,
+body.page-instructor-dashboard .btn-outline-light:hover,
+body.page-instructor-management .btn-outline-light:hover,
+.table .btn-outline-light:hover {
+    background: rgba(39, 184, 214, 0.25) !important;
+    border-color: #27B8D6 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 14px rgba(39, 184, 214, 0.35) !important;
+}
+
+.studio-action-btn:hover *,
+.btn-outline-light:hover *,
+.table .btn-outline-light:hover * {
+    color: #FFFFFF !important;
+}
+
+/* Category & Level Badges on Tables across Admin and Instructor */
+.course-row .badge-primary-subtle,
+.table .badge-primary-subtle,
+.table .badge.badge-primary-subtle,
+body.page-admin-management .table .badge-primary-subtle,
+body.page-instructor-management .table .badge.bg-light {
+    background: rgba(39, 184, 214, 0.18) !important;
+    color: #27B8D6 !important;
+    border: 1px solid rgba(39, 184, 214, 0.4) !important;
+}
+
+/* Admin / Instructor Inputs and Selects Global High Specificity Safeguards */
+body.page-admin-management .form-control,
+body.page-admin-management .form-select,
+body.page-instructor-management .form-control,
+body.page-instructor-management .form-select {
+    background: rgba(6, 35, 48, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-admin-management .form-control:focus,
+body.page-admin-management .form-select:focus,
+body.page-instructor-management .form-control:focus,
+body.page-instructor-management .form-select:focus {
+    background: rgba(6, 35, 48, 0.95) !important;
+    border-color: #27B8D6 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 0 3px rgba(39, 184, 214, 0.25) !important;
+}
+

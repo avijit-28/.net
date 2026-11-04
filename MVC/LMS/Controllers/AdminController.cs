@@ -624,6 +624,7 @@ namespace LMS.Controllers
                 course.PublishedDate = DateTime.UtcNow;
             }
             _db.SaveChanges();
+            TriggerRagIndexRefresh();
 
             TempData["SuccessMessage"] = $"Course '{course.Title}' status updated to {status}.";
             return RedirectToAction("Courses");
@@ -934,6 +935,25 @@ namespace LMS.Controllers
             }
 
             return RedirectToAction("PasswordResets");
+        }
+
+        private void TriggerRagIndexRefresh()
+        {
+            System.Threading.Tasks.Task.Run(async () =>
+            {
+                try
+                {
+                    using (var db = new ApplicationDbContext())
+                    {
+                        var rag = new RagKnowledgeService(db);
+                        await rag.RebuildIndexAsync();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Trace.TraceWarning("RAG automatic refresh warning: " + ex.Message);
+                }
+            });
         }
 
         protected override void Dispose(bool disposing)
