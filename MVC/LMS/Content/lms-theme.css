@@ -3059,3 +3059,26 @@ body.page-contact .form-control::placeholder {
 .modal .text-muted {
     color: #94A3B8 !important;
 }
+
+/* AI Academic Advisor & ChatBot Atmosphere */
+body.page-ai-assistant,
+body.page-chatbot {
+    background-color: #041822 !important;
+    background-image:
+        radial-gradient(circle at 12% 15%, #0D3B4F 0%, transparent 38%),
+        radial-gradient(circle at 88% 22%, #0B3445 0%, transparent 38%),
+        radial-gradient(circle at 50% 85%, rgba(39, 184, 214, 0.08) 0%, transparent 35%),
+        linear-gradient(180deg, #041822 0%, #062330 45%, #041822 100%) !important;
+    background-attachment: fixed !important;
+    color: #FFFFFF !important;
+}
+
+body.page-ai-assistant h1, body.page-ai-assistant h2, body.page-ai-assistant h3, body.page-ai-assistant h4, body.page-ai-assistant h5, body.page-ai-assistant h6,
+body.page-chatbot h1, body.page-chatbot h2, body.page-chatbot h3, body.page-chatbot h4, body.page-chatbot h5, body.page-chatbot h6 {
+    color: #FFFFFF !important;
+}
+
+body.page-ai-assistant .text-muted,
+body.page-chatbot .text-muted {
+    color: #94A3B8 !important;
+}
