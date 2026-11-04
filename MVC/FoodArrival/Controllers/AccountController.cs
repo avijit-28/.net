@@ -454,7 +454,7 @@ namespace FoodArrival.Controllers
                     }
                     else if (model.CurrentRequest.Status == "Completed")
                     {
-                        model.StatusMessage = "Password has already been reset for this request. Please login with your new password, or submit a new request if needed.";
+                        model.StatusMessage = "Aapka password safaltapoorvak change ho chuka hai! Kripya naye password ka use karke login karein. Purane password se login nahi hoga. Yadi aapko dobara password change karna hai, toh aapko Admin ko nayi request bhejni hogi.";
                     }
                 }
                 else
@@ -536,8 +536,8 @@ namespace FoodArrival.Controllers
             string message;
             if (_passwordRepo.SetNewPassword(model.Email, model.NewPassword, out message))
             {
-                TempData["Success"] = message;
-                return RedirectToAction("Login", "Account");
+                TempData["Success"] = "Password change ho chuka hai! Kripya naye password se login karein. Purana password ab kaam nahi karega. (Password changed successfully! You can now log in using your new password only. The old password is no longer valid.)";
+                return RedirectToAction("PasswordRecovery", new { email = model.Email.Trim().ToLower(), tab = "check" });
             }
 
             ModelState.AddModelError("", message);
