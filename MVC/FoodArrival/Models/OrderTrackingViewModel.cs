@@ -16,6 +16,7 @@ namespace FoodArrival.Models
         public DateTime OrderedAt { get; set; }
         public DateTime? EstimatedDeliveryTime { get; set; }
         public string OverallStatus { get; set; } // Confirmed, Preparing, ReadyForPickup, OutForDelivery, Delivered, Cancelled
+        public string DeliveryOtp { get; set; } // 6-digit handover OTP
         public string PaymentStatus { get; set; } // Paid, Pending, Failed
         public string PaymentMethod { get; set; } // UPI, Card, NetBanking, COD
         public decimal SubTotal { get; set; }
