@@ -386,32 +386,14 @@ namespace FoodArrival.Services
             try
             {
                 using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand("dbo.sp_OrderSubOrder_ReassignRider", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@SubOrderId", subOrderId);
+                    cmd.Parameters.AddWithValue("@NewRiderId", newRiderId);
+                    cmd.Parameters.AddWithValue("@Reason", reason ?? "Operational rebalance");
                     conn.Open();
-                    string sql = @"
-                        UPDATE dbo.OrderSubOrders
-                        SET RiderId = @NewRiderId,
-                            DeliveryStatus = 'RiderAssigned'
-                        WHERE SubOrderId = @SubOrderId";
-                    using (var cmd = new SqlCommand(sql, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@NewRiderId", newRiderId);
-                        cmd.Parameters.AddWithValue("@SubOrderId", subOrderId);
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    // Add history event
-                    string histSql = @"
-                        INSERT INTO dbo.OrderStatusHistory (OrderId, SubOrderId, Status, ChangedByRole, Message)
-                        SELECT OrderId, @SubOrderId, 'RiderReassigned', 'Admin', 'Rider reassigned: ' + @Reason
-                        FROM dbo.OrderSubOrders WHERE SubOrderId = @SubOrderId";
-                    using (var cmdHist = new SqlCommand(histSql, conn))
-                    {
-                        cmdHist.Parameters.AddWithValue("@SubOrderId", subOrderId);
-                        cmdHist.Parameters.AddWithValue("@Reason", reason ?? "Operational rebalance");
-                        cmdHist.ExecuteNonQuery();
-                    }
-                    return true;
+                    return cmd.ExecuteNonQuery() > 0;
                 }
             }
             catch { return false; }
