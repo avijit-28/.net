@@ -45,15 +45,15 @@ namespace LMS.Services
                 .Include(c => c.Category)
                 .Include(c => c.Instructor)
                 .Include(c => c.Modules.Select(m => m.Lessons))
-                .Where(c => c.IsPublished)
+                .Where(c => c.Status == "Published")
                 .ToListAsync();
 
             foreach (var course in courses)
             {
                 int totalLessons = course.Modules.SelectMany(m => m.Lessons).Count();
-                int totalDuration = course.Modules.SelectMany(m => m.Lessons).Sum(l => l.DurationMinutes);
+                int totalDuration = course.Modules.SelectMany(m => m.Lessons).Sum(l => l.DurationInMinutes);
                 string instructorName = course.Instructor?.FullName ?? "Staff Faculty";
-                string categoryName = course.Category?.Name ?? "General";
+                string categoryName = course.Category?.CategoryName ?? "General";
                 string priceStr = course.Price == 0 ? "Free" : $"₹{course.Price:N2}";
 
                 // Course Overview Chunk
@@ -65,42 +65,41 @@ namespace LMS.Services
                     Content = $"Course: {course.Title}. Category: {categoryName}. Difficulty Level: {course.Level}. Price: {priceStr}. Instructor: {instructorName}. " +
                               $"Total Lessons: {totalLessons} across {course.Modules.Count} modules. Estimated Duration: {totalDuration} minutes. " +
                               $"Description: {course.Description} " +
-                              (!string.IsNullOrEmpty(course.Objectives) ? $"Learning Objectives: {course.Objectives}. " : "") +
-                              (!string.IsNullOrEmpty(course.Prerequisites) ? $"Prerequisites: {course.Prerequisites}." : "Prerequisites: None."),
+                              (!string.IsNullOrEmpty(course.Level) ? $"Target Skill Level: {course.Level}. " : ""),
                     Keywords = $"{course.Title} {categoryName} {course.Level} {instructorName} syllabus learn curriculum",
                     UrlPath = $"/Courses/Details/{course.CourseId}",
                     LastUpdated = DateTime.UtcNow
                 });
 
                 // 2. Index Modules & Lessons
-                foreach (var module in course.Modules.OrderBy(m => m.OrderIndex))
+                foreach (var module in course.Modules.OrderBy(m => m.ModuleOrder))
                 {
-                    var lessonTitles = module.Lessons.OrderBy(l => l.OrderIndex).Select(l => $"{l.Title} ({l.DurationMinutes}m)").ToList();
+                    var lessonTitles = module.Lessons.OrderBy(l => l.LessonOrder).Select(l => $"{l.Title} ({l.DurationInMinutes}m)").ToList();
                     string lessonsSummary = string.Join(", ", lessonTitles);
 
                     chunks.Add(new KnowledgeChunk
                     {
                         SourceType = "Module",
                         SourceId = module.ModuleId,
-                        Title = $"Curriculum Module: {course.Title} - {module.Title}",
-                        Content = $"Module #{module.OrderIndex}: {module.Title} for course '{course.Title}'. Description: {module.Description}. " +
+                        Title = $"Curriculum Module: {course.Title} - {module.ModuleName}",
+                        Content = $"Module #{module.ModuleOrder}: {module.ModuleName} for course '{course.Title}'. Description: {module.Description}. " +
                                   $"Lessons included: {(string.IsNullOrEmpty(lessonsSummary) ? "Lessons being prepared" : lessonsSummary)}.",
-                        Keywords = $"{course.Title} {module.Title} syllabus topics lessons chapters",
+                        Keywords = $"{course.Title} {module.ModuleName} syllabus topics lessons chapters",
                         UrlPath = $"/Learning?courseId={course.CourseId}",
                         LastUpdated = DateTime.UtcNow
                     });
 
-                    foreach (var lesson in module.Lessons.OrderBy(l => l.OrderIndex))
+                    foreach (var lesson in module.Lessons.OrderBy(l => l.LessonOrder))
                     {
                         chunks.Add(new KnowledgeChunk
                         {
                             SourceType = "Lesson",
                             SourceId = lesson.LessonId,
                             Title = $"Lesson: {course.Title} > {lesson.Title}",
-                            Content = $"Lesson in course '{course.Title}', Module '{module.Title}': '{lesson.Title}'. Duration: {lesson.DurationMinutes} minutes. " +
+                            Content = $"Lesson in course '{course.Title}', Module '{module.ModuleName}': '{lesson.Title}'. Duration: {lesson.DurationInMinutes} minutes. " +
                                       $"Preview Available: {(lesson.IsPreview ? "Yes, free preview" : "Enrolled students only")}. " +
                                       (!string.IsNullOrEmpty(lesson.Content) ? $"Summary: {StripHtml(lesson.Content)}" : ""),
-                            Keywords = $"{course.Title} {lesson.Title} {module.Title} video lesson tutorial",
+                            Keywords = $"{course.Title} {lesson.Title} {module.ModuleName} video lesson tutorial",
                             UrlPath = $"/Learning?courseId={course.CourseId}",
                             LastUpdated = DateTime.UtcNow
                         });
@@ -267,20 +266,20 @@ namespace LMS.Services
 
             var enrollments = await _db.Enrollments
                 .Include(e => e.Course)
-                .Where(e => e.UserId == userId)
+                .Where(e => e.StudentId == userId)
                 .ToListAsync();
 
             var certs = await _db.Certificates
                 .Include(c => c.Course)
-                .Where(c => c.UserId == userId)
+                .Where(c => c.StudentId == userId)
                 .ToListAsync();
 
             string enrollmentsSummary = enrollments.Any()
-                ? string.Join("; ", enrollments.Select(e => $"'{e.Course?.Title}' ({e.ProgressPercentage}% completed, Last Accessed: {e.LastAccessedDate:MMM dd})"))
+                ? string.Join("; ", enrollments.Select(e => $"'{e.Course?.Title}' ({(int)e.CompletionPercentage}% completed)"))
                 : "None currently enrolled.";
 
             string certsSummary = certs.Any()
-                ? string.Join(", ", certs.Select(c => $"'{c.Course?.Title}' (ID: {c.CertificateCode})"))
+                ? string.Join(", ", certs.Select(c => $"'{c.Course?.Title}' (ID: {c.CertificateNumber})"))
                 : "None yet.";
 
             return $"Active Learner: {user.FullName} ({user.Email}). " +
@@ -306,13 +305,13 @@ namespace LMS.Services
             {
                 var queryLower = query.ToLower();
                 var matchingCourses = await _db.Courses
-                    .Where(c => c.IsPublished)
+                    .Where(c => c.Status == "Published")
                     .ToListAsync();
 
                 foreach (var c in matchingCourses)
                 {
                     if (queryLower.Contains(c.Title.ToLower()) || 
-                        (c.Category != null && queryLower.Contains(c.Category.Name.ToLower())))
+                        (c.Category != null && queryLower.Contains(c.Category.CategoryName.ToLower())))
                     {
                         recommendedCourseIds.Add(c.CourseId);
                     }
@@ -328,7 +327,7 @@ namespace LMS.Services
             if (!string.IsNullOrEmpty(userId))
             {
                 var userEnrollments = await _db.Enrollments
-                    .Where(e => e.UserId == userId && recommendedCourseIds.Contains(e.CourseId))
+                    .Where(e => e.StudentId == userId && recommendedCourseIds.Contains(e.CourseId))
                     .ToListAsync();
                 foreach (var e in userEnrollments)
                 {
@@ -346,16 +345,16 @@ namespace LMS.Services
             foreach (var c in courseEntities)
             {
                 bool isEnrolled = enrollments.ContainsKey(c.CourseId);
-                int progress = isEnrolled ? enrollments[c.CourseId].ProgressPercentage : 0;
+                int progress = isEnrolled ? (int)enrollments[c.CourseId].CompletionPercentage : 0;
 
                 cards.Add(new CourseRecommendationCard
                 {
                     CourseId = c.CourseId,
                     Title = c.Title,
-                    CategoryName = c.Category?.Name ?? "General",
+                    CategoryName = c.Category?.CategoryName ?? "General",
                     Level = c.Level,
                     Price = c.Price,
-                    ThumbnailUrl = string.IsNullOrEmpty(c.ThumbnailUrl) ? "/Content/images/course-default.jpg" : c.ThumbnailUrl,
+                    ThumbnailUrl = string.IsNullOrEmpty(c.Thumbnail) ? "/Content/images/course-default.jpg" : c.Thumbnail,
                     DetailUrl = $"/Courses/Details/{c.CourseId}",
                     LearnUrl = $"/Learning?courseId={c.CourseId}",
                     IsEnrolled = isEnrolled,
