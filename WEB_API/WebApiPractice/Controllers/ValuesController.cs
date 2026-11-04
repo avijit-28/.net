@@ -39,6 +39,7 @@ namespace WebApiPractice.Controllers
         // DELETE api/values/5
         public void Delete(int id)
         {
+            _values.RemoveAt(id);
         }
     }
 }
