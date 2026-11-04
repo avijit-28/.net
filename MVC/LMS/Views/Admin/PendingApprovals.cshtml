@@ -71,25 +71,29 @@
     }
 
     <!-- Filter & Search Controls -->
-    <div class="card card-custom p-3 mb-4 shadow-sm bg-white">
+    <div class="card p-3 mb-4 shadow-sm" style="background: rgba(11, 52, 69, 0.7); border: 1px solid rgba(255, 255, 255, 0.12); backdrop-filter: blur(8px);">
         @using (Html.BeginForm("PendingApprovals", "Admin", FormMethod.Get, new { @class = "row g-2 align-items-center" }))
         {
             <div class="col-lg-7 d-flex flex-wrap gap-2 align-items-center">
-                <span class="small fw-bold text-muted text-uppercase me-1" style="font-size: 11px;">Status:</span>
+                <span class="small fw-bold text-white-50 text-uppercase me-1" style="font-size: 11px;">Status:</span>
                 <a href="@Url.Action("PendingApprovals", "Admin", new { statusFilter = "Pending", roleFilter = currentRole, search = search })" 
-                   class="btn btn-sm @(currentStatus == "Pending" ? "btn-warning text-dark fw-bold" : "btn-light border") rounded-pill px-3">
+                   class="btn btn-sm rounded-pill px-3 fw-bold @(currentStatus == "Pending" ? "text-white" : "text-white-50")"
+                   style="@(currentStatus == "Pending" ? "background: #FF7A18; border: 1px solid #FF7A18;" : "background: rgba(6, 35, 48, 0.6); border: 1px solid rgba(255,255,255,0.1);")">
                     <i class="bi bi-clock-history me-1"></i> Pending (@pendingCount)
                 </a>
                 <a href="@Url.Action("PendingApprovals", "Admin", new { statusFilter = "Approved", roleFilter = currentRole, search = search })" 
-                   class="btn btn-sm @(currentStatus == "Approved" ? "btn-success fw-bold" : "btn-light border") rounded-pill px-3">
+                   class="btn btn-sm rounded-pill px-3 fw-bold @(currentStatus == "Approved" ? "text-white" : "text-white-50")"
+                   style="@(currentStatus == "Approved" ? "background: #35C98A; border: 1px solid #35C98A;" : "background: rgba(6, 35, 48, 0.6); border: 1px solid rgba(255,255,255,0.1);")">
                     <i class="bi bi-check-circle me-1"></i> Approved
                 </a>
                 <a href="@Url.Action("PendingApprovals", "Admin", new { statusFilter = "Declined", roleFilter = currentRole, search = search })" 
-                   class="btn btn-sm @(currentStatus == "Declined" ? "btn-danger fw-bold" : "btn-light border") rounded-pill px-3">
+                   class="btn btn-sm rounded-pill px-3 fw-bold @(currentStatus == "Declined" ? "text-white" : "text-white-50")"
+                   style="@(currentStatus == "Declined" ? "background: #EF4444; border: 1px solid #EF4444;" : "background: rgba(6, 35, 48, 0.6); border: 1px solid rgba(255,255,255,0.1);")">
                     <i class="bi bi-x-circle me-1"></i> Declined
                 </a>
                 <a href="@Url.Action("PendingApprovals", "Admin", new { statusFilter = "All", roleFilter = currentRole, search = search })" 
-                   class="btn btn-sm @(currentStatus == "All" ? "btn-primary fw-bold" : "btn-light border") rounded-pill px-3">
+                   class="btn btn-sm rounded-pill px-3 fw-bold @(currentStatus == "All" ? "text-white" : "text-white-50")"
+                   style="@(currentStatus == "All" ? "background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);" : "background: rgba(6, 35, 48, 0.6); border: 1px solid rgba(255,255,255,0.1);")">
                     All Statuses
                 </a>
             </div>
@@ -97,18 +101,18 @@
             <div class="col-lg-5">
                 <div class="input-group input-group-sm">
                     <input type="hidden" name="statusFilter" value="@currentStatus" />
-                    <select name="roleFilter" class="form-select border-end-0 flex-grow-0" style="width: 140px;">
-                        <option value="">All Roles</option>
-                        <option value="Student" @(currentRole == "Student" ? "selected" : "")>Students</option>
-                        <option value="Instructor" @(currentRole == "Instructor" ? "selected" : "")>Instructors</option>
+                    <select name="roleFilter" class="form-select flex-grow-0 text-white" style="width: 140px; background: rgba(6, 35, 48, 0.85); border-color: rgba(255, 255, 255, 0.15);">
+                        <option value="" style="background: #062330;">All Roles</option>
+                        <option value="Student" style="background: #062330;" @(currentRole == "Student" ? "selected" : "")>Students</option>
+                        <option value="Instructor" style="background: #062330;" @(currentRole == "Instructor" ? "selected" : "")>Instructors</option>
                     </select>
-                    <input type="text" name="search" value="@search" class="form-control" placeholder="Search name or email..." />
-                    <button type="submit" class="btn btn-primary px-3">
+                    <input type="text" name="search" value="@search" class="form-control text-white" placeholder="Search name or email..." style="background: rgba(6, 35, 48, 0.85); border-color: rgba(255, 255, 255, 0.15);" />
+                    <button type="submit" class="btn text-white fw-bold px-3" style="background: #FF7A18; border-color: #FF7A18;">
                         <i class="bi bi-search"></i>
                     </button>
                     @if (!string.IsNullOrEmpty(search) || !string.IsNullOrEmpty(currentRole) || currentStatus != "Pending")
                     {
-                        <a href="@Url.Action("PendingApprovals", "Admin")" class="btn btn-outline-secondary" title="Reset Filters">
+                        <a href="@Url.Action("PendingApprovals", "Admin")" class="btn btn-outline-light" title="Reset Filters">
                             <i class="bi bi-x-lg"></i>
                         </a>
                     }
@@ -118,13 +122,13 @@
     </div>
 
     <!-- Approvals Table Card -->
-    <div class="card card-custom shadow-sm bg-white overflow-hidden">
-        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
-            <h5 class="fw-bold mb-0 text-dark">
-                <i class="bi bi-person-check me-2 text-primary"></i>Registrations List
-                <span class="badge bg-light text-muted border ms-2">@Model.Count() records</span>
+    <div class="card shadow-sm overflow-hidden" style="background: rgba(6, 35, 48, 0.9); border: 1px solid rgba(255, 255, 255, 0.12);">
+        <div class="card-header py-3 px-4 d-flex justify-content-between align-items-center" style="background: rgba(11, 52, 69, 0.7); border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+            <h5 class="fw-bold mb-0 text-white">
+                <i class="bi bi-person-check me-2 text-cyan"></i>Registrations List
+                <span class="badge rounded-pill ms-2" style="background: rgba(39, 184, 214, 0.2); border: 1px solid rgba(39, 184, 214, 0.4); color: #27B8D6;">@Model.Count() records</span>
             </h5>
-            <span class="small text-muted">Showing: <strong>@currentStatus</strong> accounts</span>
+            <span class="small text-white-50">Showing: <strong class="text-white">@currentStatus</strong> accounts</span>
         </div>
 
         @if (!Model.Any())
@@ -132,12 +136,12 @@
             <div class="text-center py-5">
                 <div class="mb-3 text-muted">
                     <i class="bi bi-check2-circle fs-1 text-success d-block mb-2"></i>
-                    <h5 class="fw-bold text-dark">No registrations found</h5>
-                    <p class="small text-muted mb-3">There are currently no registrations matching the selected filters.</p>
+                    <h5 class="fw-bold text-white">No registrations found</h5>
+                    <p class="small text-white-50 mb-3">There are currently no registrations matching the selected filters.</p>
                 </div>
                 @if (currentStatus != "Pending")
                 {
-                    <a href="@Url.Action("PendingApprovals", "Admin", new { statusFilter = "Pending" })" class="btn btn-sm btn-outline-warning text-dark rounded-pill px-3">
+                    <a href="@Url.Action("PendingApprovals", "Admin", new { statusFilter = "Pending" })" class="btn btn-sm btn-outline-light rounded-pill px-3">
                         <i class="bi bi-clock-history me-1"></i> View Pending Queue
                     </a>
                 }
@@ -146,15 +150,15 @@
         else
         {
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light small">
+                <table class="table table-hover align-middle mb-0 text-white" style="border-color: rgba(255, 255, 255, 0.08);">
+                    <thead style="background: rgba(4, 24, 34, 0.8); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
                         <tr>
-                            <th class="ps-4">Applicant / Email</th>
-                            <th>Requested Role</th>
-                            <th>Registered Date</th>
-                            <th>Verification Status</th>
-                            <th>Notes / Rejection Reason</th>
-                            <th class="text-end pe-4">Review Actions</th>
+                            <th class="ps-4 text-white-50">Applicant / Email</th>
+                            <th class="text-white-50">Requested Role</th>
+                            <th class="text-white-50">Registered Date</th>
+                            <th class="text-white-50">Verification Status</th>
+                            <th class="text-white-50">Notes / Rejection Reason</th>
+                            <th class="text-end pe-4 text-white-50">Review Actions</th>
                         </tr>
                     </thead>
                     <tbody class="small">
@@ -167,43 +171,52 @@
                             <tr>
                                 <td class="ps-4">
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="rounded-circle bg-light border d-flex align-items-center justify-content-center fw-bold text-primary" style="width: 38px; height: 38px;">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white" style="width: 38px; height: 38px; background: #FF7A18; flex-shrink: 0;">
                                             @(string.IsNullOrEmpty(user.FullName) ? "U" : user.FullName.Substring(0, 1).ToUpper())
                                         </div>
                                         <div>
-                                            <div class="fw-bold text-dark">@user.FullName</div>
-                                            <div class="text-muted" style="font-size: 11px;">@user.Email</div>
+                                            <div class="fw-bold text-white">@user.FullName</div>
+                                            <div class="text-white-50 font-monospace" style="font-size: 11px;">@user.Email</div>
                                         </div>
                                     </div>
                                 </td>
 
                                 <td>
-                                    <span class="badge @(user.RequestedRole == "Instructor" ? "bg-info-subtle text-info border border-info-subtle" : "bg-primary-subtle text-primary border border-primary-subtle") rounded-pill px-2 py-1">
-                                        <i class="bi @(user.RequestedRole == "Instructor" ? "bi-mortarboard" : "bi-backpack2") me-1"></i> @user.RequestedRole
-                                    </span>
+                                    @if (user.RequestedRole == "Instructor")
+                                    {
+                                        <span class="badge px-2 py-1 rounded-pill" style="background: rgba(39, 184, 214, 0.2); color: #27B8D6; border: 1px solid rgba(39, 184, 214, 0.4);">
+                                            <i class="bi bi-mortarboard me-1"></i> Instructor
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge px-2 py-1 rounded-pill" style="background: rgba(53, 201, 138, 0.2); color: #35C98A; border: 1px solid rgba(53, 201, 138, 0.4);">
+                                            <i class="bi bi-backpack2 me-1"></i> @(user.RequestedRole ?? "Student")
+                                        </span>
+                                    }
                                 </td>
 
-                                <td class="text-muted">
-                                    <div>@user.RegisteredDate.ToLocalTime().ToString("dd MMM yyyy")</div>
-                                    <div style="font-size: 11px;">@user.RegisteredDate.ToLocalTime().ToString("hh:mm tt")</div>
+                                <td class="text-white-50">
+                                    <div class="text-white">@user.RegisteredDate.ToLocalTime().ToString("dd MMM yyyy")</div>
+                                    <div class="font-monospace" style="font-size: 11px;">@user.RegisteredDate.ToLocalTime().ToString("hh:mm tt")</div>
                                 </td>
 
                                 <td>
                                     @if (isUserPending)
                                     {
-                                        <span class="badge bg-warning text-dark rounded-pill px-2 py-1">
-                                            <span class="spinner-grow spinner-grow-sm me-1" role="status" aria-hidden="true" style="width: 7px; height: 7px;"></span> Pending Verification
+                                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1 fw-bold">
+                                            Pending Verification
                                         </span>
                                     }
                                     else if (isUserApproved)
                                     {
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-1">
+                                        <span class="badge bg-success rounded-pill px-3 py-1 fw-bold">
                                             <i class="bi bi-check-circle-fill me-1"></i> Approved
                                         </span>
                                     }
                                     else if (isUserDeclined)
                                     {
-                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2 py-1">
+                                        <span class="badge bg-danger rounded-pill px-3 py-1 fw-bold">
                                             <i class="bi bi-x-circle-fill me-1"></i> Declined
                                         </span>
                                     }
@@ -218,7 +231,7 @@
                                     }
                                     else
                                     {
-                                        <span class="text-muted">&mdash;</span>
+                                        <span class="text-white-50">&mdash;</span>
                                     }
                                 </td>
 
@@ -230,7 +243,7 @@
                                             {
                                                 @Html.AntiForgeryToken()
                                                 <input type="hidden" name="userId" value="@user.Id" />
-                                                <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 fw-semibold shadow-xs" 
+                                                <button type="submit" class="btn btn-sm text-white rounded-pill px-3 fw-bold" style="background: #35C98A; border: none;"
                                                         data-fullname="@user.FullName" 
                                                         data-role="@user.RequestedRole" 
                                                         onclick="return confirm('Approve registration for ' + this.getAttribute('data-fullname') + ' as ' + this.getAttribute('data-role') + '?');">

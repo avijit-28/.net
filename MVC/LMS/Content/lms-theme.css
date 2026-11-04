@@ -2402,6 +2402,92 @@ body.page-admin-management .table th {
     background: #0B3445 !important;
 }
 
+/* Universal Overrides for Admin Views */
+body.page-admin-dashboard .bg-white,
+body.page-admin-management .bg-white,
+body.page-admin-dashboard .card-header.bg-white,
+body.page-admin-management .card-header.bg-white {
+    background: rgba(6, 35, 48, 0.9) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-admin-dashboard .card-header,
+body.page-admin-management .card-header {
+    background: rgba(11, 52, 69, 0.7) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-admin-dashboard .bg-light,
+body.page-admin-management .bg-light,
+body.page-admin-dashboard .p-3.bg-light,
+body.page-admin-management .p-3.bg-light,
+body.page-admin-dashboard .modal-footer.bg-light,
+body.page-admin-management .modal-footer.bg-light {
+    background: rgba(11, 52, 69, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-admin-dashboard .list-group-item,
+body.page-admin-management .list-group-item {
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-admin-dashboard .table thead,
+body.page-admin-management .table thead,
+body.page-admin-dashboard .table-light,
+body.page-admin-management .table-light {
+    background-color: rgba(4, 24, 34, 0.85) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.page-admin-dashboard .table thead th,
+body.page-admin-management .table thead th {
+    background-color: rgba(4, 24, 34, 0.85) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.page-admin-dashboard .table td,
+body.page-admin-management .table td {
+    color: #E2E8F0 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    background-color: transparent !important;
+}
+
+body.page-admin-dashboard .badge.bg-light,
+body.page-admin-management .badge.bg-light {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #E2E8F0 !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+body.page-admin-dashboard .form-control,
+body.page-admin-management .form-control,
+body.page-admin-dashboard .form-select,
+body.page-admin-management .form-select {
+    background-color: rgba(4, 24, 34, 0.85) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-admin-dashboard .form-control::placeholder,
+body.page-admin-management .form-control::placeholder {
+    color: #64748B !important;
+}
+
+body.page-admin-dashboard code,
+body.page-admin-management code {
+    background: rgba(39, 184, 214, 0.15) !important;
+    color: #27B8D6 !important;
+    border: 1px solid rgba(39, 184, 214, 0.35) !important;
+}
+
 /* --------------------------------------------------------------------------
    16. Authentication (Login): Gateway to Learning Split Screen
    -------------------------------------------------------------------------- */
