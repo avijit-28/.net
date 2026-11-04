@@ -111,6 +111,57 @@ namespace FoodArrival.DAL
             }
         }
 
+        private static bool HasColumn(SqlDataReader reader, string columnName)
+        {
+            try
+            {
+                return reader.GetOrdinal(columnName) >= 0;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static RestaurantStaff MapStaff(SqlDataReader reader)
+        {
+            var staff = new RestaurantStaff();
+            staff.StaffId = Convert.ToInt32(reader["StaffId"]);
+            staff.StaffCode = reader["StaffCode"] != DBNull.Value ? reader["StaffCode"].ToString() : string.Empty;
+
+            if (HasColumn(reader, "StaffName") && reader["StaffName"] != DBNull.Value)
+                staff.StaffName = reader["StaffName"].ToString();
+            else if (HasColumn(reader, "FullName") && reader["FullName"] != DBNull.Value)
+                staff.StaffName = reader["FullName"].ToString();
+
+            staff.Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : string.Empty;
+            staff.Email = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : string.Empty;
+            staff.PhoneNumber = HasColumn(reader, "PhoneNumber") && reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : string.Empty;
+            staff.RestaurantId = Convert.ToInt32(reader["RestaurantId"]);
+            staff.RestaurantName = HasColumn(reader, "RestaurantName") && reader["RestaurantName"] != DBNull.Value ? reader["RestaurantName"].ToString() : string.Empty;
+            staff.RoleTitle = HasColumn(reader, "RoleTitle") && reader["RoleTitle"] != DBNull.Value ? reader["RoleTitle"].ToString() : "Kitchen Staff";
+
+            if (HasColumn(reader, "PerformanceRating") && reader["PerformanceRating"] != DBNull.Value)
+                staff.PerformanceRating = Convert.ToDecimal(reader["PerformanceRating"]);
+            else
+                staff.PerformanceRating = 4.8m;
+
+            if (HasColumn(reader, "OrdersPrepared") && reader["OrdersPrepared"] != DBNull.Value)
+                staff.OrdersPrepared = Convert.ToInt32(reader["OrdersPrepared"]);
+            else if (HasColumn(reader, "OrdersPreparedCount") && reader["OrdersPreparedCount"] != DBNull.Value)
+                staff.OrdersPrepared = Convert.ToInt32(reader["OrdersPreparedCount"]);
+
+            if (HasColumn(reader, "ShiftStatus") && reader["ShiftStatus"] != DBNull.Value)
+                staff.ShiftStatus = reader["ShiftStatus"].ToString();
+            else
+                staff.ShiftStatus = "On Duty (Active)";
+
+            staff.IsVerified = Convert.ToBoolean(reader["IsVerified"]);
+            staff.IsActive = Convert.ToBoolean(reader["IsActive"]);
+
+            return staff;
+        }
+
         public RestaurantStaff Login(string loginId, string password)
         {
             try
@@ -126,23 +177,7 @@ namespace FoodArrival.DAL
                     {
                         if (reader.Read())
                         {
-                            return new RestaurantStaff
-                            {
-                                StaffId = Convert.ToInt32(reader["StaffId"]),
-                                StaffCode = reader["StaffCode"].ToString(),
-                                FullName = reader["FullName"].ToString(),
-                                Username = reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
-                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
-                                RestaurantName = reader["RestaurantName"].ToString(),
-                                RoleTitle = reader["RoleTitle"].ToString(),
-                                PerformanceRating = Convert.ToDecimal(reader["PerformanceRating"]),
-                                OrdersPreparedCount = Convert.ToInt32(reader["OrdersPreparedCount"]),
-                                ShiftStatus = reader["ShiftStatus"].ToString(),
-                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                IsActive = Convert.ToBoolean(reader["IsActive"])
-                            };
+                            return MapStaff(reader);
                         }
                     }
                 }
@@ -165,23 +200,7 @@ namespace FoodArrival.DAL
                     {
                         if (reader.Read())
                         {
-                            return new RestaurantStaff
-                            {
-                                StaffId = Convert.ToInt32(reader["StaffId"]),
-                                StaffCode = reader["StaffCode"].ToString(),
-                                FullName = reader["FullName"].ToString(),
-                                Username = reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
-                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
-                                RestaurantName = reader["RestaurantName"].ToString(),
-                                RoleTitle = reader["RoleTitle"].ToString(),
-                                PerformanceRating = Convert.ToDecimal(reader["PerformanceRating"]),
-                                OrdersPreparedCount = Convert.ToInt32(reader["OrdersPreparedCount"]),
-                                ShiftStatus = reader["ShiftStatus"].ToString(),
-                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                IsActive = Convert.ToBoolean(reader["IsActive"])
-                            };
+                            return MapStaff(reader);
                         }
                     }
                 }
@@ -205,23 +224,7 @@ namespace FoodArrival.DAL
                     {
                         while (reader.Read())
                         {
-                            list.Add(new RestaurantStaff
-                            {
-                                StaffId = Convert.ToInt32(reader["StaffId"]),
-                                StaffCode = reader["StaffCode"].ToString(),
-                                FullName = reader["FullName"].ToString(),
-                                Username = reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
-                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
-                                RestaurantName = reader["RestaurantName"].ToString(),
-                                RoleTitle = reader["RoleTitle"].ToString(),
-                                PerformanceRating = Convert.ToDecimal(reader["PerformanceRating"]),
-                                OrdersPreparedCount = Convert.ToInt32(reader["OrdersPreparedCount"]),
-                                ShiftStatus = reader["ShiftStatus"].ToString(),
-                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                IsActive = Convert.ToBoolean(reader["IsActive"])
-                            });
+                            list.Add(MapStaff(reader));
                         }
                     }
                 }
@@ -244,23 +247,7 @@ namespace FoodArrival.DAL
                     {
                         while (reader.Read())
                         {
-                            list.Add(new RestaurantStaff
-                            {
-                                StaffId = Convert.ToInt32(reader["StaffId"]),
-                                StaffCode = reader["StaffCode"].ToString(),
-                                FullName = reader["FullName"].ToString(),
-                                Username = reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
-                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
-                                RestaurantName = reader["RestaurantName"].ToString(),
-                                RoleTitle = reader["RoleTitle"].ToString(),
-                                PerformanceRating = Convert.ToDecimal(reader["PerformanceRating"]),
-                                OrdersPreparedCount = Convert.ToInt32(reader["OrdersPreparedCount"]),
-                                ShiftStatus = reader["ShiftStatus"].ToString(),
-                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                IsActive = Convert.ToBoolean(reader["IsActive"])
-                            });
+                            list.Add(MapStaff(reader));
                         }
                     }
                 }
@@ -288,23 +275,7 @@ namespace FoodArrival.DAL
                     {
                         while (reader.Read())
                         {
-                            list.Add(new RestaurantStaff
-                            {
-                                StaffId = Convert.ToInt32(reader["StaffId"]),
-                                StaffCode = reader["StaffCode"].ToString(),
-                                FullName = reader["FullName"].ToString(),
-                                Username = reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
-                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
-                                RestaurantName = reader["RestaurantName"].ToString(),
-                                RoleTitle = reader["RoleTitle"].ToString(),
-                                PerformanceRating = Convert.ToDecimal(reader["PerformanceRating"]),
-                                OrdersPreparedCount = Convert.ToInt32(reader["OrdersPreparedCount"]),
-                                ShiftStatus = reader["ShiftStatus"].ToString(),
-                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                IsActive = Convert.ToBoolean(reader["IsActive"])
-                            });
+                            list.Add(MapStaff(reader));
                         }
                     }
                 }
