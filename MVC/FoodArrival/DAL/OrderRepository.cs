@@ -99,9 +99,9 @@ namespace FoodArrival.DAL
                             int subOrderId;
                             string insertSubSql = @"
                                 INSERT INTO dbo.OrderSubOrders 
-                                (OrderId, RestaurantId, SubTotal, PreparationStatus, EstimatedReadyAt, DeliveryStatus, PickupSequence, CreatedAt)
+                                (OrderId, RestaurantId, SubTotal, PreparationStatus, EstimatedReadyAt, DeliveryStatus, PickupSequence, CreatedAt, DeliveryOtp)
                                 VALUES 
-                                (@OrderId, @RestaurantId, @SubTotal, 'Confirmed', DATEADD(MINUTE, @PrepMin, GETDATE()), 'Pending', 1, GETDATE());
+                                (@OrderId, @RestaurantId, @SubTotal, 'Confirmed', DATEADD(MINUTE, @PrepMin, GETDATE()), 'Pending', 1, GETDATE(), @DeliveryOtp);
                                 SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
                             using (var cmdSub = new SqlCommand(insertSubSql, conn, tran))
@@ -110,6 +110,7 @@ namespace FoodArrival.DAL
                                 cmdSub.Parameters.AddWithValue("@RestaurantId", restId);
                                 cmdSub.Parameters.AddWithValue("@SubTotal", restSubTotal);
                                 cmdSub.Parameters.AddWithValue("@PrepMin", prepMinutes);
+                                cmdSub.Parameters.AddWithValue("@DeliveryOtp", deliveryOtp);
                                 subOrderId = Convert.ToInt32(cmdSub.ExecuteScalar());
                             }
 
