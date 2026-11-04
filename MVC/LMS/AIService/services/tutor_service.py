@@ -1,15 +1,17 @@
 """
 Personalized Tutor & Code Assistant Service.
-Handles programming explanations, debugging guidance, and study plan creation
-based on student learning progress.
+Handles programming explanations, debugging walkthroughs, and study plan creation.
 """
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel
-from llm.provider_factory import LLMProviderFactory
-from rag.prompt_templates import SystemPrompts
+from llm.provider_factory import llm_factory
 from core.logger import get_masked_logger
 
 logger = get_masked_logger(__name__)
+
+TUTOR_SYSTEM_PROMPT = """You are an elite Lead Software Engineer and Academic CS Tutor at EduPlatform LMS.
+Provide precise, pedagogical, step-by-step code walkthroughs, root-cause bug diagnoses, and production-ready corrections.
+Always emphasize clean code, security best practices, and performance considerations."""
 
 class StudyPlanItem(BaseModel):
     day: int
@@ -26,23 +28,16 @@ class StudyPlanResponse(BaseModel):
     advice: str
 
 class TutorService:
-    def __init__(self):
-        self.llm = LLMProviderFactory.get_provider()
-
-    async def explain_code_or_error(
+    def explain_code_or_error(
         self,
         code_snippet: str,
         error_message: Optional[str] = None,
         language: str = "csharp",
         question: Optional[str] = None
     ) -> Dict[str, Any]:
-        """
-        Explains code snippets, identifies bug root-cause, and provides step-by-step fix.
-        """
         logger.info(f"Tutor analyzing code ({language}) with error: {error_message is not None}")
 
-        prompt = f"""
-LANGUAGE: {language}
+        prompt = f"""LANGUAGE: {language}
 USER QUESTION: {question or 'Explain this code and identify any potential bugs or performance bottlenecks.'}
 
 CODE SNIPPET:
@@ -57,23 +52,23 @@ Please provide:
 1. **Walkthrough**: What this code does line-by-line in plain, intuitive language.
 2. **Analysis / Bug Detection**: Why the error occurs (or potential flaws/edge cases).
 3. **Corrected Solution**: The fixed, production-ready code with comments.
-4. **Best Practices**: 2-3 tips for {language} development to prevent this in the future.
-"""
-        response_text, tokens, provider = await self.llm.generate(
+4. **Best Practices**: 2-3 tips for {language} development to prevent this in the future."""
+
+        res = llm_factory.generate(
             prompt=prompt,
-            system_prompt=SystemPrompts.CODE_TUTOR,
+            system_instruction=TUTOR_SYSTEM_PROMPT,
             temperature=0.2
         )
 
         return {
-            "analysis": response_text,
+            "analysis": res.get("text", ""),
             "language": language,
             "has_error": bool(error_message),
-            "tokens_used": tokens,
-            "provider_used": provider
+            "tokens_used": res.get("total_tokens", 0),
+            "provider_used": res.get("provider", "")
         }
 
-    async def generate_study_plan(
+    def generate_study_plan(
         self,
         course_title: str,
         completed_lessons: List[str],
@@ -81,13 +76,9 @@ Please provide:
         available_days: int = 7,
         daily_hours: float = 1.5
     ) -> StudyPlanResponse:
-        """
-        Creates personalized study plan prioritizing incomplete topics and revision.
-        """
         logger.info(f"Generating personalized {available_days}-day study plan for {course_title}")
 
-        prompt = f"""
-You are an academic learning advisor for {course_title}.
+        prompt = f"""You are an academic learning advisor for {course_title}.
 A student has requested a {available_days}-day study plan ({daily_hours} hours/day).
 
 STUDENT PROGRESS:
@@ -97,15 +88,14 @@ STUDENT PROGRESS:
 INSTRUCTIONS:
 Create a realistic, step-by-step daily study schedule.
 Prioritize uncompleted lessons, with built-in revision checkpoints and practice tests.
-Return a warm, motivating tone.
-"""
-        response_text, tokens, provider = await self.llm.generate(
+Return a warm, motivating tone."""
+
+        res = llm_factory.generate(
             prompt=prompt,
-            system_prompt="You are a compassionate, structured Academic Mentor at an enterprise university.",
+            system_instruction="You are a compassionate, structured Academic Mentor at an enterprise university.",
             temperature=0.3
         )
 
-        # Build mock structured schedule from recommendations
         items = []
         step = max(1, len(incomplete_lessons) // max(1, available_days))
         for d in range(1, available_days + 1):
@@ -123,5 +113,7 @@ Return a warm, motivating tone.
             target_exam_or_goal="Course Mastery & Assessment Readiness",
             total_days=available_days,
             daily_schedule=items,
-            advice=response_text
+            advice=res.get("text", "")
         )
+
+tutor_service = TutorService()
