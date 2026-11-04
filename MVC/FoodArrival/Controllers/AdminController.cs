@@ -128,7 +128,8 @@ namespace FoodArrival.Controllers
                 PendingRestaurants = _restRepo.GetPendingVerification(),
                 PendingStaff = _staffRepo.GetAllPendingStaff(),
                 PendingRiders = _riderRepo.GetRestaurantRiders(null, true),
-                PendingDishes = _staffRepo.GetPendingDishes(null)
+                PendingDishes = _staffRepo.GetPendingDishes(null),
+                PendingPasswordRequests = _passwordRepo.GetAllRequests()
             };
 
             return View(summary);
