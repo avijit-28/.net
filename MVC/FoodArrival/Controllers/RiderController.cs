@@ -74,7 +74,7 @@ namespace FoodArrival.Controllers
             int riderId = Convert.ToInt32(Session["RiderId"]);
             var rider = _riderRepo.GetById(riderId);
             var myDeliveries = _riderRepo.GetMyDeliveries(riderId);
-            var availableDeliveries = _riderRepo.GetAvailableDeliveries();
+            var availableDeliveries = _riderRepo.GetAvailableDeliveries(riderId);
             var affiliations = _riderRepo.GetRiderAffiliations(riderId);
             var allRestaurants = _restRepo.GetAllVerified();
 
