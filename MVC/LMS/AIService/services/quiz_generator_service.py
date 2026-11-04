@@ -7,11 +7,14 @@ import json
 import re
 from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
-from llm.provider_factory import LLMProviderFactory
-from rag.prompt_templates import SystemPrompts
+from llm.provider_factory import llm_factory
 from core.logger import get_masked_logger
 
 logger = get_masked_logger(__name__)
+
+QUIZ_SYSTEM_PROMPT = """You are an expert pedagogical examination designer at EduPlatform LMS.
+Generate clear, rigorous, educational practice quiz questions strictly grounded in the provided course materials.
+Always provide the correct answer and a pedagogical explanation."""
 
 class QuizQuestion(BaseModel):
     id: int
@@ -32,10 +35,7 @@ class QuizResult(BaseModel):
     grounded_in_rag: bool = True
 
 class QuizGeneratorService:
-    def __init__(self):
-        self.llm = LLMProviderFactory.get_provider()
-
-    async def generate_quiz(
+    def generate_quiz(
         self,
         course_id: int,
         course_title: str,
@@ -45,31 +45,21 @@ class QuizGeneratorService:
         question_type: str = "mcq",
         topic: Optional[str] = None
     ) -> QuizResult:
-        """
-        Generates practice questions grounded in context chunks.
-        Never publishes directly to official graded exams.
-        """
         logger.info(f"Generating practice quiz for course {course_id} ({num_questions} questions, {difficulty})")
         
         context_text = "\n\n---\n\n".join(context_chunks)
         if not context_text.strip():
-            context_text = f"Course: {course_title}. General curriculum concepts for {topic or 'the course'}."
+            context_text = f"Course: {course_title}. Core principles and fundamental concepts of {topic or course_title}."
 
-        prompt = f"""
-You are an expert educational assessment creator for {course_title}.
-Generate a {difficulty}-level practice quiz of {num_questions} questions on: {topic or 'the provided course materials'}.
+        prompt = f"""Generate a {difficulty}-level practice quiz of {num_questions} questions on: {topic or course_title}.
 Question type: {question_type}.
 
-GROUNDING CONTEXT:
-{context_text}
+GROUNDING COURSE MATERIALS:
+{context_text[:8000]}
 
 INSTRUCTIONS:
-1. Every question must be directly grounded in the provided context.
-2. Return ONLY valid JSON in the exact format shown below, with no markdown code fences or conversational text.
-3. For MCQ: provide exactly 4 distinct options (A, B, C, D) and specify the exact correct option string.
-4. Provide a clear pedagogical explanation for the correct answer.
-
-JSON FORMAT:
+1. Every question must be directly grounded in the provided material.
+2. Return ONLY a valid JSON object matching this exact schema:
 {{
   "title": "{course_title} Practice Quiz",
   "difficulty": "{difficulty}",
@@ -80,21 +70,22 @@ JSON FORMAT:
       "type": "{question_type}",
       "options": ["Option A", "Option B", "Option C", "Option D"],
       "correct_answer": "Option A",
-      "explanation": "Explanation why this is correct based on the text.",
+      "explanation": "Why Option A is correct based on the course materials.",
       "difficulty": "{difficulty}",
       "source_reference": "Section or concept reference"
     }}
   ]
 }}
-"""
-        response_text, tokens, provider = await self.llm.generate(
+Do not include any introductory remarks, markdown fences, or conversational padding. Return raw JSON only."""
+
+        res = llm_factory.generate(
             prompt=prompt,
-            system_prompt=SystemPrompts.QUIZ_GENERATOR,
+            system_instruction=QUIZ_SYSTEM_PROMPT,
             temperature=0.3
         )
+        response_text = res.get("text", "")
 
         try:
-            # Clean JSON if wrapped in markdown code fence
             clean_json = re.sub(r"^```(?:json)?\s*", "", response_text.strip(), flags=re.MULTILINE)
             clean_json = re.sub(r"```$", "", clean_json.strip(), flags=re.MULTILINE).strip()
             data = json.loads(clean_json)
@@ -109,28 +100,29 @@ JSON FORMAT:
                 grounded_in_rag=True
             )
         except Exception as e:
-            logger.warning(f"Failed to parse LLM quiz JSON, using structured fallback: {e}")
-            # Fallback single question
+            logger.warning(f"Failed to parse quiz JSON from LLM: {e}")
             fallback_q = QuizQuestion(
                 id=1,
-                question=f"What is a primary concept covered in {course_title}?",
+                question=f"Which core concept is central to {course_title}?",
                 type="mcq",
                 options=[
                     f"Core principles of {course_title}",
-                    "Unrelated legacy theory",
-                    "Random external concept",
+                    "External unrelated framework",
+                    "Deprecated legacy standard",
                     "None of the above"
                 ],
                 correct_answer=f"Core principles of {course_title}",
-                explanation=f"Based on the curriculum overview for {course_title}.",
+                explanation=f"Based on the foundational curriculum structure of {course_title}.",
                 difficulty=difficulty,
                 source_reference="Course Overview"
             )
             return QuizResult(
                 course_id=course_id,
-                title=f"{course_title} Review Quiz",
+                title=f"{course_title} Practice Review",
                 total_questions=1,
                 difficulty=difficulty,
                 questions=[fallback_q],
                 grounded_in_rag=False
             )
+
+quiz_generator = QuizGeneratorService()
