@@ -211,9 +211,8 @@ namespace FoodArrival.Controllers
             // 3. Clear customer active cart
             Session["Cart"] = new List<CartItem>();
 
-            // 4. Trigger intelligent Rider Allocation
-            var allocService = new RiderAllocationService();
-            var allocResult = allocService.AllocateRiders(orderId);
+            // 4. Order is now queued in the kitchen for preparation
+            // Affiliated riders will see the order once kitchen staff marks 'Food Ready'
 
             string orderNum = !string.IsNullOrEmpty(order.OrderNumber) ? order.OrderNumber : ("FR" + (100000 + orderId));
 
