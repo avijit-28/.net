@@ -33,6 +33,7 @@
         else if (activeCtrl == "Account" && activeAct == "Register") { pageClass = "page-register"; }
         else if (activeCtrl == "Account" && (activeAct == "Profile" || activeAct == "ChangePassword")) { pageClass = "page-profile"; }
         else if (activeCtrl == "Notifications") { pageClass = "page-notifications"; }
+        else if (activeCtrl == "ChatBot") { pageClass = "page-ai-assistant"; }
         else if (activeCtrl == "Account") { pageClass = "page-login"; }
         else { pageClass = "page-" + activeCtrl.ToLower(); }
     }
