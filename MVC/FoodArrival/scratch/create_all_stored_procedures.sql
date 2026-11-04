@@ -973,7 +973,7 @@ CREATE PROCEDURE dbo.sp_Staff_ProposeDish
 AS
 BEGIN
     SET NOCOUNT ON;
-    INSERT INTO dbo.FoodItems (ItemName, Description, Price, ImageUrl, IsAvailable, Category, RestaurantId, ProposedByStaffId, IsVerified)
+    INSERT INTO dbo.FoodItems (ItemName, Description, Price, ImageUrl, IsAvailable, Category, RestaurantId, SubmittedByStaffId, IsVerified)
     VALUES (@ItemName, @Description, @Price, @ImageUrl, 0, @Category, @RestaurantId, @ProposedByStaffId, 0);
     SET @FoodItemId = CAST(SCOPE_IDENTITY() AS INT);
 END;
@@ -990,7 +990,7 @@ BEGIN
            r.RestaurantName, s.StaffName AS ProposedByStaffName
     FROM dbo.FoodItems f
     LEFT JOIN dbo.Restaurants r ON f.RestaurantId = r.RestaurantId
-    LEFT JOIN dbo.RestaurantStaff s ON f.ProposedByStaffId = s.StaffId
+    LEFT JOIN dbo.RestaurantStaff s ON f.SubmittedByStaffId = s.StaffId
     WHERE f.IsVerified = 0
       AND (@RestaurantId IS NULL OR f.RestaurantId = @RestaurantId)
     ORDER BY f.CreatedAt DESC;
@@ -1035,7 +1035,7 @@ BEGIN
     SET NOCOUNT ON;
     SELECT FoodItemId, ItemName, Description, Price, ImageUrl, IsAvailable, Category, IsVerified, CreatedAt
     FROM dbo.FoodItems
-    WHERE ProposedByStaffId = @StaffId
+    WHERE SubmittedByStaffId = @StaffId
     ORDER BY FoodItemId DESC;
 END;
 GO
