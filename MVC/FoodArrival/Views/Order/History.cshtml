@@ -41,6 +41,14 @@
                                             <i class="bi bi-shop me-1"></i> @order.RestaurantNames
                                         </div>
                                     }
+                                    @if (order.OrderStatus != "Delivered" && order.OrderStatus != "Rejected" && order.OrderStatus != "Cancelled" && !string.IsNullOrEmpty(order.DeliveryOtp))
+                                    {
+                                        <div class="mt-2">
+                                            <span class="badge bg-success-subtle text-success border border-success fw-bold px-2 py-1 small shadow-sm" title="Share with rider at doorstep">
+                                                <i class="bi bi-shield-lock-fill me-1"></i> OTP: <span class="font-monospace fs-6 text-dark fw-bold">@order.DeliveryOtp</span>
+                                            </span>
+                                        </div>
+                                    }
                                 </div>
                                 <div class="col-md-3">
                                     <span class="text-muted small d-block">Total Amount</span>
