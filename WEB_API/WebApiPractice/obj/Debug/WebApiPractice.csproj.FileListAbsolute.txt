@@ -83,3 +83,5 @@ D:\avi\C#\WEB_API\WebApiPractice\obj\Debug\WebApiPractice.csproj.CoreCompileInpu
 D:\avi\C#\WEB_API\WebApiPractice\obj\Debug\WebApiPr.0E5B0EE0.Up2Date
 D:\avi\C#\WEB_API\WebApiPractice\obj\Debug\WebApiPractice.dll
 D:\avi\C#\WEB_API\WebApiPractice\obj\Debug\WebApiPractice.pdb
+D:\avi\C#\WEB_API\WebApiPractice\bin\Swashbuckle.Core.dll
+D:\avi\C#\WEB_API\WebApiPractice\bin\WebActivatorEx.dll
