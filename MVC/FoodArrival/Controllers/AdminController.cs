@@ -96,8 +96,7 @@ namespace FoodArrival.Controllers
             summary.PendingRestaurants = _restRepo.GetPendingVerification();
             summary.PendingStaff = _staffRepo.GetAllPendingStaff();
             summary.PendingRiders = _riderRepo.GetRestaurantRiders(null, true);
-            summary.PendingDishes = _staffRepo.GetPendingDishes(null),
-                PendingPasswordRequests = _passwordRepo.GetAllRequests();
+            summary.PendingDishes = _staffRepo.GetPendingDishes(null);
             summary.PendingPasswordRequests = _passwordRepo.GetAllRequests("Pending");
             summary.PendingApprovalsCount += summary.PendingPasswordRequests.Count;
             summary.RecentTransactions = _adminRepo.GetAllTransactions().Take(10).ToList();
