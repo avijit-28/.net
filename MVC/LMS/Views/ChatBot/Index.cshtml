@@ -1,0 +1,326 @@
+@model LMS.Models.ChatSession
+@{
+    ViewBag.Title = "EduBot AI Academic Advisor";
+    ViewBag.PageClass = "page-ai-assistant";
+    string sessionGuid = ViewBag.SessionGuid as string ?? Model?.SessionGuid ?? Guid.NewGuid().ToString("N");
+}
+
+<div class="py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" class="text-cyan text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item active text-white-50" aria-current="page">AI Academic Advisor</li>
+        </ol>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="badge px-3 py-1 rounded-pill fw-semibold" style="background: rgba(39, 184, 214, 0.2); color: #27B8D6; border: 1px solid rgba(39, 184, 214, 0.4);">
+                    <i class="bi bi-cpu-fill me-1"></i> Retrieval-Augmented Generation (RAG)
+                </span>
+                <span class="badge px-2 py-1 rounded-pill" style="background: rgba(53, 201, 138, 0.2); color: #35C98A;">
+                    <i class="bi bi-check-circle me-1"></i> Live Catalog Grounding
+                </span>
+            </div>
+            <h2 class="fw-extrabold mb-1 tracking-tight text-white">EduBot AI Academic Advisor</h2>
+            <p class="text-muted small mb-0">
+                Ask anything about courses, syllabus chapters, learning objectives, pricing, instructor profiles, and credentials.
+            </p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="@Url.Action("Index", "Courses")" class="btn rounded-pill px-3 fw-semibold text-white" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2);">
+                <i class="bi bi-book me-1 text-cyan"></i> Browse Courses
+            </a>
+            @if (User.IsInRole("Admin"))
+            {
+                <button type="button" class="btn rounded-pill px-3 fw-semibold text-white" style="background: rgba(255, 122, 24, 0.2); border: 1px solid #FF7A18;" onclick="reindexKnowledge()">
+                    <i class="bi bi-arrow-repeat me-1 text-orange" id="reindex-spinner"></i> Rebuild Index
+                </button>
+            }
+        </div>
+    </div>
+
+    <!-- Main Advisor Layout -->
+    <div class="row g-4">
+        <!-- Sidebar Info & Quick Starters -->
+        <div class="col-lg-4">
+            <div class="card card-custom p-4 mb-4 shadow-sm" style="background: rgba(6, 35, 48, 0.9); border: 1px solid rgba(39, 184, 214, 0.25); border-radius: 20px;">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 48px; height: 48px; background: linear-gradient(135deg, #FF7A18, #27B8D6);">
+                        <i class="bi bi-robot fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-white mb-0">EduBot</h5>
+                        <div class="small text-muted font-monospace">Grounded in LMS Knowledge Base</div>
+                    </div>
+                </div>
+                <p class="small text-white-50 mb-3" style="line-height: 1.6;">
+                    EduBot indexes all published curriculum modules, lessons, pricing tiers, and institutional policies to answer questions with precision and provide direct enrollment and study links.
+                </p>
+
+                <h6 class="fw-bold text-white small text-uppercase tracking-wider mb-2">Indexed Knowledge Areas</h6>
+                <div class="d-flex flex-column gap-2 mb-4">
+                    <div class="p-2 rounded-3 d-flex align-items-center gap-2 small" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                        <i class="bi bi-mortarboard text-cyan"></i>
+                        <span class="text-white">Courses & Syllabi</span>
+                        <span class="ms-auto text-muted font-monospace">Live Sync</span>
+                    </div>
+                    <div class="p-2 rounded-3 d-flex align-items-center gap-2 small" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                        <i class="bi bi-play-btn text-orange"></i>
+                        <span class="text-white">Lessons & Video Durations</span>
+                        <span class="ms-auto text-muted font-monospace">All Modules</span>
+                    </div>
+                    <div class="p-2 rounded-3 d-flex align-items-center gap-2 small" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                        <i class="bi bi-patch-check text-success"></i>
+                        <span class="text-white">Certificate & Verification</span>
+                        <span class="ms-auto text-muted font-monospace">Official ID</span>
+                    </div>
+                    <div class="p-2 rounded-3 d-flex align-items-center gap-2 small" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                        <i class="bi bi-receipt text-warning"></i>
+                        <span class="text-white">Billing & Receipts</span>
+                        <span class="ms-auto text-muted font-monospace">Invoices</span>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold text-white small text-uppercase tracking-wider mb-2">Recommended Inquiries</h6>
+                <div class="d-flex flex-column gap-2">
+                    <button type="button" class="btn text-start p-2 rounded-3 small text-white border-0" style="background: rgba(255, 255, 255, 0.05);" onclick="sendPromptFromPage('What courses are available for beginners?')">
+                        <i class="bi bi-chevron-right text-orange me-1"></i> What courses are available for beginners?
+                    </button>
+                    <button type="button" class="btn text-start p-2 rounded-3 small text-white border-0" style="background: rgba(255, 255, 255, 0.05);" onclick="sendPromptFromPage('Tell me about the modules in Data Science.')">
+                        <i class="bi bi-chevron-right text-orange me-1"></i> Tell me about Data Science modules.
+                    </button>
+                    <button type="button" class="btn text-start p-2 rounded-3 small text-white border-0" style="background: rgba(255, 255, 255, 0.05);" onclick="sendPromptFromPage('How do I earn an official certificate?')">
+                        <i class="bi bi-chevron-right text-orange me-1"></i> How do I earn an official certificate?
+                    </button>
+                    <button type="button" class="btn text-start p-2 rounded-3 small text-white border-0" style="background: rgba(255, 255, 255, 0.05);" onclick="sendPromptFromPage('What is my current course progress?')">
+                        <i class="bi bi-chevron-right text-orange me-1"></i> What is my current course progress?
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Stream -->
+        <div class="col-lg-8">
+            <div class="card card-custom shadow-lg d-flex flex-column" style="background: rgba(6, 35, 48, 0.95); border: 1px solid rgba(39, 184, 214, 0.25); border-radius: 20px; height: 680px;">
+                <!-- Chat Stream Header -->
+                <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center" style="background: rgba(4, 24, 34, 0.8);">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="online-dot"></span>
+                        <span class="text-white fw-bold small">Active Consultation Session</span>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-light rounded-pill px-3" style="font-size: 11px;" onclick="clearPageChatHistory()">
+                        <i class="bi bi-trash3 me-1"></i> Clear History
+                    </button>
+                </div>
+
+                <!-- Messages Container -->
+                <div id="page-chat-messages" class="p-4 flex-grow-1 overflow-auto d-flex flex-column gap-3">
+                    @if (Model != null && Model.Messages != null && Model.Messages.Any())
+                    {
+                        foreach (var msg in Model.Messages.OrderBy(m => m.Timestamp))
+                        {
+                            <div class="edubot-msg @(msg.Sender.ToLower())">
+                                <div class="edubot-bubble">
+                                    @Html.Raw(msg.Content.Replace("\n", "<br/>"))
+                                </div>
+                                <span class="edubot-time">@msg.Timestamp.ToString("hh:mm tt") UTC</span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="edubot-msg assistant">
+                            <div class="edubot-bubble">
+                                <p class="mb-1">Welcome to the <strong>EduBot Academic Advisor Studio</strong>!</p>
+                                <p class="mb-0 small text-white-50">I am connected to the live EduPlatform knowledge base. You can ask me for course recommendations, syllabus walkthroughs, or guidance on completing your learning path.</p>
+                            </div>
+                            <span class="edubot-time">Just now</span>
+                        </div>
+                    }
+                </div>
+
+                <!-- Typing indicator -->
+                <div id="page-chat-typing" class="px-4 py-2 small text-white-50 align-items-center gap-2" style="display: none;">
+                    <span class="spinner-grow spinner-grow-sm text-cyan" role="status"></span>
+                    <span class="spinner-grow spinner-grow-sm text-orange" role="status"></span>
+                    <span class="font-monospace" style="font-size: 11px;">EduBot is searching curriculum knowledge chunks...</span>
+                </div>
+
+                <!-- Input Footer -->
+                <div class="p-3 border-top border-secondary border-opacity-10" style="background: rgba(4, 24, 34, 0.85);">
+                    <form onsubmit="handlePageChatSubmit(event)" class="d-flex align-items-end gap-2">
+                        <input type="hidden" id="page-session-guid" value="@sessionGuid" />
+                        <textarea id="page-chat-input" class="form-control edubot-textarea" rows="2" placeholder="Ask your question about EduPlatform courses or syllabus..." onkeydown="handlePageChatKeyDown(event)"></textarea>
+                        <button type="submit" id="page-chat-send-btn" class="btn edubot-send-btn d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-send-fill fs-5"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function scrollPageChatToBottom() {
+        var msgs = document.getElementById('page-chat-messages');
+        if (msgs) msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function handlePageChatKeyDown(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handlePageChatSubmit(e);
+        }
+    }
+
+    function sendPromptFromPage(text) {
+        var input = document.getElementById('page-chat-input');
+        if (input) {
+            input.value = text;
+            handlePageChatSubmit(new Event('submit'));
+        }
+    }
+
+    function handlePageChatSubmit(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        var input = document.getElementById('page-chat-input');
+        var sessionGuid = document.getElementById('page-session-guid').value;
+        var msgsContainer = document.getElementById('page-chat-messages');
+        var typing = document.getElementById('page-chat-typing');
+
+        if (!input || !input.value.trim()) return;
+
+        var text = input.value.trim();
+        input.value = '';
+
+        // Add user message
+        msgsContainer.insertAdjacentHTML('beforeend', `
+            <div class="edubot-msg user">
+                <div class="edubot-bubble">${escapeHtml(text)}</div>
+                <span class="edubot-time">Just now</span>
+            </div>
+        `);
+        scrollPageChatToBottom();
+
+        if (typing) typing.style.display = 'flex';
+        scrollPageChatToBottom();
+
+        fetch('/ChatBot/SendMessage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ Message: text, SessionGuid: sessionGuid })
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (typing) typing.style.display = 'none';
+
+            if (!data.Success) {
+                msgsContainer.insertAdjacentHTML('beforeend', `
+                    <div class="edubot-msg assistant">
+                        <div class="edubot-bubble text-danger">
+                            <i class="bi bi-exclamation-triangle me-1"></i> ${escapeHtml(data.ErrorMessage || 'Error generating response.')}
+                        </div>
+                    </div>
+                `);
+                scrollPageChatToBottom();
+                return;
+            }
+
+            var formatted = renderMarkdownSimple(data.Reply);
+            var coursesHtml = '';
+            if (data.RecommendedCourses && data.RecommendedCourses.length > 0) {
+                coursesHtml += '<div class="row g-2 mt-2">';
+                data.RecommendedCourses.forEach(function(course) {
+                    var actionBtn = course.IsEnrolled
+                        ? `<a href="${course.LearnUrl}" class="btn btn-sm btn-outline-cyan rounded-pill py-1 px-3 fw-bold" style="font-size: 11px;"><i class="bi bi-play-circle me-1"></i> Resume (${course.ProgressPercent}%)</a>`
+                        : `<a href="${course.DetailUrl}" class="btn btn-sm text-white rounded-pill py-1 px-3 fw-bold" style="background: #FF7A18; font-size: 11px;"><i class="bi bi-book me-1"></i> View Course</a>`;
+
+                    coursesHtml += `
+                        <div class="col-md-6">
+                            <div class="edubot-course-card">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="course-title">${escapeHtml(course.Title)}</div>
+                                    <span class="badge rounded-pill" style="background: rgba(39, 184, 214, 0.2); color: #27B8D6; font-size: 10px;">${escapeHtml(course.Level)}</span>
+                                </div>
+                                <div class="course-meta d-flex justify-content-between align-items-center">
+                                    <span><i class="bi bi-tag me-1"></i>${escapeHtml(course.CategoryName)}</span>
+                                    <span class="fw-bold text-white">${course.Price === 0 ? 'Free' : '₹' + course.Price.toFixed(2)}</span>
+                                </div>
+                                <div class="mt-1">${actionBtn}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                coursesHtml += '</div>';
+            }
+
+            msgsContainer.insertAdjacentHTML('beforeend', `
+                <div class="edubot-msg assistant">
+                    <div class="edubot-bubble">
+                        ${formatted}
+                        ${coursesHtml}
+                    </div>
+                    <span class="edubot-time">Just now</span>
+                </div>
+            `);
+            scrollPageChatToBottom();
+        })
+        .catch(function(err) {
+            if (typing) typing.style.display = 'none';
+            msgsContainer.insertAdjacentHTML('beforeend', `
+                <div class="edubot-msg assistant">
+                    <div class="edubot-bubble text-danger">
+                        <i class="bi bi-wifi-off me-1"></i> Network error connecting to AI Assistant.
+                    </div>
+                </div>
+            `);
+            scrollPageChatToBottom();
+        });
+    }
+
+    function clearPageChatHistory() {
+        var sessionGuid = document.getElementById('page-session-guid').value;
+        if (!confirm('Clear this chat conversation?')) return;
+
+        fetch('/ChatBot/ClearHistory', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionGuid: sessionGuid })
+        }).then(function() {
+            var msgs = document.getElementById('page-chat-messages');
+            if (msgs) {
+                msgs.innerHTML = `
+                    <div class="edubot-msg assistant">
+                        <div class="edubot-bubble">
+                            <p class="mb-0">Chat history cleared! Ask me anything about courses, modules, or certifications.</p>
+                        </div>
+                        <span class="edubot-time">Just now</span>
+                    </div>
+                `;
+            }
+        });
+    }
+
+    function reindexKnowledge() {
+        var spinner = document.getElementById('reindex-spinner');
+        if (spinner) spinner.className = 'spinner-border spinner-border-sm me-1 text-orange';
+
+        fetch('/ChatBot/Reindex', { method: 'POST' })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (spinner) spinner.className = 'bi bi-arrow-repeat me-1 text-orange';
+                alert(data.message || 'Knowledge index refreshed!');
+            })
+            .catch(function() {
+                if (spinner) spinner.className = 'bi bi-arrow-repeat me-1 text-orange';
+                alert('Error refreshing index.');
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', scrollPageChatToBottom);
+</script>
