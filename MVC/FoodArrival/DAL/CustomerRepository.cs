@@ -11,38 +11,32 @@ namespace FoodArrival.DAL
         public bool CheckDuplication(string username, string email, out string message)
         {
             message = string.Empty;
-            string checkSql = @"
-                SELECT 'Username already taken' AS Reason FROM dbo.Customers WHERE LOWER(Username) = @Username
-                UNION ALL
-                SELECT 'Email already registered' FROM dbo.Customers WHERE LOWER(Email) = @Email
-                UNION ALL
-                SELECT 'Username already taken' FROM dbo.Restaurants WHERE LOWER(Username) = @Username
-                UNION ALL
-                SELECT 'Email already registered' FROM dbo.Restaurants WHERE LOWER(Email) = @Email
-                UNION ALL
-                SELECT 'Username already taken' FROM dbo.Riders WHERE LOWER(Username) = @Username
-                UNION ALL
-                SELECT 'Email already registered' FROM dbo.Riders WHERE LOWER(Email) = @Email
-                UNION ALL
-                SELECT 'Username already taken' FROM dbo.RestaurantStaff WHERE LOWER(Username) = @Username
-                UNION ALL
-                SELECT 'Email already registered' FROM dbo.RestaurantStaff WHERE LOWER(Email) = @Email
-                UNION ALL
-                SELECT 'Username already taken' FROM dbo.Admins WHERE LOWER(Username) = @Username";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(checkSql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_User_CheckDuplication", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Username", (username ?? string.Empty).Trim().ToLower());
                     cmd.Parameters.AddWithValue("@Email", (email ?? string.Empty).Trim().ToLower());
-                    conn.Open();
-                    var reason = cmd.ExecuteScalar()?.ToString();
-                    if (!string.IsNullOrEmpty(reason))
+
+                    var outParam = new SqlParameter("@Reason", SqlDbType.NVarChar, 200)
                     {
-                        message = reason;
-                        return true;
+                        Direction = ParameterDirection.Output
+                    };
+                    cmd.Parameters.Add(outParam);
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+
+                    if (outParam.Value != DBNull.Value && outParam.Value != null)
+                    {
+                        string reason = outParam.Value.ToString();
+                        if (!string.IsNullOrEmpty(reason))
+                        {
+                            message = reason;
+                            return true;
+                        }
                     }
                 }
             }
@@ -65,16 +59,12 @@ namespace FoodArrival.DAL
                 return false;
             }
 
-            string sql = @"
-                INSERT INTO dbo.Customers (CustomerName, Username, Email, PasswordHash, PhoneNumber, Address)
-                VALUES (@CustomerName, @Username, @Email, @PasswordHash, @PhoneNumber, @Address);
-                SELECT CAST(SCOPE_IDENTITY() AS INT);";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Customer_Insert", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@CustomerName", customer.CustomerName ?? string.Empty);
                     cmd.Parameters.AddWithValue("@Username", (customer.Username ?? customer.Email).Trim().ToLower());
                     cmd.Parameters.AddWithValue("@Email", customer.Email.Trim().ToLower());
@@ -82,8 +72,19 @@ namespace FoodArrival.DAL
                     cmd.Parameters.AddWithValue("@PhoneNumber", (object)customer.PhoneNumber ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Address", (object)customer.Address ?? DBNull.Value);
 
+                    var idParam = new SqlParameter("@CustomerId", SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+                    cmd.Parameters.Add(idParam);
+
                     conn.Open();
-                    customerId = Convert.ToInt32(cmd.ExecuteScalar());
+                    cmd.ExecuteNonQuery();
+
+                    if (idParam.Value != DBNull.Value && idParam.Value != null)
+                    {
+                        customerId = Convert.ToInt32(idParam.Value);
+                    }
                     message = "Customer registered successfully.";
                     return true;
                 }
@@ -104,18 +105,12 @@ namespace FoodArrival.DAL
 
         public Customer Login(string loginId, string password)
         {
-            string sql = @"
-                SELECT CustomerId, CustomerName, Username, Email, PhoneNumber, Address, IsActive
-                FROM dbo.Customers
-                WHERE (LOWER(Email) = @LoginId OR LOWER(Username) = @LoginId)
-                  AND PasswordHash = @Password
-                  AND IsActive = 1";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Customer_Login", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@LoginId", (loginId ?? string.Empty).Trim().ToLower());
                     cmd.Parameters.AddWithValue("@Password", password ?? string.Empty);
                     conn.Open();
@@ -231,12 +226,13 @@ namespace FoodArrival.DAL
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand("UPDATE dbo.Customers SET PasswordHash = @Password WHERE CustomerId = @Id", conn))
+                using (var cmd = new SqlCommand("dbo.sp_Customer_ResetPassword", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@CustomerId", customerId);
                     cmd.Parameters.AddWithValue("@Password", newPassword);
-                    cmd.Parameters.AddWithValue("@Id", customerId);
                     conn.Open();
-                    int rows = cmd.ExecuteNonQuery();
+                    int rows = Convert.ToInt32(cmd.ExecuteScalar());
                     if (rows > 0)
                     {
                         message = "Password reset successfully.";
