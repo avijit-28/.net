@@ -49,11 +49,15 @@ namespace FoodArrival.DAL
             return false;
         }
 
-        public bool Insert(RestaurantStaff staff, out string message, out int staffId, out string staffCode)
+        public bool Register(RestaurantStaff staff, out string message, out int staffId)
+        {
+            return Insert(staff, out message, out staffId);
+        }
+
+        public bool Insert(RestaurantStaff staff, out string message, out int staffId)
         {
             message = string.Empty;
             staffId = 0;
-            staffCode = string.Empty;
 
             if (CheckDuplication(staff.Username, staff.Email, out message))
             {
@@ -66,42 +70,40 @@ namespace FoodArrival.DAL
                 using (var cmd = new SqlCommand("dbo.sp_Staff_Insert", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@StaffName", staff.StaffName ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@FullName", staff.FullName ?? string.Empty);
                     cmd.Parameters.AddWithValue("@Username", (staff.Username ?? staff.Email).Trim().ToLower());
                     cmd.Parameters.AddWithValue("@Email", staff.Email.Trim().ToLower());
                     cmd.Parameters.AddWithValue("@PasswordHash", staff.PasswordHash ?? string.Empty);
-                    cmd.Parameters.AddWithValue("@PhoneNumber", staff.PhoneNumber ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", (object)staff.PhoneNumber ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@RestaurantId", staff.RestaurantId);
                     cmd.Parameters.AddWithValue("@RoleTitle", (object)staff.RoleTitle ?? "Kitchen Staff");
 
-                    var idParam = new SqlParameter("@StaffId", SqlDbType.Int)
+                    var outStaffId = new SqlParameter("@StaffId", SqlDbType.Int)
                     {
                         Direction = ParameterDirection.Output
                     };
-                    var codeParam = new SqlParameter("@StaffCode", SqlDbType.NVarChar, 50)
+                    cmd.Parameters.Add(outStaffId);
+
+                    var outCode = new SqlParameter("@StaffCode", SqlDbType.NVarChar, 50)
                     {
                         Direction = ParameterDirection.Output
                     };
-                    cmd.Parameters.Add(idParam);
-                    cmd.Parameters.Add(codeParam);
+                    cmd.Parameters.Add(outCode);
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
 
-                    if (idParam.Value != DBNull.Value && idParam.Value != null)
+                    if (outStaffId.Value != DBNull.Value && outStaffId.Value != null)
                     {
-                        staffId = Convert.ToInt32(idParam.Value);
+                        staffId = Convert.ToInt32(outStaffId.Value);
                     }
-                    if (codeParam.Value != DBNull.Value && codeParam.Value != null)
-                    {
-                        staffCode = codeParam.Value.ToString();
-                    }
+                    string staffCode = outCode.Value?.ToString() ?? $"STF-{staffId:D4}";
 
-                    message = $"Kitchen staff registered successfully with Staff ID: {staffCode}. Pending restaurant/admin verification.";
+                    message = $"Registration successful! Your official Staff ID is '{staffCode}'. Verification is required before you can access all kitchen duties.";
                     return true;
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 message = ex.Message;
                 return false;
@@ -127,13 +129,16 @@ namespace FoodArrival.DAL
                             {
                                 StaffId = Convert.ToInt32(reader["StaffId"]),
                                 StaffCode = reader["StaffCode"].ToString(),
-                                StaffName = reader["StaffName"].ToString(),
-                                Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : null,
+                                FullName = reader["FullName"].ToString(),
+                                Username = reader["Username"].ToString(),
                                 Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"].ToString(),
+                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
                                 RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
                                 RestaurantName = reader["RestaurantName"].ToString(),
-                                RoleTitle = reader["RoleTitle"] != DBNull.Value ? reader["RoleTitle"].ToString() : "Staff",
+                                RoleTitle = reader["RoleTitle"].ToString(),
+                                PerformanceRating = Convert.ToDecimal(reader["PerformanceRating"]),
+                                OrdersPreparedCount = Convert.ToInt32(reader["OrdersPreparedCount"]),
+                                ShiftStatus = reader["ShiftStatus"].ToString(),
                                 IsVerified = Convert.ToBoolean(reader["IsVerified"]),
                                 IsActive = Convert.ToBoolean(reader["IsActive"])
                             };
@@ -145,7 +150,7 @@ namespace FoodArrival.DAL
             return null;
         }
 
-        public RestaurantStaff GetById(int id)
+        public RestaurantStaff GetById(int staffId)
         {
             try
             {
@@ -153,7 +158,7 @@ namespace FoodArrival.DAL
                 using (var cmd = new SqlCommand("dbo.sp_Staff_GetById", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@StaffId", id);
+                    cmd.Parameters.AddWithValue("@StaffId", staffId);
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -163,16 +168,18 @@ namespace FoodArrival.DAL
                             {
                                 StaffId = Convert.ToInt32(reader["StaffId"]),
                                 StaffCode = reader["StaffCode"].ToString(),
-                                StaffName = reader["StaffName"].ToString(),
-                                Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : null,
+                                FullName = reader["FullName"].ToString(),
+                                Username = reader["Username"].ToString(),
                                 Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"].ToString(),
+                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
                                 RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
                                 RestaurantName = reader["RestaurantName"].ToString(),
-                                RoleTitle = reader["RoleTitle"] != DBNull.Value ? reader["RoleTitle"].ToString() : "Staff",
+                                RoleTitle = reader["RoleTitle"].ToString(),
+                                PerformanceRating = Convert.ToDecimal(reader["PerformanceRating"]),
+                                OrdersPreparedCount = Convert.ToInt32(reader["OrdersPreparedCount"]),
+                                ShiftStatus = reader["ShiftStatus"].ToString(),
                                 IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                IsActive = Convert.ToBoolean(reader["IsActive"]),
-                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"])
+                                IsActive = Convert.ToBoolean(reader["IsActive"])
                             };
                         }
                     }
@@ -182,7 +189,7 @@ namespace FoodArrival.DAL
             return null;
         }
 
-        public List<RestaurantStaff> GetRestaurantStaff(int restaurantId)
+        public List<RestaurantStaff> GetByRestaurant(int restaurantId)
         {
             var list = new List<RestaurantStaff>();
             try
@@ -201,16 +208,18 @@ namespace FoodArrival.DAL
                             {
                                 StaffId = Convert.ToInt32(reader["StaffId"]),
                                 StaffCode = reader["StaffCode"].ToString(),
-                                StaffName = reader["StaffName"].ToString(),
-                                Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : null,
+                                FullName = reader["FullName"].ToString(),
+                                Username = reader["Username"].ToString(),
                                 Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"].ToString(),
+                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
                                 RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
                                 RestaurantName = reader["RestaurantName"].ToString(),
-                                RoleTitle = reader["RoleTitle"] != DBNull.Value ? reader["RoleTitle"].ToString() : "Staff",
+                                RoleTitle = reader["RoleTitle"].ToString(),
+                                PerformanceRating = Convert.ToDecimal(reader["PerformanceRating"]),
+                                OrdersPreparedCount = Convert.ToInt32(reader["OrdersPreparedCount"]),
+                                ShiftStatus = reader["ShiftStatus"].ToString(),
                                 IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                IsActive = Convert.ToBoolean(reader["IsActive"]),
-                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"])
+                                IsActive = Convert.ToBoolean(reader["IsActive"])
                             });
                         }
                     }
@@ -238,16 +247,18 @@ namespace FoodArrival.DAL
                             {
                                 StaffId = Convert.ToInt32(reader["StaffId"]),
                                 StaffCode = reader["StaffCode"].ToString(),
-                                StaffName = reader["StaffName"].ToString(),
-                                Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : null,
+                                FullName = reader["FullName"].ToString(),
+                                Username = reader["Username"].ToString(),
                                 Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"].ToString(),
+                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
                                 RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
                                 RestaurantName = reader["RestaurantName"].ToString(),
-                                RoleTitle = reader["RoleTitle"] != DBNull.Value ? reader["RoleTitle"].ToString() : "Staff",
+                                RoleTitle = reader["RoleTitle"].ToString(),
+                                PerformanceRating = Convert.ToDecimal(reader["PerformanceRating"]),
+                                OrdersPreparedCount = Convert.ToInt32(reader["OrdersPreparedCount"]),
+                                ShiftStatus = reader["ShiftStatus"].ToString(),
                                 IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                IsActive = Convert.ToBoolean(reader["IsActive"]),
-                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"])
+                                IsActive = Convert.ToBoolean(reader["IsActive"])
                             });
                         }
                     }
@@ -255,6 +266,11 @@ namespace FoodArrival.DAL
             }
             catch { }
             return list;
+        }
+
+        public List<RestaurantStaff> GetAllPendingStaff()
+        {
+            return GetPendingVerification();
         }
 
         public List<RestaurantStaff> GetPendingVerification()
@@ -275,16 +291,18 @@ namespace FoodArrival.DAL
                             {
                                 StaffId = Convert.ToInt32(reader["StaffId"]),
                                 StaffCode = reader["StaffCode"].ToString(),
-                                StaffName = reader["StaffName"].ToString(),
-                                Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : null,
+                                FullName = reader["FullName"].ToString(),
+                                Username = reader["Username"].ToString(),
                                 Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"].ToString(),
+                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
                                 RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
                                 RestaurantName = reader["RestaurantName"].ToString(),
-                                RoleTitle = reader["RoleTitle"] != DBNull.Value ? reader["RoleTitle"].ToString() : "Staff",
+                                RoleTitle = reader["RoleTitle"].ToString(),
+                                PerformanceRating = Convert.ToDecimal(reader["PerformanceRating"]),
+                                OrdersPreparedCount = Convert.ToInt32(reader["OrdersPreparedCount"]),
+                                ShiftStatus = reader["ShiftStatus"].ToString(),
                                 IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                IsActive = Convert.ToBoolean(reader["IsActive"]),
-                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"])
+                                IsActive = Convert.ToBoolean(reader["IsActive"])
                             });
                         }
                     }
@@ -294,8 +312,9 @@ namespace FoodArrival.DAL
             return list;
         }
 
-        public bool VerifyStaff(int staffId, bool isApproved)
+        public bool VerifyStaff(int staffId, string verifiedByRole, int verifiedBy, out string message)
         {
+            message = string.Empty;
             try
             {
                 using (var conn = DbHelper.GetConnection())
@@ -303,12 +322,43 @@ namespace FoodArrival.DAL
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@StaffId", staffId);
-                    cmd.Parameters.AddWithValue("@IsApproved", isApproved);
+                    cmd.Parameters.AddWithValue("@VerifiedByRole", verifiedByRole ?? "Admin");
+                    cmd.Parameters.AddWithValue("@VerifiedBy", verifiedBy);
+                    cmd.Parameters.AddWithValue("@IsApproved", true);
                     conn.Open();
-                    return cmd.ExecuteNonQuery() > 0;
+                    cmd.ExecuteNonQuery();
+                    message = "Staff member successfully verified!";
+                    return true;
                 }
             }
-            catch { return false; }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
+        }
+
+        public bool RejectStaff(int staffId, out string message)
+        {
+            message = string.Empty;
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand("dbo.sp_Staff_Reject", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@StaffId", staffId);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    message = "Staff application rejected.";
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
         }
 
         public bool ProposeDish(FoodItem item, int staffId, int restaurantId, out string message)
@@ -323,25 +373,115 @@ namespace FoodArrival.DAL
                     cmd.Parameters.AddWithValue("@ItemName", item.ItemName ?? string.Empty);
                     cmd.Parameters.AddWithValue("@Description", (object)item.Description ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@Price", item.Price);
-                    cmd.Parameters.AddWithValue("@Category", (object)item.Category ?? "Snacks");
-                    cmd.Parameters.AddWithValue("@ImageUrl", (object)item.ImageUrl ?? "/Content/images/margherita.jpg");
+                    cmd.Parameters.AddWithValue("@ImageUrl", (object)item.ImageUrl ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Category", item.Category ?? "Snacks");
                     cmd.Parameters.AddWithValue("@RestaurantId", restaurantId);
-                    cmd.Parameters.AddWithValue("@ProposedByStaffId", staffId);
+                    cmd.Parameters.AddWithValue("@SubmittedByStaffId", staffId);
 
-                    var idParam = new SqlParameter("@FoodItemId", SqlDbType.Int)
+                    var outParam = new SqlParameter("@NewFoodItemId", SqlDbType.Int)
                     {
                         Direction = ParameterDirection.Output
                     };
-                    cmd.Parameters.Add(idParam);
+                    cmd.Parameters.Add(outParam);
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
 
-                    message = "Dish proposed successfully! It will appear on menu after restaurant owner approval.";
+                    int newId = outParam.Value != DBNull.Value ? Convert.ToInt32(outParam.Value) : 0;
+                    message = $"New dish '{item.ItemName}' proposed successfully! (ID: #{newId}) It will appear on the menu once approved by restaurant owner or admin.";
                     return true;
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
+        }
+
+        public List<FoodItem> GetStaffDishes(int staffId)
+        {
+            return GetDishesByStaff(staffId);
+        }
+
+        public List<FoodItem> GetDishesByStaff(int staffId)
+        {
+            var list = new List<FoodItem>();
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand("dbo.sp_Staff_GetDishesByStaff", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@StaffId", staffId);
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            list.Add(new FoodItem
+                            {
+                                FoodItemId = Convert.ToInt32(reader["FoodItemId"]),
+                                ItemName = reader["ItemName"].ToString(),
+                                Description = reader["Description"] == DBNull.Value ? string.Empty : reader["Description"].ToString(),
+                                Price = Convert.ToDecimal(reader["Price"]),
+                                ImageUrl = reader["ImageUrl"] == DBNull.Value ? string.Empty : reader["ImageUrl"].ToString(),
+                                Category = reader["Category"].ToString(),
+                                IsAvailable = Convert.ToBoolean(reader["IsAvailable"]),
+                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
+                                RestaurantId = Convert.ToInt32(reader["RestaurantId"])
+                            });
+                        }
+                    }
+                }
+            }
+            catch { }
+            return list;
+        }
+
+        public bool ApproveDish(int foodItemId, string verifiedByRole, int verifiedBy, out string message)
+        {
+            message = string.Empty;
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand("dbo.sp_Staff_VerifyDish", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@FoodItemId", foodItemId);
+                    cmd.Parameters.AddWithValue("@VerifiedByRole", verifiedByRole ?? "Admin");
+                    cmd.Parameters.AddWithValue("@VerifiedBy", verifiedBy);
+                    cmd.Parameters.AddWithValue("@IsApproved", true);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    message = "Dish approved and activated for ordering!";
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
+        }
+
+        public bool RejectDish(int foodItemId, out string message)
+        {
+            message = string.Empty;
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand("dbo.sp_Staff_RejectDish", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@FoodItemId", foodItemId);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    message = "Proposed dish has been rejected.";
+                    return true;
+                }
+            }
+            catch (Exception ex)
             {
                 message = ex.Message;
                 return false;
@@ -367,15 +507,13 @@ namespace FoodArrival.DAL
                             {
                                 FoodItemId = Convert.ToInt32(reader["FoodItemId"]),
                                 ItemName = reader["ItemName"].ToString(),
-                                Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() : null,
+                                Description = reader["Description"] == DBNull.Value ? string.Empty : reader["Description"].ToString(),
                                 Price = Convert.ToDecimal(reader["Price"]),
-                                ImageUrl = reader["ImageUrl"] != DBNull.Value ? reader["ImageUrl"].ToString() : null,
-                                Category = reader["Category"] != DBNull.Value ? reader["Category"].ToString() : "Snacks",
+                                ImageUrl = reader["ImageUrl"] == DBNull.Value ? string.Empty : reader["ImageUrl"].ToString(),
+                                Category = reader["Category"].ToString(),
+                                IsAvailable = Convert.ToBoolean(reader["IsAvailable"]),
                                 IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                RestaurantId = reader["RestaurantId"] != DBNull.Value ? (int?)Convert.ToInt32(reader["RestaurantId"]) : null,
-                                RestaurantName = reader["RestaurantName"] != DBNull.Value ? reader["RestaurantName"].ToString() : null,
-                                ProposedByStaffName = reader["ProposedByStaffName"] != DBNull.Value ? reader["ProposedByStaffName"].ToString() : null,
-                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"])
+                                RestaurantId = Convert.ToInt32(reader["RestaurantId"])
                             });
                         }
                     }
@@ -385,24 +523,7 @@ namespace FoodArrival.DAL
             return list;
         }
 
-        public bool VerifyDish(int foodItemId, bool isApproved)
-        {
-            try
-            {
-                using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand("dbo.sp_Staff_VerifyDish", conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@FoodItemId", foodItemId);
-                    cmd.Parameters.AddWithValue("@IsApproved", isApproved);
-                    conn.Open();
-                    return cmd.ExecuteNonQuery() > 0;
-                }
-            }
-            catch { return false; }
-        }
-
-        public bool ToggleAvailability(int foodItemId)
+        public bool ToggleDishAvailability(int foodItemId, bool isAvailable)
         {
             try
             {
@@ -411,46 +532,12 @@ namespace FoodArrival.DAL
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@FoodItemId", foodItemId);
+                    cmd.Parameters.AddWithValue("@IsAvailable", isAvailable);
                     conn.Open();
                     return cmd.ExecuteNonQuery() > 0;
                 }
             }
             catch { return false; }
-        }
-
-        public List<FoodItem> GetStaffDishes(int staffId)
-        {
-            var list = new List<FoodItem>();
-            try
-            {
-                using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand("dbo.sp_Staff_GetDishesByStaff", conn))
-                {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@StaffId", staffId);
-                    conn.Open();
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            list.Add(new FoodItem
-                            {
-                                FoodItemId = Convert.ToInt32(reader["FoodItemId"]),
-                                ItemName = reader["ItemName"].ToString(),
-                                Description = reader["Description"] != DBNull.Value ? reader["Description"].ToString() : null,
-                                Price = Convert.ToDecimal(reader["Price"]),
-                                ImageUrl = reader["ImageUrl"] != DBNull.Value ? reader["ImageUrl"].ToString() : null,
-                                IsAvailable = Convert.ToBoolean(reader["IsAvailable"]),
-                                Category = reader["Category"] != DBNull.Value ? reader["Category"].ToString() : "Snacks",
-                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"])
-                            });
-                        }
-                    }
-                }
-            }
-            catch { }
-            return list;
         }
 
         public bool ResetPassword(int staffId, string newPassword, out string message)
