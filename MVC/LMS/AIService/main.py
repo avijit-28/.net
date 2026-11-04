@@ -27,11 +27,9 @@ async def lifespan(app: FastAPI):
     
     # Pre-warm local embedder and Qdrant collection
     try:
-        embedder = LocalEmbedder.get_instance()
-        logger.info(f"Embedding Engine loaded: {settings.EMBEDDING_MODEL_NAME} (dim={embedder.dimension})")
-        
-        qdrant = QdrantManager.get_instance()
-        vector_count = qdrant.count()
+        dim = embedder.dimension
+        logger.info(f"Embedding Engine loaded: {settings.EMBEDDING_MODEL_NAME} (dim={dim})")
+        vector_count = qdrant.get_collection_vector_count()
         logger.info(f"Qdrant vectorstore initialized with {vector_count} indexed chunks.")
     except Exception as e:
         logger.error(f"Error during pre-warming services: {e}")
