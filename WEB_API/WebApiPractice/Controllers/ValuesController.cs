@@ -9,19 +9,20 @@ namespace WebApiPractice.Controllers
 {
     public class ValuesController : ApiController
     {
-        private readonly List<string> _values = new List<string> { "N", "AVijit", "K", "An" };
-
+        private static readonly List<string> _values = new List<string> { "N", "AVijit", "K", "An" };
 
         // GET api/values
         public IEnumerable<string> Get()
         {
-
             return _values;
         }
 
-        // GET api/values/5
+        // GET api/values/1
         public string Get(int id)
         {
+            if (id < 0 || id >= _values.Count)
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+
             return _values[id];
         }
 
@@ -31,15 +32,26 @@ namespace WebApiPractice.Controllers
             _values.Add(value);
         }
 
-        // PUT api/values/5
-        public void Put(int id, [FromBody] string value)
+        // PUT api/values/1
+        public IHttpActionResult Put(int id, [FromBody] string value)
         {
+            if (id < 0 || id >= _values.Count)
+                return NotFound();
+
+            _values[id] = value;
+
+            return Ok("Value Updated Successfully");
         }
 
-        // DELETE api/values/5
-        public void Delete(int id)
+        // DELETE api/values/1
+        public IHttpActionResult Delete(int id)
         {
+            if (id < 0 || id >= _values.Count)
+                return NotFound();
+
             _values.RemoveAt(id);
+
+            return Ok("Value Deleted Successfully");
         }
     }
 }
