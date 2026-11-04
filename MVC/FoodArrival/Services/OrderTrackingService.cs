@@ -254,6 +254,7 @@ namespace FoodArrival.Services
                             PaymentStatus = reader["PaymentStatus"].ToString(),
                             OrderStatus = reader["OrderStatus"].ToString(),
                             DeliveryStatus = reader["DeliveryStatus"].ToString(),
+                            DeliveryOtp = reader["DeliveryOtp"] != DBNull.Value ? reader["DeliveryOtp"].ToString() : null,
                             OrderedAt = Convert.ToDateTime(reader["OrderedAt"]),
                             ProcessedAt = reader["ProcessedAt"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["ProcessedAt"]) : null,
                             RejectionReason = reader["RejectionReason"] != DBNull.Value ? reader["RejectionReason"].ToString() : null,
