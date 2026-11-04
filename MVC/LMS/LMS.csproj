@@ -163,6 +163,7 @@
     <Compile Include="Controllers\AssignmentController.cs" />
     <Compile Include="Controllers\CertificateController.cs" />
     <Compile Include="Controllers\CoursesController.cs" />
+    <Compile Include="Controllers\ChatBotController.cs" />
     <Compile Include="Helpers\VideoHelper.cs" />
     <Compile Include="Helpers\UserHelper.cs" />
     <Compile Include="Controllers\HomeController.cs" />
