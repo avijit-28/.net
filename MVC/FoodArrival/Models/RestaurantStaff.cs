@@ -50,6 +50,12 @@ namespace FoodArrival.Models
         [Display(Name = "Orders Prepared")]
         public int OrdersPrepared { get; set; } = 0;
 
+        public int OrdersPreparedCount { get { return OrdersPrepared; } set { OrdersPrepared = value; } }
+
+        public string FullName { get { return StaffName; } set { StaffName = value; } }
+
+        public string ShiftStatus { get; set; } = "On Duty (Active)";
+
         [Display(Name = "PMS Rating")]
         public decimal PerformanceRating { get; set; } = 4.8m;
 
