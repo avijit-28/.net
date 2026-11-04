@@ -20,9 +20,9 @@ namespace WebApiPractice.Controllers
         }
 
         // GET api/values/5
-        public string Get(int i)
+        public string Get(int id)
         {
-            return _values[i];
+            return _values[id];
         }
 
         // POST api/values
