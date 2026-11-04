@@ -48,6 +48,16 @@
                         <i class="bi bi-megaphone-fill"></i>
                         <span>Bulletins</span>
                     </a>
+                    <a href="@Url.Action("Approvals", "Admin", new { tab = "passwords" })" class="admin-nav-item @(activeTab == "passwords" ? "active" : "") d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-key-fill"></i>
+                            <span>Password Requests</span>
+                        </div>
+                        @if (Model.PendingPasswordRequests != null && Model.PendingPasswordRequests.Any(r => r.Status == "Pending"))
+                        {
+                            <span class="badge bg-danger rounded-pill">@Model.PendingPasswordRequests.Count(r => r.Status == "Pending")</span>
+                        }
+                    </a>
                     <hr class="border-secondary my-3" />
                     <a href="@Url.Action("Logout", "Admin")" class="admin-nav-item text-danger">
                         <i class="bi bi-box-arrow-right"></i>
@@ -86,6 +96,11 @@
                 <li class="nav-item">
                     <a class="nav-link fw-bold @(activeTab == "dishes" ? "active bg-warning text-dark" : "bg-light text-dark")" href="@Url.Action("Approvals", "Admin", new { tab = "dishes" })">
                         <i class="bi bi-egg-fried me-1"></i> Proposed Dishes (@Model.PendingDishes.Count)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bold @(activeTab == "passwords" ? "active bg-warning text-dark" : "bg-light text-dark")" href="@Url.Action("Approvals", "Admin", new { tab = "passwords" })">
+                        <i class="bi bi-key-fill me-1"></i> Password Requests (@(Model.PendingPasswordRequests?.Count ?? 0))
                     </a>
                 </li>
             </ul>
@@ -392,6 +407,260 @@
                     </div>
                 </div>
             }
+
+            <!-- Tab 5: Password Recovery Requests -->
+            @if (activeTab == "passwords")
+            {
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                    <div class="p-3 bg-light border-bottom d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div class="fw-bold text-dark">
+                            <i class="bi bi-key-fill text-warning me-2 fs-5"></i> Password Reset & Recovery Requests
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="input-group input-group-sm" style="max-width: 320px;">
+                                <input type="text" id="verifySearchInput" class="form-control" placeholder="Search user existence by email..." />
+                                <button type="button" class="btn btn-outline-primary" onclick="verifyUser(document.getElementById('verifySearchInput').value)">
+                                    <i class="bi bi-search me-1"></i> Verify Email
+                                </button>
+                            </div>
+                            <span class="badge bg-secondary">Total: @(Model.PendingPasswordRequests?.Count ?? 0)</span>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0 custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Req ID</th>
+                                    <th>User Details</th>
+                                    <th>Detected Role</th>
+                                    <th>Submitted Reason</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th class="text-end">Verification & Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.PendingPasswordRequests != null && Model.PendingPasswordRequests.Any())
+                                {
+                                    foreach (var req in Model.PendingPasswordRequests)
+                                    {
+                                        <tr>
+                                            <td class="fw-bold text-dark">#PR@req.RequestId</td>
+                                            <td>
+                                                <div class="fw-bold text-dark">@(string.IsNullOrEmpty(req.UserName) ? "Unverified Account" : req.UserName)</div>
+                                                <div class="small text-muted"><i class="bi bi-envelope me-1"></i>@req.Email</div>
+                                            </td>
+                                            <td>
+                                                <span class="badge @(req.UserRole == "Admin" ? "bg-dark" : req.UserRole == "Restaurant" ? "bg-danger" : req.UserRole == "RestaurantStaff" ? "bg-primary" : req.UserRole == "Rider" ? "bg-info text-dark" : "bg-secondary")">
+                                                    @req.UserRole
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="small text-dark p-2 bg-light rounded border text-wrap" style="max-width: 280px;">
+                                                    @req.Reason
+                                                </div>
+                                                @if (!string.IsNullOrEmpty(req.AdminNotes))
+                                                {
+                                                    <div class="small text-muted mt-1 fst-italic">Note: @req.AdminNotes</div>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (req.Status == "Pending")
+                                                {
+                                                    <span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i> Pending Approval</span>
+                                                }
+                                                else if (req.Status == "Approved")
+                                                {
+                                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Approved (Awaiting User Reset)</span>
+                                                }
+                                                else if (req.Status == "Completed")
+                                                {
+                                                    <span class="badge bg-primary"><i class="bi bi-check2-all me-1"></i> Reset Completed</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">@req.Status</span>
+                                                }
+                                            </td>
+                                            <td class="small text-muted">@req.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")</td>
+                                            <td class="text-end">
+                                                <!-- Verify User Button -->
+                                                <button type="button" class="btn btn-sm btn-outline-info me-1" onclick="verifyUser('@req.Email')" title="Verify if account exists in database">
+                                                    <i class="bi bi-search me-1"></i> Verify User
+                                                </button>
+
+                                                @if (req.Status == "Pending")
+                                                {
+                                                    <!-- Approve Button -->
+                                                    using (Html.BeginForm("ApprovePasswordRequest", "Admin", FormMethod.Post, new { @class = "d-inline" }))
+                                                    {
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="requestId" value="@req.RequestId" />
+                                                        <input type="hidden" name="adminNotes" value="Verified and approved by admin." />
+                                                        <button type="submit" class="btn btn-sm btn-success fw-bold px-3 py-1 me-1" onclick="return confirm('Approve password reset request for @req.Email? The user will be permitted to enter a new password.');">
+                                                            <i class="bi bi-check-circle me-1"></i> Approve
+                                                        </button>
+                                                    }
+
+                                                    <!-- Reject Button -->
+                                                    using (Html.BeginForm("RejectPasswordRequest", "Admin", FormMethod.Post, new { @class = "d-inline" }))
+                                                    {
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="requestId" value="@req.RequestId" />
+                                                        <input type="hidden" name="adminNotes" value="Identity verification failed or unverified request." />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger fw-bold px-3 py-1" onclick="return confirm('Reject password reset request for @req.Email?');">
+                                                            <i class="bi bi-x-circle me-1"></i> Reject
+                                                        </button>
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center py-5 text-muted">
+                                            <i class="bi bi-shield-check display-6 text-success d-block mb-2"></i>
+                                            No password reset requests pending.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            <!-- User Verification Modal (Admin Search Feature) -->
+            <div class="modal fade" id="userVerificationModal" tabindex="-1" aria-labelledby="userVerificationModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                        <div class="modal-header bg-dark text-white p-3">
+                            <h5 class="modal-title fw-bold" id="userVerificationModalLabel">
+                                <i class="bi bi-person-check-fill text-warning me-2"></i> User Account Verification
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <!-- Search Form Inside Modal -->
+                            <div class="input-group mb-3">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+                                <input type="email" id="modalSearchEmail" class="form-control border-start-0" placeholder="Enter email address..." />
+                                <button type="button" class="btn btn-primary" onclick="verifyUser(document.getElementById('modalSearchEmail').value)">
+                                    <i class="bi bi-search"></i> Check
+                                </button>
+                            </div>
+
+                            <div id="verifyLoading" class="text-center py-4 d-none">
+                                <div class="spinner-border text-primary" role="status"></div>
+                                <div class="small text-muted mt-2">Checking database records across all user roles...</div>
+                            </div>
+
+                            <div id="verifyResult" class="d-none">
+                                <div id="verifyAlert" class="alert mb-3 rounded-3"></div>
+
+                                <div id="verifyDetailsCard" class="card border rounded-3 p-3 bg-light d-none">
+                                    <div class="d-flex align-items-center gap-3 mb-3 pb-2 border-bottom">
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                            <i class="bi bi-person-fill fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold mb-0 text-dark" id="verFullName">-</h6>
+                                            <div class="small text-muted">Username: <span id="verUsername" class="fw-semibold">-</span></div>
+                                        </div>
+                                        <span class="badge bg-primary ms-auto" id="verRole">-</span>
+                                    </div>
+
+                                    <div class="row g-2 small">
+                                        <div class="col-6">
+                                            <span class="text-muted d-block">Account ID:</span>
+                                            <span class="fw-bold text-dark" id="verUserId">-</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="text-muted d-block">Email Address:</span>
+                                            <span class="fw-bold text-dark" id="verEmail">-</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="text-muted d-block">Phone Number:</span>
+                                            <span class="fw-bold text-dark" id="verPhone">-</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="text-muted d-block">Account Active:</span>
+                                            <span class="fw-bold" id="verActive">-</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="text-muted d-block">Verification Status:</span>
+                                            <span class="fw-bold" id="verVerified">-</span>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="text-muted d-block">Registered Date:</span>
+                                            <span class="fw-bold text-dark" id="verDate">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer bg-light p-3 border-top">
+                            <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function verifyUser(email) {
+                    if (!email || !email.trim()) {
+                        alert('Please enter an email address to verify.');
+                        return;
+                    }
+
+                    document.getElementById('modalSearchEmail').value = email.trim();
+                    var modal = new bootstrap.Modal(document.getElementById('userVerificationModal'));
+                    modal.show();
+
+                    document.getElementById('verifyLoading').classList.remove('d-none');
+                    document.getElementById('verifyResult').classList.add('d-none');
+                    document.getElementById('verifyDetailsCard').classList.add('d-none');
+
+                    fetch('@Url.Action("VerifyUserEmail", "Admin")?email=' + encodeURIComponent(email.trim()))
+                        .then(function (res) { return res.json(); })
+                        .then(function (data) {
+                            document.getElementById('verifyLoading').classList.add('d-none');
+                            document.getElementById('verifyResult').classList.remove('d-none');
+                            var alertBox = document.getElementById('verifyAlert');
+                            var detailsCard = document.getElementById('verifyDetailsCard');
+
+                            if (data.found) {
+                                alertBox.className = 'alert alert-success rounded-3 mb-3';
+                                alertBox.innerHTML = '<i class="bi bi-check-circle-fill me-2 fs-5"></i> <strong>User Record Found!</strong> This email is legitimately registered under <strong>' + data.role + '</strong> role.';
+                                detailsCard.classList.remove('d-none');
+
+                                document.getElementById('verFullName').innerText = data.name || '-';
+                                document.getElementById('verUsername').innerText = data.username || '-';
+                                document.getElementById('verRole').innerText = data.role || '-';
+                                document.getElementById('verUserId').innerText = '#' + (data.userId || 'N/A');
+                                document.getElementById('verEmail').innerText = data.email || '-';
+                                document.getElementById('verPhone').innerText = data.phone || 'Not provided';
+                                document.getElementById('verActive').innerHTML = data.isActive ? '<span class="text-success"><i class="bi bi-check-circle"></i> Active</span>' : '<span class="text-danger"><i class="bi bi-x-circle"></i> Inactive</span>';
+                                document.getElementById('verVerified').innerHTML = data.isVerified ? '<span class="text-success"><i class="bi bi-shield-check"></i> Verified</span>' : '<span class="text-warning"><i class="bi bi-clock"></i> Unverified</span>';
+                                document.getElementById('verDate').innerText = data.createdAt || 'N/A';
+                            } else {
+                                alertBox.className = 'alert alert-danger rounded-3 mb-3';
+                                alertBox.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i> <strong>No Account Found!</strong> No user with email <code>' + email + '</code> exists in Customers, Restaurants, Staff, Riders, or Admins.';
+                                detailsCard.classList.add('d-none');
+                            }
+                        })
+                        .catch(function (err) {
+                            document.getElementById('verifyLoading').classList.add('d-none');
+                            document.getElementById('verifyResult').classList.remove('d-none');
+                            var alertBox = document.getElementById('verifyAlert');
+                            alertBox.className = 'alert alert-danger rounded-3 mb-3';
+                            alertBox.innerText = 'Error verifying email: ' + err;
+                        });
+                }
+            </script>
+
         </div>
     </div>
 </div>
