@@ -8,53 +8,65 @@ namespace FoodArrival.DAL
 {
     public class RiderRepository
     {
-        public bool Register(Rider rider, int restaurantId, out string message, out int riderId)
+        public bool CheckDuplication(string username, string email, out string message)
+        {
+            message = string.Empty;
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand("dbo.sp_User_CheckDuplication", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Username", (username ?? string.Empty).Trim().ToLower());
+                    cmd.Parameters.AddWithValue("@Email", (email ?? string.Empty).Trim().ToLower());
+
+                    var outParam = new SqlParameter("@Reason", SqlDbType.NVarChar, 200)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+                    cmd.Parameters.Add(outParam);
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+
+                    if (outParam.Value != DBNull.Value && outParam.Value != null)
+                    {
+                        string reason = outParam.Value.ToString();
+                        if (!string.IsNullOrEmpty(reason))
+                        {
+                            message = reason;
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool Insert(Rider rider, out string message, out int riderId)
         {
             message = string.Empty;
             riderId = 0;
 
-            // Check duplication
-            string checkSql = @"
-                SELECT 1 FROM dbo.Riders WHERE LOWER(Email) = @Email OR LOWER(Username) = @Username
-                UNION ALL
-                SELECT 1 FROM dbo.Customers WHERE LOWER(Email) = @Email OR LOWER(Username) = @Username
-                UNION ALL
-                SELECT 1 FROM dbo.Restaurants WHERE LOWER(Email) = @Email OR LOWER(Username) = @Username
-                UNION ALL
-                SELECT 1 FROM dbo.RestaurantStaff WHERE LOWER(Email) = @Email OR LOWER(Username) = @Username
-                UNION ALL
-                SELECT 1 FROM dbo.Admins WHERE LOWER(Username) = @Username";
+            if (CheckDuplication(rider.Username, rider.Email, out message))
+            {
+                return false;
+            }
 
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(checkSql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_Insert", conn))
                 {
-                    cmd.Parameters.AddWithValue("@Email", rider.Email.Trim().ToLower());
-                    cmd.Parameters.AddWithValue("@Username", rider.Username.Trim().ToLower());
-                    conn.Open();
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            message = "Username or Email already registered in system.";
-                            return false;
-                        }
-                    }
-                }
-
-                string insertSql = @"
-                    INSERT INTO dbo.Riders 
-                    (RiderName, Username, Email, PasswordHash, PhoneNumber, VehicleType, LicenseNumber, LicenseDocumentUrl, CurrentStatus, IsActive)
-                    VALUES 
-                    (@RiderName, @Username, @Email, @PasswordHash, @PhoneNumber, @VehicleType, @LicenseNumber, @LicenseDocumentUrl, 'Available', 1);
-                    SELECT CAST(SCOPE_IDENTITY() AS INT);";
-
-                using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(insertSql, conn))
-                {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@RiderName", rider.RiderName ?? string.Empty);
-                    cmd.Parameters.AddWithValue("@Username", rider.Username.Trim().ToLower());
+                    cmd.Parameters.AddWithValue("@Username", (rider.Username ?? rider.Email).Trim().ToLower());
                     cmd.Parameters.AddWithValue("@Email", rider.Email.Trim().ToLower());
                     cmd.Parameters.AddWithValue("@PasswordHash", rider.PasswordHash ?? string.Empty);
                     cmd.Parameters.AddWithValue("@PhoneNumber", rider.PhoneNumber ?? string.Empty);
@@ -62,20 +74,24 @@ namespace FoodArrival.DAL
                     cmd.Parameters.AddWithValue("@LicenseNumber", (object)rider.LicenseNumber ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@LicenseDocumentUrl", (object)rider.LicenseDocumentUrl ?? DBNull.Value);
 
+                    var idParam = new SqlParameter("@RiderId", SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+                    cmd.Parameters.Add(idParam);
+
                     conn.Open();
-                    riderId = Convert.ToInt32(cmd.ExecuteScalar());
-                }
+                    cmd.ExecuteNonQuery();
 
-                // Add affiliation with selected restaurant (pending verification)
-                if (restaurantId > 0)
-                {
-                    AddAffiliation(riderId, restaurantId, out string _);
+                    if (idParam.Value != DBNull.Value && idParam.Value != null)
+                    {
+                        riderId = Convert.ToInt32(idParam.Value);
+                    }
+                    message = "Rider profile registered successfully. You can now affiliate with partner restaurants.";
+                    return true;
                 }
-
-                message = "Rider registered successfully! Your profile & driving documents are pending verification by the restaurant or admin.";
-                return true;
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
                 message = ex.Message;
                 return false;
@@ -85,38 +101,40 @@ namespace FoodArrival.DAL
         public bool AddAffiliation(int riderId, int restaurantId, out string message)
         {
             message = string.Empty;
-            string checkSql = "SELECT 1 FROM dbo.RiderRestaurantAffiliations WHERE RiderId = @RiderId AND RestaurantId = @RestaurantId";
-            string insertSql = @"
-                INSERT INTO dbo.RiderRestaurantAffiliations (RiderId, RestaurantId, IsVerified, AffiliatedAt)
-                VALUES (@RiderId, @RestaurantId, 0, GETDATE());";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand("dbo.sp_Rider_AddAffiliation", conn))
                 {
-                    conn.Open();
-                    using (var cmdCheck = new SqlCommand(checkSql, conn))
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@RiderId", riderId);
+                    cmd.Parameters.AddWithValue("@RestaurantId", restaurantId);
+
+                    var affIdParam = new SqlParameter("@AffiliationId", SqlDbType.Int)
                     {
-                        cmdCheck.Parameters.AddWithValue("@RiderId", riderId);
-                        cmdCheck.Parameters.AddWithValue("@RestaurantId", restaurantId);
-                        if (cmdCheck.ExecuteScalar() != null)
-                        {
-                            message = "You have already applied or registered with this restaurant.";
-                            return false;
-                        }
+                        Direction = ParameterDirection.Output
+                    };
+                    var existsParam = new SqlParameter("@AlreadyExists", SqlDbType.Bit)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+                    cmd.Parameters.Add(affIdParam);
+                    cmd.Parameters.Add(existsParam);
+
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+
+                    if (existsParam.Value != DBNull.Value && Convert.ToBoolean(existsParam.Value))
+                    {
+                        message = "You have already registered/requested affiliation with this restaurant.";
+                        return false;
                     }
 
-                    using (var cmdInsert = new SqlCommand(insertSql, conn))
-                    {
-                        cmdInsert.Parameters.AddWithValue("@RiderId", riderId);
-                        cmdInsert.Parameters.AddWithValue("@RestaurantId", restaurantId);
-                        cmdInsert.ExecuteNonQuery();
-                        message = "Affiliation request submitted. Pending verification by restaurant or admin.";
-                        return true;
-                    }
+                    message = "Affiliation request submitted. Pending verification by the restaurant or administrator.";
+                    return true;
                 }
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
                 message = ex.Message;
                 return false;
@@ -125,18 +143,12 @@ namespace FoodArrival.DAL
 
         public Rider Login(string loginId, string password)
         {
-            string sql = @"
-                SELECT RiderId, RiderName, Username, Email, PhoneNumber, VehicleType, LicenseNumber, LicenseDocumentUrl, CurrentStatus, IsActive
-                FROM dbo.Riders
-                WHERE (LOWER(Email) = @LoginId OR LOWER(Username) = @LoginId)
-                  AND PasswordHash = @Password 
-                  AND IsActive = 1";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_Login", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@LoginId", (loginId ?? string.Empty).Trim().ToLower());
                     cmd.Parameters.AddWithValue("@Password", password ?? string.Empty);
                     conn.Open();
@@ -150,52 +162,16 @@ namespace FoodArrival.DAL
                                 RiderName = reader["RiderName"].ToString(),
                                 Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : null,
                                 Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : null,
-                                VehicleType = reader["VehicleType"] != DBNull.Value ? reader["VehicleType"].ToString() : "Motorbike",
+                                PhoneNumber = reader["PhoneNumber"].ToString(),
+                                VehicleType = reader["VehicleType"].ToString(),
                                 LicenseNumber = reader["LicenseNumber"] != DBNull.Value ? reader["LicenseNumber"].ToString() : null,
                                 LicenseDocumentUrl = reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : null,
-                                CurrentStatus = reader["CurrentStatus"] != DBNull.Value ? reader["CurrentStatus"].ToString() : "Available",
-                                IsActive = Convert.ToBoolean(reader["IsActive"])
-                            };
-                        }
-                    }
-                }
-            }
-            catch { }
-            return null;
-        }
-
-        public Rider GetById(int riderId)
-        {
-            string sql = @"
-                SELECT RiderId, RiderName, Username, Email, PhoneNumber, VehicleType, LicenseNumber, LicenseDocumentUrl, CurrentStatus, IsActive, CreatedAt
-                FROM dbo.Riders
-                WHERE RiderId = @RiderId";
-
-            try
-            {
-                using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
-                {
-                    cmd.Parameters.AddWithValue("@RiderId", riderId);
-                    conn.Open();
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            return new Rider
-                            {
-                                RiderId = Convert.ToInt32(reader["RiderId"]),
-                                RiderName = reader["RiderName"].ToString(),
-                                Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : null,
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : null,
-                                VehicleType = reader["VehicleType"] != DBNull.Value ? reader["VehicleType"].ToString() : "Motorbike",
-                                LicenseNumber = reader["LicenseNumber"] != DBNull.Value ? reader["LicenseNumber"].ToString() : null,
-                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : null,
-                                CurrentStatus = reader["CurrentStatus"] != DBNull.Value ? reader["CurrentStatus"].ToString() : "Available",
+                                CurrentStatus = reader["CurrentStatus"].ToString(),
                                 IsActive = Convert.ToBoolean(reader["IsActive"]),
-                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"])
+                                Latitude = reader["Latitude"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Latitude"]) : null,
+                                Longitude = reader["Longitude"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Longitude"]) : null,
+                                MaxCapacity = reader["MaxCapacity"] != DBNull.Value ? (int?)Convert.ToInt32(reader["MaxCapacity"]) : null,
+                                Rating = reader["Rating"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Rating"]) : null
                             };
                         }
                     }
@@ -208,16 +184,12 @@ namespace FoodArrival.DAL
         public List<Rider> GetAll()
         {
             var list = new List<Rider>();
-            string sql = @"
-                SELECT RiderId, RiderName, Username, Email, PhoneNumber, VehicleType, LicenseNumber, LicenseDocumentUrl, CurrentStatus, IsActive, CreatedAt
-                FROM dbo.Riders
-                ORDER BY RiderId DESC";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_GetAll", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -229,11 +201,11 @@ namespace FoodArrival.DAL
                                 RiderName = reader["RiderName"].ToString(),
                                 Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : null,
                                 Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : null,
-                                VehicleType = reader["VehicleType"] != DBNull.Value ? reader["VehicleType"].ToString() : "Motorbike",
+                                PhoneNumber = reader["PhoneNumber"].ToString(),
+                                VehicleType = reader["VehicleType"].ToString(),
                                 LicenseNumber = reader["LicenseNumber"] != DBNull.Value ? reader["LicenseNumber"].ToString() : null,
                                 LicenseDocumentUrl = reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : null,
-                                CurrentStatus = reader["CurrentStatus"] != DBNull.Value ? reader["CurrentStatus"].ToString() : "Available",
+                                CurrentStatus = reader["CurrentStatus"].ToString(),
                                 IsActive = Convert.ToBoolean(reader["IsActive"]),
                                 CreatedAt = Convert.ToDateTime(reader["CreatedAt"])
                             });
@@ -245,66 +217,55 @@ namespace FoodArrival.DAL
             return list;
         }
 
-        public bool Update(Rider model, out string message)
+        public Rider GetById(int id)
         {
-            message = string.Empty;
-            string sql = @"
-                UPDATE dbo.Riders
-                SET RiderName = @RiderName,
-                    PhoneNumber = @PhoneNumber,
-                    VehicleType = @VehicleType,
-                    LicenseNumber = @LicenseNumber,
-                    CurrentStatus = @CurrentStatus
-                WHERE RiderId = @RiderId";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_GetById", conn))
                 {
-                    cmd.Parameters.AddWithValue("@RiderId", model.RiderId);
-                    cmd.Parameters.AddWithValue("@RiderName", model.RiderName ?? string.Empty);
-                    cmd.Parameters.AddWithValue("@PhoneNumber", (object)model.PhoneNumber ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@VehicleType", (object)model.VehicleType ?? "Motorbike");
-                    cmd.Parameters.AddWithValue("@LicenseNumber", (object)model.LicenseNumber ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@CurrentStatus", (object)model.CurrentStatus ?? "Available");
-
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@RiderId", id);
                     conn.Open();
-                    int affected = cmd.ExecuteNonQuery();
-                    if (affected > 0)
+                    using (var reader = cmd.ExecuteReader())
                     {
-                        message = "Rider profile updated successfully.";
-                        return true;
+                        if (reader.Read())
+                        {
+                            return new Rider
+                            {
+                                RiderId = Convert.ToInt32(reader["RiderId"]),
+                                RiderName = reader["RiderName"].ToString(),
+                                Username = reader["Username"] != DBNull.Value ? reader["Username"].ToString() : null,
+                                Email = reader["Email"].ToString(),
+                                PhoneNumber = reader["PhoneNumber"].ToString(),
+                                VehicleType = reader["VehicleType"].ToString(),
+                                LicenseNumber = reader["LicenseNumber"] != DBNull.Value ? reader["LicenseNumber"].ToString() : null,
+                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : null,
+                                CurrentStatus = reader["CurrentStatus"].ToString(),
+                                IsActive = Convert.ToBoolean(reader["IsActive"]),
+                                CreatedAt = Convert.ToDateTime(reader["CreatedAt"]),
+                                Latitude = reader["Latitude"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Latitude"]) : null,
+                                Longitude = reader["Longitude"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Longitude"]) : null,
+                                MaxCapacity = reader["MaxCapacity"] != DBNull.Value ? (int?)Convert.ToInt32(reader["MaxCapacity"]) : null,
+                                Rating = reader["Rating"] != DBNull.Value ? (decimal?)Convert.ToDecimal(reader["Rating"]) : null
+                            };
+                        }
                     }
-                    message = "Rider not found.";
-                    return false;
                 }
             }
-            catch (Exception ex)
-            {
-                message = ex.Message;
-                return false;
-            }
+            catch { }
+            return null;
         }
 
         public List<RiderAffiliation> GetRiderAffiliations(int riderId)
         {
             var list = new List<RiderAffiliation>();
-            string sql = @"
-                SELECT a.AffiliationId, a.RiderId, a.RestaurantId, r.RestaurantName, a.IsVerified, 
-                       a.VerifiedByRole, a.VerifiedAt, a.AffiliatedAt,
-                       rd.RiderName, rd.PhoneNumber, rd.VehicleType, rd.LicenseNumber, rd.LicenseDocumentUrl
-                FROM dbo.RiderRestaurantAffiliations a
-                INNER JOIN dbo.Restaurants r ON a.RestaurantId = r.RestaurantId
-                INNER JOIN dbo.Riders rd ON a.RiderId = rd.RiderId
-                WHERE a.RiderId = @RiderId
-                ORDER BY a.AffiliationId DESC";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_GetAffiliations", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@RiderId", riderId);
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
@@ -317,15 +278,13 @@ namespace FoodArrival.DAL
                                 RiderId = Convert.ToInt32(reader["RiderId"]),
                                 RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
                                 RestaurantName = reader["RestaurantName"].ToString(),
+                                OwnerName = reader["OwnerName"].ToString(),
+                                RestaurantAddress = reader["RestaurantAddress"] != DBNull.Value ? reader["RestaurantAddress"].ToString() : null,
+                                RestaurantPhone = reader["RestaurantPhone"] != DBNull.Value ? reader["RestaurantPhone"].ToString() : null,
                                 IsVerified = Convert.ToBoolean(reader["IsVerified"]),
                                 VerifiedByRole = reader["VerifiedByRole"] != DBNull.Value ? reader["VerifiedByRole"].ToString() : null,
                                 VerifiedAt = reader["VerifiedAt"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["VerifiedAt"]) : null,
-                                AffiliatedAt = Convert.ToDateTime(reader["AffiliatedAt"]),
-                                RiderName = reader["RiderName"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"].ToString(),
-                                VehicleType = reader["VehicleType"].ToString(),
-                                LicenseNumber = reader["LicenseNumber"] != DBNull.Value ? reader["LicenseNumber"].ToString() : null,
-                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : null
+                                CreatedAt = Convert.ToDateTime(reader["AffiliatedAt"])
                             });
                         }
                     }
@@ -335,27 +294,16 @@ namespace FoodArrival.DAL
             return list;
         }
 
-        public List<RiderAffiliation> GetRestaurantRiders(int? restaurantId = null, bool? onlyPending = null)
+        public List<RiderAffiliation> GetRestaurantRiders(int restaurantId)
         {
             var list = new List<RiderAffiliation>();
-            string sql = @"
-                SELECT a.AffiliationId, a.RiderId, a.RestaurantId, r.RestaurantName, a.IsVerified, 
-                       a.VerifiedByRole, a.VerifiedAt, a.AffiliatedAt,
-                       rd.RiderName, rd.Username, rd.Email, rd.PhoneNumber, rd.VehicleType, rd.LicenseNumber, rd.LicenseDocumentUrl
-                FROM dbo.RiderRestaurantAffiliations a
-                INNER JOIN dbo.Restaurants r ON a.RestaurantId = r.RestaurantId
-                INNER JOIN dbo.Riders rd ON a.RiderId = rd.RiderId
-                WHERE (@RestId IS NULL OR a.RestaurantId = @RestId)
-                  AND (@OnlyPending IS NULL OR a.IsVerified = 0)
-                ORDER BY a.AffiliationId DESC";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_GetByRestaurant", conn))
                 {
-                    cmd.Parameters.AddWithValue("@RestId", (object)restaurantId ?? DBNull.Value);
-                    cmd.Parameters.AddWithValue("@OnlyPending", (object)onlyPending ?? DBNull.Value);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@RestaurantId", restaurantId);
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -366,18 +314,16 @@ namespace FoodArrival.DAL
                                 AffiliationId = Convert.ToInt32(reader["AffiliationId"]),
                                 RiderId = Convert.ToInt32(reader["RiderId"]),
                                 RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
-                                RestaurantName = reader["RestaurantName"].ToString(),
-                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                VerifiedByRole = reader["VerifiedByRole"] != DBNull.Value ? reader["VerifiedByRole"].ToString() : null,
-                                VerifiedAt = reader["VerifiedAt"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["VerifiedAt"]) : null,
-                                AffiliatedAt = Convert.ToDateTime(reader["AffiliatedAt"]),
                                 RiderName = reader["RiderName"].ToString(),
-                                Username = reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
                                 PhoneNumber = reader["PhoneNumber"].ToString(),
                                 VehicleType = reader["VehicleType"].ToString(),
                                 LicenseNumber = reader["LicenseNumber"] != DBNull.Value ? reader["LicenseNumber"].ToString() : null,
-                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : null
+                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : null,
+                                CurrentStatus = reader["CurrentStatus"].ToString(),
+                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
+                                VerifiedByRole = reader["VerifiedByRole"] != DBNull.Value ? reader["VerifiedByRole"].ToString() : null,
+                                VerifiedAt = reader["VerifiedAt"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["VerifiedAt"]) : null,
+                                CreatedAt = Convert.ToDateTime(reader["AffiliatedAt"])
                             });
                         }
                     }
@@ -387,93 +333,85 @@ namespace FoodArrival.DAL
             return list;
         }
 
-        public bool VerifyAffiliation(int affiliationId, string role, int userId, out string message)
+        public List<RiderAffiliation> GetPendingAffiliations()
         {
-            message = string.Empty;
-            string sql = @"
-                UPDATE dbo.RiderRestaurantAffiliations
-                SET IsVerified = 1, VerifiedByRole = @Role, VerifiedBy = @UserId, VerifiedAt = GETDATE()
-                WHERE AffiliationId = @AffiliationId";
-
+            var list = new List<RiderAffiliation>();
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_GetPendingAffiliations", conn))
                 {
-                    cmd.Parameters.AddWithValue("@Role", role ?? "Admin");
-                    cmd.Parameters.AddWithValue("@UserId", userId);
-                    cmd.Parameters.AddWithValue("@AffiliationId", affiliationId);
+                    cmd.CommandType = CommandType.StoredProcedure;
                     conn.Open();
-                    bool ok = cmd.ExecuteNonQuery() > 0;
-                    message = ok ? "Rider affiliation verified and approved." : "Affiliation record not found.";
-                    return ok;
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            list.Add(new RiderAffiliation
+                            {
+                                AffiliationId = Convert.ToInt32(reader["AffiliationId"]),
+                                RiderId = Convert.ToInt32(reader["RiderId"]),
+                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
+                                RiderName = reader["RiderName"].ToString(),
+                                PhoneNumber = reader["PhoneNumber"].ToString(),
+                                VehicleType = reader["VehicleType"].ToString(),
+                                LicenseNumber = reader["LicenseNumber"] != DBNull.Value ? reader["LicenseNumber"].ToString() : null,
+                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : null,
+                                RestaurantName = reader["RestaurantName"].ToString(),
+                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
+                                CreatedAt = Convert.ToDateTime(reader["AffiliatedAt"])
+                            });
+                        }
+                    }
                 }
             }
-            catch (Exception ex)
-            {
-                message = ex.Message;
-                return false;
-            }
+            catch { }
+            return list;
         }
 
-        public bool RejectAffiliation(int affiliationId, out string message)
+        public bool VerifyAffiliation(int affiliationId, bool isApproved)
         {
-            message = string.Empty;
-            string sql = @"DELETE FROM dbo.RiderRestaurantAffiliations WHERE AffiliationId = @AffiliationId";
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_VerifyAffiliation", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@AffiliationId", affiliationId);
+                    cmd.Parameters.AddWithValue("@IsApproved", isApproved);
                     conn.Open();
-                    bool ok = cmd.ExecuteNonQuery() > 0;
-                    message = ok ? "Rider affiliation rejected." : "Affiliation record not found.";
-                    return ok;
+                    return cmd.ExecuteNonQuery() > 0;
                 }
             }
-            catch (Exception ex)
+            catch { return false; }
+        }
+
+        public bool RemoveAffiliation(int riderId, int restaurantId)
+        {
+            try
             {
-                message = ex.Message;
-                return false;
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand("dbo.sp_Rider_RemoveAffiliation", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@RiderId", riderId);
+                    cmd.Parameters.AddWithValue("@RestaurantId", restaurantId);
+                    conn.Open();
+                    return cmd.ExecuteNonQuery() > 0;
+                }
             }
+            catch { return false; }
         }
 
         public List<Order> GetAvailableDeliveries()
         {
             var list = new List<Order>();
-            string sql = @"
-                SELECT o.OrderId, o.CustomerId, c.CustomerName, c.PhoneNumber, 
-                       ISNULL(o.DeliveryAddress, c.Address) AS Address, o.TotalAmount, 
-                       o.OrderStatus, o.DeliveryStatus, o.OrderedAt, 
-                       ISNULL(r.RestaurantName, 'FoodReady Kitchen') AS RestaurantName,
-                       STUFF((
-                           SELECT ', ' + f.ItemName + ' x' + CAST(od.Quantity AS NVARCHAR(10))
-                           FROM dbo.OrderDetails od
-                           INNER JOIN dbo.FoodItems f ON od.FoodItemId = f.FoodItemId
-                           WHERE od.OrderId = o.OrderId
-                           FOR XML PATH(''), TYPE
-                       ).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS Items
-                FROM dbo.Orders o
-                INNER JOIN dbo.Customers c ON o.CustomerId = c.CustomerId
-                LEFT JOIN dbo.Restaurants r ON o.RestaurantId = r.RestaurantId
-                WHERE o.OrderStatus NOT IN ('Cancelled', 'Rejected')
-                  AND o.DeliveryStatus != 'Delivered'
-                  AND (
-                      o.DeliveryStatus IN ('ReadyForPickup', 'PendingPickup', 'Pending', 'Accepted')
-                      OR EXISTS (
-                          SELECT 1 FROM dbo.OrderSubOrders oso 
-                          WHERE oso.OrderId = o.OrderId 
-                            AND oso.PreparationStatus = 'ReadyForPickup'
-                      )
-                  )
-                ORDER BY o.OrderedAt ASC";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_GetAvailableDeliveries", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -486,11 +424,13 @@ namespace FoodArrival.DAL
                                 CustomerName = reader["CustomerName"].ToString(),
                                 PhoneNumber = reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : null,
                                 Address = reader["Address"] != DBNull.Value ? reader["Address"].ToString() : null,
+                                DeliveryAddress = reader["Address"] != DBNull.Value ? reader["Address"].ToString() : null,
                                 TotalAmount = Convert.ToDecimal(reader["TotalAmount"]),
                                 OrderStatus = reader["OrderStatus"].ToString(),
-                                DeliveryStatus = reader["DeliveryStatus"] != DBNull.Value ? reader["DeliveryStatus"].ToString() : "Pending",
+                                DeliveryStatus = reader["DeliveryStatus"].ToString(),
                                 OrderedAt = Convert.ToDateTime(reader["OrderedAt"]),
-                                Items = reader["Items"] != DBNull.Value ? reader["Items"].ToString() : null
+                                RestaurantName = reader["RestaurantName"].ToString(),
+                                Items = reader["Items"] != DBNull.Value ? reader["Items"].ToString() : "Items"
                             });
                         }
                     }
@@ -503,35 +443,12 @@ namespace FoodArrival.DAL
         public List<Order> GetMyDeliveries(int riderId)
         {
             var list = new List<Order>();
-            string sql = @"
-                SELECT o.OrderId, o.CustomerId, c.CustomerName, c.PhoneNumber, 
-                       ISNULL(o.DeliveryAddress, c.Address) AS Address, o.TotalAmount, 
-                       o.OrderStatus, o.DeliveryStatus, o.OrderedAt, o.ProcessedAt,
-                       STUFF((
-                           SELECT ', ' + f.ItemName + ' x' + CAST(od.Quantity AS NVARCHAR(10))
-                           FROM dbo.OrderDetails od
-                           INNER JOIN dbo.FoodItems f ON od.FoodItemId = f.FoodItemId
-                           WHERE od.OrderId = o.OrderId
-                           FOR XML PATH(''), TYPE
-                       ).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS Items
-                FROM dbo.Orders o
-                INNER JOIN dbo.Customers c ON o.CustomerId = c.CustomerId
-                WHERE (
-                    o.RiderId = @RiderId 
-                    OR EXISTS (
-                        SELECT 1 FROM dbo.OrderSubOrders oso 
-                        WHERE oso.OrderId = o.OrderId AND oso.RiderId = @RiderId
-                    )
-                )
-                AND o.OrderStatus NOT IN ('Cancelled', 'Rejected')
-                AND (o.DeliveryStatus != 'Delivered' OR o.OrderedAt >= DATEADD(day, -1, GETDATE()))
-                ORDER BY CASE WHEN o.DeliveryStatus = 'Delivered' THEN 1 ELSE 0 END, o.OrderedAt DESC";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_GetMyDeliveries", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@RiderId", riderId);
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
@@ -545,12 +462,13 @@ namespace FoodArrival.DAL
                                 CustomerName = reader["CustomerName"].ToString(),
                                 PhoneNumber = reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : null,
                                 Address = reader["Address"] != DBNull.Value ? reader["Address"].ToString() : null,
+                                DeliveryAddress = reader["Address"] != DBNull.Value ? reader["Address"].ToString() : null,
                                 TotalAmount = Convert.ToDecimal(reader["TotalAmount"]),
                                 OrderStatus = reader["OrderStatus"].ToString(),
-                                DeliveryStatus = reader["DeliveryStatus"] != DBNull.Value ? reader["DeliveryStatus"].ToString() : "Pending",
+                                DeliveryStatus = reader["DeliveryStatus"].ToString(),
                                 OrderedAt = Convert.ToDateTime(reader["OrderedAt"]),
                                 ProcessedAt = reader["ProcessedAt"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["ProcessedAt"]) : null,
-                                Items = reader["Items"] != DBNull.Value ? reader["Items"].ToString() : null
+                                Items = reader["Items"] != DBNull.Value ? reader["Items"].ToString() : "Items"
                             });
                         }
                     }
@@ -562,22 +480,12 @@ namespace FoodArrival.DAL
 
         public bool AcceptDelivery(int orderId, int riderId)
         {
-            string sql = @"
-                UPDATE dbo.Orders 
-                SET RiderId = @RiderId, DeliveryStatus = 'OutForDelivery' 
-                WHERE OrderId = @OrderId;
-
-                UPDATE dbo.OrderSubOrders
-                SET RiderId = @RiderId, DeliveryStatus = 'OutForDelivery'
-                WHERE OrderId = @OrderId;
-
-                UPDATE dbo.Riders SET CurrentStatus = 'On Delivery' WHERE RiderId = @RiderId;";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_AcceptDelivery", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@RiderId", riderId);
                     cmd.Parameters.AddWithValue("@OrderId", orderId);
                     conn.Open();
@@ -606,71 +514,34 @@ namespace FoodArrival.DAL
             try
             {
                 using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand("dbo.sp_Rider_CompleteDeliveryWithOtp", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@OrderId", orderId);
+                    cmd.Parameters.AddWithValue("@RiderId", riderId);
+                    cmd.Parameters.AddWithValue("@EnteredOtp", enteredOtp);
+
+                    var errParam = new SqlParameter("@ErrorMessage", SqlDbType.NVarChar, 300)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+                    var successParam = new SqlParameter("@IsSuccess", SqlDbType.Bit)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+                    cmd.Parameters.Add(errParam);
+                    cmd.Parameters.Add(successParam);
+
                     conn.Open();
+                    cmd.ExecuteNonQuery();
 
-                    // 1. Verify OTP against order
-                    string checkSql = "SELECT DeliveryOtp, DeliveryStatus FROM dbo.Orders WHERE OrderId = @OrderId;";
-                    string expectedOtp = null;
-                    string currentDeliveryStatus = null;
-
-                    using (var checkCmd = new SqlCommand(checkSql, conn))
+                    bool isSuccess = successParam.Value != DBNull.Value && Convert.ToBoolean(successParam.Value);
+                    if (!isSuccess)
                     {
-                        checkCmd.Parameters.AddWithValue("@OrderId", orderId);
-                        using (var reader = checkCmd.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                expectedOtp = reader["DeliveryOtp"] != DBNull.Value ? reader["DeliveryOtp"].ToString().Trim() : null;
-                                currentDeliveryStatus = reader["DeliveryStatus"] != DBNull.Value ? reader["DeliveryStatus"].ToString().Trim() : null;
-                            }
-                            else
-                            {
-                                errorMessage = "Order not found.";
-                                return false;
-                            }
-                        }
-                    }
-
-                    if (currentDeliveryStatus == "Delivered")
-                    {
-                        errorMessage = "This order has already been marked as delivered.";
+                        errorMessage = errParam.Value != DBNull.Value ? errParam.Value.ToString() : "Delivery verification failed.";
                         return false;
                     }
-
-                    if (string.IsNullOrEmpty(expectedOtp))
-                    {
-                        errorMessage = "No delivery OTP was set for this order. Please contact support.";
-                        return false;
-                    }
-
-                    if (!string.Equals(expectedOtp, enteredOtp, StringComparison.OrdinalIgnoreCase))
-                    {
-                        errorMessage = "Invalid Delivery OTP! The code you entered does not match the customer's PIN. Please verify with the customer.";
-                        return false;
-                    }
-
-                    // 2. OTP is verified! Mark delivered.
-                    string sql = @"
-                        UPDATE dbo.Orders 
-                        SET DeliveryStatus = 'Delivered', OrderStatus = 'Accepted', ProcessedAt = GETDATE() 
-                        WHERE OrderId = @OrderId;
-
-                        UPDATE dbo.OrderSubOrders
-                        SET DeliveryStatus = 'Delivered', DeliveredAt = GETDATE()
-                        WHERE OrderId = @OrderId;
-
-                        UPDATE dbo.Riders SET CurrentStatus = 'Available' WHERE RiderId = @RiderId;
-                        
-                        INSERT INTO dbo.OrderStatusHistory (OrderId, Status, ChangedByUserId, ChangedByRole, Message, CreatedAt)
-                        VALUES (@OrderId, 'Delivered', @RiderId, 'Rider', 'Handover confirmed via customer 6-digit OTP verification.', GETDATE());";
-
-                    using (var cmd = new SqlCommand(sql, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@OrderId", orderId);
-                        cmd.Parameters.AddWithValue("@RiderId", riderId);
-                        return cmd.ExecuteNonQuery() > 0;
-                    }
+                    return true;
                 }
             }
             catch (Exception ex)
@@ -704,12 +575,13 @@ namespace FoodArrival.DAL
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand("UPDATE dbo.Riders SET PasswordHash = @Password WHERE RiderId = @Id", conn))
+                using (var cmd = new SqlCommand("dbo.sp_Rider_ResetPassword", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@RiderId", riderId);
                     cmd.Parameters.AddWithValue("@Password", newPassword);
-                    cmd.Parameters.AddWithValue("@Id", riderId);
                     conn.Open();
-                    int rows = cmd.ExecuteNonQuery();
+                    int rows = Convert.ToInt32(cmd.ExecuteScalar());
                     if (rows > 0)
                     {
                         message = "Password reset successfully.";
