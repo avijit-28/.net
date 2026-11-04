@@ -15,6 +15,7 @@ namespace FoodArrival.Models
         public string LicenseDocumentUrl { get; set; }
         public int RestaurantId { get; set; }
         public string RestaurantName { get; set; }
+        public string Cuisine { get; set; }
         public string OwnerName { get; set; }
         public string RestaurantAddress { get; set; }
         public string RestaurantPhone { get; set; }
