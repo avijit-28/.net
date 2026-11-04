@@ -99,5 +99,6 @@ namespace FoodArrival.Models
         public List<RestaurantStaff> PendingStaff { get; set; } = new List<RestaurantStaff>();
         public List<RiderAffiliation> PendingRiders { get; set; } = new List<RiderAffiliation>();
         public List<FoodItem> PendingDishes { get; set; } = new List<FoodItem>();
+        public List<PasswordResetRequest> PendingPasswordRequests { get; set; } = new List<PasswordResetRequest>();
     }
 }
