@@ -270,14 +270,12 @@ namespace FoodArrival.Services
 
         public bool SubmitRating(OrderRating rating)
         {
-            string sql = @"
-                INSERT INTO dbo.OrderRatings (OrderId, CustomerId, SubOrderId, FoodRating, RestaurantRating, RiderRating, ReviewText, CreatedAt)
-                VALUES (@OrderId, @CustomerId, @SubOrderId, @FoodRating, @RestaurantRating, @RiderRating, @ReviewText, GETDATE())";
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_OrderRating_Insert", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@OrderId", rating.OrderId);
                     cmd.Parameters.AddWithValue("@CustomerId", rating.CustomerId);
                     cmd.Parameters.AddWithValue("@SubOrderId", (object)rating.SubOrderId ?? DBNull.Value);
@@ -294,46 +292,21 @@ namespace FoodArrival.Services
 
         public bool CancelOrder(int orderId, int customerId, string reason)
         {
-            string sql = @"
-                UPDATE dbo.Orders 
-                SET OrderStatus = 'Cancelled', RejectionReason = @Reason, ProcessedAt = GETDATE()
-                WHERE OrderId = @OrderId AND CustomerId = @CustomerId 
-                  AND OrderStatus IN ('Pending', 'Confirmed');
-                
-                UPDATE dbo.OrderSubOrders
-                SET PreparationStatus = 'Cancelled', DeliveryStatus = 'Cancelled'
-                WHERE OrderId = @OrderId;";
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Order_Cancel", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@OrderId", orderId);
                     cmd.Parameters.AddWithValue("@CustomerId", customerId);
                     cmd.Parameters.AddWithValue("@Reason", reason ?? "Cancelled by customer");
                     conn.Open();
-                    int affected = cmd.ExecuteNonQuery();
-
-                    if (affected > 0)
-                    {
-                        // Insert history
-                        using (var cmdHist = new SqlCommand("dbo.sp_OrderStatusHistory_Insert", conn))
-                        {
-                            cmdHist.CommandType = CommandType.StoredProcedure;
-                            cmdHist.Parameters.AddWithValue("@OrderId", orderId);
-                            cmdHist.Parameters.AddWithValue("@SubOrderId", DBNull.Value);
-                            cmdHist.Parameters.AddWithValue("@Status", "Cancelled");
-                            cmdHist.Parameters.AddWithValue("@ChangedByUserId", customerId);
-                            cmdHist.Parameters.AddWithValue("@ChangedByRole", "Customer");
-                            cmdHist.Parameters.AddWithValue("@Message", "Order cancelled by customer: " + reason);
-                            cmdHist.ExecuteNonQuery();
-                        }
-                        return true;
-                    }
+                    object res = cmd.ExecuteScalar();
+                    return res != null && Convert.ToInt32(res) > 0;
                 }
             }
-            catch { }
-            return false;
+            catch { return false; }
         }
 
         private List<TimelineStep> BuildTimeline(OrderTrackingViewModel vm)
