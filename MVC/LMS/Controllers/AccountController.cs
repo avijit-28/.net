@@ -48,7 +48,16 @@ namespace LMS.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            if (User.Identity.IsAuthenticated)
+            if (Request.QueryString["antiforgery"] == "renew")
+            {
+                try
+                {
+                    AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                }
+                catch { }
+                ViewBag.StatusMessage = "Your security token has expired or was renewed. Please sign in to continue.";
+            }
+            else if (User.Identity.IsAuthenticated)
             {
                 // Prevent infinite redirect loop when an authenticated user lacks permissions for returnUrl
                 return RedirectToLocal(null);
@@ -267,6 +276,192 @@ namespace LMS.Controllers
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
+        }
+
+        // GET: /Account/ForgotPassword
+        [AllowAnonymous]
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        // POST: /Account/ForgotPassword
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var email = model.Email?.Trim();
+            var user = await UserManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                // To maintain security, show confirmation without revealing non-existence
+                return RedirectToAction("ForgotPasswordConfirmation");
+            }
+
+            var roles = await UserManager.GetRolesAsync(user.Id);
+            string role = roles.FirstOrDefault() ?? user.RequestedRole ?? "Student";
+
+            // Create Password Reset Request
+            var resetRequest = new PasswordResetRequest
+            {
+                UserId = user.Id,
+                Email = user.Email,
+                Role = role,
+                RequestReason = model.Reason,
+                RequestDate = DateTime.UtcNow,
+                Status = "Pending",
+                ResetToken = Guid.NewGuid().ToString("N"),
+                TokenExpiry = DateTime.UtcNow.AddDays(2)
+            };
+
+            _db.PasswordResetRequests.Add(resetRequest);
+            await _db.SaveChangesAsync();
+
+            // Notify Administrators
+            try
+            {
+                var adminRole = await _db.Roles.FirstOrDefaultAsync(r => r.Name == "Admin");
+                if (adminRole != null)
+                {
+                    var adminIds = await _db.Database.SqlQuery<string>(
+                        "SELECT UserId FROM AspNetUserRoles WHERE RoleId = @p0", adminRole.Id
+                    ).ToListAsync();
+
+                    foreach (var adminId in adminIds)
+                    {
+                        _db.Notifications.Add(new Notification
+                        {
+                            UserId = adminId,
+                            Title = "Password Reset Request",
+                            Message = $"User '{user.FullName}' ({user.Email}, Role: {role}) requested a password reset. Awaiting admin verification in Approvals.",
+                            NotificationType = "PasswordReset",
+                            IsRead = false,
+                            CreatedDate = DateTime.UtcNow
+                        });
+                    }
+                    await _db.SaveChangesAsync();
+                }
+            }
+            catch { }
+
+            return RedirectToAction("ForgotPasswordConfirmation");
+        }
+
+        // GET: /Account/ForgotPasswordConfirmation
+        [AllowAnonymous]
+        public ActionResult ForgotPasswordConfirmation()
+        {
+            return View();
+        }
+
+        // GET: /Account/ResetPassword
+        [AllowAnonymous]
+        public async Task<ActionResult> ResetPassword(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login");
+            }
+
+            var request = await _db.PasswordResetRequests
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(r => r.ResetToken == token);
+
+            if (request == null)
+            {
+                ViewBag.ErrorMessage = "The password reset link is invalid or does not exist.";
+                return View("ResetPasswordError");
+            }
+
+            if (request.Status == "Pending")
+            {
+                ViewBag.ErrorMessage = "Your password reset request is still pending administrator review. Once verified and approved by the admin/director, this link will be activated.";
+                return View("ResetPasswordError");
+            }
+
+            if (request.Status != "Approved")
+            {
+                ViewBag.ErrorMessage = $"This password reset request has already been {request.Status.ToLower()} or completed.";
+                return View("ResetPasswordError");
+            }
+
+            if (request.TokenExpiry.HasValue && request.TokenExpiry.Value < DateTime.UtcNow)
+            {
+                ViewBag.ErrorMessage = "This password reset link has expired. Please submit a new request.";
+                return View("ResetPasswordError");
+            }
+
+            var model = new ResetPasswordViewModel
+            {
+                Email = request.Email,
+                Code = token
+            };
+
+            return View(model);
+        }
+
+        // POST: /Account/ResetPassword
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var request = await _db.PasswordResetRequests
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(r => r.ResetToken == model.Code && r.Status == "Approved");
+
+            if (request == null || (request.TokenExpiry.HasValue && request.TokenExpiry.Value < DateTime.UtcNow))
+            {
+                ViewBag.ErrorMessage = "This password reset token is invalid, expired, or not yet approved by an administrator.";
+                return View("ResetPasswordError");
+            }
+
+            var user = request.User ?? await UserManager.FindByIdAsync(request.UserId);
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = "User account not found.";
+                return View("ResetPasswordError");
+            }
+
+            // Remove old password and set new password securely
+            var removeResult = await UserManager.RemovePasswordAsync(user.Id);
+            var addResult = await UserManager.AddPasswordAsync(user.Id, model.Password);
+
+            if (addResult.Succeeded)
+            {
+                request.Status = "Completed";
+                _db.Notifications.Add(new Notification
+                {
+                    UserId = user.Id,
+                    Title = "Password Changed Successfully",
+                    Message = "Your account password was successfully updated via administrator-approved reset link.",
+                    NotificationType = "Security",
+                    IsRead = false,
+                    CreatedDate = DateTime.UtcNow
+                });
+                await _db.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Your password has been changed successfully! You can now sign in with your new credentials.";
+                return RedirectToAction("Login");
+            }
+
+            foreach (var err in addResult.Errors)
+            {
+                ModelState.AddModelError("", err);
+            }
+
+            return View(model);
         }
 
         // GET: /Account/Profile

@@ -34,7 +34,10 @@
                 Review new user registrations, verify requested roles, and approve or decline account activations.
             </p>
         </div>
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <a href="@Url.Action("PasswordResets", "Admin")" class="btn rounded-pill px-3 fw-semibold text-white shadow-xs" style="background: rgba(255, 122, 24, 0.2); border: 1.5px solid #FF7A18;">
+                <i class="bi bi-key-fill me-1 text-orange"></i> Password Resets
+            </a>
             <a href="@Url.Action("Users", "Admin")" class="btn btn-outline-secondary rounded-pill px-3 fw-semibold">
                 <i class="bi bi-people me-1"></i> All Users Directory
             </a>

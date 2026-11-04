@@ -14,6 +14,8 @@
         else if (activeCtrl == "Courses" && activeAct == "Details") { pageClass = "page-course-details"; }
         else if (activeCtrl == "Student" && activeAct == "Index") { pageClass = "page-student-dashboard"; }
         else if (activeCtrl == "Student" && activeAct == "MyCourses") { pageClass = "page-my-courses"; }
+        else if (activeCtrl == "Student" && (activeAct == "Receipt" || activeAct == "AllReceipts")) { pageClass = "page-receipt"; }
+        else if (activeCtrl == "Student" && activeAct == "Payments") { pageClass = "page-my-courses"; }
         else if (activeCtrl == "Student" && activeAct == "Quizzes") { pageClass = "page-quiz"; }
         else if (activeCtrl == "Student" && (activeAct == "Assignments" || activeAct == "AssignmentDetails")) { pageClass = "page-assignment"; }
         else if (activeCtrl == "Student" && activeAct == "Certificates") { pageClass = "page-certificate"; }
@@ -287,6 +289,11 @@
                             <li class="nav-item">
                                 <a class="nav-link @(activeCtrl == "Student" && activeAct == "Quizzes" ? "active" : "")" href="@Url.Action("Quizzes", "Student")">
                                     <i class="bi bi-patch-question me-1"></i> Quizzes
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(activeCtrl == "Student" && (activeAct == "Payments" || activeAct == "Receipt" || activeAct == "AllReceipts") ? "active" : "")" href="@Url.Action("Payments", "Student")">
+                                    <i class="bi bi-receipt me-1"></i> Receipts
                                 </a>
                             </li>
                         }

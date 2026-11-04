@@ -1813,7 +1813,8 @@ body.page-course-details .list-group-item {
 /* --------------------------------------------------------------------------
    4. My Courses Page: Personal Workspace Gradient
    -------------------------------------------------------------------------- */
-body.page-my-courses {
+body.page-my-courses,
+body.page-receipt {
     background-color: #041822 !important;
     background-image:
         radial-gradient(circle at 15% 15%, #0D3B4F 0%, transparent 40%),

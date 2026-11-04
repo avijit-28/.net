@@ -124,6 +124,38 @@ namespace LMS.ViewModels
         public string FileUrl { get; set; }
     }
 
+    public class StudentReceiptViewModel
+    {
+        public int PaymentId { get; set; }
+        public string InvoiceNumber { get; set; }
+        public string TransactionId { get; set; }
+        public DateTime PaymentDate { get; set; }
+        public string PaymentMethod { get; set; }
+        public string PaymentStatus { get; set; }
+        public decimal Amount { get; set; }
+
+        public string StudentId { get; set; }
+        public string StudentName { get; set; }
+        public string StudentEmail { get; set; }
+
+        public int CourseId { get; set; }
+        public string CourseTitle { get; set; }
+        public string CategoryName { get; set; }
+        public string InstructorName { get; set; }
+        public decimal DurationHours { get; set; }
+    }
+
+    public class StudentAllReceiptsViewModel
+    {
+        public string StudentId { get; set; }
+        public string StudentName { get; set; }
+        public string StudentEmail { get; set; }
+        public DateTime GeneratedDate { get; set; }
+        public decimal TotalAmountPaid { get; set; }
+        public int TotalCoursesPurchased { get; set; }
+        public List<StudentReceiptViewModel> Receipts { get; set; } = new List<StudentReceiptViewModel>();
+    }
+
     public class CertificateViewModel
     {
         public int CertificateId { get; set; }

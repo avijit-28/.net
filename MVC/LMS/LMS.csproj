@@ -189,6 +189,7 @@
     <Compile Include="Models\Module.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Payment.cs" />
+    <Compile Include="Models\PasswordResetRequest.cs" />
     <Compile Include="Models\Question.cs" />
     <Compile Include="Models\QuestionOption.cs" />
     <Compile Include="Models\Quiz.cs" />
@@ -278,6 +279,10 @@
     <Content Include="Views\Account\PendingApproval.cshtml" />
     <Content Include="Views\Account\Profile.cshtml" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Account\ForgotPassword.cshtml" />
+    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\ResetPassword.cshtml" />
+    <Content Include="Views\Account\ResetPasswordError.cshtml" />
     <Content Include="Views\Courses\Index.cshtml" />
     <Content Include="Views\Courses\Details.cshtml" />
     <Content Include="Views\Courses\Purchase.cshtml" />
@@ -293,6 +298,9 @@
     <Content Include="Views\Student\Certificates.cshtml" />
     <Content Include="Views\Student\Quizzes.cshtml" />
     <Content Include="Views\Student\Assignments.cshtml" />
+    <Content Include="Views\Student\Payments.cshtml" />
+    <Content Include="Views\Student\Receipt.cshtml" />
+    <Content Include="Views\Student\AllReceipts.cshtml" />
     <Content Include="Views\Instructor\Index.cshtml" />
     <Content Include="Views\Instructor\Courses.cshtml" />
     <Content Include="Views\Instructor\CreateCourse.cshtml" />
@@ -316,6 +324,7 @@
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Admin\Users.cshtml" />
     <Content Include="Views\Admin\PendingApprovals.cshtml" />
+    <Content Include="Views\Admin\PasswordResets.cshtml" />
     <Content Include="Views\Admin\InstructorApplications.cshtml" />
     <Content Include="Views\Admin\Categories.cshtml" />
     <Content Include="Views\Admin\CreateCategory.cshtml" />

@@ -782,6 +782,111 @@ namespace LMS.Controllers
             return s?.Replace("\"", "\"\"") ?? "";
         }
 
+        // GET: Admin/PasswordResets
+        public async Task<ActionResult> PasswordResets(string statusFilter = "Pending", string search = null)
+        {
+            var query = _db.PasswordResetRequests.Include(r => r.User).AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim();
+                query = query.Where(r => r.Email.Contains(search) || (r.User != null && r.User.FullName.Contains(search)));
+            }
+
+            if (!string.IsNullOrEmpty(statusFilter) && statusFilter != "All")
+            {
+                query = query.Where(r => r.Status == statusFilter);
+            }
+
+            var list = await query.OrderByDescending(r => r.RequestDate).ToListAsync();
+
+            ViewBag.CurrentStatus = statusFilter;
+            ViewBag.Search = search;
+            ViewBag.PendingCount = await _db.PasswordResetRequests.CountAsync(r => r.Status == "Pending");
+            ViewBag.ApprovedCount = await _db.PasswordResetRequests.CountAsync(r => r.Status == "Approved");
+            ViewBag.RejectedCount = await _db.PasswordResetRequests.CountAsync(r => r.Status == "Rejected");
+            ViewBag.CompletedCount = await _db.PasswordResetRequests.CountAsync(r => r.Status == "Completed");
+
+            return View(list);
+        }
+
+        // POST: Admin/ApprovePasswordReset
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ApprovePasswordReset(int id, string adminNotes = null)
+        {
+            var req = await _db.PasswordResetRequests.Include(r => r.User).FirstOrDefaultAsync(r => r.RequestId == id);
+            if (req != null)
+            {
+                req.Status = "Approved";
+                req.ApprovedByAdminId = User.Identity.GetUserId();
+                req.ApprovedDate = DateTime.UtcNow;
+                req.AdminNotes = adminNotes;
+                req.TokenExpiry = DateTime.UtcNow.AddDays(3);
+                if (string.IsNullOrEmpty(req.ResetToken))
+                {
+                    req.ResetToken = Guid.NewGuid().ToString("N");
+                }
+
+                var resetUrl = Url.Action("ResetPassword", "Account", new { token = req.ResetToken }, Request.Url.Scheme);
+                
+                // Add notification to requester
+                _db.Notifications.Add(new Notification
+                {
+                    UserId = req.UserId,
+                    Title = "Password Reset Request Approved",
+                    Message = $"Your password reset request has been verified and approved by the administration. You can now reset your password using the following link: {resetUrl}",
+                    NotificationType = "PasswordResetApproved",
+                    IsRead = false,
+                    CreatedDate = DateTime.UtcNow
+                });
+
+                await _db.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Password reset request for {req.Email} was APPROVED. Secure reset URL: {resetUrl}";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Password reset request record not found.";
+            }
+
+            return RedirectToAction("PasswordResets");
+        }
+
+        // POST: Admin/RejectPasswordReset
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> RejectPasswordReset(int id, string reason = null)
+        {
+            var req = await _db.PasswordResetRequests.Include(r => r.User).FirstOrDefaultAsync(r => r.RequestId == id);
+            if (req != null)
+            {
+                req.Status = "Rejected";
+                req.ApprovedByAdminId = User.Identity.GetUserId();
+                req.ApprovedDate = DateTime.UtcNow;
+                req.AdminNotes = reason;
+
+                // Add notification to requester
+                _db.Notifications.Add(new Notification
+                {
+                    UserId = req.UserId,
+                    Title = "Password Reset Request Declined",
+                    Message = $"Your password reset request was declined by the administrator. Reason: {(string.IsNullOrEmpty(reason) ? "Identity could not be verified" : reason)}",
+                    NotificationType = "PasswordResetRejected",
+                    IsRead = false,
+                    CreatedDate = DateTime.UtcNow
+                });
+
+                await _db.SaveChangesAsync();
+                TempData["WarningMessage"] = $"Password reset request for {req.Email} was DECLINED.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Password reset request record not found.";
+            }
+
+            return RedirectToAction("PasswordResets");
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

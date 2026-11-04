@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using Microsoft.AspNet.Identity;
 
 namespace LMS
 {
@@ -17,6 +20,9 @@ namespace LMS
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            // Configure AntiForgery to bind exclusively to the Identity NameIdentifier claim
+            AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
+
             try
             {
                 using (var db = new LMS.Data.ApplicationDbContext())
@@ -27,6 +33,23 @@ namespace LMS
             catch (Exception ex)
             {
                 System.Diagnostics.Trace.TraceError("Database seeding error: " + ex.Message);
+            }
+        }
+
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            var exception = Server.GetLastError();
+            if (exception is HttpAntiForgeryException)
+            {
+                Server.ClearError();
+                try
+                {
+                    var authManager = HttpContext.Current.GetOwinContext().Authentication;
+                    authManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                }
+                catch { }
+
+                Response.Redirect("~/Account/Login?antiforgery=renew");
             }
         }
     }

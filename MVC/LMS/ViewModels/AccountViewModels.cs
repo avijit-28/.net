@@ -57,6 +57,21 @@ namespace LMS.ViewModels
         public string Bio { get; set; }
     }
 
+    public class ForgotPasswordViewModel
+    {
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid Email Address.")]
+        [Display(Name = "Registered Email Address")]
+        public string Email { get; set; }
+
+        [Display(Name = "Account Role")]
+        public string Role { get; set; }
+
+        [Display(Name = "Reason / Verification Notes for Administrator")]
+        [StringLength(500, ErrorMessage = "Notes cannot exceed 500 characters.")]
+        public string Reason { get; set; }
+    }
+
     public class ResetPasswordViewModel
     {
         [Required(ErrorMessage = "Email is required.")]
