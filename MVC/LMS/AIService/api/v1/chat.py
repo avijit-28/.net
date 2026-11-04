@@ -4,7 +4,7 @@ Chat and RAG query processing endpoints.
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
-from rag.rag_pipeline import RAGPipeline
+from rag.rag_pipeline import rag_pipeline
 from core.security import verify_internal_api_key, parse_authorized_courses
 from core.logger import get_masked_logger
 
@@ -19,20 +19,17 @@ class ChatAskRequest(BaseModel):
     module_id: Optional[int] = None
     lesson_id: Optional[int] = None
     query: str
-    learning_mode: str = "general"  # "general", "course", "exam", "quiz", "code"
+    learning_mode: str = "CourseAssistant"  # "General", "CourseAssistant", "ExamPrep", "PracticeQuiz", "CodeTutor"
     history: Optional[List[Dict[str, str]]] = Field(default_factory=list)
 
 class SourceCitation(BaseModel):
-    chunk_id: str
-    document_id: int
-    course_id: int
-    module_id: Optional[int] = None
-    lesson_id: Optional[int] = None
-    document_title: str
+    source_index: int
+    document_id: Optional[int] = None
+    chunk_id: Optional[str] = None
+    source_title: str
     page_number: Optional[int] = None
-    section_name: Optional[str] = None
-    text_snippet: str
-    score: float
+    relevance_score: float = 0.0
+    excerpt: str = ""
 
 class ChatAskResponse(BaseModel):
     answer: str
@@ -41,9 +38,12 @@ class ChatAskResponse(BaseModel):
     learning_mode: str
     tokens_used: int
     llm_provider: str
+    model_used: str
+    failover_occurred: bool = False
+    duration_ms: int = 0
 
 @router.post("/ask", response_model=ChatAskResponse)
-async def ask_chat(
+def ask_chat(
     req: ChatAskRequest,
     api_key_valid: bool = Depends(verify_internal_api_key),
     authorized_courses_header: Optional[str] = Header(None, alias="X-Authorized-Courses")
@@ -65,37 +65,33 @@ async def ask_chat(
 
     logger.info(f"Processing query from user {req.user_id} (mode={req.learning_mode}, course={req.course_id})")
 
-    pipeline = RAGPipeline()
-    result = await pipeline.query(
-        user_query=req.query,
+    result = rag_pipeline.answer_query(
+        query=req.query,
         course_id=req.course_id,
-        module_id=req.module_id,
-        lesson_id=req.lesson_id,
-        authorized_course_ids=authorized_courses,
-        learning_mode=req.learning_mode,
-        history=req.history
+        mode=req.learning_mode,
+        chat_history=req.history
     )
 
     citations = [
         SourceCitation(
-            chunk_id=s["chunk_id"],
-            document_id=s["document_id"],
-            course_id=s["course_id"],
-            module_id=s.get("module_id"),
-            lesson_id=s.get("lesson_id"),
-            document_title=s["document_title"],
+            source_index=s.get("source_index", idx + 1),
+            document_id=s.get("document_id"),
+            chunk_id=s.get("chunk_id"),
+            source_title=s.get("source_title", "Course Material"),
             page_number=s.get("page_number"),
-            section_name=s.get("section_name"),
-            text_snippet=s["text_snippet"],
-            score=s["score"]
-        ) for s in result["sources"]
+            relevance_score=s.get("relevance_score", 0.0),
+            excerpt=s.get("excerpt", "")
+        ) for idx, s in enumerate(result.get("sources", []))
     ]
 
     return ChatAskResponse(
-        answer=result["answer"],
+        answer=result.get("answer", ""),
         sources=citations,
-        grounded_in_rag=result["grounded_in_rag"],
+        grounded_in_rag=len(citations) > 0,
         learning_mode=req.learning_mode,
-        tokens_used=result["tokens_used"],
-        llm_provider=result["llm_provider"]
+        tokens_used=result.get("total_tokens", 0),
+        llm_provider=result.get("provider_used", ""),
+        model_used=result.get("model_used", ""),
+        failover_occurred=result.get("failover_occurred", False),
+        duration_ms=result.get("duration_ms", 0)
     )
