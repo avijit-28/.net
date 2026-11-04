@@ -71,7 +71,7 @@
                             @Html.CheckBoxFor(m => m.RememberMe, new { @class = "form-check-input", id = "rememberMeCheck" })
                             <label class="form-check-label text-muted" for="rememberMeCheck">Remember me</label>
                         </div>
-                        <a href="#" class="text-muted text-decoration-none" onclick="alert('For credentials assistance:\n- Admin: avi@123 / 28072003\n- Customer: john@example.com / 12345\n- Restaurant: restaurant@example.com / rest123\n- Staff: staff@example.com / Staff@123\n- Rider: rider@example.com / rider123'); return false;">Forgot Password?</a>
+                        <a href="@Url.Action("PasswordRecovery", "Account")" class="text-primary text-decoration-none fw-semibold">Forgot Password?</a>
                     </div>
 
                     <!-- Big Vibrant Orange Login Button -->
