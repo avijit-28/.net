@@ -29,7 +29,7 @@ namespace WebApiPractice.Controllers
         // POST api/values
         public void Post([FromBody] string value)
         {
-            _values.Add(value);
+            _values.Addat(value);
         }
 
         // PUT api/values/1
@@ -44,14 +44,14 @@ namespace WebApiPractice.Controllers
         }
 
         // DELETE api/values/1
-        public void Delete(int id)
+        public IHttpActionResult Delete(int id)
         {
-            //if (id < 0 || id >= _values.Count)
-                //return NotFound();
+            if (id < 0 || id >= _values.Count)
+                return NotFound();
 
             _values.RemoveAt(id);
 
-            //return Ok("Value Deleted Successfully");
+            return Ok("Value Deleted Successfully");
         }
     }
 }
