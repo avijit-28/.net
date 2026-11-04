@@ -420,5 +420,129 @@ namespace FoodArrival.Controllers
             Session["CustomerAddress"] = customer.Address;
             Session["UserRole"] = "Customer";
         }
+    
+        // ==========================================
+        // PASSWORD RECOVERY / RESET REQUEST WORKFLOW
+        // ==========================================
+        [HttpGet]
+        public ActionResult PasswordRecovery(string email = null, string tab = "submit")
+        {
+            var model = new PasswordRecoveryViewModel
+            {
+                Email = email,
+                ActiveTab = string.Equals(tab, "check", StringComparison.OrdinalIgnoreCase) ? "check" : "submit"
+            };
+
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                model.CurrentRequest = _passwordRepo.GetLatestByEmail(email);
+                if (model.CurrentRequest != null)
+                {
+                    model.ActiveTab = "check";
+                    if (model.CurrentRequest.Status == "Pending")
+                    {
+                        model.StatusMessage = "Admin is yet to approve the request. Please check back later.";
+                    }
+                    else if (model.CurrentRequest.Status == "Approved")
+                    {
+                        model.StatusMessage = "Your password reset request has been APPROVED by the admin! Please set your new password below.";
+                        model.IsSuccess = true;
+                    }
+                    else if (model.CurrentRequest.Status == "Rejected")
+                    {
+                        model.StatusMessage = "Your password reset request was rejected by admin." + (!string.IsNullOrEmpty(model.CurrentRequest.AdminNotes) ? " Reason: " + model.CurrentRequest.AdminNotes : string.Empty);
+                    }
+                    else if (model.CurrentRequest.Status == "Completed")
+                    {
+                        model.StatusMessage = "Password has already been reset for this request. Please login with your new password, or submit a new request if needed.";
+                    }
+                }
+                else
+                {
+                    model.StatusMessage = "No password recovery request found for this email address. Please submit a request first.";
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateCustomAntiForgeryToken]
+        public ActionResult SubmitPasswordRecovery(PasswordRecoveryViewModel model)
+        {
+            model.ActiveTab = "submit";
+            if (string.IsNullOrWhiteSpace(model.Email))
+            {
+                ModelState.AddModelError("Email", "Please enter your registered email address.");
+                return View("PasswordRecovery", model);
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Reason) || model.Reason.Trim().Length < 5)
+            {
+                ModelState.AddModelError("Reason", "Please provide a valid reason (at least 5 characters) for password reset/recovery.");
+                return View("PasswordRecovery", model);
+            }
+
+            int requestId;
+            string role;
+            string message;
+            if (_passwordRepo.SubmitRequest(model.Email, model.Reason, out requestId, out role, out message))
+            {
+                TempData["Success"] = message;
+                return RedirectToAction("PasswordRecovery", new { email = model.Email.Trim().ToLower(), tab = "check" });
+            }
+
+            ModelState.AddModelError("", message);
+            return View("PasswordRecovery", model);
+        }
+
+        [HttpPost]
+        [ValidateCustomAntiForgeryToken]
+        public ActionResult CheckPasswordStatus(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return RedirectToAction("PasswordRecovery", new { tab = "check" });
+            }
+
+            return RedirectToAction("PasswordRecovery", new { email = email.Trim().ToLower(), tab = "check" });
+        }
+
+        [HttpPost]
+        [ValidateCustomAntiForgeryToken]
+        public ActionResult ResetPasswordConfirm(PasswordRecoveryViewModel model)
+        {
+            model.ActiveTab = "check";
+            if (string.IsNullOrWhiteSpace(model.Email))
+            {
+                ModelState.AddModelError("Email", "Email address is required.");
+                return View("PasswordRecovery", model);
+            }
+
+            if (string.IsNullOrWhiteSpace(model.NewPassword) || model.NewPassword.Length < 8)
+            {
+                ModelState.AddModelError("NewPassword", "Password must be at least 8 characters long.");
+                model.CurrentRequest = _passwordRepo.GetLatestByEmail(model.Email);
+                return View("PasswordRecovery", model);
+            }
+
+            if (model.NewPassword != model.ConfirmPassword)
+            {
+                ModelState.AddModelError("ConfirmPassword", "New password and confirm password do not match.");
+                model.CurrentRequest = _passwordRepo.GetLatestByEmail(model.Email);
+                return View("PasswordRecovery", model);
+            }
+
+            string message;
+            if (_passwordRepo.SetNewPassword(model.Email, model.NewPassword, out message))
+            {
+                TempData["Success"] = message;
+                return RedirectToAction("Login", "Account");
+            }
+
+            ModelState.AddModelError("", message);
+            model.CurrentRequest = _passwordRepo.GetLatestByEmail(model.Email);
+            return View("PasswordRecovery", model);
+        }
     }
 }
