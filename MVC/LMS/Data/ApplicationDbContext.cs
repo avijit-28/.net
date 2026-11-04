@@ -40,6 +40,9 @@ namespace LMS.Data
         public DbSet<Announcement> Announcements { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<PasswordResetRequest> PasswordResetRequests { get; set; }
+        public DbSet<KnowledgeChunk> KnowledgeChunks { get; set; }
+        public DbSet<ChatSession> ChatSessions { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
