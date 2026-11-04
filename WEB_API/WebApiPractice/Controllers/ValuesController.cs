@@ -29,7 +29,7 @@ namespace WebApiPractice.Controllers
         // POST api/values
         public void Post([FromBody] string value)
         {
-            _values.Addat(value);
+            _values.Add(value);
         }
 
         // PUT api/values/1
