@@ -36,6 +36,14 @@ namespace FoodArrival.Models
 
         public bool IsActive { get; set; } = true;
 
+        public decimal? Latitude { get; set; }
+
+        public decimal? Longitude { get; set; }
+
+        public int? MaxCapacity { get; set; } = 4;
+
+        public decimal? Rating { get; set; } = 4.8m;
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }
