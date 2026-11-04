@@ -372,7 +372,7 @@ namespace FoodArrival.DAL
             return list;
         }
 
-        public List<Order> GetOrders(int? restaurantId = null)
+        public List<Order> GetOrders(int? restaurantId = null, bool excludePickedUp = false)
         {
             var list = new List<Order>();
             try
@@ -382,6 +382,7 @@ namespace FoodArrival.DAL
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@RestaurantId", (object)restaurantId ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@ExcludePickedUp", excludePickedUp);
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
                     {
