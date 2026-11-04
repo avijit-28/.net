@@ -106,6 +106,32 @@ namespace FoodArrival.DAL
             }
         }
 
+        private static bool HasColumn(SqlDataReader reader, string columnName)
+        {
+            try { return reader.GetOrdinal(columnName) >= 0; }
+            catch { return false; }
+        }
+
+        private static Restaurant MapRestaurant(SqlDataReader reader)
+        {
+            var r = new Restaurant();
+            r.RestaurantId = Convert.ToInt32(reader["RestaurantId"]);
+            r.RestaurantName = reader["RestaurantName"] != DBNull.Value ? reader["RestaurantName"].ToString() : string.Empty;
+            r.OwnerName = HasColumn(reader, "OwnerName") && reader["OwnerName"] != DBNull.Value ? reader["OwnerName"].ToString() : string.Empty;
+            r.Username = HasColumn(reader, "Username") && reader["Username"] != DBNull.Value ? reader["Username"].ToString() : string.Empty;
+            r.Email = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : string.Empty;
+            r.PhoneNumber = HasColumn(reader, "PhoneNumber") && reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : string.Empty;
+            r.Address = HasColumn(reader, "Address") && reader["Address"] != DBNull.Value ? reader["Address"].ToString() : string.Empty;
+            r.Cuisine = HasColumn(reader, "Cuisine") && reader["Cuisine"] != DBNull.Value ? reader["Cuisine"].ToString() : string.Empty;
+            r.Rating = HasColumn(reader, "Rating") && reader["Rating"] != DBNull.Value ? Convert.ToDecimal(reader["Rating"]) : 4.5m;
+            r.ImageUrl = HasColumn(reader, "ImageUrl") && reader["ImageUrl"] != DBNull.Value ? reader["ImageUrl"].ToString() : string.Empty;
+            r.IsVerified = HasColumn(reader, "IsVerified") && reader["IsVerified"] != DBNull.Value && Convert.ToBoolean(reader["IsVerified"]);
+            r.IsActive = !HasColumn(reader, "IsActive") || reader["IsActive"] == DBNull.Value || Convert.ToBoolean(reader["IsActive"]);
+            r.Latitude = HasColumn(reader, "Latitude") && reader["Latitude"] != DBNull.Value ? Convert.ToDecimal(reader["Latitude"]) : (decimal?)null;
+            r.Longitude = HasColumn(reader, "Longitude") && reader["Longitude"] != DBNull.Value ? Convert.ToDecimal(reader["Longitude"]) : (decimal?)null;
+            return r;
+        }
+
         public Restaurant Login(string loginId, string password)
         {
             string dummy;
@@ -128,30 +154,13 @@ namespace FoodArrival.DAL
                     {
                         if (reader.Read())
                         {
-                            bool isVerified = Convert.ToBoolean(reader["IsVerified"]);
-                            if (!isVerified)
+                            var rest = MapRestaurant(reader);
+                            if (!rest.IsVerified)
                             {
                                 verificationMessage = "Your restaurant account is pending admin verification. You will receive an update once verified.";
                                 return null;
                             }
-
-                            return new Restaurant
-                            {
-                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
-                                RestaurantName = reader["RestaurantName"].ToString(),
-                                OwnerName = reader["OwnerName"] == DBNull.Value ? string.Empty : reader["OwnerName"].ToString(),
-                                Username = reader["Username"] == DBNull.Value ? string.Empty : reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
-                                Address = reader["Address"] == DBNull.Value ? string.Empty : reader["Address"].ToString(),
-                                Cuisine = reader["Cuisine"] == DBNull.Value ? string.Empty : reader["Cuisine"].ToString(),
-                                Rating = Convert.ToDecimal(reader["Rating"]),
-                                ImageUrl = reader["ImageUrl"] == DBNull.Value ? string.Empty : reader["ImageUrl"].ToString(),
-                                IsVerified = isVerified,
-                                IsActive = Convert.ToBoolean(reader["IsActive"]),
-                                Latitude = reader["Latitude"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(reader["Latitude"]),
-                                Longitude = reader["Longitude"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(reader["Longitude"])
-                            };
+                            return rest;
                         }
                     }
                 }
@@ -174,23 +183,7 @@ namespace FoodArrival.DAL
                     {
                         if (reader.Read())
                         {
-                            return new Restaurant
-                            {
-                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
-                                RestaurantName = reader["RestaurantName"].ToString(),
-                                OwnerName = reader["OwnerName"] == DBNull.Value ? string.Empty : reader["OwnerName"].ToString(),
-                                Username = reader["Username"] == DBNull.Value ? string.Empty : reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
-                                Address = reader["Address"] == DBNull.Value ? string.Empty : reader["Address"].ToString(),
-                                Cuisine = reader["Cuisine"] == DBNull.Value ? string.Empty : reader["Cuisine"].ToString(),
-                                Rating = Convert.ToDecimal(reader["Rating"]),
-                                ImageUrl = reader["ImageUrl"] == DBNull.Value ? string.Empty : reader["ImageUrl"].ToString(),
-                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                IsActive = Convert.ToBoolean(reader["IsActive"]),
-                                Latitude = reader["Latitude"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(reader["Latitude"]),
-                                Longitude = reader["Longitude"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(reader["Longitude"])
-                            };
+                            return MapRestaurant(reader);
                         }
                     }
                 }
@@ -213,23 +206,7 @@ namespace FoodArrival.DAL
                     {
                         while (reader.Read())
                         {
-                            list.Add(new Restaurant
-                            {
-                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
-                                RestaurantName = reader["RestaurantName"].ToString(),
-                                OwnerName = reader["OwnerName"] == DBNull.Value ? string.Empty : reader["OwnerName"].ToString(),
-                                Username = reader["Username"] == DBNull.Value ? string.Empty : reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
-                                Address = reader["Address"] == DBNull.Value ? string.Empty : reader["Address"].ToString(),
-                                Cuisine = reader["Cuisine"] == DBNull.Value ? string.Empty : reader["Cuisine"].ToString(),
-                                Rating = Convert.ToDecimal(reader["Rating"]),
-                                ImageUrl = reader["ImageUrl"] == DBNull.Value ? string.Empty : reader["ImageUrl"].ToString(),
-                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                IsActive = Convert.ToBoolean(reader["IsActive"]),
-                                Latitude = reader["Latitude"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(reader["Latitude"]),
-                                Longitude = reader["Longitude"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(reader["Longitude"])
-                            });
+                            list.Add(MapRestaurant(reader));
                         }
                     }
                 }
@@ -252,23 +229,7 @@ namespace FoodArrival.DAL
                     {
                         while (reader.Read())
                         {
-                            list.Add(new Restaurant
-                            {
-                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
-                                RestaurantName = reader["RestaurantName"].ToString(),
-                                OwnerName = reader["OwnerName"] == DBNull.Value ? string.Empty : reader["OwnerName"].ToString(),
-                                Username = reader["Username"] == DBNull.Value ? string.Empty : reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
-                                Address = reader["Address"] == DBNull.Value ? string.Empty : reader["Address"].ToString(),
-                                Cuisine = reader["Cuisine"] == DBNull.Value ? string.Empty : reader["Cuisine"].ToString(),
-                                Rating = Convert.ToDecimal(reader["Rating"]),
-                                ImageUrl = reader["ImageUrl"] == DBNull.Value ? string.Empty : reader["ImageUrl"].ToString(),
-                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                IsActive = Convert.ToBoolean(reader["IsActive"]),
-                                Latitude = reader["Latitude"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(reader["Latitude"]),
-                                Longitude = reader["Longitude"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(reader["Longitude"])
-                            });
+                            list.Add(MapRestaurant(reader));
                         }
                     }
                 }
@@ -291,23 +252,7 @@ namespace FoodArrival.DAL
                     {
                         while (reader.Read())
                         {
-                            list.Add(new Restaurant
-                            {
-                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
-                                RestaurantName = reader["RestaurantName"].ToString(),
-                                OwnerName = reader["OwnerName"] == DBNull.Value ? string.Empty : reader["OwnerName"].ToString(),
-                                Username = reader["Username"] == DBNull.Value ? string.Empty : reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
-                                Address = reader["Address"] == DBNull.Value ? string.Empty : reader["Address"].ToString(),
-                                Cuisine = reader["Cuisine"] == DBNull.Value ? string.Empty : reader["Cuisine"].ToString(),
-                                Rating = Convert.ToDecimal(reader["Rating"]),
-                                ImageUrl = reader["ImageUrl"] == DBNull.Value ? string.Empty : reader["ImageUrl"].ToString(),
-                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                IsActive = Convert.ToBoolean(reader["IsActive"]),
-                                Latitude = reader["Latitude"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(reader["Latitude"]),
-                                Longitude = reader["Longitude"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(reader["Longitude"])
-                            });
+                            list.Add(MapRestaurant(reader));
                         }
                     }
                 }
