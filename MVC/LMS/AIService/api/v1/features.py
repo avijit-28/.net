@@ -5,10 +5,11 @@ Summarizer, Practice Quiz Generator, Study Planner, and Programming Tutor.
 from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
-from services.quiz_generator_service import QuizGeneratorService, QuizResult
-from services.summarizer_service import SummarizerService, SummaryResult
-from services.tutor_service import TutorService, StudyPlanResponse
-from vectorstore.qdrant_manager import QdrantManager
+from services.quiz_generator_service import quiz_generator, QuizResult
+from services.summarizer_service import summarizer, SummaryResult
+from services.tutor_service import tutor_service, StudyPlanResponse
+from embeddings.local_embedder import embedder
+from vectorstore.qdrant_manager import qdrant
 from core.security import verify_internal_api_key, parse_authorized_courses
 from core.logger import get_masked_logger
 
@@ -46,7 +47,7 @@ class StudyPlanRequest(BaseModel):
     daily_hours: float = 1.5
 
 @router.post("/generate-quiz", response_model=QuizResult)
-async def generate_quiz(
+def generate_quiz(
     req: QuizGenRequest,
     api_key_valid: bool = Depends(verify_internal_api_key),
     authorized_courses_header: Optional[str] = Header(None, alias="X-Authorized-Courses")
@@ -54,17 +55,17 @@ async def generate_quiz(
     """
     Generates practice questions grounded in course vectors in Qdrant.
     """
-    qdrant = QdrantManager.get_instance()
-    # Retrieve top chunks for this course/topic to ground quiz
-    retrieved = qdrant.search_by_text(
-        query=req.topic or req.course_title,
+    query_str = req.topic or req.course_title
+    query_vec = embedder.embed_text(query_str)
+    
+    retrieved = qdrant.search_authorized_course(
+        query_vector=query_vec,
         course_id=req.course_id,
-        limit=6
+        top_k=6
     )
-    context_chunks = [r["text"] for r in retrieved]
+    context_chunks = [r.get("text", "") for r in retrieved]
 
-    service = QuizGeneratorService()
-    result = await service.generate_quiz(
+    return quiz_generator.generate_quiz(
         course_id=req.course_id,
         course_title=req.course_title,
         context_chunks=context_chunks,
@@ -73,33 +74,30 @@ async def generate_quiz(
         question_type=req.question_type,
         topic=req.topic
     )
-    return result
 
 @router.post("/summarize", response_model=SummaryResult)
-async def summarize(
+def summarize(
     req: SummarizeRequest,
     api_key_valid: bool = Depends(verify_internal_api_key)
 ):
     """
     Summarizes learning content or generates revision notes.
     """
-    service = SummarizerService()
-    return await service.summarize_content(
+    return summarizer.summarize_content(
         title=req.title,
         content_text=req.content,
         summary_type=req.summary_type
     )
 
 @router.post("/code-explain")
-async def explain_code(
+def explain_code(
     req: CodeExplainRequest,
     api_key_valid: bool = Depends(verify_internal_api_key)
 ):
     """
     Code walkthrough, debugging and error resolution.
     """
-    service = TutorService()
-    return await service.explain_code_or_error(
+    return tutor_service.explain_code_or_error(
         code_snippet=req.code_snippet,
         error_message=req.error_message,
         language=req.language,
@@ -107,15 +105,14 @@ async def explain_code(
     )
 
 @router.post("/study-plan", response_model=StudyPlanResponse)
-async def generate_study_plan(
+def generate_study_plan(
     req: StudyPlanRequest,
     api_key_valid: bool = Depends(verify_internal_api_key)
 ):
     """
     Creates personalized study plan tailored to student's incomplete lessons.
     """
-    service = TutorService()
-    return await service.generate_study_plan(
+    return tutor_service.generate_study_plan(
         course_title=req.course_title,
         completed_lessons=req.completed_lessons,
         incomplete_lessons=req.incomplete_lessons,
