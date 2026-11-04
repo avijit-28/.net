@@ -28,6 +28,7 @@ namespace FoodArrival.Models
         public decimal RiderLongitude { get; set; }
 
         public string DeliveryStatus { get; set; } = "Pending"; // Pending, RiderAssigned, PickedUp, OutForDelivery, Delivered
+        public string DeliveryOtp { get; set; }
         public int PickupSequence { get; set; } = 1;
         public DateTime? DeliveredAt { get; set; }
         public DateTime? EstimatedDeliveryAt { get; set; }
