@@ -143,8 +143,9 @@ namespace FoodArrival.Controllers
                 var order = _orderRepo.GetById(orderId);
                 int? custId = order != null ? (int?)order.CustomerId : null;
                 string orderNum = order != null && !string.IsNullOrEmpty(order.OrderNumber) ? order.OrderNumber : ("#FD" + (1000 + orderId));
+                string otpMsg = !string.IsNullOrEmpty(order?.DeliveryOtp) ? $" Share your 6-digit delivery OTP ({order.DeliveryOtp}) with the rider upon arrival." : "";
                 
-                _notifRepo.AddNotification("Customer", custId, "Rider On the Way!", riderName + " picked up your Order " + orderNum + " and is heading to your address.", "Order", "/Order/History");
+                _notifRepo.AddNotification("Customer", custId, "Rider On the Way!", riderName + " picked up your Order " + orderNum + " and is heading to your address." + otpMsg, "Order", "/OrderTracking/Track?orderId=" + orderId);
                 _notifRepo.AddNotification("Admin", null, "Delivery Dispatched", "Order " + orderNum + " is out for delivery with " + riderName + ".", "Order", "/Admin/Orders");
                 TempData["Success"] = "You accepted delivery for Order " + orderNum + ". Drive safe!";
             }
