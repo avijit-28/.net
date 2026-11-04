@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -587,27 +587,112 @@ namespace FoodArrival.DAL
             catch { return false; }
         }
 
-        public bool CompleteDelivery(int orderId, int riderId)
+        public bool CompleteDelivery(int orderId, int riderId, string enteredOtp, out string errorMessage)
         {
-            string sql = @"
-                UPDATE dbo.Orders 
-                SET DeliveryStatus = 'Delivered', OrderStatus = 'Accepted', ProcessedAt = GETDATE() 
-                WHERE OrderId = @OrderId;
+            errorMessage = string.Empty;
+            if (string.IsNullOrWhiteSpace(enteredOtp))
+            {
+                errorMessage = "Please enter the 6-digit delivery OTP provided by the customer.";
+                return false;
+            }
 
-                UPDATE dbo.OrderSubOrders
-                SET DeliveryStatus = 'Delivered', DeliveredAt = GETDATE()
-                WHERE OrderId = @OrderId;
-
-                UPDATE dbo.Riders SET CurrentStatus = 'Available' WHERE RiderId = @RiderId;";
+            enteredOtp = enteredOtp.Trim();
+            if (enteredOtp.Length != 6)
+            {
+                errorMessage = "Delivery OTP must be exactly 6 digits.";
+                return false;
+            }
 
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    conn.Open();
+
+                    // 1. Verify OTP against order
+                    string checkSql = "SELECT DeliveryOtp, DeliveryStatus FROM dbo.Orders WHERE OrderId = @OrderId;";
+                    string expectedOtp = null;
+                    string currentDeliveryStatus = null;
+
+                    using (var checkCmd = new SqlCommand(checkSql, conn))
+                    {
+                        checkCmd.Parameters.AddWithValue("@OrderId", orderId);
+                        using (var reader = checkCmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                expectedOtp = reader["DeliveryOtp"] != DBNull.Value ? reader["DeliveryOtp"].ToString().Trim() : null;
+                                currentDeliveryStatus = reader["DeliveryStatus"] != DBNull.Value ? reader["DeliveryStatus"].ToString().Trim() : null;
+                            }
+                            else
+                            {
+                                errorMessage = "Order not found.";
+                                return false;
+                            }
+                        }
+                    }
+
+                    if (currentDeliveryStatus == "Delivered")
+                    {
+                        errorMessage = "This order has already been marked as delivered.";
+                        return false;
+                    }
+
+                    if (string.IsNullOrEmpty(expectedOtp))
+                    {
+                        errorMessage = "No delivery OTP was set for this order. Please contact support.";
+                        return false;
+                    }
+
+                    if (!string.Equals(expectedOtp, enteredOtp, StringComparison.OrdinalIgnoreCase))
+                    {
+                        errorMessage = "Invalid Delivery OTP! The code you entered does not match the customer's PIN. Please verify with the customer.";
+                        return false;
+                    }
+
+                    // 2. OTP is verified! Mark delivered.
+                    string sql = @"
+                        UPDATE dbo.Orders 
+                        SET DeliveryStatus = 'Delivered', OrderStatus = 'Accepted', ProcessedAt = GETDATE() 
+                        WHERE OrderId = @OrderId;
+
+                        UPDATE dbo.OrderSubOrders
+                        SET DeliveryStatus = 'Delivered', DeliveredAt = GETDATE()
+                        WHERE OrderId = @OrderId;
+
+                        UPDATE dbo.Riders SET CurrentStatus = 'Available' WHERE RiderId = @RiderId;
+                        
+                        INSERT INTO dbo.OrderStatusHistory (OrderId, Status, ChangedByUserId, ChangedByRole, Message, CreatedAt)
+                        VALUES (@OrderId, 'Delivered', @RiderId, 'Rider', 'Handover confirmed via customer 6-digit OTP verification.', GETDATE());";
+
+                    using (var cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@OrderId", orderId);
+                        cmd.Parameters.AddWithValue("@RiderId", riderId);
+                        return cmd.ExecuteNonQuery() > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errorMessage = "Database error verifying OTP: " + ex.Message;
+                return false;
+            }
+        }
+
+        public bool CompleteDelivery(int orderId, int riderId)
+        {
+            string msg;
+            try
+            {
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand("SELECT DeliveryOtp FROM dbo.Orders WHERE OrderId = @OrderId", conn))
                 {
                     cmd.Parameters.AddWithValue("@OrderId", orderId);
                     conn.Open();
-                    return cmd.ExecuteNonQuery() > 0;
+                    var obj = cmd.ExecuteScalar();
+                    string otp = obj != null && obj != DBNull.Value ? obj.ToString() : "";
+                    return CompleteDelivery(orderId, riderId, otp, out msg);
                 }
             }
             catch { return false; }
