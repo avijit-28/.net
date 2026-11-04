@@ -166,6 +166,13 @@ class QdrantManager:
             logger.error(f"Qdrant vector search failed: {ex}")
             return []
 
+    def get_collection_vector_count(self) -> int:
+        try:
+            info = self.client.get_collection(self.collection_name)
+            return info.points_count or 0
+        except Exception:
+            return 0
+
     def delete_document_vectors(self, document_id: int) -> bool:
         """Deletes all chunks belonging to a deleted or re-indexed document."""
         try:
