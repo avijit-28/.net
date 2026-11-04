@@ -42,6 +42,7 @@ namespace FoodArrival.Services
                     vm.PaymentStatus = reader["PaymentStatus"].ToString();
                     vm.PaymentMethod = reader["PaymentMethod"].ToString();
                     vm.OverallStatus = reader["OrderStatus"].ToString();
+                    vm.DeliveryOtp = reader["DeliveryOtp"] != DBNull.Value ? reader["DeliveryOtp"].ToString() : null;
                     vm.OrderedAt = Convert.ToDateTime(reader["OrderedAt"]);
                     vm.EstimatedDeliveryTime = reader["EstimatedDeliveryTime"] != DBNull.Value
                         ? (DateTime?)Convert.ToDateTime(reader["EstimatedDeliveryTime"])
