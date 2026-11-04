@@ -288,19 +288,19 @@ namespace FoodArrival.DAL
                         {
                             list.Add(new RiderAffiliation
                             {
-                                AffiliationId = Convert.ToInt32(reader["AffiliationId"]),
-                                RiderId = Convert.ToInt32(reader["RiderId"]),
-                                RestaurantId = Convert.ToInt32(reader["RestaurantId"]),
-                                RestaurantName = reader["RestaurantName"].ToString(),
+                                AffiliationId = HasColumn(reader, "AffiliationId") ? Convert.ToInt32(reader["AffiliationId"]) : 0,
+                                RiderId = HasColumn(reader, "RiderId") ? Convert.ToInt32(reader["RiderId"]) : 0,
+                                RestaurantId = HasColumn(reader, "RestaurantId") ? Convert.ToInt32(reader["RestaurantId"]) : 0,
+                                RestaurantName = HasColumn(reader, "RestaurantName") && reader["RestaurantName"] != DBNull.Value ? reader["RestaurantName"].ToString() : string.Empty,
                                 Cuisine = HasColumn(reader, "Cuisine") && reader["Cuisine"] != DBNull.Value ? reader["Cuisine"].ToString() : string.Empty,
-                                OwnerName = reader["OwnerName"] == DBNull.Value ? string.Empty : reader["OwnerName"].ToString(),
-                                RestaurantAddress = reader["RestaurantAddress"] == DBNull.Value ? string.Empty : reader["RestaurantAddress"].ToString(),
-                                RestaurantPhone = reader["RestaurantPhone"] == DBNull.Value ? string.Empty : reader["RestaurantPhone"].ToString(),
-                                IsVerified = Convert.ToBoolean(reader["IsVerified"]),
-                                VerifiedByRole = reader["VerifiedByRole"] == DBNull.Value ? string.Empty : reader["VerifiedByRole"].ToString(),
-                                VerifiedBy = reader["VerifiedBy"] == DBNull.Value ? (int?)null : Convert.ToInt32(reader["VerifiedBy"]),
-                                VerifiedAt = reader["VerifiedAt"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["VerifiedAt"]),
-                                AffiliatedAt = Convert.ToDateTime(reader["AffiliatedAt"])
+                                OwnerName = HasColumn(reader, "OwnerName") && reader["OwnerName"] != DBNull.Value ? reader["OwnerName"].ToString() : string.Empty,
+                                RestaurantAddress = HasColumn(reader, "RestaurantAddress") && reader["RestaurantAddress"] != DBNull.Value ? reader["RestaurantAddress"].ToString() : string.Empty,
+                                RestaurantPhone = HasColumn(reader, "RestaurantPhone") && reader["RestaurantPhone"] != DBNull.Value ? reader["RestaurantPhone"].ToString() : string.Empty,
+                                IsVerified = HasColumn(reader, "IsVerified") && reader["IsVerified"] != DBNull.Value && Convert.ToBoolean(reader["IsVerified"]),
+                                VerifiedByRole = HasColumn(reader, "VerifiedByRole") && reader["VerifiedByRole"] != DBNull.Value ? reader["VerifiedByRole"].ToString() : string.Empty,
+                                VerifiedBy = HasColumn(reader, "VerifiedBy") && reader["VerifiedBy"] != DBNull.Value ? (int?)Convert.ToInt32(reader["VerifiedBy"]) : null,
+                                VerifiedAt = HasColumn(reader, "VerifiedAt") && reader["VerifiedAt"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(reader["VerifiedAt"]) : null,
+                                AffiliatedAt = HasColumn(reader, "AffiliatedAt") && reader["AffiliatedAt"] != DBNull.Value ? Convert.ToDateTime(reader["AffiliatedAt"]) : DateTime.Now
                             });
                         }
                     }
