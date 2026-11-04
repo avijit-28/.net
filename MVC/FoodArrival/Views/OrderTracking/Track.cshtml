@@ -76,6 +76,63 @@
         </div>
     }
 
+    <!-- 1.5 DELIVERY VERIFICATION OTP CARD (SHARE WITH RIDER AT DOORSTEP) -->
+    @if (!string.IsNullOrEmpty(Model.DeliveryOtp))
+    {
+        if (!Model.IsDelivered)
+        {
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white border-start border-5 border-success">
+                <div class="row align-items-center g-3">
+                    <div class="col-lg-7 col-md-6">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-success-subtle text-success border border-success rounded-pill px-3 py-1 fw-bold">
+                                <i class="bi bi-shield-lock-fill me-1"></i> Delivery Verification OTP
+                            </span>
+                            <span class="badge bg-light text-muted border rounded-pill px-2 py-1 small">Share at doorstep</span>
+                        </div>
+                        <h4 class="fw-bold text-dark mb-1">Your 6-Digit Delivery PIN</h4>
+                        <p class="text-muted small mb-0">
+                            Give this 6-digit confirmation code to your delivery partner when they arrive with your food. The delivery is confirmed only after the rider verifies this code.
+                        </p>
+                    </div>
+                    <div class="col-lg-5 col-md-6 text-md-end text-center">
+                        <div class="d-inline-flex flex-column align-items-center align-items-md-end">
+                            <div class="d-flex gap-2 justify-content-center justify-content-md-end my-1">
+                                @foreach (char digit in Model.DeliveryOtp)
+                                {
+                                    <span class="d-inline-flex justify-content-center align-items-center bg-light border border-2 border-primary rounded-3 fw-bold text-primary shadow-sm"
+                                          style="width: 44px; height: 52px; font-size: 1.6rem; font-family: monospace;">
+                                        @digit
+                                    </span>
+                                }
+                            </div>
+                            <div class="small text-muted mt-1">
+                                <i class="bi bi-person-check-fill text-success me-1"></i> <strong>Share with rider upon arrival</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-success border-0 shadow-sm rounded-4 p-3 mb-4 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle p-2 bg-success text-white fs-4">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0 text-success">Delivery Successfully Verified via OTP</h6>
+                        <span class="small text-muted">Confirmed handover with 6-digit delivery PIN: <strong>@Model.DeliveryOtp</strong></span>
+                    </div>
+                </div>
+                <span class="badge bg-success text-white px-3 py-2 rounded-pill fw-bold">
+                    <i class="bi bi-patch-check-fill me-1"></i> OTP Handover Completed
+                </span>
+            </div>
+        }
+    }
+
     <!-- 2. OVERALL ORDER 8-STEP VISUAL TIMELINE -->
     <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-4 bg-white">
         <h5 class="fw-bold text-dark mb-4 d-flex align-items-center gap-2">
