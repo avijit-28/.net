@@ -75,6 +75,7 @@ namespace LMS.Data
             modelBuilder.Entity<Payment>().Property(p => p.Amount).HasPrecision(18, 2);
             modelBuilder.Entity<Payment>().Property(p => p.AdminCommission).HasPrecision(18, 2);
             modelBuilder.Entity<Payment>().Property(p => p.InstructorEarnings).HasPrecision(18, 2);
+            modelBuilder.Entity<AiUsageLog>().Property(u => u.EstimatedCost).HasPrecision(18, 6);
 
             // Optional 1-to-many relationships without cascade delete
             modelBuilder.Entity<Quiz>()
