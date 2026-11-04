@@ -15,11 +15,12 @@ namespace WebApiPractice.Controllers
         // GET api/values
         public IEnumerable<string> Get()
         {
+
             return _values;
         }
 
         // GET api/values/5
-        public string Get(int id)
+        public string Get(int i)
         {
             return "value";
         }
