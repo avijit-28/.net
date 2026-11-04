@@ -44,9 +44,22 @@ class Settings(BaseSettings):
     # Storage paths
     UPLOAD_DIR: str = Field(default=str(BASE_DIR / "uploads"))
 
-    # Server Settings
+    # Server & App Settings
+    APP_NAME: str = "EduPlatform LMS - RAG AI Learning Assistant"
+    VERSION: str = "1.0.0"
+    ENVIRONMENT: str = "development"
+    DEBUG: bool = False
+    LOG_LEVEL: str = "INFO"
     HOST: str = "127.0.0.1"
     PORT: int = 8000
+
+    @property
+    def EMBEDDING_MODEL_NAME(self) -> str:
+        return self.EMBEDDING_MODEL
+
+    @property
+    def EMBEDDING_DIM(self) -> int:
+        return self.EMBEDDING_DIMENSION
 
     class Config:
         env_file = str(BASE_DIR / ".env")
