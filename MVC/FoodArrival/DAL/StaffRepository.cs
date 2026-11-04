@@ -70,7 +70,8 @@ namespace FoodArrival.DAL
                 using (var cmd = new SqlCommand("dbo.sp_Staff_Insert", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@FullName", staff.FullName ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@StaffName", staff.FullName ?? staff.StaffName ?? string.Empty);
+                    cmd.Parameters.AddWithValue("@FullName", staff.FullName ?? staff.StaffName ?? string.Empty);
                     cmd.Parameters.AddWithValue("@Username", (staff.Username ?? staff.Email).Trim().ToLower());
                     cmd.Parameters.AddWithValue("@Email", staff.Email.Trim().ToLower());
                     cmd.Parameters.AddWithValue("@PasswordHash", staff.PasswordHash ?? string.Empty);
