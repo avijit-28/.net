@@ -519,11 +519,12 @@ namespace FoodArrival.Services
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand("UPDATE dbo.Orders SET OrderStatus = @OrderStatus, DeliveryStatus = @DeliveryStatus WHERE OrderId = @OrderId", conn))
+                using (var cmd = new SqlCommand("dbo.sp_Order_UpdateMasterStatus", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@OrderId", masterOrderId);
                     cmd.Parameters.AddWithValue("@OrderStatus", orderStatus);
                     cmd.Parameters.AddWithValue("@DeliveryStatus", deliveryStatus);
-                    cmd.Parameters.AddWithValue("@OrderId", masterOrderId);
                     conn.Open();
                     cmd.ExecuteNonQuery();
                 }
