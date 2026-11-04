@@ -9,10 +9,13 @@ namespace WebApiPractice.Controllers
 {
     public class ValuesController : ApiController
     {
+        private readonly List<string> _values = new List<string> { "Nishat", "AVijit", "Komal", "Anubhaw" };
+
+
         // GET api/values
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            return _values;
         }
 
         // GET api/values/5
