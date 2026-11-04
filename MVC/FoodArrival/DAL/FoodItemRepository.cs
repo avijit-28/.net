@@ -189,16 +189,12 @@ namespace FoodArrival.DAL
         public List<FoodItem> GetByRestaurant(int restaurantId)
         {
             var list = new List<FoodItem>();
-            string sql = @"
-                SELECT FoodItemId, ItemName, Description, Price, ImageUrl, IsAvailable, Category, IsVerified, CreatedAt
-                FROM dbo.FoodItems
-                WHERE (RestaurantId = @RestaurantId OR RestaurantId IS NULL)
-                ORDER BY FoodItemId DESC";
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_FoodItem_GetByRestaurant", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@RestaurantId", restaurantId);
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
