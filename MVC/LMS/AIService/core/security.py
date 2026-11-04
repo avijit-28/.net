@@ -40,13 +40,28 @@ async def verify_service_auth(
             detail="Unauthorized: Invalid internal service credentials."
         )
 
-    # Parse authorized course IDs (e.g. "1,4,7")
-    course_ids = []
-    if x_authorized_courses:
-        for c in x_authorized_courses.split(","):
-            c_clean = c.strip()
-            if c_clean.isdigit():
-                course_ids.append(int(c_clean))
+def parse_authorized_courses(header_val: Optional[str]) -> Optional[List[int]]:
+    if not header_val or header_val.strip() == "*":
+        return None
+    ids = []
+    for part in header_val.split(","):
+        part = part.strip()
+        if part.isdigit():
+            ids.append(int(part))
+    return ids if ids else None
+
+def verify_internal_api_key(
+    x_internal_api_key: Optional[str] = Header(None, alias="X-Internal-API-Key")
+) -> bool:
+    expected_key = settings.AISERVICE_INTERNAL_KEY
+    if expected_key and x_internal_api_key != expected_key:
+        logger.warning("Unauthorized access attempt: Invalid X-Internal-API-Key.")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized: Invalid internal service credentials."
+        )
+    return True
+
 
     user_id = x_user_id or "anonymous"
     role = x_user_role or "Student"
