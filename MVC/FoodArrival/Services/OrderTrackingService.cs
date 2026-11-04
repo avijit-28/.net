@@ -331,17 +331,24 @@ namespace FoodArrival.Services
 
             int currentStepIndex = 1;
             string status = vm.OverallStatus;
-            bool anyRiderAssigned = vm.SubOrders.Any(s => s.RiderId.HasValue);
+            bool anyRiderAssigned = vm.SubOrders.Any(s => s.RiderId.HasValue && s.RiderId.Value > 0);
             bool anyPickedUp = vm.SubOrders.Any(s => s.DeliveryStatus == "PickedUp" || s.DeliveryStatus == "OutForDelivery" || s.DeliveryStatus == "Delivered");
             bool anyOut = vm.SubOrders.Any(s => s.DeliveryStatus == "OutForDelivery" || s.DeliveryStatus == "Delivered");
             bool allDelivered = vm.SubOrders.Any() && vm.SubOrders.All(s => s.DeliveryStatus == "Delivered");
 
-            if (status == "Delivered" || allDelivered) currentStepIndex = 8;
-            else if (status == "OutForDelivery" || anyOut) currentStepIndex = 7;
-            else if (anyPickedUp) currentStepIndex = 6;
-            else if (anyRiderAssigned) currentStepIndex = 5;
-            else if (vm.SubOrders.Any(s => s.PreparationStatus == "ReadyForPickup" || s.DeliveryStatus == "ReadyForPickup")) currentStepIndex = 4;
-            else if (vm.SubOrders.Any(s => s.PreparationStatus == "Preparing" || s.PreparationStatus == "Confirmed") || status == "Preparing" || status == "Accepted") currentStepIndex = 3;
+            bool isDelivered = status == "Delivered" || vm.DeliveryStatus == "Delivered" || allDelivered;
+            bool isOutForDelivery = status == "OutForDelivery" || vm.DeliveryStatus == "OutForDelivery" || anyOut;
+            bool isPickedUp = status == "PickedUp" || vm.DeliveryStatus == "PickedUp" || anyPickedUp;
+            bool isRiderAssigned = (anyRiderAssigned || vm.AssignedRiders.Any(r => r.RiderId > 0)) && (status == "RiderAssigned" || vm.SubOrders.Any(s => s.DeliveryStatus == "RiderAssigned" || s.DeliveryStatus == "PickedUp" || s.DeliveryStatus == "OutForDelivery" || s.DeliveryStatus == "Delivered"));
+            bool isReadyForPickup = vm.DeliveryStatus == "ReadyForPickup" || vm.SubOrders.Any(s => s.PreparationStatus == "ReadyForPickup" || s.DeliveryStatus == "ReadyForPickup");
+            bool isCooking = vm.DeliveryStatus == "Preparing" || vm.DeliveryStatus == "Cooking" || vm.SubOrders.Any(s => s.PreparationStatus == "Preparing" || s.PreparationStatus == "Cooking");
+
+            if (isDelivered) currentStepIndex = 8;
+            else if (isOutForDelivery) currentStepIndex = 7;
+            else if (isPickedUp) currentStepIndex = 6;
+            else if (isRiderAssigned) currentStepIndex = 5;
+            else if (isReadyForPickup) currentStepIndex = 4;
+            else if (isCooking) currentStepIndex = 3;
             else if (vm.PaymentStatus == "Success" || vm.PaymentStatus == "Paid") currentStepIndex = 2;
             else currentStepIndex = 1;
 
