@@ -21,6 +21,7 @@ namespace FoodArrival.Controllers
         private readonly RiderRepository _riderRepo = new RiderRepository();
         private readonly StaffRepository _staffRepo = new StaffRepository();
         private readonly NotificationRepository _notifRepo = new NotificationRepository();
+        private readonly PasswordRecoveryRepository _passwordRepo = new PasswordRecoveryRepository();
 
         private bool IsAdminAuthenticated()
         {
@@ -95,7 +96,10 @@ namespace FoodArrival.Controllers
             summary.PendingRestaurants = _restRepo.GetPendingVerification();
             summary.PendingStaff = _staffRepo.GetAllPendingStaff();
             summary.PendingRiders = _riderRepo.GetRestaurantRiders(null, true);
-            summary.PendingDishes = _staffRepo.GetPendingDishes(null);
+            summary.PendingDishes = _staffRepo.GetPendingDishes(null),
+                PendingPasswordRequests = _passwordRepo.GetAllRequests();
+            summary.PendingPasswordRequests = _passwordRepo.GetAllRequests("Pending");
+            summary.PendingApprovalsCount += summary.PendingPasswordRequests.Count;
             summary.RecentTransactions = _adminRepo.GetAllTransactions().Take(10).ToList();
             summary.ActiveBulletins = _adminRepo.GetBulletins();
 
@@ -631,6 +635,92 @@ namespace FoodArrival.Controllers
             }
 
             return RedirectToAction("Dashboard");
+        }
+    
+        // ==========================================
+        // PASSWORD RECOVERY REQUESTS ADMIN ACTIONS
+        // ==========================================
+        [HttpGet]
+        public ActionResult PasswordRequests(string status = null, string search = null)
+        {
+            if (!IsAdminAuthenticated()) return RedirectToAction("Login");
+
+            ViewBag.CurrentStatus = status;
+            ViewBag.Search = search;
+            var requests = _passwordRepo.GetAllRequests(status, search);
+            return View(requests);
+        }
+
+        [HttpGet]
+        public JsonResult VerifyUserEmail(string email)
+        {
+            if (!IsAdminAuthenticated())
+            {
+                return Json(new { found = false, error = "Unauthorized" }, JsonRequestBehavior.AllowGet);
+            }
+
+            var result = _passwordRepo.VerifyUserByEmail(email);
+            return Json(new
+            {
+                found = result.Found,
+                role = result.UserRole,
+                userId = result.UserId,
+                name = result.FullName,
+                username = result.Username,
+                email = result.Email,
+                phone = result.PhoneNumber,
+                isActive = result.IsActive,
+                isVerified = result.IsVerified,
+                createdAt = result.CreatedAt != null ? result.CreatedAt.Value.ToString("dd MMM yyyy, hh:mm tt") : null
+            }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [ValidateCustomAntiForgeryToken]
+        public ActionResult ApprovePasswordRequest(int requestId, string adminNotes, string returnUrl = null)
+        {
+            if (!IsAdminAuthenticated()) return RedirectToAction("Login");
+
+            int adminId = Convert.ToInt32(Session["AdminId"]);
+            string message;
+            if (_passwordRepo.ApproveRequest(requestId, adminId, adminNotes, out message))
+            {
+                TempData["Success"] = message;
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Approvals", new { tab = "passwords" });
+        }
+
+        [HttpPost]
+        [ValidateCustomAntiForgeryToken]
+        public ActionResult RejectPasswordRequest(int requestId, string adminNotes, string returnUrl = null)
+        {
+            if (!IsAdminAuthenticated()) return RedirectToAction("Login");
+
+            int adminId = Convert.ToInt32(Session["AdminId"]);
+            string message;
+            if (_passwordRepo.RejectRequest(requestId, adminId, adminNotes, out message))
+            {
+                TempData["Success"] = message;
+            }
+            else
+            {
+                TempData["Error"] = message;
+            }
+
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Approvals", new { tab = "passwords" });
         }
     }
 }
