@@ -1,4 +1,4 @@
-﻿using FoodArrival.Attributes;
+using FoodArrival.Attributes;
 using System;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -158,7 +158,7 @@ namespace FoodArrival.Controllers
 
         [HttpPost]
         [ValidateCustomAntiForgeryToken]
-        public ActionResult CompleteDelivery(int orderId)
+        public ActionResult CompleteDelivery(int orderId, string otp)
         {
             if (!IsRiderAuthenticated())
             {
@@ -166,19 +166,20 @@ namespace FoodArrival.Controllers
             }
 
             int riderId = Convert.ToInt32(Session["RiderId"]);
-            if (_riderRepo.CompleteDelivery(orderId, riderId))
+            string errorMessage;
+            if (_riderRepo.CompleteDelivery(orderId, riderId, otp, out errorMessage))
             {
                 var order = _orderRepo.GetById(orderId);
                 int? custId = order != null ? (int?)order.CustomerId : null;
                 string orderNum = order != null && !string.IsNullOrEmpty(order.OrderNumber) ? order.OrderNumber : ("#FD" + (1000 + orderId));
 
-                _notifRepo.AddNotification("Customer", custId, "Order Delivered!", "Your Order " + orderNum + " has been delivered. Enjoy your delicious food!", "Order", "/Order/History");
-                _notifRepo.AddNotification("Admin", null, "Order Completed", "Order " + orderNum + " delivered successfully.", "Order", "/Admin/Orders?tab=accepted");
-                TempData["Success"] = "Order " + orderNum + " marked as DELIVERED. Great job!";
+                _notifRepo.AddNotification("Customer", custId, "Order Delivered!", "Your Order " + orderNum + " has been successfully verified via OTP and delivered. Enjoy your delicious food!", "Order", "/Order/History");
+                _notifRepo.AddNotification("Admin", null, "Order Completed via OTP", "Order " + orderNum + " delivered successfully with customer OTP verification.", "Order", "/Admin/Orders?tab=accepted");
+                TempData["Success"] = "Order " + orderNum + " delivery successfully confirmed with customer OTP verification! Great job!";
             }
             else
             {
-                TempData["Error"] = "Could not update delivery status.";
+                TempData["Error"] = errorMessage;
             }
 
             return RedirectToAction("Dashboard");
