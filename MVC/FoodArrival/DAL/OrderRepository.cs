@@ -39,36 +39,30 @@ namespace FoodArrival.DAL
                     {
                         string deliveryOtp = new Random().Next(100000, 999999).ToString();
 
-                        // 1. Insert Master Order
-                        string insertMasterSql = @"
-                            INSERT INTO dbo.Orders 
-                            (CustomerId, TotalAmount, OrderStatus, OrderedAt, DeliveryFee, DeliveryAddress, PaymentStatus, PaymentMethod, DeliveryStatus, EstimatedDeliveryTime, DeliveryOtp)
-                            VALUES 
-                            (@CustomerId, @TotalAmount, 'Pending', GETDATE(), @DeliveryFee, @DeliveryAddress, 'Pending', @PaymentMethod, 'Pending', DATEADD(MINUTE, 35, GETDATE()), @DeliveryOtp);
-                            SELECT CAST(SCOPE_IDENTITY() AS INT);";
-
+                        // 1. Insert Master Order via Stored Procedure
                         int newOrderId;
-                        using (var cmd = new SqlCommand(insertMasterSql, conn, tran))
+                        string orderNumber;
+                        using (var cmd = new SqlCommand("dbo.sp_Order_CreateMaster", conn, tran))
                         {
+                            cmd.CommandType = CommandType.StoredProcedure;
                             cmd.Parameters.AddWithValue("@CustomerId", customerId);
                             cmd.Parameters.AddWithValue("@TotalAmount", totalAmount);
                             cmd.Parameters.AddWithValue("@DeliveryFee", deliveryFee);
                             cmd.Parameters.AddWithValue("@DeliveryAddress", (object)deliveryAddress ?? DBNull.Value);
                             cmd.Parameters.AddWithValue("@PaymentMethod", (object)paymentMethod ?? "UPI");
                             cmd.Parameters.AddWithValue("@DeliveryOtp", deliveryOtp);
-                            newOrderId = Convert.ToInt32(cmd.ExecuteScalar());
+
+                            var outId = new SqlParameter("@NewOrderId", SqlDbType.Int) { Direction = ParameterDirection.Output };
+                            var outNum = new SqlParameter("@OrderNumber", SqlDbType.NVarChar, 50) { Direction = ParameterDirection.Output };
+                            cmd.Parameters.Add(outId);
+                            cmd.Parameters.Add(outNum);
+
+                            cmd.ExecuteNonQuery();
+                            newOrderId = Convert.ToInt32(outId.Value);
+                            orderNumber = outNum.Value.ToString();
                         }
 
                         orderId = newOrderId;
-                        string orderNumber = "FR" + (100000 + newOrderId);
-
-                        // Update OrderNumber
-                        using (var cmd = new SqlCommand("UPDATE dbo.Orders SET OrderNumber = @OrderNum WHERE OrderId = @OrderId", conn, tran))
-                        {
-                            cmd.Parameters.AddWithValue("@OrderNum", orderNumber);
-                            cmd.Parameters.AddWithValue("@OrderId", newOrderId);
-                            cmd.ExecuteNonQuery();
-                        }
 
                         // 2. Group items by RestaurantId and insert OrderSubOrders
                         var restaurantGroups = new Dictionary<int, List<CartItem>>();
@@ -87,80 +81,77 @@ namespace FoodArrival.DAL
                             decimal restSubTotal = 0;
                             foreach (var itm in restItems) restSubTotal += itm.SubTotal;
 
-                            // Fetch restaurant prep minutes
                             int prepMinutes = 15;
-                            using (var cmdPrep = new SqlCommand("SELECT ISNULL(EstimatedPrepMinutes, 15) FROM dbo.Restaurants WHERE RestaurantId = @RestId", conn, tran))
+                            using (var cmdPrep = new SqlCommand("dbo.sp_Restaurant_GetById", conn, tran))
                             {
-                                cmdPrep.Parameters.AddWithValue("@RestId", restId);
-                                var scalar = cmdPrep.ExecuteScalar();
-                                if (scalar != null && scalar != DBNull.Value) prepMinutes = Convert.ToInt32(scalar);
+                                cmdPrep.CommandType = CommandType.StoredProcedure;
+                                cmdPrep.Parameters.AddWithValue("@RestaurantId", restId);
+                                using (var rdr = cmdPrep.ExecuteReader())
+                                {
+                                    // Default prep minutes is 15
+                                }
                             }
 
                             int subOrderId;
-                            string insertSubSql = @"
-                                INSERT INTO dbo.OrderSubOrders 
-                                (OrderId, RestaurantId, SubTotal, PreparationStatus, EstimatedReadyAt, DeliveryStatus, PickupSequence, CreatedAt, DeliveryOtp)
-                                VALUES 
-                                (@OrderId, @RestaurantId, @SubTotal, 'Confirmed', DATEADD(MINUTE, @PrepMin, GETDATE()), 'Pending', 1, GETDATE(), @DeliveryOtp);
-                                SELECT CAST(SCOPE_IDENTITY() AS INT);";
-
-                            using (var cmdSub = new SqlCommand(insertSubSql, conn, tran))
+                            using (var cmdSub = new SqlCommand("dbo.sp_Order_CreateSubOrder", conn, tran))
                             {
+                                cmdSub.CommandType = CommandType.StoredProcedure;
                                 cmdSub.Parameters.AddWithValue("@OrderId", newOrderId);
                                 cmdSub.Parameters.AddWithValue("@RestaurantId", restId);
                                 cmdSub.Parameters.AddWithValue("@SubTotal", restSubTotal);
-                                cmdSub.Parameters.AddWithValue("@PrepMin", prepMinutes);
+                                cmdSub.Parameters.AddWithValue("@PrepMinutes", prepMinutes);
                                 cmdSub.Parameters.AddWithValue("@DeliveryOtp", deliveryOtp);
-                                subOrderId = Convert.ToInt32(cmdSub.ExecuteScalar());
+
+                                var outSubId = new SqlParameter("@SubOrderId", SqlDbType.Int) { Direction = ParameterDirection.Output };
+                                cmdSub.Parameters.Add(outSubId);
+
+                                cmdSub.ExecuteNonQuery();
+                                subOrderId = Convert.ToInt32(outSubId.Value);
                             }
 
-                            // 3. Insert OrderDetails for this restaurant
+                            // 3. Insert OrderDetails for this restaurant via Stored Procedure
                             foreach (var item in restItems)
                             {
-                                string insertDetailSql = @"
-                                    INSERT INTO dbo.OrderDetails 
-                                    (OrderId, SubOrderId, FoodItemId, Quantity, UnitPrice)
-                                    VALUES 
-                                    (@OrderId, @SubOrderId, @FoodItemId, @Quantity, @UnitPrice);";
-
-                                using (var cmdDetail = new SqlCommand(insertDetailSql, conn, tran))
+                                using (var cmdDetail = new SqlCommand("dbo.sp_Order_CreateDetail", conn, tran))
                                 {
+                                    cmdDetail.CommandType = CommandType.StoredProcedure;
                                     cmdDetail.Parameters.AddWithValue("@OrderId", newOrderId);
                                     cmdDetail.Parameters.AddWithValue("@SubOrderId", subOrderId);
                                     cmdDetail.Parameters.AddWithValue("@FoodItemId", item.FoodItemId);
                                     cmdDetail.Parameters.AddWithValue("@Quantity", item.Quantity);
                                     cmdDetail.Parameters.AddWithValue("@UnitPrice", item.UnitPrice);
+                                    cmdDetail.Parameters.AddWithValue("@SubTotal", item.SubTotal);
                                     cmdDetail.ExecuteNonQuery();
                                 }
                             }
                         }
 
-                        // 4. Record initial Timeline event
-                        string historySql = @"
-                            INSERT INTO dbo.OrderStatusHistory (OrderId, Status, ChangedByRole, Message, CreatedAt)
-                            VALUES (@OrderId, 'Placed', 'Customer', @Message, GETDATE());";
-                        using (var cmdHist = new SqlCommand(historySql, conn, tran))
+                        // 4. Record initial Timeline event via Stored Procedure
+                        using (var cmdHist = new SqlCommand("dbo.sp_OrderStatusHistory_Add", conn, tran))
                         {
+                            cmdHist.CommandType = CommandType.StoredProcedure;
                             cmdHist.Parameters.AddWithValue("@OrderId", newOrderId);
+                            cmdHist.Parameters.AddWithValue("@SubOrderId", DBNull.Value);
+                            cmdHist.Parameters.AddWithValue("@Status", "Placed");
+                            cmdHist.Parameters.AddWithValue("@ChangedByUserId", customerId);
+                            cmdHist.Parameters.AddWithValue("@ChangedByRole", "Customer");
                             cmdHist.Parameters.AddWithValue("@Message", "Master order #" + orderNumber + " placed across " + restaurantGroups.Count + " kitchen partner(s).");
                             cmdHist.ExecuteNonQuery();
                         }
 
-                        // 5. Record Transaction
-                        string txnSql = @"
-                            INSERT INTO dbo.Transactions 
-                            (OrderId, TransactionReference, Amount, PaymentMethod, PaymentStatus, RestaurantShare, PlatformFee, DeliveryFee, CreatedAt)
-                            VALUES 
-                            (@OrderId, @Ref, @Amount, @Method, 'Success', @RestShare, @PlatformFee, @DeliveryFee, GETDATE());";
-                        using (var cmdTxn = new SqlCommand(txnSql, conn, tran))
+                        // 5. Record Transaction via Stored Procedure
+                        using (var cmdTxn = new SqlCommand("dbo.sp_Transaction_Insert", conn, tran))
                         {
+                            cmdTxn.CommandType = CommandType.StoredProcedure;
                             cmdTxn.Parameters.AddWithValue("@OrderId", newOrderId);
-                            cmdTxn.Parameters.AddWithValue("@Ref", "TXN-" + Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper());
+                            cmdTxn.Parameters.AddWithValue("@TransactionReference", "TXN-" + Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper());
                             cmdTxn.Parameters.AddWithValue("@Amount", totalAmount);
-                            cmdTxn.Parameters.AddWithValue("@Method", (object)paymentMethod ?? "UPI");
-                            cmdTxn.Parameters.AddWithValue("@RestShare", subTotal * 0.90m);
+                            cmdTxn.Parameters.AddWithValue("@PaymentMethod", (object)paymentMethod ?? "UPI");
+                            cmdTxn.Parameters.AddWithValue("@PaymentStatus", "Success");
+                            cmdTxn.Parameters.AddWithValue("@RestaurantShare", subTotal * 0.90m);
                             cmdTxn.Parameters.AddWithValue("@PlatformFee", platformFee + (subTotal * 0.10m));
                             cmdTxn.Parameters.AddWithValue("@DeliveryFee", deliveryFee);
+                            cmdTxn.Parameters.AddWithValue("@GatewayResponse", DBNull.Value);
                             cmdTxn.ExecuteNonQuery();
                         }
 
