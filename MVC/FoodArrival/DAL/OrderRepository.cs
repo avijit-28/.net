@@ -37,12 +37,14 @@ namespace FoodArrival.DAL
                 {
                     try
                     {
+                        string deliveryOtp = new Random().Next(100000, 999999).ToString();
+
                         // 1. Insert Master Order
                         string insertMasterSql = @"
                             INSERT INTO dbo.Orders 
-                            (CustomerId, TotalAmount, OrderStatus, OrderedAt, DeliveryFee, DeliveryAddress, PaymentStatus, PaymentMethod, DeliveryStatus, EstimatedDeliveryTime)
+                            (CustomerId, TotalAmount, OrderStatus, OrderedAt, DeliveryFee, DeliveryAddress, PaymentStatus, PaymentMethod, DeliveryStatus, EstimatedDeliveryTime, DeliveryOtp)
                             VALUES 
-                            (@CustomerId, @TotalAmount, 'Pending', GETDATE(), @DeliveryFee, @DeliveryAddress, 'Pending', @PaymentMethod, 'Pending', DATEADD(MINUTE, 35, GETDATE()));
+                            (@CustomerId, @TotalAmount, 'Pending', GETDATE(), @DeliveryFee, @DeliveryAddress, 'Pending', @PaymentMethod, 'Pending', DATEADD(MINUTE, 35, GETDATE()), @DeliveryOtp);
                             SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
                         int newOrderId;
@@ -53,6 +55,7 @@ namespace FoodArrival.DAL
                             cmd.Parameters.AddWithValue("@DeliveryFee", deliveryFee);
                             cmd.Parameters.AddWithValue("@DeliveryAddress", (object)deliveryAddress ?? DBNull.Value);
                             cmd.Parameters.AddWithValue("@PaymentMethod", (object)paymentMethod ?? "UPI");
+                            cmd.Parameters.AddWithValue("@DeliveryOtp", deliveryOtp);
                             newOrderId = Convert.ToInt32(cmd.ExecuteScalar());
                         }
 
