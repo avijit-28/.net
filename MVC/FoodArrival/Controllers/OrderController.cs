@@ -217,8 +217,9 @@ namespace FoodArrival.Controllers
             {
                 // Mark payment as Pending until customer completes checkout on Dummy Payment Gateway
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new System.Data.SqlClient.SqlCommand("UPDATE dbo.Orders SET PaymentStatus = 'Pending', OrderStatus = 'Pending' WHERE OrderId = @OrderId", conn))
+                using (var cmd = new System.Data.SqlClient.SqlCommand("dbo.sp_Order_SetPendingPayment", conn))
                 {
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@OrderId", orderId);
                     conn.Open();
                     cmd.ExecuteNonQuery();
