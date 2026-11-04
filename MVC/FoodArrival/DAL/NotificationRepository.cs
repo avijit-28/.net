@@ -8,50 +8,31 @@ namespace FoodArrival.DAL
 {
     public class NotificationRepository
     {
-        public List<Notification> GetNotifications(string role = "All", int? userId = null)
+        public List<Notification> GetNotifications(string role, int? userId = null)
         {
             var list = new List<Notification>();
-            if (string.IsNullOrWhiteSpace(role) || role.Equals("All", StringComparison.OrdinalIgnoreCase) || role.Equals("Guest", StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrWhiteSpace(role))
             {
-                // Unauthenticated visitors do not receive private notifications
                 return list;
             }
 
-            string sql;
-            if (role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            // Non-admin roles strictly require a valid UserId
+            if (!role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
             {
-                // Admin views platform administrative notifications
-                sql = @"
-                    SELECT TOP 15 NotificationId, UserId, UserRole, Title, Message, NotificationType, IsRead, CreatedAt, TargetUrl
-                    FROM dbo.Notifications
-                    WHERE UserRole = 'Admin'
-                    ORDER BY CreatedAt DESC";
-            }
-            else
-            {
-                // For Customer, Rider, Restaurant Owner, and Staff: STRICTLY show ONLY their own personal notifications!
                 if (!userId.HasValue || userId.Value <= 0)
                 {
                     return list;
                 }
-
-                sql = @"
-                    SELECT TOP 15 NotificationId, UserId, UserRole, Title, Message, NotificationType, IsRead, CreatedAt, TargetUrl
-                    FROM dbo.Notifications
-                    WHERE UserRole = @Role AND UserId = @UserId
-                    ORDER BY CreatedAt DESC";
             }
 
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Notification_GetForUser", conn))
                 {
-                    cmd.Parameters.AddWithValue("@Role", (object)role ?? "All");
-                    if (userId.HasValue)
-                    {
-                        cmd.Parameters.AddWithValue("@UserId", userId.Value);
-                    }
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@Role", role);
+                    cmd.Parameters.AddWithValue("@UserId", (object)userId ?? DBNull.Value);
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -73,25 +54,19 @@ namespace FoodArrival.DAL
                     }
                 }
             }
-            catch
-            {
-                // return empty list on db error
-            }
+            catch { }
 
             return list;
         }
 
         public bool AddNotification(string role, int? userId, string title, string message, string type = "Info", string targetUrl = null)
         {
-            string sql = @"
-                INSERT INTO dbo.Notifications (UserId, UserRole, Title, Message, NotificationType, TargetUrl)
-                VALUES (@UserId, @UserRole, @Title, @Message, @Type, @TargetUrl)";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Notification_Add", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@UserId", (object)userId ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@UserRole", role ?? "All");
                     cmd.Parameters.AddWithValue("@Title", title ?? "FoodReady Alert");
@@ -112,27 +87,14 @@ namespace FoodArrival.DAL
         {
             if (string.IsNullOrWhiteSpace(role)) return false;
 
-            string sql;
-            if (role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
-            {
-                sql = "UPDATE dbo.Notifications SET IsRead = 1 WHERE UserRole = 'Admin'";
-            }
-            else
-            {
-                if (!userId.HasValue || userId.Value <= 0) return false;
-                sql = "UPDATE dbo.Notifications SET IsRead = 1 WHERE UserRole = @Role AND UserId = @UserId";
-            }
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Notification_MarkAllAsRead", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Role", role);
-                    if (userId.HasValue)
-                    {
-                        cmd.Parameters.AddWithValue("@UserId", userId.Value);
-                    }
+                    cmd.Parameters.AddWithValue("@UserId", (object)userId ?? DBNull.Value);
                     conn.Open();
                     return cmd.ExecuteNonQuery() > 0;
                 }
