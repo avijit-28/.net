@@ -27,9 +27,11 @@ namespace WebApiPractice.Controllers
         }
 
         // POST api/values
-        public void Post([FromBody] string value)
+        public IHttpActionResult Post([FromBody] string value)
         {
             _values.Add(value);
+
+            return Ok("Added Successfully");
         }
 
         // PUT api/values/1
