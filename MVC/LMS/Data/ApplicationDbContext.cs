@@ -44,6 +44,16 @@ namespace LMS.Data
         public DbSet<ChatSession> ChatSessions { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
+        // Enterprise RAG Document Ingestion & Assistant DbSets
+        public DbSet<AiDocument> AiDocuments { get; set; }
+        public DbSet<AiDocumentChunk> AiDocumentChunks { get; set; }
+        public DbSet<AiChatSession> AiChatSessions { get; set; }
+        public DbSet<AiChatMessage> AiChatMessages { get; set; }
+        public DbSet<AiChatSource> AiChatSources { get; set; }
+        public DbSet<AiUsageLog> AiUsageLogs { get; set; }
+        public DbSet<AiFeedback> AiFeedbacks { get; set; }
+        public DbSet<AiIndexingJob> AiIndexingJobs { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
