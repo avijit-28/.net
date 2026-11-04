@@ -15,10 +15,15 @@ namespace FoodArrival.Models
         public string LicenseDocumentUrl { get; set; }
         public int RestaurantId { get; set; }
         public string RestaurantName { get; set; }
+        public string OwnerName { get; set; }
+        public string RestaurantAddress { get; set; }
+        public string RestaurantPhone { get; set; }
+        public string CurrentStatus { get; set; }
         public bool IsVerified { get; set; }
         public string VerifiedByRole { get; set; }
         public int? VerifiedBy { get; set; }
         public DateTime? VerifiedAt { get; set; }
         public DateTime AffiliatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get { return AffiliatedAt; } set { AffiliatedAt = value; } }
     }
 }
