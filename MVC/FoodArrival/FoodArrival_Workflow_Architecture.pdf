@@ -1,0 +1,118 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Pages /Kids [2 0 R 3 0 R 4 0 R] /Count 3 >>
+endobj
+2 0 obj
+<< /Type /Page /Parent 1 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 6 0 R >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 1 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 7 0 R >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 1 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 8 0 R >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Length 1527 >>
+stream
+0.08 0.18 0.24 rg 0 0 612 792 re f
+0.97 0.96 0.92 rg 42 42 528 708 re f
+0.08 0.18 0.24 rg BT /F1 24 Tf 62 704 Td (FoodArrival) Tj ET
+0.20 0.39 0.43 rg BT /F1 11 Tf 62 682 Td (Workflow and architecture overview) Tj ET
+0.08 0.34 0.37 rg BT /F1 14 Tf 68 638 Td ( Product summary) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 613 Td (Multi-role food ordering and delivery application.) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 594 Td (ASP.NET MVC 5 on .NET Framework 4.8.1, with Razor UI, C#,) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 575 Td (ADO.NET repositories, and SQL Server stored procedures.) Tj ET
+0.08 0.34 0.37 rg BT /F1 14 Tf 68 546 Td ( Main capabilities) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 521 Td (Customer browsing, cart, order placement, payment simulation, tracking) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 502 Td (Restaurant and kitchen order preparation and menu operations) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 483 Td (Rider assignment, pickup, delivery progress, and OTP handoff) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 464 Td (Admin dashboards, approvals, transactions, and bulletins) Tj ET
+0.08 0.34 0.37 rg BT /F1 14 Tf 68 435 Td ( System boundary) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 410 Td (Payment is simulated. ETA, map coordinates, and route logic include) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 391 Td (demo/fallback data and should not be treated as live integrations.) Tj ET
+0.20 0.39 0.43 rg BT /F1 8 Tf 62 56 Td (FoodArrival | Workflow and architecture | 04 Nov 2026) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Length 2522 >>
+stream
+0.08 0.18 0.24 rg 0 0 612 792 re f
+0.97 0.96 0.92 rg 42 42 528 708 re f
+0.08 0.18 0.24 rg BT /F1 24 Tf 62 704 Td (Application architecture) Tj ET
+0.20 0.39 0.43 rg BT /F1 11 Tf 62 682 Td (Request path and main component responsibilities) Tj ET
+0.08 0.34 0.37 rg BT /F1 14 Tf 68 638 Td ( Layer responsibilities) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 613 Td (Browser UI: Razor views, Bootstrap, jQuery and AJAX) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 594 Td (MVC: route dispatch, portal controllers, validation, session role checks) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 575 Td (Services: rider allocation and order tracking calculations) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 556 Td (DAL: repositories plus DbHelper for SQL calls and result mapping) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 537 Td (Database: FoodArrivalDB tables, stored procedures, and order history) Tj ET
+0.08 0.34 0.37 rg BT /F1 14 Tf 68 508 Td ( Main project areas) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 483 Td (Controllers/  | request coordination and role workflows) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 464 Td (Services/    | allocation and tracking logic) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 445 Td (DAL/         | database connectivity and repositories) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 426 Td (Models/      | domain types and view models) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 407 Td (Views/       | customer, restaurant, staff, rider, admin pages) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 388 Td (App_Start/   | route, bundle, and global filter registration) Tj ET
+0.86 0.91 0.88 rg 75 290 460 46 re f 0.20 0.39 0.43 RG 1 w 75 290 460 46 re S
+0.08 0.18 0.24 rg BT /F1 10 Tf 83 309 Td (Browser: Razor + Bootstrap + jQuery) Tj ET
+0.86 0.91 0.88 rg 75 224 460 46 re f 0.20 0.39 0.43 RG 1 w 75 224 460 46 re S
+0.08 0.18 0.24 rg BT /F1 10 Tf 83 243 Td (MVC controllers: customer | restaurant | staff | rider | admin) Tj ET
+0.86 0.91 0.88 rg 75 158 215 46 re f 0.20 0.39 0.43 RG 1 w 75 158 215 46 re S
+0.08 0.18 0.24 rg BT /F1 10 Tf 83 177 Td (Services: dispatch + tracking) Tj ET
+0.86 0.91 0.88 rg 320 158 215 46 re f 0.20 0.39 0.43 RG 1 w 320 158 215 46 re S
+0.08 0.18 0.24 rg BT /F1 10 Tf 328 177 Td (DAL: repositories + DbHelper) Tj ET
+0.86 0.91 0.88 rg 75 92 460 46 re f 0.20 0.39 0.43 RG 1 w 75 92 460 46 re S
+0.08 0.18 0.24 rg BT /F1 10 Tf 83 111 Td (SQL Server: tables + stored procedures) Tj ET
+0.20 0.39 0.43 rg BT /F1 8 Tf 62 56 Td (FoodArrival | Workflow and architecture | 04 Nov 2026) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Length 2190 >>
+stream
+0.08 0.18 0.24 rg 0 0 612 792 re f
+0.97 0.96 0.92 rg 42 42 528 708 re f
+0.08 0.18 0.24 rg BT /F1 24 Tf 62 704 Td (Order and delivery workflow) Tj ET
+0.20 0.39 0.43 rg BT /F1 11 Tf 62 682 Td (Master order may be split into restaurant-specific sub-orders) Tj ET
+0.08 0.34 0.37 rg BT /F1 14 Tf 68 638 Td ( Customer and fulfillment journey) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 613 Td (1. Customer browses menu, builds cart, and submits delivery details.) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 594 Td (2. Application creates an order and its line items/sub-orders.) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 575 Td (3. Payment simulation records payment/transaction outcome.) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 556 Td (4. Restaurant accepts and prepares its assigned sub-order.) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 537 Td (5. Ready order is considered for rider assignment and pickup.) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 518 Td (6. Rider updates pickup and delivery progress.) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 499 Td (7. Customer provides the delivery OTP to confirm handoff.) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 480 Td (8. Order history and tracking show current state and status events.) Tj ET
+0.08 0.34 0.37 rg BT /F1 14 Tf 68 451 Td ( Other role loops) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 426 Td (Restaurant: maintain menu ’ process kitchen queue ’ mark ready.) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 407 Td (Rider: review assignment ’ pick up ’ update status ’ confirm delivery.) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 388 Td (Admin: review operations ’ approvals and transactions ’ publish bulletins.) Tj ET
+0.08 0.34 0.37 rg BT /F1 14 Tf 68 359 Td ( Notes for operators) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 334 Td (Set the FoodDeliveryDB connection string in Web.config. Initialize) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 315 Td (FoodArrivalDB with the consolidated script or matching SQL scripts.) Tj ET
+0.10 0.16 0.20 rg BT /F1 10.5 Tf 68 296 Td (Use secure secrets; replace embedded local fallback credentials.) Tj ET
+0.20 0.39 0.43 rg BT /F1 8 Tf 62 56 Td (FoodArrival | Workflow and architecture | 04 Nov 2026) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Type /Catalog /Pages 1 0 R >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000009 00000 n 
+0000000078 00000 n 
+0000000204 00000 n 
+0000000330 00000 n 
+0000000456 00000 n 
+0000000526 00000 n 
+0000002104 00000 n 
+0000004677 00000 n 
+0000006918 00000 n 
+trailer
+<< /Size 10 /Root 9 0 R >>
+startxref
+6967
+%%EOF
