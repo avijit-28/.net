@@ -145,16 +145,18 @@ namespace FoodArrival.Controllers
             if (simulateFailure)
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(@"
-                    INSERT INTO dbo.Transactions 
-                    (OrderId, TransactionReference, Amount, PaymentMethod, PaymentStatus, GatewayResponse, CreatedAt)
-                    VALUES 
-                    (@OrderId, @TxnRef, @Amount, @Method, 'Failed', 'Bank Gateway Simulation: Transaction declined by customer issuing bank.', GETDATE())", conn))
+                using (var cmd = new SqlCommand("dbo.sp_Transaction_Insert", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@OrderId", orderId);
-                    cmd.Parameters.AddWithValue("@TxnRef", txnRef);
+                    cmd.Parameters.AddWithValue("@TransactionReference", txnRef);
                     cmd.Parameters.AddWithValue("@Amount", order.TotalAmount);
-                    cmd.Parameters.AddWithValue("@Method", cleanMethod);
+                    cmd.Parameters.AddWithValue("@PaymentMethod", cleanMethod);
+                    cmd.Parameters.AddWithValue("@PaymentStatus", "Failed");
+                    cmd.Parameters.AddWithValue("@RestaurantShare", 0);
+                    cmd.Parameters.AddWithValue("@PlatformFee", 0);
+                    cmd.Parameters.AddWithValue("@DeliveryFee", 0);
+                    cmd.Parameters.AddWithValue("@GatewayResponse", "Bank Gateway Simulation: Transaction declined by customer issuing bank.");
                     conn.Open();
                     cmd.ExecuteNonQuery();
                 }
@@ -172,84 +174,29 @@ namespace FoodArrival.Controllers
                 return RedirectToAction("Gateway", new { orderId = orderId });
             }
 
-            // 2. SUCCESSFUL PAYMENT
-            using (var conn = DbHelper.GetConnection())
+            // 2. SUCCESSFUL PAYMENT via Stored Procedure
+            try
             {
-                conn.Open();
-                using (var tran = conn.BeginTransaction())
+                using (var conn = DbHelper.GetConnection())
+                using (var cmd = new SqlCommand("dbo.sp_Payment_ConfirmPayment", conn))
                 {
-                    try
-                    {
-                        // A. Update Orders table
-                        using (var cmd = new SqlCommand(@"
-                            UPDATE dbo.Orders 
-                            SET PaymentStatus = 'Success',
-                                OrderStatus = 'Accepted',
-                                PaymentMethod = @Method,
-                                DeliveryStatus = 'Pending'
-                            WHERE OrderId = @OrderId", conn, tran))
-                        {
-                            cmd.Parameters.AddWithValue("@Method", cleanMethod);
-                            cmd.Parameters.AddWithValue("@OrderId", orderId);
-                            cmd.ExecuteNonQuery();
-                        }
-
-                        // B. Update OrderSubOrders
-                        using (var cmd = new SqlCommand(@"
-                            UPDATE dbo.OrderSubOrders 
-                            SET PreparationStatus = 'Confirmed',
-                                DeliveryStatus = 'Pending'
-                            WHERE OrderId = @OrderId", conn, tran))
-                        {
-                            cmd.Parameters.AddWithValue("@OrderId", orderId);
-                            cmd.ExecuteNonQuery();
-                        }
-
-                        decimal deliveryFee = order.DeliveryFee > 0 ? order.DeliveryFee : 40.00m;
-                        decimal platformFee = 15.00m;
-                        decimal restShare = Math.Max(0, order.TotalAmount - deliveryFee - platformFee);
-
-                        // C. Insert Transaction Record
-                        using (var cmd = new SqlCommand(@"
-                            INSERT INTO dbo.Transactions 
-                            (OrderId, TransactionReference, Amount, PaymentMethod, PaymentStatus, RestaurantShare, PlatformFee, DeliveryFee, GatewayResponse, CreatedAt)
-                            VALUES 
-                            (@OrderId, @TxnRef, @Amount, @Method, 'Success', @RestShare, @PlatformFee, @DeliveryFee, 'Payment Authorized 200 OK via FoodReady Gateway', GETDATE())", conn, tran))
-                        {
-                            cmd.Parameters.AddWithValue("@OrderId", orderId);
-                            cmd.Parameters.AddWithValue("@TxnRef", txnRef);
-                            cmd.Parameters.AddWithValue("@Amount", order.TotalAmount);
-                            cmd.Parameters.AddWithValue("@Method", cleanMethod);
-                            cmd.Parameters.AddWithValue("@RestShare", restShare);
-                            cmd.Parameters.AddWithValue("@PlatformFee", platformFee);
-                            cmd.Parameters.AddWithValue("@DeliveryFee", deliveryFee);
-                            cmd.ExecuteNonQuery();
-                        }
-
-                        // D. Insert Order Status History
-                        using (var cmd = new SqlCommand(@"
-                            INSERT INTO dbo.OrderStatusHistory 
-                            (OrderId, Status, ChangedByUserId, ChangedByRole, Message, CreatedAt)
-                            VALUES 
-                            (@OrderId, 'Payment Confirmed', @CustomerId, 'Customer', @Message, GETDATE())", conn, tran))
-                        {
-                            cmd.Parameters.AddWithValue("@OrderId", orderId);
-                            cmd.Parameters.AddWithValue("@CustomerId", customerId);
-                            cmd.Parameters.AddWithValue("@Message", $"Payment of INR {order.TotalAmount:N0} successfully verified via {cleanMethod}. Reference: {txnRef}");
-                            cmd.ExecuteNonQuery();
-                        }
-
-                        tran.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        tran.Rollback();
-                        if (Request.IsAjaxRequest())
-                            return Json(new { success = false, message = "Payment processing error: " + ex.Message });
-                        TempData["Error"] = "Payment failed: " + ex.Message;
-                        return RedirectToAction("Gateway", new { orderId = orderId });
-                    }
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@OrderId", orderId);
+                    cmd.Parameters.AddWithValue("@PaymentMethod", cleanMethod);
+                    cmd.Parameters.AddWithValue("@TxnRef", txnRef);
+                    cmd.Parameters.AddWithValue("@GatewayResponse", "Payment Authorized 200 OK via FoodReady Gateway");
+                    cmd.Parameters.AddWithValue("@CustomerId", customerId);
+                    cmd.Parameters.AddWithValue("@Message", $"Payment of INR {order.TotalAmount:N0} successfully verified via {cleanMethod}. Reference: {txnRef}");
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
                 }
+            }
+            catch (Exception ex)
+            {
+                if (Request.IsAjaxRequest())
+                    return Json(new { success = false, message = "Payment processing error: " + ex.Message });
+                TempData["Error"] = "Payment failed: " + ex.Message;
+                return RedirectToAction("Gateway", new { orderId = orderId });
             }
 
             // 3. Clear customer active cart
