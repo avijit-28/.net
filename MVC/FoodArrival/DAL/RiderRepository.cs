@@ -210,19 +210,7 @@ namespace FoodArrival.DAL
                     {
                         if (reader.Read())
                         {
-                            return new Rider
-                            {
-                                RiderId = Convert.ToInt32(reader["RiderId"]),
-                                RiderName = reader["RiderName"].ToString(),
-                                Username = reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
-                                VehicleType = reader["VehicleType"] == DBNull.Value ? "Motorbike" : reader["VehicleType"].ToString(),
-                                LicenseNumber = reader["LicenseNumber"] == DBNull.Value ? string.Empty : reader["LicenseNumber"].ToString(),
-                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] == DBNull.Value ? string.Empty : reader["LicenseDocumentUrl"].ToString(),
-                                CurrentStatus = reader["CurrentStatus"].ToString(),
-                                IsActive = Convert.ToBoolean(reader["IsActive"])
-                            };
+                            return MapRider(reader);
                         }
                     }
                 }
@@ -245,19 +233,7 @@ namespace FoodArrival.DAL
                     {
                         while (reader.Read())
                         {
-                            list.Add(new Rider
-                            {
-                                RiderId = Convert.ToInt32(reader["RiderId"]),
-                                RiderName = reader["RiderName"].ToString(),
-                                Username = reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
-                                VehicleType = reader["VehicleType"] == DBNull.Value ? "Motorbike" : reader["VehicleType"].ToString(),
-                                LicenseNumber = reader["LicenseNumber"] == DBNull.Value ? string.Empty : reader["LicenseNumber"].ToString(),
-                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] == DBNull.Value ? string.Empty : reader["LicenseDocumentUrl"].ToString(),
-                                CurrentStatus = reader["CurrentStatus"].ToString(),
-                                IsActive = Convert.ToBoolean(reader["IsActive"])
-                            });
+                            list.Add(MapRider(reader));
                         }
                     }
                 }
