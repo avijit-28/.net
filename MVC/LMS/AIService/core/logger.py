@@ -38,3 +38,5 @@ def setup_logger(name: str = "AIService") -> logging.Logger:
     return logger
 
 logger = setup_logger()
+get_masked_logger = setup_logger
+
