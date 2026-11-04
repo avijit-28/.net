@@ -1,4 +1,4 @@
-﻿using FoodArrival.Attributes;
+using FoodArrival.Attributes;
 using System;
 using System.IO;
 using System.Web;
@@ -17,6 +17,7 @@ namespace FoodArrival.Controllers
         private readonly StaffRepository _staffRepo = new StaffRepository();
         private readonly AdminRepository _adminRepo = new AdminRepository();
         private readonly NotificationRepository _notifRepo = new NotificationRepository();
+        private readonly PasswordRecoveryRepository _passwordRepo = new PasswordRecoveryRepository();
 
         private void PopulateRoleDropdowns()
         {
