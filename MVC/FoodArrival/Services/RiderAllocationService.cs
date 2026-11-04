@@ -451,8 +451,9 @@ namespace FoodArrival.Services
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand("SELECT OrderId, OrderNumber, CustomerId, TotalAmount, OrderStatus, OrderedAt FROM dbo.Orders WHERE OrderId = @OrderId", conn))
+                using (var cmd = new SqlCommand("dbo.sp_Order_GetBasicById", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@OrderId", orderId);
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
