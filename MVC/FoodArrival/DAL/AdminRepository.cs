@@ -13,18 +13,12 @@ namespace FoodArrival.DAL
             string cleanId = (loginId ?? string.Empty).Trim().ToLower();
             string cleanPass = (password ?? string.Empty).Trim();
 
-            string sql = @"
-                SELECT AdminId, AdminName, Username, Email, IsActive
-                FROM dbo.Admins
-                WHERE (LOWER(Email) = @LoginId OR LOWER(Username) = @LoginId)
-                  AND PasswordHash = @Password
-                  AND IsActive = 1";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Admin_Login", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@LoginId", cleanId);
                     cmd.Parameters.AddWithValue("@Password", cleanPass);
                     conn.Open();
@@ -52,30 +46,12 @@ namespace FoodArrival.DAL
         {
             var vm = new AdminDashboardViewModel();
 
-            string summarySql = @"
-                SELECT 
-                    (SELECT COUNT(*) FROM dbo.Orders WHERE OrderStatus = 'Pending') AS PendingOrders,
-                    (SELECT COUNT(*) FROM dbo.Orders WHERE OrderStatus = 'Accepted') AS AcceptedOrders,
-                    (SELECT COUNT(*) FROM dbo.Orders WHERE OrderStatus = 'Rejected') AS RejectedOrders,
-                    (SELECT COUNT(*) FROM dbo.FoodItems WHERE IsAvailable = 1 AND IsVerified = 1) AS AvailableFoodItems,
-                    (SELECT COUNT(*) FROM dbo.Customers WHERE IsActive = 1) AS ActiveCustomers,
-                    (SELECT COUNT(*) FROM dbo.Restaurants WHERE IsActive = 1 AND IsVerified = 1) AS TotalRestaurants,
-                    (SELECT COUNT(*) FROM dbo.Riders WHERE IsActive = 1) AS TotalRiders,
-                    (SELECT COUNT(*) FROM dbo.RestaurantStaff WHERE IsActive = 1 AND IsVerified = 1) AS TotalStaff,
-                    (
-                        (SELECT COUNT(*) FROM dbo.Restaurants WHERE IsVerified = 0 AND IsActive = 1) +
-                        (SELECT COUNT(*) FROM dbo.RestaurantStaff WHERE IsVerified = 0 AND IsActive = 1) +
-                        (SELECT COUNT(*) FROM dbo.RiderRestaurantAffiliations WHERE IsVerified = 0) +
-                        (SELECT COUNT(*) FROM dbo.FoodItems WHERE IsVerified = 0)
-                    ) AS PendingApprovalsCount,
-                    ISNULL((SELECT SUM(Amount) FROM dbo.Transactions WHERE PaymentStatus = 'Success'), 0) AS TotalRevenue,
-                    ISNULL((SELECT SUM(PlatformFee) FROM dbo.Transactions WHERE PaymentStatus = 'Success'), 0) AS PlatformEarnings";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(summarySql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Admin_GetDashboardSummary", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -104,21 +80,13 @@ namespace FoodArrival.DAL
         public List<Transaction> GetAllTransactions()
         {
             var list = new List<Transaction>();
-            string sql = @"
-                SELECT t.TransactionId, t.OrderId, t.TransactionReference, t.Amount, t.PaymentMethod, 
-                       t.PaymentStatus, t.RestaurantShare, t.PlatformFee, t.DeliveryFee, t.CreatedAt,
-                       c.CustomerName, r.RestaurantName
-                FROM dbo.Transactions t
-                INNER JOIN dbo.Orders o ON t.OrderId = o.OrderId
-                INNER JOIN dbo.Customers c ON o.CustomerId = c.CustomerId
-                LEFT JOIN dbo.Restaurants r ON o.RestaurantId = r.RestaurantId
-                ORDER BY t.TransactionId DESC";
 
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Admin_GetAllTransactions", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -150,18 +118,13 @@ namespace FoodArrival.DAL
         public List<Bulletin> GetBulletins(string targetAudience = null)
         {
             var list = new List<Bulletin>();
-            string sql = @"
-                SELECT BulletinId, Title, Message, TargetAudience, Priority, CreatedByAdminId, CreatedAt, IsActive
-                FROM dbo.Bulletins
-                WHERE IsActive = 1
-                  AND (@Audience IS NULL OR TargetAudience = 'All' OR TargetAudience = @Audience)
-                ORDER BY BulletinId DESC";
 
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Admin_GetBulletins", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Audience", (object)targetAudience ?? DBNull.Value);
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
@@ -189,15 +152,12 @@ namespace FoodArrival.DAL
 
         public bool AddBulletin(Bulletin bulletin)
         {
-            string sql = @"
-                INSERT INTO dbo.Bulletins (Title, Message, TargetAudience, Priority, CreatedByAdminId)
-                VALUES (@Title, @Message, @TargetAudience, @Priority, @AdminId)";
-
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Admin_AddBulletin", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Title", bulletin.Title ?? string.Empty);
                     cmd.Parameters.AddWithValue("@Message", bulletin.Message ?? string.Empty);
                     cmd.Parameters.AddWithValue("@TargetAudience", bulletin.TargetAudience ?? "All");
@@ -212,13 +172,13 @@ namespace FoodArrival.DAL
 
         public bool DeleteBulletin(int id)
         {
-            string sql = @"UPDATE dbo.Bulletins SET IsActive = 0 WHERE BulletinId = @Id";
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand(sql, conn))
+                using (var cmd = new SqlCommand("dbo.sp_Admin_DeleteBulletin", conn))
                 {
-                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@BulletinId", id);
                     conn.Open();
                     return cmd.ExecuteNonQuery() > 0;
                 }
