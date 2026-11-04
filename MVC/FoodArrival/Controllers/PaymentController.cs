@@ -59,6 +59,15 @@ namespace FoodArrival.Controllers
                             return RedirectToAction("Track", "OrderTracking", new { orderId = orderId });
                         }
 
+                        string paymentMethodVal = "UPI";
+                        try
+                        {
+                            int pmOrdinal = reader.GetOrdinal("PaymentMethod");
+                            if (pmOrdinal >= 0 && reader[pmOrdinal] != DBNull.Value)
+                                paymentMethodVal = reader[pmOrdinal].ToString();
+                        }
+                        catch { }
+
                         vm = new PaymentGatewayViewModel
                         {
                             OrderId = Convert.ToInt32(reader["OrderId"]),
@@ -71,7 +80,7 @@ namespace FoodArrival.Controllers
                             TotalAmount = Convert.ToDecimal(reader["TotalAmount"]),
                             DeliveryFee = reader["DeliveryFee"] != DBNull.Value ? Convert.ToDecimal(reader["DeliveryFee"]) : 40.00m,
                             PlatformFee = 15.00m,
-                            PaymentMethod = reader["PaymentMethod"] != DBNull.Value ? reader["PaymentMethod"].ToString() : "UPI",
+                            PaymentMethod = paymentMethodVal,
                             DefaultUpiId = (Session["CustomerUsername"]?.ToString() ?? "user") + "@okaxis"
                         };
                         vm.Subtotal = Math.Max(0, vm.TotalAmount - vm.DeliveryFee - vm.PlatformFee);
