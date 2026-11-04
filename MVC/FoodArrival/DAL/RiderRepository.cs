@@ -405,7 +405,7 @@ namespace FoodArrival.DAL
             }
         }
 
-        public List<Order> GetAvailableDeliveries()
+        public List<Order> GetAvailableDeliveries(int? riderId = null)
         {
             var list = new List<Order>();
             try
@@ -414,6 +414,7 @@ namespace FoodArrival.DAL
                 using (var cmd = new SqlCommand("dbo.sp_Rider_GetAvailableDeliveries", conn))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@RiderId", (object)riderId ?? DBNull.Value);
                     conn.Open();
                     using (var reader = cmd.ExecuteReader())
                     {
