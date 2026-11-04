@@ -35,14 +35,9 @@ namespace FoodArrival.Controllers
             PaymentGatewayViewModel vm = null;
 
             using (var conn = DbHelper.GetConnection())
-            using (var cmd = new SqlCommand(@"
-                SELECT o.OrderId, o.OrderNumber, o.CustomerId, c.CustomerName, c.PhoneNumber, c.Email,
-                       ISNULL(o.DeliveryAddress, c.Address) AS DeliveryAddress,
-                       o.TotalAmount, o.DeliveryFee, o.PaymentStatus, o.PaymentMethod, o.OrderStatus
-                FROM dbo.Orders o
-                INNER JOIN dbo.Customers c ON o.CustomerId = c.CustomerId
-                WHERE o.OrderId = @OrderId", conn))
+            using (var cmd = new SqlCommand("dbo.sp_Payment_GetOrderDetails", conn))
             {
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@OrderId", orderId);
                 conn.Open();
 
