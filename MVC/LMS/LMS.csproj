@@ -209,11 +209,16 @@
     <Compile Include="Services\LearningService.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\PaymentService.cs" />
+    <Compile Include="Services\IRagKnowledgeService.cs" />
+    <Compile Include="Services\RagKnowledgeService.cs" />
+    <Compile Include="Services\IGeminiChatService.cs" />
+    <Compile Include="Services\GeminiChatService.cs" />
     <Compile Include="Services\StripeService.cs" />
     <Compile Include="Services\QuizService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="ViewModels\AdminViewModels.cs" />
+    <Compile Include="ViewModels\ChatBotViewModels.cs" />
     <Compile Include="ViewModels\CourseFilterViewModel.cs" />
     <Compile Include="ViewModels\InstructorViewModels.cs" />
     <Compile Include="ViewModels\PaymentViewModels.cs" />
