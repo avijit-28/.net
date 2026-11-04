@@ -22,7 +22,7 @@ namespace WebApiPractice.Controllers
         // GET api/values/5
         public string Get(int i)
         {
-            return "value";
+            return _values[i];
         }
 
         // POST api/values
