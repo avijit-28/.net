@@ -44,14 +44,14 @@ namespace WebApiPractice.Controllers
         }
 
         // DELETE api/values/1
-        public IHttpActionResult Delete(int id)
+        public void Delete(int id)
         {
-            if (id < 0 || id >= _values.Count)
-                return NotFound();
+            //if (id < 0 || id >= _values.Count)
+                //return NotFound();
 
             _values.RemoveAt(id);
 
-            return Ok("Value Deleted Successfully");
+            //return Ok("Value Deleted Successfully");
         }
     }
 }
