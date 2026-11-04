@@ -1116,12 +1116,12 @@ CREATE PROCEDURE dbo.sp_Order_CreateDetail
     @FoodItemId INT,
     @Quantity INT,
     @UnitPrice DECIMAL(10,2),
-    @SubTotal DECIMAL(10,2)
+    @SubTotal DECIMAL(10,2) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
-    INSERT INTO dbo.OrderDetails (OrderId, SubOrderId, FoodItemId, Quantity, UnitPrice, SubTotal)
-    VALUES (@OrderId, @SubOrderId, @FoodItemId, @Quantity, @UnitPrice, @SubTotal);
+    INSERT INTO dbo.OrderDetails (OrderId, SubOrderId, FoodItemId, Quantity, UnitPrice)
+    VALUES (@OrderId, @SubOrderId, @FoodItemId, @Quantity, @UnitPrice);
     SELECT @@ROWCOUNT;
 END;
 GO
