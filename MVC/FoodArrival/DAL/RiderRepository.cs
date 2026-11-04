@@ -150,6 +150,28 @@ namespace FoodArrival.DAL
             }
         }
 
+        private static bool HasColumn(SqlDataReader reader, string columnName)
+        {
+            try { return reader.GetOrdinal(columnName) >= 0; }
+            catch { return false; }
+        }
+
+        private static Rider MapRider(SqlDataReader reader)
+        {
+            var r = new Rider();
+            r.RiderId = Convert.ToInt32(reader["RiderId"]);
+            r.RiderName = reader["RiderName"] != DBNull.Value ? reader["RiderName"].ToString() : string.Empty;
+            r.Username = HasColumn(reader, "Username") && reader["Username"] != DBNull.Value ? reader["Username"].ToString() : string.Empty;
+            r.Email = reader["Email"] != DBNull.Value ? reader["Email"].ToString() : string.Empty;
+            r.PhoneNumber = HasColumn(reader, "PhoneNumber") && reader["PhoneNumber"] != DBNull.Value ? reader["PhoneNumber"].ToString() : string.Empty;
+            r.VehicleType = HasColumn(reader, "VehicleType") && reader["VehicleType"] != DBNull.Value ? reader["VehicleType"].ToString() : "Motorbike";
+            r.LicenseNumber = HasColumn(reader, "LicenseNumber") && reader["LicenseNumber"] != DBNull.Value ? reader["LicenseNumber"].ToString() : string.Empty;
+            r.LicenseDocumentUrl = HasColumn(reader, "LicenseDocumentUrl") && reader["LicenseDocumentUrl"] != DBNull.Value ? reader["LicenseDocumentUrl"].ToString() : string.Empty;
+            r.CurrentStatus = HasColumn(reader, "CurrentStatus") && reader["CurrentStatus"] != DBNull.Value ? reader["CurrentStatus"].ToString() : "Available";
+            r.IsActive = !HasColumn(reader, "IsActive") || reader["IsActive"] == DBNull.Value || Convert.ToBoolean(reader["IsActive"]);
+            return r;
+        }
+
         public Rider Login(string loginId, string password)
         {
             try
@@ -165,19 +187,7 @@ namespace FoodArrival.DAL
                     {
                         if (reader.Read())
                         {
-                            return new Rider
-                            {
-                                RiderId = Convert.ToInt32(reader["RiderId"]),
-                                RiderName = reader["RiderName"].ToString(),
-                                Username = reader["Username"].ToString(),
-                                Email = reader["Email"].ToString(),
-                                PhoneNumber = reader["PhoneNumber"] == DBNull.Value ? string.Empty : reader["PhoneNumber"].ToString(),
-                                VehicleType = reader["VehicleType"] == DBNull.Value ? "Motorbike" : reader["VehicleType"].ToString(),
-                                LicenseNumber = reader["LicenseNumber"] == DBNull.Value ? string.Empty : reader["LicenseNumber"].ToString(),
-                                LicenseDocumentUrl = reader["LicenseDocumentUrl"] == DBNull.Value ? string.Empty : reader["LicenseDocumentUrl"].ToString(),
-                                CurrentStatus = reader["CurrentStatus"].ToString(),
-                                IsActive = Convert.ToBoolean(reader["IsActive"])
-                            };
+                            return MapRider(reader);
                         }
                     }
                 }
