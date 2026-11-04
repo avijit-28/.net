@@ -595,7 +595,7 @@ CREATE PROCEDURE dbo.sp_Rider_GetAffiliations
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT a.AffiliationId, a.RiderId, a.RestaurantId, a.IsVerified, a.VerifiedByRole, a.VerifiedAt, a.CreatedAt,
+    SELECT a.AffiliationId, a.RiderId, a.RestaurantId, a.IsVerified, a.VerifiedByRole, a.VerifiedAt, a.AffiliatedAt,
            r.RestaurantName, r.OwnerName, r.Address AS RestaurantAddress, r.PhoneNumber AS RestaurantPhone
     FROM dbo.RiderRestaurantAffiliations a
     INNER JOIN dbo.Restaurants r ON a.RestaurantId = r.RestaurantId
@@ -611,7 +611,7 @@ CREATE PROCEDURE dbo.sp_Rider_GetByRestaurant
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT a.AffiliationId, a.RiderId, a.RestaurantId, a.IsVerified, a.VerifiedByRole, a.VerifiedAt, a.CreatedAt,
+    SELECT a.AffiliationId, a.RiderId, a.RestaurantId, a.IsVerified, a.VerifiedByRole, a.VerifiedAt, a.AffiliatedAt,
            rd.RiderName, rd.PhoneNumber, rd.VehicleType, rd.LicenseNumber, rd.LicenseDocumentUrl, rd.CurrentStatus
     FROM dbo.RiderRestaurantAffiliations a
     INNER JOIN dbo.Riders rd ON a.RiderId = rd.RiderId
@@ -626,14 +626,14 @@ CREATE PROCEDURE dbo.sp_Rider_GetPendingAffiliations
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT a.AffiliationId, a.RiderId, a.RestaurantId, a.IsVerified, a.CreatedAt,
+    SELECT a.AffiliationId, a.RiderId, a.RestaurantId, a.IsVerified, a.AffiliatedAt,
            rd.RiderName, rd.PhoneNumber, rd.VehicleType, rd.LicenseNumber, rd.LicenseDocumentUrl,
            r.RestaurantName
     FROM dbo.RiderRestaurantAffiliations a
     INNER JOIN dbo.Riders rd ON a.RiderId = rd.RiderId
     INNER JOIN dbo.Restaurants r ON a.RestaurantId = r.RestaurantId
     WHERE a.IsVerified = 0
-    ORDER BY a.CreatedAt ASC;
+    ORDER BY a.AffiliatedAt ASC;
 END;
 GO
 
