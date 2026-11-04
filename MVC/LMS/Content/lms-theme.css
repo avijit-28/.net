@@ -2324,6 +2324,113 @@ body.page-instructor-management .table th {
     background: #0B3445 !important;
 }
 
+/* Universal Modals Dark Theme */
+.modal-content {
+    background: #062330 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
+}
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
+}
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(4, 24, 34, 0.6) !important;
+}
+.modal-title, .modal-title * {
+    color: #FFFFFF !important;
+}
+.modal .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%) !important;
+}
+.modal .form-control,
+.modal .form-select {
+    background-color: rgba(4, 24, 34, 0.85) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+.modal .form-control:focus,
+.modal .form-select:focus {
+    background-color: rgba(4, 24, 34, 0.95) !important;
+    border-color: #FF7A18 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 122, 24, 0.25) !important;
+}
+.modal .form-control::placeholder {
+    color: #64748B !important;
+}
+.modal label,
+.modal .form-label,
+.modal .form-check-label {
+    color: #E2E8F0 !important;
+}
+.modal .p-3.bg-light,
+.modal .bg-light {
+    background: rgba(11, 52, 69, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #FFFFFF !important;
+}
+
+/* Universal Dark Success & Info Alerts */
+body.page-instructor-management .alert-success,
+body.page-instructor-dashboard .alert-success,
+body.page-admin-dashboard .alert-success,
+body.page-admin-management .alert-success {
+    background: rgba(53, 201, 138, 0.15) !important;
+    border: 1px solid rgba(53, 201, 138, 0.35) !important;
+    border-left: 5px solid #35C98A !important;
+    color: #35C98A !important;
+    backdrop-filter: blur(8px);
+}
+body.page-instructor-management .alert-success *,
+body.page-instructor-dashboard .alert-success *,
+body.page-admin-dashboard .alert-success *,
+body.page-admin-management .alert-success * {
+    color: #35C98A !important;
+}
+
+/* Universal Badges & Empty State Circles */
+body.page-instructor-management .badge.bg-light,
+body.page-instructor-dashboard .badge.bg-light,
+body.page-instructor-management .badge.bg-secondary-subtle,
+body.page-admin-dashboard .badge.bg-light,
+body.page-admin-management .badge.bg-light {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #E2E8F0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+body.page-instructor-management .rounded-circle.bg-light,
+body.page-instructor-dashboard .rounded-circle.bg-light,
+body.page-admin-dashboard .rounded-circle.bg-light,
+body.page-admin-management .rounded-circle.bg-light {
+    background: rgba(39, 184, 214, 0.12) !important;
+    border: 1px solid rgba(39, 184, 214, 0.3) !important;
+    color: #27B8D6 !important;
+}
+body.page-instructor-management .rounded-circle.bg-light i,
+body.page-instructor-dashboard .rounded-circle.bg-light i,
+body.page-admin-dashboard .rounded-circle.bg-light i,
+body.page-admin-management .rounded-circle.bg-light i {
+    color: #27B8D6 !important;
+}
+
+/* Instructor & Admin Dropdown & Action Buttons */
+body.page-instructor-management .btn-light,
+body.page-instructor-dashboard .btn-light,
+body.page-admin-management .btn-light {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+body.page-instructor-management .btn-light:hover,
+body.page-admin-management .btn-light:hover {
+    background: rgba(255, 255, 255, 0.18) !important;
+    color: #FFFFFF !important;
+}
+
 /* --------------------------------------------------------------------------
    14. Admin Dashboard: Enterprise Command Center
    -------------------------------------------------------------------------- */

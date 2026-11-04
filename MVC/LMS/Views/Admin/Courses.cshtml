@@ -25,7 +25,7 @@
                 <span class="badge badge-primary-subtle px-3 py-1 rounded-pill fw-semibold">
                     <span class="pulse-dot pulse-primary"></span> Curriculum Management
                 </span>
-                <span class="badge bg-light text-muted border rounded-pill px-2 py-1 small">
+                <span class="badge rounded-pill px-3 py-1 small" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #94A3B8;">
                     Admin Center
                 </span>
             </div>
@@ -217,7 +217,7 @@
                                 </span>
                             </td>
                             <td>
-                                <span class="badge bg-light text-dark border rounded-pill px-2 py-1 small">
+                                <span class="badge rounded-pill px-2 py-1 small" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #E2E8F0;">
                                     @course.Level
                                 </span>
                             </td>
@@ -275,10 +275,10 @@
                                     {
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="courseId" value="@course.CourseId" />
-                                        <select name="status" class="form-select form-select-sm rounded-pill px-2 py-1 border-secondary-subtle small me-1" style="width: 105px; font-size: 12px;" onchange="this.form.submit();" title="Quick change course publication state">
-                                            <option value="Published" @(course.Status == "Published" ? "selected" : "")>Published</option>
-                                            <option value="Draft" @(course.Status == "Draft" ? "selected" : "")>Draft</option>
-                                            <option value="Archived" @(course.Status == "Archived" ? "selected" : "")>Archived</option>
+                                        <select name="status" class="form-select form-select-sm rounded-pill px-2 py-1 small me-1 text-white" style="width: 105px; font-size: 12px; background: rgba(6, 35, 48, 0.95); border: 1px solid rgba(255, 255, 255, 0.2);" onchange="this.form.submit();" title="Quick change course publication state">
+                                            <option value="Published" style="background: #062330;" @(course.Status == "Published" ? "selected" : "")>Published</option>
+                                            <option value="Draft" style="background: #062330;" @(course.Status == "Draft" ? "selected" : "")>Draft</option>
+                                            <option value="Archived" style="background: #062330;" @(course.Status == "Archived" ? "selected" : "")>Archived</option>
                                         </select>
                                     }
                                 </div>

@@ -2,6 +2,27 @@
 @{
     Layout = null;
     string instructorName = !string.IsNullOrWhiteSpace(Model.InstructorName) ? Model.InstructorName : "Marcus Holloway";
+    string instructorSigLocal = null;
+    if (!string.IsNullOrWhiteSpace(Model.InstructorSignaturePath))
+    {
+        try
+        {
+            if (Model.InstructorSignaturePath.StartsWith("~") || Model.InstructorSignaturePath.StartsWith("/"))
+            {
+                var vPath = Model.InstructorSignaturePath.StartsWith("~") ? Model.InstructorSignaturePath : "~" + Model.InstructorSignaturePath;
+                var pPath = Server.MapPath(vPath);
+                if (System.IO.File.Exists(pPath))
+                {
+                    instructorSigLocal = pPath;
+                }
+            }
+            else if (System.IO.File.Exists(Model.InstructorSignaturePath))
+            {
+                instructorSigLocal = Model.InstructorSignaturePath;
+            }
+        }
+        catch { }
+    }
 }
 <!DOCTYPE html>
 <html>
@@ -222,7 +243,11 @@
 
                 <div class="sig-col">
                     <div class="sig-svg">
-                        @if (!string.IsNullOrWhiteSpace(Model.InstructorSignaturePath))
+                        @if (!string.IsNullOrWhiteSpace(instructorSigLocal))
+                        {
+                            <img src="@instructorSigLocal" alt="@instructorName" style="max-height: 44px; max-width: 170px; object-fit: contain;" />
+                        }
+                        else if (!string.IsNullOrWhiteSpace(Model.InstructorSignaturePath))
                         {
                             <img src="@Model.InstructorSignaturePath" alt="@instructorName" style="max-height: 44px; max-width: 170px; object-fit: contain;" />
                         }

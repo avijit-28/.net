@@ -152,7 +152,8 @@
                     <div class="mb-1" style="height: 52px; display: flex; align-items: flex-end; justify-content: center;">
                         @if (!string.IsNullOrWhiteSpace(Model.InstructorSignaturePath))
                         {
-                            <img src="@Model.InstructorSignaturePath" alt="@instructorName Signature" style="max-height: 50px; max-width: 190px; object-fit: contain;" />
+                            var sigSrc = Model.InstructorSignaturePath.StartsWith("~") ? Model.InstructorSignaturePath : (Model.InstructorSignaturePath.StartsWith("/") ? Model.InstructorSignaturePath : "~/" + Model.InstructorSignaturePath);
+                            <img src="@Url.Content(sigSrc)" alt="@instructorName Signature" style="max-height: 50px; max-width: 190px; object-fit: contain;" />
                         }
                         else
                         {

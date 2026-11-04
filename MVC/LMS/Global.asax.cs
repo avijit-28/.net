@@ -39,17 +39,22 @@ namespace LMS
         protected void Application_Error(object sender, EventArgs e)
         {
             var exception = Server.GetLastError();
-            if (exception is HttpAntiForgeryException)
+            var baseException = exception?.GetBaseException();
+            if (exception is HttpAntiForgeryException || 
+                baseException is HttpAntiForgeryException ||
+                (exception?.Message != null && exception.Message.Contains("anti-forgery")) ||
+                (baseException?.Message != null && baseException.Message.Contains("anti-forgery")))
             {
                 Server.ClearError();
                 try
                 {
-                    var authManager = HttpContext.Current.GetOwinContext().Authentication;
-                    authManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                    var authManager = HttpContext.Current?.GetOwinContext()?.Authentication;
+                    authManager?.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
                 }
                 catch { }
 
                 Response.Redirect("~/Account/Login?antiforgery=renew");
+                return;
             }
         }
     }
