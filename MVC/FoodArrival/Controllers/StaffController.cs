@@ -178,31 +178,7 @@ namespace FoodArrival.Controllers
                 }
             }
 
-            // If still no rider assigned, trigger intelligent rider allocation now!
-            if (!riderId.HasValue)
-            {
-                var allocService = new FoodArrival.Services.RiderAllocationService();
-                var allocRes = allocService.AllocateRiders(orderId);
-                if (allocRes.IsSuccessful)
-                {
-                    using (var conn = DbHelper.GetConnection())
-                    using (var cmd = new SqlCommand("dbo.sp_Order_SyncAssignedRider", conn))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@OrderId", orderId);
-                        var outRider = new SqlParameter("@AssignedRiderId", SqlDbType.Int) { Direction = ParameterDirection.Output };
-                        cmd.Parameters.Add(outRider);
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-
-                        if (outRider.Value != DBNull.Value && outRider.Value != null)
-                        {
-                            riderId = Convert.ToInt32(outRider.Value);
-                        }
-                    }
-                }
-            }
-
+            // When staff marks Food Ready, the order is made available in the affiliated riders' Ready for Pickup queue!
             string orderNum = order != null && !string.IsNullOrEmpty(order.OrderNumber) ? order.OrderNumber : ($"#FD{1000 + orderId}");
 
             if (status == "ReadyForPickup")
