@@ -228,6 +228,8 @@ namespace FoodArrival.DAL
                 Address = firstRow["Address"] != DBNull.Value ? firstRow["Address"].ToString() : null,
                 TotalAmount = Convert.ToDecimal(firstRow["TotalAmount"]),
                 OrderStatus = firstRow["OrderStatus"].ToString(),
+                DeliveryStatus = firstRow.Table.Columns.Contains("DeliveryStatus") && firstRow["DeliveryStatus"] != DBNull.Value ? firstRow["DeliveryStatus"].ToString() : "Pending",
+                DeliveryOtp = firstRow.Table.Columns.Contains("DeliveryOtp") && firstRow["DeliveryOtp"] != DBNull.Value ? firstRow["DeliveryOtp"].ToString() : null,
                 OrderedAt = Convert.ToDateTime(firstRow["OrderedAt"]),
                 ProcessedAt = firstRow["ProcessedAt"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(firstRow["ProcessedAt"]) : null,
                 RejectionReason = firstRow["RejectionReason"] != DBNull.Value ? firstRow["RejectionReason"].ToString() : null
