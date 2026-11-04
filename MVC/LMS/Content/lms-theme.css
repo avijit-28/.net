@@ -2598,13 +2598,18 @@ body.page-admin-management code {
 /* --------------------------------------------------------------------------
    16. Authentication (Login): Gateway to Learning Split Screen
    -------------------------------------------------------------------------- */
-body.page-login {
+body.page-login,
+body.page-account,
+body.page-forgot-password,
+body.page-reset-password {
     background-color: #041822 !important;
     background-image:
-        radial-gradient(circle at 25% 30%, rgba(255, 122, 24, 0.20), transparent 45%),
-        radial-gradient(circle at 75% 70%, rgba(39, 184, 214, 0.18), transparent 40%),
+        radial-gradient(circle at 20% 25%, rgba(39, 184, 214, 0.16), transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(255, 122, 24, 0.18), transparent 40%),
         linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%) !important;
     background-attachment: fixed;
+    color: #E2E8F0 !important;
+    min-height: 100vh;
 }
 body.page-login .login-split-card {
     background: #062330;

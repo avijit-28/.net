@@ -29,10 +29,11 @@
         else if (activeCtrl == "Instructor" && (activeAct == "Assignments" || activeAct == "Grade" || activeAct == "Submissions")) { pageClass = "page-assignment"; }
         else if (activeCtrl == "Admin" && activeAct == "Index") { pageClass = "page-admin-dashboard"; }
         else if (activeCtrl == "Admin") { pageClass = "page-admin-management"; }
-        else if (activeCtrl == "Account" && activeAct == "Login") { pageClass = "page-login"; }
+        else if (activeCtrl == "Account" && (activeAct == "Login" || activeAct == "ForgotPassword" || activeAct == "ForgotPasswordConfirmation" || activeAct == "ResetPassword" || activeAct == "ResetPasswordConfirmation" || activeAct == "ResetPasswordError" || activeAct == "PendingApproval")) { pageClass = "page-login"; }
         else if (activeCtrl == "Account" && activeAct == "Register") { pageClass = "page-register"; }
         else if (activeCtrl == "Account" && (activeAct == "Profile" || activeAct == "ChangePassword")) { pageClass = "page-profile"; }
         else if (activeCtrl == "Notifications") { pageClass = "page-notifications"; }
+        else if (activeCtrl == "Account") { pageClass = "page-login"; }
         else { pageClass = "page-" + activeCtrl.ToLower(); }
     }
 }
@@ -58,7 +59,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- EduPlatform Master LMS Theme -->
-    <link href="~/Content/lms-theme.css?v=20261104_0918" rel="stylesheet" />
+    <link href="~/Content/lms-theme.css?v=20261104_0945" rel="stylesheet" />
     
     @RenderSection("Styles", required: false)
 </head>
