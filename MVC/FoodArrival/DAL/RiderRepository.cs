@@ -557,8 +557,9 @@ namespace FoodArrival.DAL
             try
             {
                 using (var conn = DbHelper.GetConnection())
-                using (var cmd = new SqlCommand("SELECT DeliveryOtp FROM dbo.Orders WHERE OrderId = @OrderId", conn))
+                using (var cmd = new SqlCommand("dbo.sp_Order_GetDeliveryOtp", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@OrderId", orderId);
                     conn.Open();
                     var obj = cmd.ExecuteScalar();
