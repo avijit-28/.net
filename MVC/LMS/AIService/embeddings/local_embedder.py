@@ -28,6 +28,10 @@ class LocalEmbedder:
             logger.warning(f"SentenceTransformer not yet available: {e}. Utilizing lightweight vectorizer.")
             self._model = None
 
+    @property
+    def dimension(self) -> int:
+        return settings.EMBEDDING_DIMENSION
+
     def embed_text(self, text: str) -> List[float]:
         """Generates a dense vector for a single query."""
         if self._model:
