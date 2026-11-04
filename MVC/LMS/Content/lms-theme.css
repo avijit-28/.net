@@ -2972,3 +2972,85 @@ body.page-contact .form-control:focus {
 body.page-contact .form-control::placeholder {
     color: rgba(255, 255, 255, 0.45) !important;
 }
+
+/* --------------------------------------------------------------------------
+   Universal Button Hover Dark-Theme Rules
+   Ensures buttons NEVER flash white / light on hover, focus, or active
+   -------------------------------------------------------------------------- */
+.btn-outline-light:hover,
+.btn-outline-light:focus,
+.btn-outline-light:active,
+.btn-outline-light.active,
+.show > .btn-outline-light.dropdown-toggle,
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus,
+.btn-outline-secondary:active,
+.btn-group .btn-outline-light:hover,
+.btn-group .btn-outline-light:focus,
+.studio-action-btn:hover,
+.studio-action-btn:focus,
+.studio-action-btn:active {
+    background: rgba(39, 184, 214, 0.22) !important;
+    border-color: #27B8D6 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 12px rgba(39, 184, 214, 0.35) !important;
+}
+
+.studio-action-btn:hover *,
+.btn-group .btn-outline-light:hover *,
+.table .btn-outline-light:hover * {
+    color: #FFFFFF !important;
+}
+
+/* Modals High Specificity Safeguards */
+.modal-content,
+.modal-body,
+.modal-header,
+.modal-footer {
+    color: #FFFFFF !important;
+}
+
+.modal-content {
+    background: #062330 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75) !important;
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    background: rgba(4, 24, 34, 0.7) !important;
+}
+
+.modal .form-control,
+.modal .form-select,
+.modal textarea {
+    background: rgba(4, 24, 34, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+}
+
+.modal .form-control:focus,
+.modal .form-select:focus,
+.modal textarea:focus {
+    background: rgba(4, 24, 34, 0.95) !important;
+    border-color: #FF7A18 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 0 3px rgba(255, 122, 24, 0.25) !important;
+}
+
+.modal label,
+.modal .form-label {
+    color: #FFFFFF !important;
+}
+
+.modal .text-dark {
+    color: #FFFFFF !important;
+}
+
+.modal .text-muted {
+    color: #94A3B8 !important;
+}

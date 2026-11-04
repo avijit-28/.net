@@ -90,10 +90,10 @@
 <!-- Add Question Modal -->
 <div class="modal fade" id="addQuestionModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-header border-bottom py-3">
-                <h5 class="modal-title fw-bold text-dark"><i class="bi bi-plus-circle me-2 text-primary"></i>Add Question with 4 Multiple-Choice Options</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow-lg rounded-4" style="background: #062330; border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;">
+            <div class="modal-header border-bottom py-3" style="border-color: rgba(255, 255, 255, 0.1) !important;">
+                <h5 class="modal-title fw-bold text-white"><i class="bi bi-plus-circle me-2 text-warning"></i>Add Question with 4 Multiple-Choice Options</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             @using (Html.BeginForm("CreateQuestion", "Instructor", FormMethod.Post))
             {
@@ -101,48 +101,48 @@
                 <input type="hidden" name="quizId" value="@(quiz?.QuizId ?? 0)" />
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label fw-bold small text-dark">Question Prompt</label>
-                        <textarea name="questionText" class="form-control" rows="3" placeholder="e.g. Which of the following data structures provides O(1) average time complexity for key-based lookups?" required></textarea>
+                        <label class="form-label fw-bold small text-white">Question Prompt</label>
+                        <textarea name="questionText" class="form-control" rows="3" placeholder="e.g. Which of the following data structures provides O(1) average time complexity for key-based lookups?" required style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;"></textarea>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-bold small text-dark">Allocated Marks</label>
-                        <input type="number" name="marks" class="form-control" value="1" min="1" required style="max-width: 150px;" />
+                        <label class="form-label fw-bold small text-white">Allocated Marks</label>
+                        <input type="number" name="marks" class="form-control" value="1" min="1" required style="max-width: 150px; background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;" />
                     </div>
 
-                    <label class="form-label fw-bold small text-dark mb-2">Answer Choices:</label>
+                    <label class="form-label fw-bold small text-white mb-2">Answer Choices:</label>
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">Option A</label>
-                            <input type="text" name="opt1" class="form-control" placeholder="Choice 1" required />
+                            <label class="form-label small" style="color: #94A3B8;">Option A</label>
+                            <input type="text" name="opt1" class="form-control" placeholder="Choice 1" required style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;" />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">Option B</label>
-                            <input type="text" name="opt2" class="form-control" placeholder="Choice 2" required />
+                            <label class="form-label small" style="color: #94A3B8;">Option B</label>
+                            <input type="text" name="opt2" class="form-control" placeholder="Choice 2" required style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;" />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">Option C</label>
-                            <input type="text" name="opt3" class="form-control" placeholder="Choice 3" required />
+                            <label class="form-label small" style="color: #94A3B8;">Option C</label>
+                            <input type="text" name="opt3" class="form-control" placeholder="Choice 3" required style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;" />
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label small text-muted">Option D</label>
-                            <input type="text" name="opt4" class="form-control" placeholder="Choice 4" required />
+                            <label class="form-label small" style="color: #94A3B8;">Option D</label>
+                            <input type="text" name="opt4" class="form-control" placeholder="Choice 4" required style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;" />
                         </div>
                     </div>
 
-                    <div class="p-3 bg-light rounded-3 border">
+                    <div class="p-3 rounded-3" style="background: rgba(4, 24, 34, 0.7); border: 1px solid rgba(255, 255, 255, 0.15);">
                         <label class="form-label fw-bold small text-success mb-1"><i class="bi bi-check-circle-fill me-1"></i>Select Correct Answer Key:</label>
-                        <select name="correctOption" class="form-select border-success fw-bold">
-                            <option value="1">Option A is the Correct Answer</option>
-                            <option value="2">Option B is the Correct Answer</option>
-                            <option value="3">Option C is the Correct Answer</option>
-                            <option value="4">Option D is the Correct Answer</option>
+                        <select name="correctOption" class="form-select border-success fw-bold text-white" style="background: rgba(6, 35, 48, 0.95); border: 1px solid rgba(53, 201, 138, 0.5);">
+                            <option value="1" style="background: #062330;">Option A is the Correct Answer</option>
+                            <option value="2" style="background: #062330;">Option B is the Correct Answer</option>
+                            <option value="3" style="background: #062330;">Option C is the Correct Answer</option>
+                            <option value="4" style="background: #062330;">Option D is the Correct Answer</option>
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer border-top py-3">
+                <div class="modal-footer border-top py-3" style="border-color: rgba(255, 255, 255, 0.1) !important;">
                     <button type="button" class="btn btn-secondary rounded-pill px-3" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Save Question</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" style="background-color: #FF7A18 !important; border-color: #FF7A18 !important;">Save Question</button>
                 </div>
             }
         </div>
