@@ -1,36 +1,103 @@
-﻿<!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - ASP.NET Web API Practice Hub</title>
     @Styles.Render("~/Content/css")
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            --card-hover: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar-custom {
+            background: #0f172a;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .main-content {
+            flex: 1;
+        }
+        .card-modern {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #ffffff;
+            transition: var(--card-hover);
+        }
+        .card-modern:hover {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+        .badge-method {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+        .badge-get { background-color: #0284c7; color: white; }
+        .badge-post { background-color: #16a34a; color: white; }
+        .badge-put { background-color: #d97706; color: white; }
+        .badge-delete { background-color: #dc2626; color: white; }
+        pre.code-response {
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+    </style>
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3">
         <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+                <span class="badge bg-primary px-2 py-1"><i class="bi bi-cpu-fill"></i></span>
+                <span>Web API Practice Hub</span>
+            </a>
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, new { @class = "nav-link" })</li>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/"><i class="bi bi-house-door me-1"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#project1"><i class="bi bi-layers me-1"></i> Project 1 (3-Layer API)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Customer/Index"><i class="bi bi-people me-1"></i> Project 2 (Customer MVC)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Help"><i class="bi bi-journal-code me-1"></i> API Documentation</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
-    <div class="container body-content">
+
+    <div class="main-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
     </div>
+
+    <footer class="bg-white border-top py-4 mt-5 text-center text-muted">
+        <div class="container">
+            <p class="mb-1 fw-semibold text-secondary">ASP.NET Web API 2 Practice Projects &mdash; Clean 3-Layer Architecture &amp; ADO.NET</p>
+            <small class="text-secondary">&copy; @DateTime.Now.Year &bull; Project 1 (Users API) &bull; Project 2 (Customer API &amp; MVC Client)</small>
+        </div>
+    </footer>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
