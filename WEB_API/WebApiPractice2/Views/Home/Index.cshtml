@@ -1,26 +1,876 @@
-﻿<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="aspnetTitle">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>ASP.NET Web API is a framework that makes it easy to build HTTP services that reach
-            a broad range of clients, including browsers and mobile devices. ASP.NET Web API
-            is an ideal platform for building RESTful applications on the .NET Framework.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301870">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301871">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
-        </section>>
+@{
+    ViewBag.Title = "Interactive Web API Practice Hub";
+}
+
+<div class="container py-4">
+
+    <!-- Hero Section -->
+    <div class="p-4 p-md-5 mb-4 rounded-4 text-white shadow-sm" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-left: 6px solid #3b82f6;">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <span class="badge bg-primary px-3 py-2 text-uppercase fw-bold mb-3 tracking-wide">ASP.NET Web API 2 Practice Showcase</span>
+                <h1 class="display-6 fw-bold mb-2">Web API Practice Projects</h1>
+                <p class="lead text-light opacity-75 mb-3">
+                    A visual, interactive frontend demonstrating the 2 practice projects from the guide:
+                    <strong>Project 1 (3-Layer Architecture)</strong> and <strong>Project 2 (ADO.NET Web API &amp; MVC Client)</strong>.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="#pills-project1" class="btn btn-primary" onclick="bootstrap.Tab.getInstance(document.querySelector('#tab-p1'))?.show() || new bootstrap.Tab(document.querySelector('#tab-p1')).show();">
+                        <i class="bi bi-layers-fill me-1"></i> Project 1: 3-Layer Users API
+                    </a>
+                    <a href="#pills-project2" class="btn btn-outline-light" onclick="bootstrap.Tab.getInstance(document.querySelector('#tab-p2'))?.show() || new bootstrap.Tab(document.querySelector('#tab-p2')).show();">
+                        <i class="bi bi-people-fill me-1"></i> Project 2: Customer ADO.NET &amp; MVC
+                    </a>
+                    <a href="/Customer/Index" class="btn btn-warning text-dark fw-semibold">
+                        <i class="bi bi-window-sidebar me-1"></i> Open MVC Client Pages
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center d-none d-lg-block">
+                <div class="p-3 rounded-3 bg-secondary bg-opacity-25 border border-secondary border-opacity-25">
+                    <div class="fs-1 text-info mb-1"><i class="bi bi-diagram-3-fill"></i></div>
+                    <div class="fw-bold">Connected Database</div>
+                    <small class="text-light opacity-75">SQL Server <code>WEBAPI_DB</code></small>
+                    <div class="mt-2">
+                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> LocalDB Ready</span>
+                        <span class="badge bg-secondary">Stored Procedures Loaded</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</main>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-pills nav-fill mb-4 bg-white p-2 rounded-3 shadow-sm border" id="projectTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active py-2 fw-semibold" id="tab-p1" data-bs-toggle="pill" data-bs-target="#pills-project1" type="button" role="tab">
+                <i class="bi bi-layers me-1"></i> Project 1: 3-Layer Architecture (Users API)
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link py-2 fw-semibold" id="tab-p2" data-bs-toggle="pill" data-bs-target="#pills-project2" type="button" role="tab">
+                <i class="bi bi-person-badge me-1"></i> Project 2: ADO.NET &amp; MVC Client (Customers)
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link py-2 fw-semibold" id="tab-guide" data-bs-toggle="pill" data-bs-target="#pills-guide" type="button" role="tab">
+                <i class="bi bi-book-half me-1"></i> Quick Architecture &amp; API Guide
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="projectTabsContent">
+
+        <!-- ========================================== -->
+        <!-- TAB 1: PROJECT 1 (3-LAYER ARCHITECTURE)    -->
+        <!-- ========================================== -->
+        <div class="tab-pane fade show active" id="pills-project1" role="tabpanel">
+
+            <!-- Architecture Flow Banner -->
+            <div class="card-modern p-4 mb-4">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-diagram-3 text-primary me-2"></i>How 3-Layer Architecture Works Here:</h5>
+                <div class="row g-2 text-center align-items-center">
+                    <div class="col-md-3">
+                        <div class="p-3 rounded-3 bg-light border">
+                            <span class="badge bg-primary mb-2">1. API Controller</span>
+                            <h6 class="fw-bold mb-1">UserController</h6>
+                            <small class="text-muted">Handles HTTP Requests &amp; formats responses</small>
+                        </div>
+                    </div>
+                    <div class="col-md-1 text-muted fs-4 d-none d-md-block">&#10132;</div>
+                    <div class="col-md-3">
+                        <div class="p-3 rounded-3 bg-light border">
+                            <span class="badge bg-success mb-2">2. BLL (Business Logic)</span>
+                            <h6 class="fw-bold mb-1">UserService</h6>
+                            <small class="text-muted">Processes logic &amp; prepares SQL parameters</small>
+                        </div>
+                    </div>
+                    <div class="col-md-1 text-muted fs-4 d-none d-md-block">&#10132;</div>
+                    <div class="col-md-3">
+                        <div class="p-3 rounded-3 bg-light border">
+                            <span class="badge bg-warning text-dark mb-2">3. DAL (Data Access)</span>
+                            <h6 class="fw-bold mb-1">DBFunction</h6>
+                            <small class="text-muted">Executes Stored Procs via ADO.NET</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operations Grid -->
+            <div class="row g-4 mb-4">
+                
+                <!-- 1. Login / Verify User (GET) -->
+                <div class="col-lg-6">
+                    <div class="card-modern h-100 p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">1. User Login (GET)</h5>
+                            <span class="badge badge-method badge-get">GET</span>
+                        </div>
+                        <p class="text-muted small mb-3">Calls <code>api/User/Loging?UserID={id}&amp;UserPassword={pwd}</code> to verify user credentials using <code>spGetLoginDetails</code>.</p>
+                        <form id="formLogin" onsubmit="event.preventDefault(); handleUserLogin();">
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <label class="form-label small fw-semibold">User ID</label>
+                                    <input type="number" id="loginUserId" class="form-control" value="101" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-semibold">Password</label>
+                                    <input type="text" id="loginPassword" class="form-control" value="pass123" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Test Login Request
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 2. Register / Insert User (POST) -->
+                <div class="col-lg-6">
+                    <div class="card-modern h-100 p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">2. Register User (POST)</h5>
+                            <span class="badge badge-method badge-post">POST</span>
+                        </div>
+                        <p class="text-muted small mb-3">Calls <code>api/User/InsertUser</code> with JSON body to execute stored proc <code>spInsertUsers</code>.</p>
+                        <form id="formInsertUser" onsubmit="event.preventDefault(); handleInsertUser();">
+                            <div class="row g-2 mb-2">
+                                <div class="col-4">
+                                    <label class="form-label small fw-semibold">User ID</label>
+                                    <input type="number" id="insertUserId" class="form-control" placeholder="e.g. 104" required>
+                                </div>
+                                <div class="col-8">
+                                    <label class="form-label small fw-semibold">Username</label>
+                                    <input type="text" id="insertUserName" class="form-control" placeholder="e.g. mark_twain" required>
+                                </div>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-4">
+                                    <label class="form-label small fw-semibold">Role</label>
+                                    <select id="insertUserRole" class="form-select">
+                                        <option value="User">User</option>
+                                        <option value="Admin">Admin</option>
+                                        <option value="Manager">Manager</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label small fw-semibold">Password</label>
+                                    <input type="password" id="insertPassword" class="form-control" placeholder="pwd123" required>
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label small fw-semibold">Email</label>
+                                    <input type="email" id="insertEmail" class="form-control" placeholder="user@corp.com" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-person-plus-fill me-1"></i> Send POST: Insert User
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 3. Update User (PUT) -->
+                <div class="col-lg-6">
+                    <div class="card-modern h-100 p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">3. Update User (PUT)</h5>
+                            <span class="badge badge-method badge-put">PUT</span>
+                        </div>
+                        <p class="text-muted small mb-3">Calls <code>api/User/UpdateUser?UserID={id}</code> with updated details using <code>spUpdateUsers</code>.</p>
+                        <form id="formUpdateUser" onsubmit="event.preventDefault(); handleUpdateUser();">
+                            <div class="row g-2 mb-2">
+                                <div class="col-4">
+                                    <label class="form-label small fw-semibold">Target User ID</label>
+                                    <input type="number" id="updateUserId" class="form-control" value="101" required>
+                                </div>
+                                <div class="col-8">
+                                    <label class="form-label small fw-semibold">New Username</label>
+                                    <input type="text" id="updateUserName" class="form-control" value="john_doe_updated" required>
+                                </div>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-4">
+                                    <label class="form-label small fw-semibold">Role</label>
+                                    <input type="text" id="updateUserRole" class="form-control" value="Senior Admin">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label small fw-semibold">Password</label>
+                                    <input type="text" id="updatePassword" class="form-control" value="newpass123">
+                                </div>
+                                <div class="col-4">
+                                    <label class="form-label small fw-semibold">Email</label>
+                                    <input type="email" id="updateEmail" class="form-control" value="john.new@example.com">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-warning w-100 text-dark fw-semibold">
+                                <i class="bi bi-pencil-square me-1"></i> Send PUT: Update User
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 4. Delete User (DELETE) -->
+                <div class="col-lg-6">
+                    <div class="card-modern h-100 p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">4. Delete User (DELETE)</h5>
+                            <span class="badge badge-method badge-delete">DELETE</span>
+                        </div>
+                        <p class="text-muted small mb-3">Calls <code>api/User/DeleteUser?UserID={id}</code> to execute stored procedure <code>spDeleteUser</code>.</p>
+                        <form id="formDeleteUser" onsubmit="event.preventDefault(); handleDeleteUser();">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">User ID to Delete</label>
+                                <input type="number" id="deleteUserId" class="form-control" placeholder="e.g. 102" required>
+                            </div>
+                            <button type="submit" class="btn btn-outline-danger w-100">
+                                <i class="bi bi-trash3-fill me-1"></i> Send DELETE: Remove User
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Live Users Table -->
+            <div class="card-modern mb-4">
+                <div class="p-3 bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-table text-primary me-2"></i>Live Users Database</h5>
+                        <small class="text-muted">Table <code>Users</code> in SQL Server</small>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="loadUsersTable()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Refresh Users List
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="usersTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">User ID</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Role</th>
+                                <th>Email ID</th>
+                                <th class="text-end pe-3">Quick Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Response Console -->
+            <div class="card-modern p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold mb-0 text-secondary"><i class="bi bi-terminal-fill me-2"></i>API Live Request &amp; Response Console</h6>
+                    <span id="responseStatusBadge" class="badge bg-secondary">Awaiting Request</span>
+                </div>
+                <div class="mb-2 small text-muted font-monospace" id="requestUrlInfo">No request sent yet.</div>
+                <pre class="code-response mb-0" id="responseOutput">// Trigger any action above to inspect live JSON response...</pre>
+            </div>
+
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 2: PROJECT 2 (ADO.NET & MVC CLIENT)    -->
+        <!-- ========================================== -->
+        <div class="tab-pane fade" id="pills-project2" role="tabpanel">
+
+            <!-- ADO.NET Architecture Banner -->
+            <div class="card-modern p-4 mb-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="fw-bold text-dark mb-2"><i class="bi bi-hdd-network text-success me-2"></i>Project 2: ADO.NET Web API + ASP.NET MVC Client</h5>
+                        <p class="text-muted mb-0">
+                            Demonstrates direct ADO.NET data access inside <code>CustomerAPIController</code> (using <code>SqlConnection</code>, <code>SqlCommand</code>, output parameters, and <code>SqlDataReader</code>), and an ASP.NET MVC Client (<code>CustomerController</code>) consuming it via <code>HttpClient</code>.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <a href="/Customer/Index" class="btn btn-primary me-2">
+                            <i class="bi bi-table me-1"></i> MVC Customer List
+                        </a>
+                        <a href="/Customer/Create" class="btn btn-success">
+                            <i class="bi bi-plus-circle me-1"></i> MVC Create Form
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer API Interactive Cards -->
+            <div class="row g-4 mb-4">
+
+                <!-- 1. Add Customer (POST) -->
+                <div class="col-lg-6">
+                    <div class="card-modern h-100 p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">Add Customer (POST)</h5>
+                            <span class="badge badge-method badge-post">POST</span>
+                        </div>
+                        <p class="text-muted small mb-3">Calls <code>api/CustomerAPI/InsertCustomer</code>. Stored proc <code>spInsertCustomer</code> outputs new Customer ID.</p>
+                        <form id="formAddCustomer" onsubmit="event.preventDefault(); handleAddCustomer();">
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <label class="form-label small fw-semibold">Customer Name</label>
+                                    <input type="text" id="custName" class="form-control" placeholder="e.g. Rahul Sharma" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-semibold">Mobile Number</label>
+                                    <input type="text" id="custMobile" class="form-control" placeholder="9876543210" required>
+                                </div>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-7">
+                                    <label class="form-label small fw-semibold">Email ID</label>
+                                    <input type="email" id="custEmail" class="form-control" placeholder="rahul@example.com" required>
+                                </div>
+                                <div class="col-5">
+                                    <label class="form-label small fw-semibold">Country</label>
+                                    <input type="text" id="custCountry" class="form-control" placeholder="India" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-person-plus me-1"></i> Insert Customer via API
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 2. Get Customer by ID (GET) -->
+                <div class="col-lg-6">
+                    <div class="card-modern h-100 p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0">Get Customer by ID (GET)</h5>
+                            <span class="badge badge-method badge-get">GET</span>
+                        </div>
+                        <p class="text-muted small mb-3">Calls <code>api/CustomerAPI/GetCustomerByID?id={id}</code> to query with <code>spGetCustomerByID</code>.</p>
+                        <form id="formGetCustomer" onsubmit="event.preventDefault(); handleGetCustomerById();">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Customer ID</label>
+                                <div class="input-group">
+                                    <input type="number" id="searchCustomerId" class="form-control" value="1" required>
+                                    <button class="btn btn-outline-primary" type="submit">
+                                        <i class="bi bi-search me-1"></i> Search
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-light rounded-3 border small" id="customerSearchResult">
+                                <span class="text-muted">Enter an ID and click Search to query customer data...</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Live Customers Table -->
+            <div class="card-modern mb-4">
+                <div class="p-3 bg-white border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-people-fill text-success me-2"></i>Live Customer Directory</h5>
+                        <small class="text-muted">Direct ADO.NET execution of <code>spGetCustomers</code></small>
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary me-2" onclick="loadCustomersTable()">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                        </button>
+                        <a href="/Customer/Create" class="btn btn-sm btn-primary">
+                            <i class="bi bi-plus me-1"></i> MVC Create
+                        </a>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-3">ID</th>
+                                <th>Name</th>
+                                <th>Mobile Number</th>
+                                <th>Email</th>
+                                <th>Country</th>
+                                <th class="text-end pe-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customersTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">Loading customers...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Customer API Response Console -->
+            <div class="card-modern p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold mb-0 text-secondary"><i class="bi bi-terminal-fill me-2"></i>Customer API Response Inspector</h6>
+                    <span id="custResponseStatusBadge" class="badge bg-secondary">Ready</span>
+                </div>
+                <div class="mb-2 small text-muted font-monospace" id="custRequestUrlInfo">Ready to test Customer endpoints.</div>
+                <pre class="code-response mb-0" id="custResponseOutput">// Customer API output will appear here...</pre>
+            </div>
+
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 3: COMPLETE REFERENCE & GUIDE          -->
+        <!-- ========================================== -->
+        <div class="tab-pane fade" id="pills-guide" role="tabpanel">
+
+            <div class="row g-4">
+                
+                <div class="col-lg-6">
+                    <div class="card-modern p-4 h-100">
+                        <h5 class="fw-bold text-primary mb-3"><i class="bi bi-layers-half me-2"></i>What is 3-Layer Architecture?</h5>
+                        <p class="text-muted">
+                            The 3-tier/layer architectural pattern cleanly separates concerns into three distinct layers:
+                        </p>
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item px-0">
+                                <strong class="text-dark">1. BEL (Business Entity Layer):</strong>
+                                <p class="text-muted small mb-0">Holds POCO models (like <code>Users</code> and <code>Customer</code>) that map to database table rows and carry data across layers.</p>
+                            </li>
+                            <li class="list-group-item px-0">
+                                <strong class="text-dark">2. BLL (Business Logic Layer):</strong>
+                                <p class="text-muted small mb-0">Encapsulates business rules and validations (e.g., <code>UserService</code>). It calls the DAL and does not touch SQL directly.</p>
+                            </li>
+                            <li class="list-group-item px-0">
+                                <strong class="text-dark">3. DAL (Data Access Layer):</strong>
+                                <p class="text-muted small mb-0">Responsible exclusively for communicating with the database (e.g., <code>DBFunction</code>) using ADO.NET commands and stored procedures.</p>
+                            </li>
+                        </ul>
+                        <div class="alert alert-info py-2 small mb-0">
+                            <strong>Key Benefit:</strong> Changes in the database or business rules do not break the API or Frontend, ensuring high maintainability and security.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card-modern p-4 h-100">
+                        <h5 class="fw-bold text-success mb-3"><i class="bi bi-code-slash me-2"></i>HTTP Verbs &amp; Parameter Binding</h5>
+                        <p class="text-muted">
+                            RESTful APIs map CRUD operations directly to standard HTTP verbs:
+                        </p>
+                        <div class="table-responsive mb-3">
+                            <table class="table table-bordered table-sm small mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>CRUD Action</th>
+                                        <th>HTTP Verb</th>
+                                        <th>Attribute</th>
+                                        <th>Parameter Source</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Create</strong></td>
+                                        <td><span class="badge badge-method badge-post">POST</span></td>
+                                        <td><code>[HttpPost]</code></td>
+                                        <td><code>[FromBody]</code> (Request payload)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Read</strong></td>
+                                        <td><span class="badge badge-method badge-get">GET</span></td>
+                                        <td><code>[HttpGet]</code></td>
+                                        <td><code>[FromUri]</code> (URL query string)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Update</strong></td>
+                                        <td><span class="badge badge-method badge-put">PUT</span></td>
+                                        <td><code>[HttpPut]</code></td>
+                                        <td>ID in URI + Data in <code>[FromBody]</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Delete</strong></td>
+                                        <td><span class="badge badge-method badge-delete">DELETE</span></td>
+                                        <td><code>[HttpDelete]</code></td>
+                                        <td><code>[FromUri]</code> or route parameter</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-3 bg-light rounded-3 border small">
+                            <strong>Parameter Binding Rule:</strong> Simple types (<code>int</code>, <code>string</code>) default to <code>[FromUri]</code>; Complex types (<code>Users</code>, <code>Customer</code>) default to <code>[FromBody]</code>.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card-modern p-4">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-database-check text-info me-2"></i>Stored Procedures Reference (WEBAPI_DB)</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 bg-light">
+                                    <h6 class="fw-bold text-primary">Project 1 Stored Procedures:</h6>
+                                    <ul class="small mb-0 text-muted">
+                                        <li><code>spGetLoginDetails</code> - Validates UserID &amp; UserPassword.</li>
+                                        <li><code>spInsertUsers</code> - Creates a new user record.</li>
+                                        <li><code>spUpdateUsers</code> - Updates existing user details.</li>
+                                        <li><code>spDeleteUser</code> - Deletes a user by ID.</li>
+                                        <li><code>spGetAllUsers</code> - Retrieves full user list.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3 bg-light">
+                                    <h6 class="fw-bold text-success">Project 2 Stored Procedures:</h6>
+                                    <ul class="small mb-0 text-muted">
+                                        <li><code>spGetCustomers</code> - Fetches all customer records.</li>
+                                        <li><code>spGetCustomerByID</code> - Fetches specific customer by ID.</li>
+                                        <li><code>spInsertCustomer</code> - Inserts customer and returns generated ID via <code>OUTPUT</code>.</li>
+                                        <li><code>spUpdateCustomer</code> - Updates customer data by ID.</li>
+                                        <li><code>spDeleteCustomer</code> - Deletes customer by ID.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Customer Edit Modal -->
+<div class="modal fade" id="customerEditModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title fw-bold" id="customerModalTitle">Edit Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="modalEditCustForm" onsubmit="event.preventDefault(); submitCustomerEditModal();">
+                    <input type="hidden" id="modalCustId">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Name</label>
+                        <input type="text" id="modalCustName" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Mobile Number</label>
+                        <input type="text" id="modalCustMobile" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Email</label>
+                        <input type="email" id="modalCustEmail" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Country</label>
+                        <input type="text" id="modalCustCountry" class="form-control" required>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-warning fw-semibold">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+<script>
+    // --- Helper Functions ---
+    function logResponse(method, url, status, data, isCust = false) {
+        const statusBadge = document.getElementById(isCust ? 'custResponseStatusBadge' : 'responseStatusBadge');
+        const urlInfo = document.getElementById(isCust ? 'custRequestUrlInfo' : 'requestUrlInfo');
+        const output = document.getElementById(isCust ? 'custResponseOutput' : 'responseOutput');
+
+        if (status >= 200 && status < 300) {
+            statusBadge.className = 'badge bg-success';
+            statusBadge.innerText = `HTTP ${status} OK`;
+        } else {
+            statusBadge.className = 'badge bg-danger';
+            statusBadge.innerText = `HTTP ${status} Error`;
+        }
+
+        urlInfo.innerText = `${method} ${url}`;
+        output.innerText = typeof data === 'object' ? JSON.stringify(data, null, 2) : String(data);
+    }
+
+    // ==========================================
+    // PROJECT 1: USERS API HANDLERS
+    // ==========================================
+    function loadUsersTable() {
+        const tbody = document.getElementById('usersTableBody');
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-muted">Refreshing users...</td></tr>';
+        
+        fetch('/api/User/GetAllUsers')
+            .then(res => res.json())
+            .then(users => {
+                if (!users || users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-muted">No users found. Use form above to add one.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = users.map(u => `
+                    <tr>
+                        <td class="ps-3"><span class="badge bg-light text-dark border">#${u.UserID}</span></td>
+                        <td class="fw-semibold text-primary">${u.UserName || ''}</td>
+                        <td><code>•••••••</code></td>
+                        <td><span class="badge bg-secondary">${u.UserRoles || 'User'}</span></td>
+                        <td>${u.UserEmailID || ''}</td>
+                        <td class="text-end pe-3">
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="selectUserForLogin(${u.UserID}, '${u.UserPassword}')">
+                                <i class="bi bi-key-fill"></i> Test Login
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning me-1" onclick="selectUserForUpdate(${u.UserID}, '${u.UserName}', '${u.UserRoles}', '${u.UserEmailID}')">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteUserPrompt(${u.UserID})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            })
+            .catch(err => {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-danger">Error loading users: ${err.message}</td></tr>`;
+            });
+    }
+
+    function selectUserForLogin(id, pwd) {
+        document.getElementById('loginUserId').value = id;
+        document.getElementById('loginPassword').value = pwd;
+        handleUserLogin();
+    }
+
+    function selectUserForUpdate(id, name, role, email) {
+        document.getElementById('updateUserId').value = id;
+        document.getElementById('updateUserName').value = name;
+        document.getElementById('updateUserRole').value = role;
+        document.getElementById('updateEmail').value = email;
+        window.location.hash = 'formUpdateUser';
+    }
+
+    function handleUserLogin() {
+        const id = document.getElementById('loginUserId').value;
+        const pwd = document.getElementById('loginPassword').value;
+        const url = `/api/User/Loging?UserID=${encodeURIComponent(id)}&UserPassword=${encodeURIComponent(pwd)}`;
+
+        fetch(url)
+            .then(res => res.json().then(data => ({ status: res.status, data })))
+            .then(res => {
+                logResponse('GET', url, res.status, res.data);
+            })
+            .catch(err => logResponse('GET', url, 500, err.message));
+    }
+
+    function handleInsertUser() {
+        const payload = {
+            UserID: parseInt(document.getElementById('insertUserId').value),
+            UserName: document.getElementById('insertUserName').value,
+            UserRoles: document.getElementById('insertUserRole').value,
+            UserPassword: document.getElementById('insertPassword').value,
+            UserEmailID: document.getElementById('insertEmail').value
+        };
+        const url = '/api/User/InsertUser';
+
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json().then(data => ({ status: res.status, data })))
+        .then(res => {
+            logResponse('POST', url, res.status, res.data);
+            loadUsersTable();
+            document.getElementById('formInsertUser').reset();
+        })
+        .catch(err => logResponse('POST', url, 500, err.message));
+    }
+
+    function handleUpdateUser() {
+        const id = parseInt(document.getElementById('updateUserId').value);
+        const payload = {
+            UserID: id,
+            UserName: document.getElementById('updateUserName').value,
+            UserRoles: document.getElementById('updateUserRole').value,
+            UserPassword: document.getElementById('updatePassword').value,
+            UserEmailID: document.getElementById('updateEmail').value
+        };
+        const url = `/api/User/UpdateUser?UserID=${id}`;
+
+        fetch(url, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json().then(data => ({ status: res.status, data })))
+        .then(res => {
+            logResponse('PUT', url, res.status, res.data);
+            loadUsersTable();
+        })
+        .catch(err => logResponse('PUT', url, 500, err.message));
+    }
+
+    function deleteUserPrompt(id) {
+        if (confirm(`Are you sure you want to delete User #${id}?`)) {
+            document.getElementById('deleteUserId').value = id;
+            handleDeleteUser();
+        }
+    }
+
+    function handleDeleteUser() {
+        const id = document.getElementById('deleteUserId').value;
+        const url = `/api/User/DeleteUser?UserID=${encodeURIComponent(id)}`;
+
+        fetch(url, { method: 'DELETE' })
+            .then(res => res.json().then(data => ({ status: res.status, data })))
+            .then(res => {
+                logResponse('DELETE', url, res.status, res.data);
+                loadUsersTable();
+            })
+            .catch(err => logResponse('DELETE', url, 500, err.message));
+    }
+
+    // ==========================================
+    // PROJECT 2: CUSTOMER API HANDLERS
+    // ==========================================
+    function loadCustomersTable() {
+        const tbody = document.getElementById('customersTableBody');
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-muted">Refreshing customers...</td></tr>';
+
+        fetch('/api/CustomerAPI/GetCustomers')
+            .then(res => res.json())
+            .then(customers => {
+                if (!customers || customers.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-3 text-muted">No customers found.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = customers.map(c => `
+                    <tr>
+                        <td class="ps-3"><span class="badge bg-light text-dark border">#${c.CustomerId}</span></td>
+                        <td class="fw-semibold text-primary">${c.Name || ''}</td>
+                        <td><code>${c.MobileNo || ''}</code></td>
+                        <td>${c.EmailID || ''}</td>
+                        <td><span class="badge bg-info text-dark">${c.Country || ''}</span></td>
+                        <td class="text-end pe-3">
+                            <button class="btn btn-sm btn-outline-warning me-1" onclick="openCustomerEditModal(${c.CustomerId}, '${c.Name}', '${c.MobileNo}', '${c.EmailID}', '${c.Country}')">
+                                <i class="bi bi-pencil"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCustomerApi(${c.CustomerId})">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            })
+            .catch(err => {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-3 text-danger">Error: ${err.message}</td></tr>`;
+            });
+    }
+
+    function handleAddCustomer() {
+        const payload = {
+            Name: document.getElementById('custName').value,
+            MobileNo: document.getElementById('custMobile').value,
+            EmailID: document.getElementById('custEmail').value,
+            Country: document.getElementById('custCountry').value
+        };
+        const url = '/api/CustomerAPI/InsertCustomer';
+
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json().then(data => ({ status: res.status, data })))
+        .then(res => {
+            logResponse('POST', url, res.status, res.data, true);
+            loadCustomersTable();
+            document.getElementById('formAddCustomer').reset();
+        })
+        .catch(err => logResponse('POST', url, 500, err.message, true));
+    }
+
+    function handleGetCustomerById() {
+        const id = document.getElementById('searchCustomerId').value;
+        const url = `/api/CustomerAPI/GetCustomerByID?id=${encodeURIComponent(id)}`;
+
+        fetch(url)
+            .then(res => res.json().then(data => ({ status: res.status, data })))
+            .then(res => {
+                logResponse('GET', url, res.status, res.data, true);
+                const resBox = document.getElementById('customerSearchResult');
+                if (res.status === 200 && res.data) {
+                    resBox.innerHTML = `
+                        <div class="text-success fw-bold mb-1"><i class="bi bi-check-circle me-1"></i> Customer Found:</div>
+                        <div><strong>Name:</strong> ${res.data.Name}</div>
+                        <div><strong>Mobile:</strong> ${res.data.MobileNo} &bull; <strong>Email:</strong> ${res.data.EmailID}</div>
+                        <div><strong>Country:</strong> <span class="badge bg-info text-dark">${res.data.Country}</span></div>
+                    `;
+                } else {
+                    resBox.innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-triangle me-1"></i> ${res.data || 'Customer not found.'}</span>`;
+                }
+            })
+            .catch(err => {
+                logResponse('GET', url, 500, err.message, true);
+                document.getElementById('customerSearchResult').innerHTML = `<span class="text-danger">Error: ${err.message}</span>`;
+            });
+    }
+
+    function openCustomerEditModal(id, name, mobile, email, country) {
+        document.getElementById('modalCustId').value = id;
+        document.getElementById('modalCustName').value = name;
+        document.getElementById('modalCustMobile').value = mobile;
+        document.getElementById('modalCustEmail').value = email;
+        document.getElementById('modalCustCountry').value = country;
+        document.getElementById('customerModalTitle').innerText = `Edit Customer #${id}`;
+        new bootstrap.Modal(document.getElementById('customerEditModal')).show();
+    }
+
+    function submitCustomerEditModal() {
+        const id = document.getElementById('modalCustId').value;
+        const payload = {
+            CustomerId: parseInt(id),
+            Name: document.getElementById('modalCustName').value,
+            MobileNo: document.getElementById('modalCustMobile').value,
+            EmailID: document.getElementById('modalCustEmail').value,
+            Country: document.getElementById('modalCustCountry').value
+        };
+        const url = `/api/CustomerAPI/UpdateCustomer/${id}`;
+
+        fetch(url, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json().then(data => ({ status: res.status, data })))
+        .then(res => {
+            logResponse('PUT', url, res.status, res.data, true);
+            bootstrap.Modal.getInstance(document.getElementById('customerEditModal')).hide();
+            loadCustomersTable();
+        })
+        .catch(err => logResponse('PUT', url, 500, err.message, true));
+    }
+
+    function deleteCustomerApi(id) {
+        if (confirm(`Delete Customer #${id}?`)) {
+            const url = `/api/CustomerAPI/DeleteCustomer/${id}`;
+            fetch(url, { method: 'DELETE' })
+                .then(res => res.json().then(data => ({ status: res.status, data })))
+                .then(res => {
+                    logResponse('DELETE', url, res.status, res.data, true);
+                    loadCustomersTable();
+                })
+                .catch(err => logResponse('DELETE', url, 500, err.message, true));
+        }
+    }
+
+    // Initial load
+    document.addEventListener('DOMContentLoaded', function() {
+        loadUsersTable();
+        loadCustomersTable();
+    });
+</script>
+}
