@@ -19,6 +19,10 @@ namespace WebApiPractice2.Controllers
             var conSetting = ConfigurationManager.ConnectionStrings["DBConn"] 
                           ?? ConfigurationManager.ConnectionStrings["DBCon"];
             _conStr = conSetting != null ? conSetting.ToString() : string.Empty;
+            if (!string.IsNullOrEmpty(_conStr))
+            {
+                _conStr = _conStr.Replace("Trust Server Certificate", "TrustServerCertificate");
+            }
         }
 
         [HttpGet]
