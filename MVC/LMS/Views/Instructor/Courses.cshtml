@@ -90,6 +90,7 @@
                                                 <i class="bi bi-three-dots-vertical"></i>
                                             </button>
                                             <ul class="dropdown-menu shadow-lg border-0 py-2 studio-dropdown-menu" style="z-index: 99999; min-width: 200px;">
+                                                <li><a class="dropdown-item py-2" href="@Url.Action("Documents", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-file-earmark-pdf text-info me-2"></i> AI Knowledge Docs</a></li>
                                                 <li><a class="dropdown-item py-2" href="@Url.Action("Quizzes", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-patch-question text-warning me-2"></i> Quizzes &amp; Exams</a></li>
                                                 <li><a class="dropdown-item py-2" href="@Url.Action("Assignments", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-file-earmark-text text-info me-2"></i> Tasks &amp; Assignments</a></li>
                                                 <li><a class="dropdown-item py-2" href="@Url.Action("Students", "Instructor", new { courseId = c.CourseId })"><i class="bi bi-people text-primary me-2"></i> Enrolled Students</a></li>

@@ -1,112 +1,112 @@
 """
-Document ingestion and lifecycle management endpoints.
-Supports PDF, DOCX, PPTX, and TXT files.
+Multi-format Document Ingestion & Lifecycle Management.
+Supports PDF (PyMuPDF), DOCX (python-docx), PPTX (python-pptx), and TXT/Markdown.
 """
-from fastapi import APIRouter, Depends, Header, HTTPException, status
-from pydantic import BaseModel
-from typing import Optional, Dict, Any
 from pathlib import Path
-from services.document_service import document_service
+from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
+from typing import Optional, List, Dict, Any
+from extractors.pdf_extractor import PdfExtractor
+from extractors.docx_extractor import DocxExtractor
+from extractors.pptx_extractor import PptxExtractor
+from extractors.text_cleaner import clean_text
+from rag.chunker import chunker
+from embeddings.gemini_embedder import embedder
+from vectorstore.qdrant_store import qdrant_store
 from core.security import verify_internal_api_key
-from core.logger import get_masked_logger
-import os
+from core.logger import logger
 
-logger = get_masked_logger(__name__)
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
-class IndexRequest(BaseModel):
+class IndexDocumentRequest(BaseModel):
     document_id: int
     course_id: int
     module_id: Optional[int] = None
     lesson_id: Optional[int] = None
     title: str
     file_path: str
-    access_scope: str = "enrolled_students"
+    visibility: str = "student"  # student, instructor_only
 
-class IndexResponse(BaseModel):
+class IndexDocumentResponse(BaseModel):
     status: str
     document_id: int
-    chunks_created: int
+    course_id: int
+    total_pages: int
+    total_chunks: int
     message: str
 
-@router.post("/index", response_model=IndexResponse)
+@router.post("/index", response_model=IndexDocumentResponse)
 def index_document(
-    req: IndexRequest,
+    req: IndexDocumentRequest,
     api_key_valid: bool = Depends(verify_internal_api_key)
 ):
-    """
-    Indexes an uploaded document into Qdrant.
-    """
-    logger.info(f"Received indexing request for document {req.document_id} ('{req.title}')")
-    
     path = Path(req.file_path)
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"File not found on server: {req.file_path}")
 
-    file_ext = path.suffix.lower().replace(".", "") or "txt"
-    try:
-        result = document_service.index_document(
-            document_id=req.document_id,
-            course_id=req.course_id,
-            file_path=str(path),
-            file_type=file_ext,
-            module_id=req.module_id,
-            lesson_id=req.lesson_id
-        )
-        return IndexResponse(
-            status=result["status"],
-            document_id=req.document_id,
-            chunks_created=result["total_chunks"],
-            message="Document successfully processed and indexed into Qdrant vector database."
-        )
-    except Exception as e:
-        logger.error(f"Error during document indexing: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    ext = path.suffix.lower().replace(".", "")
+    logger.info(f"Ingesting Document #{req.document_id} ('{req.title}', format: {ext}) for Course #{req.course_id}...")
 
-@router.post("/{document_id}/reindex", response_model=IndexResponse)
-def reindex_document(
-    document_id: int,
-    req: IndexRequest,
-    api_key_valid: bool = Depends(verify_internal_api_key)
-):
-    """
-    Deletes existing vectors for document and re-indexes the file.
-    """
-    path = Path(req.file_path)
-    if not path.exists():
-        raise HTTPException(status_code=404, detail=f"File not found on server: {req.file_path}")
+    # 1. Remove previous vectors for this document (idempotent re-indexing)
+    qdrant_store.delete_document_vectors(req.document_id)
 
-    file_ext = path.suffix.lower().replace(".", "") or "txt"
-    try:
-        result = document_service.index_document(
-            document_id=document_id,
-            course_id=req.course_id,
-            file_path=str(path),
-            file_type=file_ext,
-            module_id=req.module_id,
-            lesson_id=req.lesson_id
-        )
-        return IndexResponse(
-            status="reindexed",
-            document_id=document_id,
-            chunks_created=result["total_chunks"],
-            message="Document successfully re-indexed into Qdrant."
-        )
-    except Exception as e:
-        logger.error(f"Error during document reindexing: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    # 2. Extract multi-format text
+    pages: List[Dict[str, Any]] = []
+    if ext == "pdf":
+        pages = PdfExtractor.extract(str(path))
+    elif ext in ["docx", "doc"]:
+        pages = DocxExtractor.extract(str(path))
+    elif ext in ["pptx", "ppt"]:
+        pages = PptxExtractor.extract(str(path))
+    elif ext in ["txt", "md", "sql", "cs", "py", "json"]:
+        with open(path, "r", encoding="utf-8", errors="ignore") as f:
+            content = clean_text(f.read())
+        pages = [{"page_number": 1, "section_title": req.title or path.stem, "text": content}]
+    else:
+        raise HTTPException(status_code=400, detail=f"Unsupported document format: {ext}")
+
+    if not pages:
+        raise HTTPException(status_code=400, detail=f"Could not extract readable text from document {path.name}")
+
+    # 3. Semantic Chunking
+    chunks = chunker.chunk_document_pages(
+        pages=pages,
+        document_id=req.document_id,
+        course_id=req.course_id,
+        module_id=req.module_id,
+        lesson_id=req.lesson_id,
+        visibility=req.visibility
+    )
+
+    if not chunks:
+        raise HTTPException(status_code=400, detail="Document produced 0 meaningful chunks.")
+
+    # 4. Dense Vector Embedding
+    texts = [c["text"] for c in chunks]
+    vectors = embedder.embed_documents(texts)
+
+    # 5. Upsert to Qdrant & BM25 sparse index
+    upserted_count = qdrant_store.upsert_chunks(chunks, vectors)
+
+    logger.info(f"Successfully indexed Document #{req.document_id}: {len(pages)} pages, {upserted_count} chunks.")
+
+    return IndexDocumentResponse(
+        status="Indexed",
+        document_id=req.document_id,
+        course_id=req.course_id,
+        total_pages=len(pages),
+        total_chunks=upserted_count,
+        message=f"Document successfully parsed and indexed into Hybrid Knowledge Base ({upserted_count} chunks)."
+    )
 
 @router.delete("/{document_id}")
 def delete_document(
     document_id: int,
     api_key_valid: bool = Depends(verify_internal_api_key)
 ):
-    """
-    Removes all vector embeddings and chunk metadata for the specified document.
-    """
-    success = document_service.delete_document(document_id)
+    success = qdrant_store.delete_document_vectors(document_id)
     return {
         "status": "deleted" if success else "not_found",
         "document_id": document_id,
-        "message": f"Successfully deleted all vector representations for document {document_id} from Qdrant."
+        "message": f"Purged all vectors and lexical index entries for document #{document_id}."
     }

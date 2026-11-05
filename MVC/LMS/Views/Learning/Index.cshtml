@@ -369,6 +369,60 @@
                             }
                         </div>
                     }
+                    else if (Model.CurrentLesson.LessonType == "PDF" || (!string.IsNullOrEmpty(Model.CurrentLesson.ResourceUrl) && Model.CurrentLesson.ResourceUrl.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var pdfUrl = !string.IsNullOrEmpty(Model.CurrentLesson.ResourceUrl) ? Model.CurrentLesson.ResourceUrl : Model.CurrentLesson.VideoUrl;
+                        <div class="card card-custom p-0 rounded-4 overflow-hidden shadow-lg mb-4" style="background: #062330; border: 1px solid rgba(39, 184, 214, 0.3); color: #FFFFFF;">
+                            <!-- PDF Viewer Toolbar -->
+                            <div class="d-flex flex-wrap justify-content-between align-items-center p-3 border-bottom gap-2" style="background: #0B3445; border-color: rgba(255, 255, 255, 0.1) !important;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="background: rgba(239, 68, 68, 0.2); color: #EF4444; width: 36px; height: 36px;">
+                                        <i class="bi bi-file-earmark-pdf-fill fs-5"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="text-white small d-block">@Model.CurrentLesson.Title</strong>
+                                        <span class="badge rounded-pill small" style="background: rgba(39, 184, 214, 0.2); color: #27B8D6; font-size: 10px;">
+                                            <i class="bi bi-cloud-check me-1"></i>Cloudinary PDF &bull; API 184454516547644
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    @if (!string.IsNullOrEmpty(pdfUrl))
+                                    {
+                                        <a href="@pdfUrl" target="_blank" download class="btn btn-sm btn-outline-cyan rounded-pill px-3 fw-semibold shadow-xs" style="border-color: #27B8D6; color: #27B8D6;">
+                                            <i class="bi bi-download me-1"></i> Download PDF
+                                        </a>
+                                        <a href="@pdfUrl" target="_blank" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold shadow-xs text-white" style="background-color: #FF7A18 !important; border-color: #FF7A18 !important;">
+                                            <i class="bi bi-arrows-fullscreen me-1"></i> Fullscreen
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- PDF Reader Container -->
+                            @if (!string.IsNullOrEmpty(pdfUrl))
+                            {
+                                <div class="w-100 position-relative" style="height: 720px; background: #041822;">
+                                    <iframe src="@pdfUrl#toolbar=1&navpanes=0" class="w-100 h-100 border-0" title="@Model.CurrentLesson.Title">
+                                        <div class="p-5 text-center text-white">
+                                            <p>Your browser doesn't support embedded PDFs.</p>
+                                            <a href="@pdfUrl" target="_blank" class="btn btn-primary rounded-pill">Open PDF Document</a>
+                                        </div>
+                                    </iframe>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="p-5 text-center" style="background: rgba(4, 24, 34, 0.6);">
+                                    <div class="rounded-circle p-4 d-inline-flex mx-auto mb-3 shadow-sm" style="background: rgba(239, 68, 68, 0.15); color: #EF4444;">
+                                        <i class="bi bi-file-earmark-x display-4"></i>
+                                    </div>
+                                    <h5 class="fw-bold text-white mb-2">No PDF File Attached</h5>
+                                    <p class="small text-muted mb-0">The instructor has marked this lesson as a PDF document but hasn't uploaded the file yet.</p>
+                                </div>
+                            }
+                        </div>
+                    }
                     else if (Model.CurrentLesson.LessonType == "Quiz")
                     {
                         var quiz = Model.Course.Quizzes.FirstOrDefault(q => q.LessonId == Model.CurrentLesson.LessonId) ?? Model.Course.Quizzes.FirstOrDefault();

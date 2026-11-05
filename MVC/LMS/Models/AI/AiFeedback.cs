@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LMS.Models
+namespace LMS.Models.AI
 {
     [Table("AI_Feedback")]
     public class AiFeedback
@@ -10,14 +10,13 @@ namespace LMS.Models
         [Key]
         public int FeedbackId { get; set; }
 
-        [Required]
         public int MessageId { get; set; }
 
         [Required]
         [StringLength(128)]
         public string UserId { get; set; }
 
-        public int Rating { get; set; } // 1 (Helpful) or -1 (Unhelpful)
+        public bool IsHelpful { get; set; }
 
         [StringLength(1000)]
         public string FeedbackText { get; set; }

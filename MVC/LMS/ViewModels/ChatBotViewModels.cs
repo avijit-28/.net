@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using LMS.Services;
 
 namespace LMS.ViewModels
 {
@@ -8,6 +9,10 @@ namespace LMS.ViewModels
         public string Message { get; set; }
         public string SessionGuid { get; set; }
         public int? CourseId { get; set; }
+        public int? ModuleId { get; set; }
+        public int? LessonId { get; set; }
+        public string LearningMode { get; set; } = "CourseAssistant"; // CourseAssistant, SocraticTutor, ExamPrep, PracticeQuiz, CodeDebugger
+        public string Persona { get; set; } = "learner_socratic";
     }
 
     public class CourseRecommendationCard
@@ -30,6 +35,11 @@ namespace LMS.ViewModels
         public string Reply { get; set; }
         public string SessionGuid { get; set; }
         public string ModelUsed { get; set; }
+        public string Provider { get; set; }
+        public bool IsGrounded { get; set; }
+        public string AgenticIntent { get; set; }
+        public List<AiCitationDto> Citations { get; set; } = new List<AiCitationDto>();
+        public AiTelemetryDto Telemetry { get; set; }
         public List<string> Suggestions { get; set; } = new List<string>();
         public List<CourseRecommendationCard> RecommendedCourses { get; set; } = new List<CourseRecommendationCard>();
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
@@ -41,7 +51,30 @@ namespace LMS.ViewModels
         public int MessageId { get; set; }
         public string Sender { get; set; }
         public string Content { get; set; }
+        public bool IsGrounded { get; set; }
+        public string ModelUsed { get; set; }
+        public List<AiCitationDto> Citations { get; set; } = new List<AiCitationDto>();
         public DateTime Timestamp { get; set; }
         public List<CourseRecommendationCard> RecommendedCourses { get; set; } = new List<CourseRecommendationCard>();
+    }
+
+    public class AiStudioViewModel
+    {
+        public string SessionGuid { get; set; }
+        public int? ActiveCourseId { get; set; }
+        public string ActiveCourseTitle { get; set; }
+        public string ActiveLearningMode { get; set; } = "CourseAssistant";
+        public List<CourseOptionViewModel> EnrolledCourses { get; set; } = new List<CourseOptionViewModel>();
+        public List<ChatHistoryMessageDto> InitialMessages { get; set; } = new List<ChatHistoryMessageDto>();
+        public bool IsUserLoggedIn { get; set; }
+        public string UserRole { get; set; }
+    }
+
+    public class CourseOptionViewModel
+    {
+        public int CourseId { get; set; }
+        public string Title { get; set; }
+        public string CategoryName { get; set; }
+        public bool IsEnrolled { get; set; }
     }
 }

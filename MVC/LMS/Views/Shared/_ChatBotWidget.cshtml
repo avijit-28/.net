@@ -466,13 +466,49 @@
                 coursesHtml += '</div>';
             }
 
+            // Citations and Grounding Badges
+            var citationsHtml = '';
+            if (data.Citations && data.Citations.length > 0) {
+                citationsHtml += `
+                    <div class="mt-2 pt-2 border-top border-secondary border-opacity-25">
+                        <div class="d-flex align-items-center gap-1 small text-info fw-semibold mb-1" style="font-size: 11px;">
+                            <i class="bi bi-shield-check text-cyan"></i> Grounded in ${data.Citations.length} Source${data.Citations.length > 1 ? 's' : ''}:
+                        </div>
+                        <div class="d-flex flex-wrap gap-1">
+                `;
+                data.Citations.forEach(function(cite) {
+                    var pageText = cite.page_number ? ` (p. ${cite.page_number})` : '';
+                    citationsHtml += `
+                        <span class="badge text-white-50 border border-secondary border-opacity-25" style="background: rgba(4, 24, 34, 0.7); font-size: 10px;" title="${escapeHtml(cite.excerpt || '')}">
+                            <i class="bi bi-file-earmark-text text-warning me-1"></i>${escapeHtml(cite.document_name || 'Curriculum')}${pageText}
+                        </span>
+                    `;
+                });
+                citationsHtml += `</div></div>`;
+            }
+
+            // Telemetry Tag
+            var telemetryHtml = '';
+            if (data.Telemetry) {
+                var hitBadge = data.Telemetry.was_cache_hit ? '<span class="text-success"><i class="bi bi-lightning-charge-fill"></i> Cache</span> • ' : '';
+                telemetryHtml = `
+                    <div class="edubot-time d-flex align-items-center justify-content-between mt-1 px-1">
+                        <span>Just now</span>
+                        <span class="font-monospace text-muted" style="font-size: 9px;">${hitBadge}${escapeHtml(data.Telemetry.model || 'gemini')} • ${data.Telemetry.latency_ms}ms</span>
+                    </div>
+                `;
+            } else {
+                telemetryHtml = '<span class="edubot-time">Just now</span>';
+            }
+
             var assistantHtml = `
                 <div class="edubot-msg assistant">
                     <div class="edubot-bubble">
                         ${formattedReply}
+                        ${citationsHtml}
                         ${coursesHtml}
                     </div>
-                    <span class="edubot-time">Just now</span>
+                    ${telemetryHtml}
                 </div>
             `;
             msgsContainer.insertAdjacentHTML('beforeend', assistantHtml);

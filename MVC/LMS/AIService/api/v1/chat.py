@@ -1,14 +1,13 @@
 """
-Chat and RAG query processing endpoints.
+Chat and RAG query processing endpoints with Hard RBAC Security.
 """
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
-from rag.rag_pipeline import rag_pipeline
-from core.security import verify_internal_api_key, parse_authorized_courses
-from core.logger import get_masked_logger
+from rag.engine import rag_engine
+from core.security import verify_internal_api_key, parse_authorized_courses, validate_user_access
+from core.logger import logger
 
-logger = get_masked_logger(__name__)
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
 class ChatAskRequest(BaseModel):
@@ -19,7 +18,7 @@ class ChatAskRequest(BaseModel):
     module_id: Optional[int] = None
     lesson_id: Optional[int] = None
     query: str
-    learning_mode: str = "CourseAssistant"  # "General", "CourseAssistant", "ExamPrep", "PracticeQuiz", "CodeTutor"
+    learning_mode: str = "CourseAssistant"  # CourseAssistant, SocraticTutor, ExamPrep, PracticeQuiz, CodeDebugger
     history: Optional[List[Dict[str, str]]] = Field(default_factory=list)
 
 class SourceCitation(BaseModel):
@@ -35,12 +34,14 @@ class ChatAskResponse(BaseModel):
     answer: str
     sources: List[SourceCitation]
     grounded_in_rag: bool
+    was_cache_hit: bool = False
     learning_mode: str
     tokens_used: int
     llm_provider: str
     model_used: str
     failover_occurred: bool = False
     duration_ms: int = 0
+    eval_metrics: Optional[Dict[str, float]] = None
 
 @router.post("/ask", response_model=ChatAskResponse)
 def ask_chat(
@@ -49,26 +50,27 @@ def ask_chat(
     authorized_courses_header: Optional[str] = Header(None, alias="X-Authorized-Courses")
 ):
     """
-    RAG-grounded query processing endpoint.
-    Enforces course isolation: students may only retrieve authorized courses.
+    RAG-grounded query processing with hard RBAC security and multi-pillar pipeline.
     """
     authorized_courses = parse_authorized_courses(authorized_courses_header)
     
-    # Check enrollment authorization for course-specific questions
-    if req.course_id and req.user_role == "Student":
-        if authorized_courses is not None and req.course_id not in authorized_courses:
-            logger.warning(f"Unauthorized RAG query attempt by user {req.user_id} for course {req.course_id}")
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Access denied: You are not enrolled in course {req.course_id}."
-            )
+    # Enforce Hard RBAC authorization check
+    validate_user_access(
+        user_id=req.user_id,
+        user_role=req.user_role,
+        target_course_id=req.course_id,
+        authorized_courses=authorized_courses,
+        requested_visibility="student" if req.user_role.lower() == "student" else "instructor_only"
+    )
 
-    logger.info(f"Processing query from user {req.user_id} (mode={req.learning_mode}, course={req.course_id})")
+    logger.info(f"Processing query from user {req.user_id} ({req.user_role}) on course {req.course_id} [Mode: {req.learning_mode}]")
 
-    result = rag_pipeline.answer_query(
+    result = rag_engine.process_query(
         query=req.query,
+        user_id=req.user_id,
+        user_role=req.user_role,
         course_id=req.course_id,
-        mode=req.learning_mode,
+        learning_mode=req.learning_mode,
         chat_history=req.history
     )
 
@@ -87,11 +89,13 @@ def ask_chat(
     return ChatAskResponse(
         answer=result.get("answer", ""),
         sources=citations,
-        grounded_in_rag=len(citations) > 0,
-        learning_mode=req.learning_mode,
-        tokens_used=result.get("total_tokens", 0),
-        llm_provider=result.get("provider_used", ""),
+        grounded_in_rag=result.get("grounded_in_rag", False),
+        was_cache_hit=result.get("was_cache_hit", False),
+        learning_mode=result.get("learning_mode", req.learning_mode),
+        tokens_used=result.get("tokens_used", 0),
+        llm_provider=result.get("llm_provider", ""),
         model_used=result.get("model_used", ""),
         failover_occurred=result.get("failover_occurred", False),
-        duration_ms=result.get("duration_ms", 0)
+        duration_ms=result.get("duration_ms", 0),
+        eval_metrics=result.get("eval_metrics")
     )

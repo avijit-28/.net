@@ -1,68 +1,116 @@
 """
-EduPlatform AIService - Centralized LLM Provider Factory with Automatic Failover
-Routes queries between Google Gemini (primary) and Groq (secondary) seamlessly.
+Pillar 4: Model Cascading & Automatic Failover Engine.
+Cascades between Google Gemini (primary) and Groq (secondary) seamlessly.
 """
-
 from typing import Dict, Any, Optional
+from google import genai
+from groq import Groq
 from config import settings
 from core.logger import logger
-from core.exceptions import LLMQuotaExceededError
-from llm.gemini_provider import GeminiProvider
-from llm.groq_provider import GroqProvider
 
 class LLMProviderFactory:
-    def __init__(self):
-        self.gemini = GeminiProvider()
-        self.groq = GroqProvider()
-        self.default_provider = (settings.DEFAULT_LLM_PROVIDER or "gemini").lower()
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(LLMProviderFactory, cls).__new__(cls)
+            cls._instance._init_clients()
+        return cls._instance
+
+    def _init_clients(self):
+        # 1. Initialize Gemini
+        self.gemini_client = None
+        if settings.GEMINI_API_KEY:
+            try:
+                self.gemini_client = genai.Client(api_key=settings.GEMINI_API_KEY)
+                logger.info(f"Initialized Gemini client with model '{settings.GEMINI_MODEL}'.")
+            except Exception as e:
+                logger.error(f"Failed to initialize Gemini: {e}")
+
+        # 2. Initialize Groq
+        self.groq_client = None
+        if settings.GROQ_API_KEY:
+            try:
+                self.groq_client = Groq(api_key=settings.GROQ_API_KEY)
+                logger.info(f"Initialized Groq client with model '{settings.GROQ_MODEL}'.")
+            except Exception as e:
+                logger.error(f"Failed to initialize Groq: {e}")
 
     def generate(
         self,
         prompt: str,
         system_instruction: str,
-        temperature: float = None,
-        max_tokens: int = None
+        temperature: float = 0.2,
+        max_tokens: int = 1024
     ) -> Dict[str, Any]:
         """
-        Attempts generation with primary provider. If rate-limited or quota exceeded,
-        automatically falls back to the alternative provider.
+        Executes generation with automatic cascading failover:
+        Gemini -> Groq -> Local Deterministic Fallback.
         """
-        primary = self.gemini if self.default_provider == "gemini" else self.groq
-        secondary = self.groq if self.default_provider == "gemini" else self.gemini
-        primary_name = "gemini" if self.default_provider == "gemini" else "groq"
-        secondary_name = "groq" if self.default_provider == "gemini" else "gemini"
-
-        # 1. Try Primary
-        if primary.is_configured():
+        # --- Attempt 1: Gemini (Primary) ---
+        if self.gemini_client:
             try:
-                res = primary.generate(prompt, system_instruction, temperature, max_tokens)
-                res["failover_occurred"] = False
-                return res
-            except LLMQuotaExceededError:
-                logger.warning(f"Primary provider '{primary_name}' quota exhausted. Engaging automatic failover to '{secondary_name}'...")
+                full_contents = f"{system_instruction}\n\nUser Question:\n{prompt}"
+                resp = self.gemini_client.models.generate_content(
+                    model=settings.GEMINI_MODEL,
+                    contents=full_contents
+                )
+                text = resp.text.strip() if resp.text else ""
+                logger.info(f"Gemini generation successful ({len(text)} chars).")
+                return {
+                    "text": text,
+                    "model": settings.GEMINI_MODEL,
+                    "provider": "gemini",
+                    "failover_occurred": False,
+                    "prompt_tokens": len(full_contents.split()),
+                    "completion_tokens": len(text.split()),
+                    "total_tokens": len(full_contents.split()) + len(text.split())
+                }
             except Exception as e:
-                logger.warning(f"Primary provider '{primary_name}' failed ({e}). Attempting failover to '{secondary_name}'...")
+                logger.warning(f"Gemini call failed ({e}). Cascading to failover provider 'groq'...")
 
-        # 2. Try Secondary Failover
-        if secondary.is_configured():
+        # --- Attempt 2: Groq (Secondary Failover) ---
+        if self.groq_client:
             try:
-                res = secondary.generate(prompt, system_instruction, temperature, max_tokens)
-                res["failover_occurred"] = True
-                logger.info(f"Failover successful using secondary provider: {secondary_name}")
-                return res
+                messages = [
+                    {"role": "system", "content": system_instruction},
+                    {"role": "user", "content": prompt}
+                ]
+                resp = self.groq_client.chat.completions.create(
+                    model=settings.GROQ_MODEL,
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens
+                )
+                text = resp.choices[0].message.content or ""
+                logger.info(f"Groq failover generation successful ({len(text)} chars).")
+                return {
+                    "text": text,
+                    "model": settings.GROQ_MODEL,
+                    "provider": "groq",
+                    "failover_occurred": True,
+                    "prompt_tokens": resp.usage.prompt_tokens if resp.usage else 0,
+                    "completion_tokens": resp.usage.completion_tokens if resp.usage else 0,
+                    "total_tokens": resp.usage.total_tokens if resp.usage else 0
+                }
             except Exception as e:
-                logger.error(f"Secondary provider '{secondary_name}' also failed: {e}")
+                logger.error(f"Groq failover also failed: {e}")
 
-        # 3. Deterministic Local Semantic Response Fallback
-        logger.warning("All LLM providers unavailable or unconfigured. Triggering local deterministic fallback.")
+        # --- Attempt 3: Local Fallback ---
+        logger.warning("All frontier & SLM providers unavailable. Providing local educational fallback.")
+        fallback_text = (
+            "**[EduPlatform Academic Assistant Notice]**\n\n"
+            "Our external AI language service is currently experiencing high load or rate limits. "
+            "Please review the retrieved course syllabus sections and lecture slides attached below."
+        )
         return {
-            "text": "[EduBot Academic Advisor Notice]: Both external LLM providers reached temporary free-tier rate limits. Please review the retrieved course syllabus sections provided below.",
+            "text": fallback_text,
             "model": "local-fallback",
             "provider": "local",
-            "prompt_tokens": len(prompt.split()),
-            "completion_tokens": 25,
-            "total_tokens": len(prompt.split()) + 25,
-            "failover_occurred": True
+            "failover_occurred": True,
+            "prompt_tokens": 0,
+            "completion_tokens": 30,
+            "total_tokens": 30
         }
 
 llm_factory = LLMProviderFactory()

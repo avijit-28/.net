@@ -1,10 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using LMS.Data;
 using LMS.Models;
+using LMS.Models.AI;
 using LMS.Services;
 using LMS.ViewModels;
 using Microsoft.AspNet.Identity;
@@ -18,6 +23,7 @@ namespace LMS.Controllers
         private readonly DashboardService _dashboardService;
         private readonly AssignmentService _assignmentService;
         private readonly PaymentService _paymentService;
+        private readonly ICloudinaryService _cloudinary = new CloudinaryService();
 
         public InstructorController()
         {
@@ -377,10 +383,32 @@ namespace LMS.Controllers
         // POST: Instructor/CreateLesson
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateLesson(LessonFormViewModel model)
+        public async Task<ActionResult> CreateLesson(LessonFormViewModel model, HttpPostedFileBase pdfFile)
         {
-            var module = _db.Modules.Include(m => m.Course).FirstOrDefault(m => m.ModuleId == model.ModuleId);
+            var module = await _db.Modules.Include(m => m.Course).FirstOrDefaultAsync(m => m.ModuleId == model.ModuleId);
             if (module == null || !IsOwnerOrAdmin(module.Course)) return new HttpUnauthorizedResult();
+
+            var fileToUpload = pdfFile ?? model.PdfFile;
+            if (fileToUpload != null && fileToUpload.ContentLength > 0)
+            {
+                var uploadResult = await _cloudinary.UploadPdfAsync(fileToUpload, $"courses/{module.CourseId}/lessons");
+                if (uploadResult.Success)
+                {
+                    model.ResourceUrl = uploadResult.SecureUrl;
+                    if (string.IsNullOrEmpty(model.LessonType) || model.LessonType == "Video")
+                    {
+                        model.LessonType = "PDF";
+                    }
+                    if (uploadResult.IsLocalFallback)
+                    {
+                        TempData["InfoMessage"] = "PDF stored locally. (To deliver via Cloudinary CDN, set Cloudinary:CloudName & ApiSecret in Web.config).";
+                    }
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "PDF Upload warning: " + uploadResult.ErrorMessage;
+                }
+            }
 
             if (ModelState.IsValid)
             {
@@ -400,11 +428,78 @@ namespace LMS.Controllers
                 };
 
                 _db.Lessons.Add(lesson);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Lesson added successfully!";
             }
 
             return RedirectToAction("Lessons", new { moduleId = model.ModuleId });
+        }
+
+        // POST: Instructor/UploadPdfLesson (Dedicated Section Endpoint)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UploadPdfLesson(int moduleId, string title, string description, int lessonOrder, bool isPreview, HttpPostedFileBase pdfFile)
+        {
+            var module = await _db.Modules.Include(m => m.Course).FirstOrDefaultAsync(m => m.ModuleId == moduleId);
+            if (module == null || !IsOwnerOrAdmin(module.Course)) return new HttpUnauthorizedResult();
+
+            if (pdfFile == null || pdfFile.ContentLength == 0)
+            {
+                TempData["ErrorMessage"] = "Please select a PDF document to upload.";
+                return RedirectToAction("Lessons", new { moduleId });
+            }
+
+            var uploadResult = await _cloudinary.UploadPdfAsync(pdfFile, $"courses/{module.CourseId}/lessons");
+            if (!uploadResult.Success)
+            {
+                TempData["ErrorMessage"] = "PDF Upload failed: " + uploadResult.ErrorMessage;
+                return RedirectToAction("Lessons", new { moduleId });
+            }
+
+            int finalOrder = lessonOrder > 0 ? lessonOrder : ((await _db.Lessons.CountAsync(l => l.ModuleId == moduleId)) + 1);
+
+            var lesson = new Lesson
+            {
+                ModuleId = moduleId,
+                Title = string.IsNullOrWhiteSpace(title) ? Path.GetFileNameWithoutExtension(pdfFile.FileName) : title.Trim(),
+                Description = description,
+                LessonType = "PDF",
+                ResourceUrl = uploadResult.SecureUrl,
+                DurationInMinutes = 15,
+                LessonOrder = finalOrder,
+                IsPreview = isPreview,
+                CreatedDate = DateTime.UtcNow
+            };
+
+            _db.Lessons.Add(lesson);
+            await _db.SaveChangesAsync();
+
+            var storageProvider = uploadResult.IsLocalFallback ? "Local Storage" : "Cloudinary CDN";
+            TempData["SuccessMessage"] = $"PDF Lesson '{lesson.Title}' successfully uploaded to {storageProvider} and added to curriculum!";
+            return RedirectToAction("Lessons", new { moduleId });
+        }
+
+        // POST: Instructor/UploadPdfAjax (Real-time Drag & Drop Endpoint)
+        [HttpPost]
+        public async Task<JsonResult> UploadPdfAjax(HttpPostedFileBase file, int? courseId)
+        {
+            if (file == null || file.ContentLength == 0)
+            {
+                return Json(new { success = false, message = "No file selected." });
+            }
+
+            string folder = courseId.HasValue ? $"courses/{courseId.Value}/materials" : "materials";
+            var result = await _cloudinary.UploadPdfAsync(file, folder);
+
+            return Json(new
+            {
+                success = result.Success,
+                url = result.SecureUrl,
+                publicId = result.PublicId,
+                isCloudinary = !result.IsLocalFallback,
+                apiKey = _cloudinary.ApiKey,
+                message = result.ErrorMessage
+            });
         }
 
         // POST: Instructor/DeleteLesson
@@ -471,10 +566,28 @@ namespace LMS.Controllers
         // POST: Instructor/EditLesson
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditLesson(LessonFormViewModel model)
+        public async Task<ActionResult> EditLesson(LessonFormViewModel model, HttpPostedFileBase pdfFile)
         {
-            var lesson = _db.Lessons.Include(l => l.Module.Course).FirstOrDefault(l => l.LessonId == model.LessonId);
+            var lesson = await _db.Lessons.Include(l => l.Module.Course).FirstOrDefaultAsync(l => l.LessonId == model.LessonId);
             if (lesson == null || !IsOwnerOrAdmin(lesson.Module.Course)) return new HttpUnauthorizedResult();
+
+            var fileToUpload = pdfFile ?? model.PdfFile;
+            if (fileToUpload != null && fileToUpload.ContentLength > 0)
+            {
+                var uploadResult = await _cloudinary.UploadPdfAsync(fileToUpload, $"courses/{lesson.Module.CourseId}/lessons");
+                if (uploadResult.Success)
+                {
+                    model.ResourceUrl = uploadResult.SecureUrl;
+                    if (model.LessonType == "PDF" || string.IsNullOrEmpty(model.LessonType))
+                    {
+                        model.LessonType = "PDF";
+                    }
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "PDF Upload warning: " + uploadResult.ErrorMessage;
+                }
+            }
 
             if (ModelState.IsValid)
             {
@@ -488,7 +601,7 @@ namespace LMS.Controllers
                 lesson.LessonOrder = model.LessonOrder;
                 lesson.IsPreview = model.IsPreview;
 
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Lesson updated successfully!";
                 return RedirectToAction("Lessons", new { moduleId = lesson.ModuleId });
             }
@@ -1000,6 +1113,242 @@ namespace LMS.Controllers
                     System.Diagnostics.Trace.TraceWarning("RAG automatic refresh warning: " + ex.Message);
                 }
             });
+        }
+
+        private readonly IAiServiceClient _aiClient = new AiServiceClient();
+
+        // =========================================================================
+        // Enterprise RAG Document Management Endpoints
+        // =========================================================================
+
+        // GET: Instructor/Documents?courseId=5
+        public async Task<ActionResult> Documents(int courseId)
+        {
+            var course = await _db.Courses
+                .Include(c => c.Modules)
+                .FirstOrDefaultAsync(c => c.CourseId == courseId);
+
+            if (course == null || !IsOwnerOrAdmin(course))
+            {
+                return HttpNotFound();
+            }
+
+            var documents = await _db.AiDocuments
+                .Include(d => d.Module)
+                .Include(d => d.Lesson)
+                .Where(d => d.CourseId == courseId)
+                .OrderByDescending(d => d.UploadedAt)
+                .ToListAsync();
+
+            ViewBag.Course = course;
+            ViewBag.Modules = course.Modules.OrderBy(m => m.ModuleOrder).ToList();
+            return View(documents);
+        }
+
+        // POST: Instructor/UploadDocument
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UploadDocument(int courseId, int? moduleId, int? lessonId, string visibility, string title, HttpPostedFileBase file)
+        {
+            var course = await _db.Courses.FindAsync(courseId);
+            if (course == null || !IsOwnerOrAdmin(course))
+            {
+                return HttpNotFound();
+            }
+
+            if (file == null || file.ContentLength == 0)
+            {
+                TempData["ErrorMessage"] = "Please select a valid document file to upload.";
+                return RedirectToAction("Documents", new { courseId });
+            }
+
+            var ext = Path.GetExtension(file.FileName)?.ToLower();
+            var allowedExtensions = new[] { ".pdf", ".docx", ".pptx", ".txt" };
+            if (!allowedExtensions.Contains(ext))
+            {
+                TempData["ErrorMessage"] = "Unsupported file type. Please upload a PDF, DOCX, PPTX, or TXT file.";
+                return RedirectToAction("Documents", new { courseId });
+            }
+
+            // Max file size: 50MB
+            if (file.ContentLength > 50 * 1024 * 1024)
+            {
+                TempData["ErrorMessage"] = "File exceeds the 50MB size limit.";
+                return RedirectToAction("Documents", new { courseId });
+            }
+
+            try
+            {
+                // Save physical file
+                var uploadsDir = Server.MapPath($"~/App_Data/CourseDocuments/{courseId}");
+                if (!Directory.Exists(uploadsDir))
+                {
+                    Directory.CreateDirectory(uploadsDir);
+                }
+
+                var safeFileName = $"{Guid.NewGuid():N}_{Path.GetFileName(file.FileName)}";
+                var fullPath = Path.Combine(uploadsDir, safeFileName);
+                file.SaveAs(fullPath);
+
+                // Insert record in SQL Server
+                var doc = new AiDocument
+                {
+                    CourseId = courseId,
+                    ModuleId = moduleId,
+                    LessonId = lessonId,
+                    Title = string.IsNullOrWhiteSpace(title) ? Path.GetFileNameWithoutExtension(file.FileName) : title.Trim(),
+                    FileName = file.FileName,
+                    FilePath = fullPath,
+                    FileType = ext.TrimStart('.').ToUpper(),
+                    FileSize = file.ContentLength,
+                    Status = "Processing",
+                    Visibility = string.IsNullOrWhiteSpace(visibility) ? "student" : visibility,
+                    UploadedBy = CurrentUserId,
+                    UploadedAt = DateTime.UtcNow
+                };
+
+                _db.AiDocuments.Add(doc);
+                await _db.SaveChangesAsync();
+
+                // Send to Python AI Microservice for extraction, chunking, and Qdrant indexing
+                var apiKey = ConfigurationManager.AppSettings["AIService:InternalApiKey"] ?? "lms_rag_enterprise_secret_key_2026";
+                var indexResult = await _aiClient.IndexDocumentAsync(
+                    doc.DocumentId,
+                    fullPath,
+                    courseId,
+                    moduleId,
+                    lessonId,
+                    doc.Visibility,
+                    doc.Title,
+                    apiKey
+                );
+
+                if (indexResult != null && indexResult.status == "Indexed")
+                {
+                    doc.Status = "Indexed";
+                    doc.TotalPages = Math.Max(indexResult.total_pages, 1);
+                    doc.TotalChunks = indexResult.chunks_created;
+                    doc.IndexedAt = DateTime.UtcNow;
+                    doc.ErrorMessage = null;
+                    await _db.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = $"Document '{doc.Title}' successfully uploaded and indexed ({indexResult.chunks_created} vector chunks created in Qdrant).";
+                }
+                else
+                {
+                    doc.Status = "Failed";
+                    doc.ErrorMessage = indexResult?.message ?? "AI Service indexing returned failure.";
+                    await _db.SaveChangesAsync();
+
+                    TempData["ErrorMessage"] = $"Document saved but AI indexing failed: {doc.ErrorMessage}";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error uploading and indexing document: {ex.Message}";
+            }
+
+            return RedirectToAction("Documents", new { courseId });
+        }
+
+        // POST: Instructor/DeleteDocument
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteDocument(int id)
+        {
+            var doc = await _db.AiDocuments
+                .Include(d => d.Course)
+                .FirstOrDefaultAsync(d => d.DocumentId == id);
+
+            if (doc == null || !IsOwnerOrAdmin(doc.Course))
+            {
+                return HttpNotFound();
+            }
+
+            int courseId = doc.CourseId;
+            try
+            {
+                // Delete from Qdrant Vector Store via AI Microservice
+                var apiKey = ConfigurationManager.AppSettings["AIService:InternalApiKey"] ?? "lms_rag_enterprise_secret_key_2026";
+                await _aiClient.DeleteDocumentIndexAsync(doc.DocumentId, apiKey);
+
+                // Delete physical file
+                if (System.IO.File.Exists(doc.FilePath))
+                {
+                    System.IO.File.Delete(doc.FilePath);
+                }
+
+                // Delete from SQL Server
+                _db.AiDocuments.Remove(doc);
+                await _db.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = $"Document '{doc.Title}' and all associated vector embeddings have been deleted.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error deleting document: {ex.Message}";
+            }
+
+            return RedirectToAction("Documents", new { courseId });
+        }
+
+        // POST: Instructor/ReindexDocument
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ReindexDocument(int id)
+        {
+            var doc = await _db.AiDocuments
+                .Include(d => d.Course)
+                .FirstOrDefaultAsync(d => d.DocumentId == id);
+
+            if (doc == null || !IsOwnerOrAdmin(doc.Course))
+            {
+                return HttpNotFound();
+            }
+
+            try
+            {
+                doc.Status = "Processing";
+                await _db.SaveChangesAsync();
+
+                var apiKey = ConfigurationManager.AppSettings["AIService:InternalApiKey"] ?? "lms_rag_enterprise_secret_key_2026";
+                var indexResult = await _aiClient.IndexDocumentAsync(
+                    doc.DocumentId,
+                    doc.FilePath,
+                    doc.CourseId,
+                    doc.ModuleId,
+                    doc.LessonId,
+                    doc.Visibility,
+                    doc.Title,
+                    apiKey
+                );
+
+                if (indexResult != null && indexResult.status == "Indexed")
+                {
+                    doc.Status = "Indexed";
+                    doc.TotalPages = Math.Max(indexResult.total_pages, 1);
+                    doc.TotalChunks = indexResult.chunks_created;
+                    doc.IndexedAt = DateTime.UtcNow;
+                    doc.ErrorMessage = null;
+                    await _db.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = $"Document '{doc.Title}' successfully re-indexed ({indexResult.chunks_created} vector chunks updated).";
+                }
+                else
+                {
+                    doc.Status = "Failed";
+                    doc.ErrorMessage = indexResult?.message ?? "AI Service indexing returned failure.";
+                    await _db.SaveChangesAsync();
+
+                    TempData["ErrorMessage"] = $"Re-indexing failed: {doc.ErrorMessage}";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error re-indexing document: {ex.Message}";
+            }
+
+            return RedirectToAction("Documents", new { courseId = doc.CourseId });
         }
 
         protected override void Dispose(bool disposing)

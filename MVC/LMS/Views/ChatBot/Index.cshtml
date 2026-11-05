@@ -1,8 +1,7 @@
-@model LMS.Models.ChatSession
+@model LMS.ViewModels.AiStudioViewModel
 @{
-    ViewBag.Title = "EduBot AI Academic Advisor";
-    ViewBag.PageClass = "page-ai-assistant";
-    string sessionGuid = ViewBag.SessionGuid as string ?? Model?.SessionGuid ?? Guid.NewGuid().ToString("N");
+    ViewBag.Title = "EduPlatform AI Learning Studio";
+    ViewBag.PageClass = "page-ai-studio";
 }
 
 <div class="py-4">
@@ -10,317 +9,831 @@
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb small">
             <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" class="text-cyan text-decoration-none">Home</a></li>
-            <li class="breadcrumb-item active text-white-50" aria-current="page">AI Academic Advisor</li>
+            <li class="breadcrumb-item active text-white-50" aria-current="page">AI Learning Studio</li>
         </ol>
     </nav>
 
-    <!-- Header Section -->
+    <!-- Studio Header -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
             <div class="d-flex align-items-center gap-2 mb-2">
                 <span class="badge px-3 py-1 rounded-pill fw-semibold" style="background: rgba(39, 184, 214, 0.2); color: #27B8D6; border: 1px solid rgba(39, 184, 214, 0.4);">
-                    <i class="bi bi-cpu-fill me-1"></i> Retrieval-Augmented Generation (RAG)
+                    <i class="bi bi-cpu-fill me-1"></i> Enterprise Agentic RAG Platform v2.0
                 </span>
                 <span class="badge px-2 py-1 rounded-pill" style="background: rgba(53, 201, 138, 0.2); color: #35C98A;">
-                    <i class="bi bi-check-circle me-1"></i> Live Catalog Grounding
+                    <i class="bi bi-shield-check me-1"></i> Hard RBAC Grounding
+                </span>
+                <span class="badge px-2 py-1 rounded-pill" style="background: rgba(255, 122, 24, 0.2); color: #FF7A18;">
+                    <i class="bi bi-lightning-charge me-1"></i> Semantic Caching (<50ms)
                 </span>
             </div>
-            <h2 class="fw-extrabold mb-1 tracking-tight text-white">EduBot AI Academic Advisor</h2>
-            <p class="text-muted small mb-0">
-                Ask anything about courses, syllabus chapters, learning objectives, pricing, instructor profiles, and credentials.
+            <h2 class="fw-extrabold mb-1 tracking-tight text-white">AI Learning Studio &amp; Cognitive Tutor</h2>
+            <p class="small mb-0" style="color: #94A3B8;">
+                Interactive multimodal tutor grounded in official course syllabi, slides, and academic textbooks. Select a course and learning mode below.
             </p>
         </div>
-        <div class="d-flex align-items-center gap-2">
-            <a href="@Url.Action("Index", "Courses")" class="btn rounded-pill px-3 fw-semibold text-white" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2);">
-                <i class="bi bi-book me-1 text-cyan"></i> Browse Courses
-            </a>
-            @if (User.IsInRole("Admin"))
-            {
-                <button type="button" class="btn rounded-pill px-3 fw-semibold text-white" style="background: rgba(255, 122, 24, 0.2); border: 1px solid #FF7A18;" onclick="reindexKnowledge()">
-                    <i class="bi bi-arrow-repeat me-1 text-orange" id="reindex-spinner"></i> Rebuild Index
-                </button>
-            }
+
+        <!-- Quick Launch Features -->
+        <div class="d-flex flex-wrap gap-2">
+            <button type="button" class="btn rounded-pill px-3 fw-semibold text-white shadow-sm" style="background: rgba(255, 122, 24, 0.15); border: 1px solid #FF7A18;" onclick="openFeatureModal('quiz')">
+                <i class="bi bi-patch-question-fill text-orange me-1"></i> AI Quiz Generator
+            </button>
+            <button type="button" class="btn rounded-pill px-3 fw-semibold text-white shadow-sm" style="background: rgba(39, 184, 214, 0.15); border: 1px solid #27B8D6;" onclick="openFeatureModal('summarize')">
+                <i class="bi bi-file-earmark-text text-cyan me-1"></i> Summarizer
+            </button>
+            <button type="button" class="btn rounded-pill px-3 fw-semibold text-white shadow-sm" style="background: rgba(53, 201, 138, 0.15); border: 1px solid #35C98A;" onclick="openFeatureModal('studyPlan')">
+                <i class="bi bi-calendar-check text-success me-1"></i> Study Planner
+            </button>
         </div>
     </div>
 
-    <!-- Main Advisor Layout -->
-    <div class="row g-4">
-        <!-- Sidebar Info & Quick Starters -->
-        <div class="col-lg-4">
-            <div class="card card-custom p-4 mb-4 shadow-sm" style="background: rgba(6, 35, 48, 0.9); border: 1px solid rgba(39, 184, 214, 0.25); border-radius: 20px;">
-                <div class="d-flex align-items-center gap-3 mb-3">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 48px; height: 48px; background: linear-gradient(135deg, #FF7A18, #27B8D6);">
-                        <i class="bi bi-robot fs-4"></i>
-                    </div>
-                    <div>
-                        <h5 class="fw-bold text-white mb-0">EduBot</h5>
-                        <div class="small text-muted font-monospace">Grounded in LMS Knowledge Base</div>
-                    </div>
-                </div>
-                <p class="small text-white-50 mb-3" style="line-height: 1.6;">
-                    EduBot indexes all published curriculum modules, lessons, pricing tiers, and institutional policies to answer questions with precision and provide direct enrollment and study links.
-                </p>
+    <!-- Controls Bar: Course Selector + Learning Mode Pills -->
+    <div class="card card-custom p-3 mb-4 shadow-sm" style="background: rgba(6, 35, 48, 0.9); border: 1px solid rgba(39, 184, 214, 0.25); border-radius: 16px;">
+        <div class="row g-3 align-items-center">
+            <!-- Course Scope Selector -->
+            <div class="col-12 col-md-4">
+                <label class="form-label small fw-bold text-white mb-1"><i class="bi bi-journal-bookmark-fill text-cyan me-1"></i> Grounding Scope (Course)</label>
+                <select id="studio-course-select" class="form-select form-select-sm" style="background: rgba(4, 24, 34, 0.85); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;" onchange="onCourseScopeChanged()">
+                    <option value="">All Authorized Curricula</option>
+                    @foreach (var c in Model.EnrolledCourses)
+                    {
+                        <option value="@c.CourseId" @(Model.ActiveCourseId == c.CourseId ? "selected" : "")>
+                            @c.Title (@c.CategoryName)
+                        </option>
+                    }
+                </select>
+            </div>
 
-                <h6 class="fw-bold text-white small text-uppercase tracking-wider mb-2">Indexed Knowledge Areas</h6>
-                <div class="d-flex flex-column gap-2 mb-4">
-                    <div class="p-2 rounded-3 d-flex align-items-center gap-2 small" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
-                        <i class="bi bi-mortarboard text-cyan"></i>
-                        <span class="text-white">Courses & Syllabi</span>
-                        <span class="ms-auto text-muted font-monospace">Live Sync</span>
-                    </div>
-                    <div class="p-2 rounded-3 d-flex align-items-center gap-2 small" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
-                        <i class="bi bi-play-btn text-orange"></i>
-                        <span class="text-white">Lessons & Video Durations</span>
-                        <span class="ms-auto text-muted font-monospace">All Modules</span>
-                    </div>
-                    <div class="p-2 rounded-3 d-flex align-items-center gap-2 small" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
-                        <i class="bi bi-patch-check text-success"></i>
-                        <span class="text-white">Certificate & Verification</span>
-                        <span class="ms-auto text-muted font-monospace">Official ID</span>
-                    </div>
-                    <div class="p-2 rounded-3 d-flex align-items-center gap-2 small" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
-                        <i class="bi bi-receipt text-warning"></i>
-                        <span class="text-white">Billing & Receipts</span>
-                        <span class="ms-auto text-muted font-monospace">Invoices</span>
-                    </div>
-                </div>
-
-                <h6 class="fw-bold text-white small text-uppercase tracking-wider mb-2">Recommended Inquiries</h6>
-                <div class="d-flex flex-column gap-2">
-                    <button type="button" class="btn text-start p-2 rounded-3 small text-white border-0" style="background: rgba(255, 255, 255, 0.05);" onclick="sendPromptFromPage('What courses are available for beginners?')">
-                        <i class="bi bi-chevron-right text-orange me-1"></i> What courses are available for beginners?
+            <!-- Learning Mode Selector (5 Agentic Personas) -->
+            <div class="col-12 col-md-8">
+                <label class="form-label small fw-bold text-white mb-1"><i class="bi bi-sliders text-orange me-1"></i> Learning Mode &amp; Agentic Persona</label>
+                <div class="d-flex flex-wrap gap-2" id="persona-pills">
+                    <button type="button" class="btn btn-sm rounded-pill px-3 persona-pill active" data-mode="CourseAssistant" onclick="setLearningMode('CourseAssistant', this)">
+                        <i class="bi bi-compass me-1"></i> Course Assistant
                     </button>
-                    <button type="button" class="btn text-start p-2 rounded-3 small text-white border-0" style="background: rgba(255, 255, 255, 0.05);" onclick="sendPromptFromPage('Tell me about the modules in Data Science.')">
-                        <i class="bi bi-chevron-right text-orange me-1"></i> Tell me about Data Science modules.
+                    <button type="button" class="btn btn-sm rounded-pill px-3 persona-pill" data-mode="SocraticTutor" onclick="setLearningMode('SocraticTutor', this)">
+                        <i class="bi bi-lightbulb me-1"></i> Socratic Tutor
                     </button>
-                    <button type="button" class="btn text-start p-2 rounded-3 small text-white border-0" style="background: rgba(255, 255, 255, 0.05);" onclick="sendPromptFromPage('How do I earn an official certificate?')">
-                        <i class="bi bi-chevron-right text-orange me-1"></i> How do I earn an official certificate?
+                    <button type="button" class="btn btn-sm rounded-pill px-3 persona-pill" data-mode="ExamPrep" onclick="setLearningMode('ExamPrep', this)">
+                        <i class="bi bi-award me-1"></i> Exam Prep &amp; Rubrics
                     </button>
-                    <button type="button" class="btn text-start p-2 rounded-3 small text-white border-0" style="background: rgba(255, 255, 255, 0.05);" onclick="sendPromptFromPage('What is my current course progress?')">
-                        <i class="bi bi-chevron-right text-orange me-1"></i> What is my current course progress?
+                    <button type="button" class="btn btn-sm rounded-pill px-3 persona-pill" data-mode="CodeDebugger" onclick="setLearningMode('CodeDebugger', this)">
+                        <i class="bi bi-terminal me-1"></i> Code Sandbox Tutor
                     </button>
                 </div>
             </div>
         </div>
+    </div>
 
+    <!-- Main Studio Layout -->
+    <div class="row g-4">
         <!-- Main Chat Stream -->
         <div class="col-lg-8">
-            <div class="card card-custom shadow-lg d-flex flex-column" style="background: rgba(6, 35, 48, 0.95); border: 1px solid rgba(39, 184, 214, 0.25); border-radius: 20px; height: 680px;">
-                <!-- Chat Stream Header -->
-                <div class="p-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center" style="background: rgba(4, 24, 34, 0.8);">
+            <div class="card card-custom shadow-lg d-flex flex-column" style="height: 650px; background: rgba(6, 35, 48, 0.95); border: 1px solid rgba(39, 184, 214, 0.25); border-radius: 20px; overflow: hidden;">
+                <!-- Chat Window Header -->
+                <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary border-opacity-25" style="background: rgba(4, 24, 34, 0.85);">
                     <div class="d-flex align-items-center gap-2">
-                        <span class="online-dot"></span>
-                        <span class="text-white fw-bold small">Active Consultation Session</span>
-                    </div>
-                    <button type="button" class="btn btn-sm btn-outline-light rounded-pill px-3" style="font-size: 11px;" onclick="clearPageChatHistory()">
-                        <i class="bi bi-trash3 me-1"></i> Clear History
-                    </button>
-                </div>
-
-                <!-- Messages Container -->
-                <div id="page-chat-messages" class="p-4 flex-grow-1 overflow-auto d-flex flex-column gap-3">
-                    @if (Model != null && Model.Messages != null && Model.Messages.Any())
-                    {
-                        foreach (var msg in Model.Messages.OrderBy(m => m.Timestamp))
-                        {
-                            <div class="edubot-msg @(msg.Sender.ToLower())">
-                                <div class="edubot-bubble">
-                                    @Html.Raw(msg.Content.Replace("\n", "<br/>"))
-                                </div>
-                                <span class="edubot-time">@msg.Timestamp.ToString("hh:mm tt") UTC</span>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="edubot-msg assistant">
-                            <div class="edubot-bubble">
-                                <p class="mb-1">Welcome to the <strong>EduBot Academic Advisor Studio</strong>!</p>
-                                <p class="mb-0 small text-white-50">I am connected to the live EduPlatform knowledge base. You can ask me for course recommendations, syllabus walkthroughs, or guidance on completing your learning path.</p>
-                            </div>
-                            <span class="edubot-time">Just now</span>
+                        <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 38px; height: 38px; background: linear-gradient(135deg, #FF7A18, #27B8D6);">
+                            <i class="bi bi-robot fs-5"></i>
                         </div>
-                    }
+                        <div>
+                            <div class="fw-bold text-white small" id="studio-session-title">Active RAG Consultation</div>
+                            <div class="small" style="color: #94A3B8; font-size: 11px;">
+                                <span class="d-inline-block rounded-circle bg-success me-1" style="width: 6px; height: 6px;"></span>
+                                <span id="studio-mode-label">Course Assistant Mode</span> • Hybrid Qdrant + BM25 Fusion
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-sm rounded-pill text-white px-3" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); font-size: 12px;" onclick="startNewSession()">
+                            <i class="bi bi-plus-circle me-1 text-cyan"></i> New Session
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Typing indicator -->
-                <div id="page-chat-typing" class="px-4 py-2 small text-white-50 align-items-center gap-2" style="display: none;">
-                    <span class="spinner-grow spinner-grow-sm text-cyan" role="status"></span>
-                    <span class="spinner-grow spinner-grow-sm text-orange" role="status"></span>
-                    <span class="font-monospace" style="font-size: 11px;">EduBot is searching curriculum knowledge chunks...</span>
+                <!-- Messages Stream Area -->
+                <div id="studio-messages" class="flex-grow-1 p-4 overflow-auto d-flex flex-column gap-3">
+                    <!-- Welcome AI Prompt -->
+                    <div class="studio-msg assistant">
+                        <div class="studio-bubble">
+                            <p class="mb-2 fw-semibold text-white">
+                                👋 Welcome to the <strong>EduPlatform AI Learning Studio</strong>!
+                            </p>
+                            <p class="mb-2 small" style="color: #E2E8F0;">
+                                I am your personal cognitive tutor, powered by an enterprise <strong>Retrieval-Augmented Generation (RAG)</strong> pipeline. I answer questions directly using the authorized syllabus modules, uploaded textbooks, and practice materials in your courses.
+                            </p>
+                            <div class="p-2 rounded-3 small mt-2" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(39, 184, 214, 0.2);">
+                                <span class="text-cyan fw-bold">💡 Try asking:</span>
+                                <ul class="mb-0 mt-1 ps-3 text-white-50">
+                                    <li>"Explain the core concept of this course in simple terms."</li>
+                                    <li>"What are the main differences between supervised and unsupervised learning?"</li>
+                                    <li>"Can you guide me step-by-step through solving a recursion problem in Python?"</li>
+                                    <li>"Generate 5 multiple choice questions to test my memory on this topic."</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <span class="studio-time text-muted">Just now</span>
+                    </div>
+
+                    <!-- Typing Indicator -->
+                    <div id="studio-typing" class="studio-msg assistant" style="display: none;">
+                        <div class="studio-bubble d-flex align-items-center gap-2 py-2 px-3">
+                            <div class="spinner-grow spinner-grow-sm text-cyan" role="status"></div>
+                            <span class="small text-cyan font-monospace">Retrieving vectors &amp; synthesizing answer...</span>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Input Footer -->
-                <div class="p-3 border-top border-secondary border-opacity-10" style="background: rgba(4, 24, 34, 0.85);">
-                    <form onsubmit="handlePageChatSubmit(event)" class="d-flex align-items-end gap-2">
-                        <input type="hidden" id="page-session-guid" value="@sessionGuid" />
-                        <textarea id="page-chat-input" class="form-control edubot-textarea" rows="2" placeholder="Ask your question about EduPlatform courses or syllabus..." onkeydown="handlePageChatKeyDown(event)"></textarea>
-                        <button type="submit" id="page-chat-send-btn" class="btn edubot-send-btn d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                <!-- Chat Input Form -->
+                <div class="p-3 border-top border-secondary border-opacity-25" style="background: rgba(4, 24, 34, 0.9);">
+                    <form id="studio-chat-form" onsubmit="handleStudioSubmit(event)" class="d-flex align-items-end gap-2">
+                        <input type="hidden" id="studio-session-guid" value="@Model.SessionGuid" />
+                        <textarea id="studio-input" class="form-control studio-textarea" rows="2" placeholder="Ask anything about your courses, lessons, code, or exams..." onkeydown="handleStudioKeyDown(event)"></textarea>
+                        <button type="submit" class="btn studio-send-btn shadow-sm" title="Send (Enter)">
                             <i class="bi bi-send-fill fs-5"></i>
                         </button>
                     </form>
+                    <div class="d-flex justify-content-between align-items-center mt-2 px-1">
+                        <span class="small text-muted font-monospace" style="font-size: 11px;">Press Enter to send, Shift+Enter for new line</span>
+                        <span class="small text-muted font-monospace" style="font-size: 11px;"><i class="bi bi-shield-lock text-success me-1"></i>No hallucinations: answers grounded in syllabus sources</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side Panel: Fast Tools, Telemetry & Active Grounding -->
+        <div class="col-lg-4">
+            <!-- Active Grounding Status Card -->
+            <div class="card card-custom p-4 mb-4 shadow-sm" style="background: rgba(6, 35, 48, 0.9); border: 1px solid rgba(39, 184, 214, 0.25); border-radius: 20px;">
+                <h6 class="fw-bold text-white small text-uppercase tracking-wider mb-3">
+                    <i class="bi bi-diagram-3-fill text-cyan me-1"></i> RAG Pipeline Architecture
+                </h6>
+                <div class="d-flex flex-column gap-2 mb-3">
+                    <div class="p-2 rounded-3 d-flex align-items-center gap-2 small" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                        <i class="bi bi-database-fill text-cyan"></i>
+                        <span class="text-white">Qdrant Vector Database</span>
+                        <span class="ms-auto text-success font-monospace">Dense (3072-dim)</span>
+                    </div>
+                    <div class="p-2 rounded-3 d-flex align-items-center gap-2 small" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                        <i class="bi bi-search text-warning"></i>
+                        <span class="text-white">Lexical BM25 Search</span>
+                        <span class="ms-auto text-warning font-monospace">Sparse Exact</span>
+                    </div>
+                    <div class="p-2 rounded-3 d-flex align-items-center gap-2 small" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                        <i class="bi bi-funnel-fill text-info"></i>
+                        <span class="text-white">Reciprocal Rank Fusion</span>
+                        <span class="ms-auto text-cyan font-monospace">RRF k=60</span>
+                    </div>
+                    <div class="p-2 rounded-3 d-flex align-items-center gap-2 small" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                        <i class="bi bi-cpu-fill text-orange"></i>
+                        <span class="text-white">Primary Model</span>
+                        <span class="ms-auto text-orange font-monospace">Gemini 3.1 Flash Lite</span>
+                    </div>
+                    <div class="p-2 rounded-3 d-flex align-items-center gap-2 small" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                        <i class="bi bi-arrow-repeat text-success"></i>
+                        <span class="text-white">Cascading Failover</span>
+                        <span class="ms-auto text-success font-monospace">Groq GPT-OSS-120B</span>
+                    </div>
+                </div>
+
+                <!-- Last Answer Telemetry -->
+                <div id="latest-telemetry-box" class="p-3 rounded-3" style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(39, 184, 214, 0.2); display: none;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="small fw-bold text-white"><i class="bi bi-speedometer2 text-cyan me-1"></i> Latency &amp; Cost Profiler</span>
+                        <span id="telemetry-cache-tag" class="badge bg-secondary font-monospace" style="font-size: 10px;">Live Inference</span>
+                    </div>
+                    <div class="row g-2 small text-muted font-monospace" style="font-size: 11px;">
+                        <div class="col-6">Latency: <span id="telemetry-latency" class="text-white fw-bold">--</span></div>
+                        <div class="col-6">Tokens: <span id="telemetry-tokens" class="text-white fw-bold">--</span></div>
+                        <div class="col-6">Provider: <span id="telemetry-provider" class="text-white fw-bold">--</span></div>
+                        <div class="col-6">Est. Cost: <span id="telemetry-cost" class="text-white fw-bold">--</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Practice Actions Card -->
+            <div class="card card-custom p-4 shadow-sm" style="background: rgba(6, 35, 48, 0.9); border: 1px solid rgba(39, 184, 214, 0.25); border-radius: 20px;">
+                <h6 class="fw-bold text-white small text-uppercase tracking-wider mb-3">
+                    <i class="bi bi-stars text-orange me-1"></i> Quick AI Accelerators
+                </h6>
+                <div class="d-flex flex-column gap-2">
+                    <button type="button" class="btn text-start p-2 rounded-3 text-white quick-action-btn" onclick="sendQuickStudioPrompt('Summarize key takeaways and formulas from this module.')">
+                        <i class="bi bi-file-earmark-ruled text-cyan me-2"></i> Extract Key Formulas &amp; Summary
+                    </button>
+                    <button type="button" class="btn text-start p-2 rounded-3 text-white quick-action-btn" onclick="sendQuickStudioPrompt('Explain the top 3 common pitfalls and exam mistakes in this topic.')">
+                        <i class="bi bi-exclamation-octagon text-warning me-2"></i> Top 3 Exam Pitfalls &amp; Traps
+                    </button>
+                    <button type="button" class="btn text-start p-2 rounded-3 text-white quick-action-btn" onclick="sendQuickStudioPrompt('Write a clean, documented Python implementation demonstrating this concept.')">
+                        <i class="bi bi-code-slash text-success me-2"></i> Generate Python Reference Code
+                    </button>
+                    <button type="button" class="btn text-start p-2 rounded-3 text-white quick-action-btn" onclick="sendQuickStudioPrompt('What prerequisite lessons should I review before attempting the capstone?')">
+                        <i class="bi bi-mortarboard text-orange me-2"></i> Check Prerequisite Alignment
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- ========================================================================= -->
+<!-- Modal: AI Quiz Generator Runner -->
+<!-- ========================================================================= -->
+<div class="modal fade" id="quizGeneratorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4" style="background: #062330; border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;">
+            <div class="modal-header border-bottom py-3" style="border-color: rgba(255, 255, 255, 0.1) !important;">
+                <h5 class="modal-title fw-bold text-white"><i class="bi bi-patch-question-fill me-2 text-warning"></i>AI Practice Quiz Generator</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div id="quiz-config-view">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-white">Target Course</label>
+                        <select id="quiz-course-id" class="form-select" style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;">
+                            @foreach (var c in Model.EnrolledCourses)
+                            {
+                                <option value="@c.CourseId" @(Model.ActiveCourseId == c.CourseId ? "selected" : "")>@c.Title</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-bold small text-white">Difficulty Level</label>
+                            <select id="quiz-difficulty" class="form-select" style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;">
+                                <option value="Easy">Easy (Conceptual Recall)</option>
+                                <option value="Medium" selected>Medium (Application &amp; Analysis)</option>
+                                <option value="Hard">Hard (Deep Problem Solving)</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-bold small text-white">Number of Questions</label>
+                            <select id="quiz-num-questions" class="form-select" style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;">
+                                <option value="3">3 Questions</option>
+                                <option value="5" selected>5 Questions</option>
+                                <option value="10">10 Questions</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-white">Specific Topic or Concept (Optional)</label>
+                        <input type="text" id="quiz-topic" class="form-control" placeholder="e.g. Asynchronous I/O, OOP Polymorphism, Gradient Descent..." style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;" />
+                    </div>
+                    <button type="button" class="btn btn-primary rounded-pill px-4 fw-semibold w-100" style="background-color: #FF7A18 !important; border-color: #FF7A18 !important;" onclick="generateQuizNow()">
+                        <i class="bi bi-stars me-1"></i> Generate Practice Quiz
+                    </button>
+                </div>
+
+                <!-- Quiz Loading View -->
+                <div id="quiz-loading-view" class="text-center py-5" style="display: none;">
+                    <div class="spinner-border text-warning mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+                    <h5 class="fw-bold text-white">Synthesizing Questions from Course Chunks...</h5>
+                    <p class="small text-muted">Retrieving knowledge chunks and formulating valid distractor options.</p>
+                </div>
+
+                <!-- Quiz Runner View -->
+                <div id="quiz-runner-view" style="display: none;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold text-cyan mb-0" id="quiz-title-badge">Practice Quiz</h6>
+                        <span class="badge bg-secondary" id="quiz-score-badge">0 / 0</span>
+                    </div>
+                    <div id="quiz-questions-container" class="d-flex flex-column gap-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- Modal: AI Content Summarizer -->
+<!-- ========================================================================= -->
+<div class="modal fade" id="summarizerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4" style="background: #062330; border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;">
+            <div class="modal-header border-bottom py-3" style="border-color: rgba(255, 255, 255, 0.1) !important;">
+                <h5 class="modal-title fw-bold text-white"><i class="bi bi-file-earmark-text me-2 text-info"></i>AI Content Summarizer</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-white">Course to Summarize</label>
+                    <select id="sum-course-id" class="form-select" style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;">
+                        @foreach (var c in Model.EnrolledCourses)
+                        {
+                            <option value="@c.CourseId" @(Model.ActiveCourseId == c.CourseId ? "selected" : "")>@c.Title</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-white">Summary Format</label>
+                    <select id="sum-format" class="form-select" style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;">
+                        <option value="bullet_points">Bullet Points &amp; Key Takeaways</option>
+                        <option value="executive_summary">Executive Summary</option>
+                        <option value="study_notes">Study Revision Notes</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary rounded-pill px-4 fw-semibold w-100 mb-4" style="background-color: #27B8D6 !important; border-color: #27B8D6 !important; color: #041822;" onclick="summarizeContentNow()">
+                    <i class="bi bi-lightning-fill me-1"></i> Generate Summary
+                </button>
+                <div id="sum-result" class="p-3 rounded-3" style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); min-height: 120px; display: none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- Modal: AI Personalized Study Planner -->
+<!-- ========================================================================= -->
+<div class="modal fade" id="studyPlanModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4" style="background: #062330; border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;">
+            <div class="modal-header border-bottom py-3" style="border-color: rgba(255, 255, 255, 0.1) !important;">
+                <h5 class="modal-title fw-bold text-white"><i class="bi bi-calendar-check me-2 text-success"></i>Personalized Revision &amp; Study Planner</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-3 mb-3">
+                    <div class="col-8">
+                        <label class="form-label fw-bold small text-white">Course</label>
+                        <select id="plan-course-id" class="form-select" style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;">
+                            @foreach (var c in Model.EnrolledCourses)
+                            {
+                                <option value="@c.CourseId" @(Model.ActiveCourseId == c.CourseId ? "selected" : "")>@c.Title</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label fw-bold small text-white">Target Timeline</label>
+                        <select id="plan-days" class="form-select" style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFFFFF;">
+                            <option value="7">7 Days (Sprint)</option>
+                            <option value="14" selected>14 Days (Standard)</option>
+                            <option value="30">30 Days (Comprehensive)</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary rounded-pill px-4 fw-semibold w-100 mb-4" style="background-color: #10B981 !important; border-color: #10B981 !important;" onclick="generatePlanNow()">
+                    <i class="bi bi-calendar2-range me-1"></i> Formulate Study Plan
+                </button>
+                <div id="plan-result" class="p-3 rounded-3" style="background: rgba(4, 24, 34, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); min-height: 120px; display: none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* AI Studio Custom Styling */
+.persona-pill {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #E2E8F0;
+    transition: all 0.2s ease;
+}
+.persona-pill:hover {
+    background: rgba(39, 184, 214, 0.2);
+    border-color: #27B8D6;
+    color: #FFFFFF;
+}
+.persona-pill.active {
+    background: #FF7A18 !important;
+    border-color: #FF7A18 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 12px rgba(255, 122, 24, 0.4);
+}
+
+.studio-msg {
+    display: flex;
+    flex-direction: column;
+    max-width: 85%;
+}
+.studio-msg.user {
+    align-self: flex-end;
+}
+.studio-msg.assistant {
+    align-self: flex-start;
+}
+.studio-bubble {
+    padding: 14px 18px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    word-break: break-word;
+}
+.studio-msg.user .studio-bubble {
+    background: linear-gradient(135deg, #FF7A18, #E06000);
+    color: #FFFFFF;
+    border-bottom-right-radius: 4px;
+}
+.studio-msg.assistant .studio-bubble {
+    background: rgba(11, 52, 69, 0.8);
+    border: 1px solid rgba(39, 184, 214, 0.25);
+    color: #F1F5F9;
+    border-bottom-left-radius: 4px;
+}
+.studio-time {
+    font-size: 11px;
+    margin-top: 4px;
+    padding: 0 4px;
+}
+.studio-msg.user .studio-time {
+    align-self: flex-end;
+}
+
+.studio-textarea {
+    background: rgba(6, 35, 48, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #FFFFFF !important;
+    border-radius: 14px !important;
+    resize: none;
+    font-size: 14px;
+    padding: 10px 16px;
+}
+.studio-textarea:focus {
+    border-color: #27B8D6 !important;
+    box-shadow: 0 0 0 3px rgba(39, 184, 214, 0.25) !important;
+}
+.studio-send-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: #FF7A18;
+    color: #FFFFFF;
+    border: none;
+    flex-shrink: 0;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+.studio-send-btn:hover {
+    background: #E06000;
+    transform: scale(1.05);
+}
+
+.quick-action-btn {
+    background: rgba(4, 24, 34, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+.quick-action-btn:hover {
+    background: rgba(39, 184, 214, 0.15);
+    border-color: #27B8D6;
+    color: #FFFFFF;
+    transform: translateX(3px);
+}
+</style>
+
 <script>
-    function scrollPageChatToBottom() {
-        var msgs = document.getElementById('page-chat-messages');
-        if (msgs) msgs.scrollTop = msgs.scrollHeight;
+    let activeLearningMode = '@Model.ActiveLearningMode';
+
+    function setLearningMode(mode, btn) {
+        activeLearningMode = mode;
+        document.querySelectorAll('.persona-pill').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+
+        const modeLabels = {
+            'CourseAssistant': 'Course Assistant Mode',
+            'SocraticTutor': 'Socratic Tutor Mode',
+            'ExamPrep': 'Exam Prep & Rubrics Mode',
+            'CodeDebugger': 'Code Sandbox Tutor Mode'
+        };
+        const label = document.getElementById('studio-mode-label');
+        if (label) label.innerText = modeLabels[mode] || mode;
     }
 
-    function handlePageChatKeyDown(e) {
+    function onCourseScopeChanged() {
+        const select = document.getElementById('studio-course-select');
+        const courseId = select.value;
+        const url = new URL(window.location.href);
+        if (courseId) {
+            url.searchParams.set('courseId', courseId);
+        } else {
+            url.searchParams.delete('courseId');
+        }
+        window.location.href = url.toString();
+    }
+
+    function startNewSession() {
+        if (!confirm('Start a fresh AI Learning Consultation?')) return;
+        const select = document.getElementById('studio-course-select');
+        const courseId = select ? select.value : '';
+        const url = new URL(window.location.href);
+        url.searchParams.delete('sessionId');
+        if (courseId) url.searchParams.set('courseId', courseId);
+        window.location.href = url.toString();
+    }
+
+    function handleStudioKeyDown(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            handlePageChatSubmit(e);
+            handleStudioSubmit(e);
         }
     }
 
-    function sendPromptFromPage(text) {
-        var input = document.getElementById('page-chat-input');
+    function sendQuickStudioPrompt(text) {
+        const input = document.getElementById('studio-input');
         if (input) {
             input.value = text;
-            handlePageChatSubmit(new Event('submit'));
+            handleStudioSubmit(new Event('submit'));
         }
     }
 
-    function handlePageChatSubmit(e) {
+    function handleStudioSubmit(e) {
         if (e && e.preventDefault) e.preventDefault();
-        var input = document.getElementById('page-chat-input');
-        var sessionGuid = document.getElementById('page-session-guid').value;
-        var msgsContainer = document.getElementById('page-chat-messages');
-        var typing = document.getElementById('page-chat-typing');
+        const input = document.getElementById('studio-input');
+        const sessionGuid = document.getElementById('studio-session-guid').value;
+        const courseSelect = document.getElementById('studio-course-select');
+        const courseId = courseSelect && courseSelect.value ? parseInt(courseSelect.value) : null;
+        const msgs = document.getElementById('studio-messages');
+        const typing = document.getElementById('studio-typing');
 
         if (!input || !input.value.trim()) return;
-
-        var text = input.value.trim();
+        const userText = input.value.trim();
         input.value = '';
 
-        // Add user message
-        msgsContainer.insertAdjacentHTML('beforeend', `
-            <div class="edubot-msg user">
-                <div class="edubot-bubble">${escapeHtml(text)}</div>
-                <span class="edubot-time">Just now</span>
+        // Add user message to UI
+        const userHtml = `
+            <div class="studio-msg user">
+                <div class="studio-bubble">${escapeHtml(userText)}</div>
+                <span class="studio-time text-muted">Just now</span>
             </div>
-        `);
-        scrollPageChatToBottom();
+        `;
+        msgs.insertAdjacentHTML('beforeend', userHtml);
+        msgs.scrollTop = msgs.scrollHeight;
 
-        if (typing) typing.style.display = 'flex';
-        scrollPageChatToBottom();
+        // Show typing indicator
+        if (typing) {
+            typing.style.display = 'flex';
+            msgs.appendChild(typing);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
 
+        // Call backend /ChatBot/SendMessage
         fetch('/ChatBot/SendMessage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ Message: text, SessionGuid: sessionGuid })
+            body: JSON.stringify({
+                Message: userText,
+                SessionGuid: sessionGuid,
+                CourseId: courseId,
+                LearningMode: activeLearningMode
+            })
         })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
+        .then(res => res.json())
+        .then(data => {
             if (typing) typing.style.display = 'none';
 
             if (!data.Success) {
-                msgsContainer.insertAdjacentHTML('beforeend', `
-                    <div class="edubot-msg assistant">
-                        <div class="edubot-bubble text-danger">
-                            <i class="bi bi-exclamation-triangle me-1"></i> ${escapeHtml(data.ErrorMessage || 'Error generating response.')}
+                const errHtml = `
+                    <div class="studio-msg assistant">
+                        <div class="studio-bubble text-danger">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i> ${escapeHtml(data.ErrorMessage || 'Error generating AI response.')}
                         </div>
                     </div>
-                `);
-                scrollPageChatToBottom();
+                `;
+                msgs.insertAdjacentHTML('beforeend', errHtml);
+                msgs.scrollTop = msgs.scrollHeight;
                 return;
             }
 
-            var formatted = renderMarkdownSimple(data.Reply);
-            var coursesHtml = '';
-            if (data.RecommendedCourses && data.RecommendedCourses.length > 0) {
-                coursesHtml += '<div class="row g-2 mt-2">';
-                data.RecommendedCourses.forEach(function(course) {
-                    var actionBtn = course.IsEnrolled
-                        ? `<a href="${course.LearnUrl}" class="btn btn-sm btn-outline-cyan rounded-pill py-1 px-3 fw-bold" style="font-size: 11px;"><i class="bi bi-play-circle me-1"></i> Resume (${course.ProgressPercent}%)</a>`
-                        : `<a href="${course.DetailUrl}" class="btn btn-sm text-white rounded-pill py-1 px-3 fw-bold" style="background: #FF7A18; font-size: 11px;"><i class="bi bi-book me-1"></i> View Course</a>`;
-
-                    coursesHtml += `
-                        <div class="col-md-6">
-                            <div class="edubot-course-card">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div class="course-title">${escapeHtml(course.Title)}</div>
-                                    <span class="badge rounded-pill" style="background: rgba(39, 184, 214, 0.2); color: #27B8D6; font-size: 10px;">${escapeHtml(course.Level)}</span>
-                                </div>
-                                <div class="course-meta d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-tag me-1"></i>${escapeHtml(course.CategoryName)}</span>
-                                    <span class="fw-bold text-white">${course.Price === 0 ? 'Free' : '₹' + course.Price.toFixed(2)}</span>
-                                </div>
-                                <div class="mt-1">${actionBtn}</div>
-                            </div>
+            // Citations rendering
+            let citationsHtml = '';
+            if (data.Citations && data.Citations.length > 0) {
+                citationsHtml += `
+                    <div class="mt-3 pt-2 border-top border-secondary border-opacity-25">
+                        <div class="d-flex align-items-center gap-1 small text-info fw-semibold mb-2">
+                            <i class="bi bi-shield-check text-cyan"></i> Grounded in ${data.Citations.length} Syllabus Source${data.Citations.length > 1 ? 's' : ''}:
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                `;
+                data.Citations.forEach(cite => {
+                    const pageText = cite.page_number ? ` (Page ${cite.page_number})` : '';
+                    const scoreText = cite.relevance_score ? ` [Score: ${cite.relevance_score.toFixed(2)}]` : '';
+                    citationsHtml += `
+                        <div class="p-2 rounded-2 small text-white-50 border border-secondary border-opacity-25" style="background: rgba(4, 24, 34, 0.7); font-size: 11px;" title="${escapeHtml(cite.excerpt || '')}">
+                            <div class="fw-bold text-warning"><i class="bi bi-file-earmark-text me-1"></i>${escapeHtml(cite.document_name || 'Curriculum')}${pageText} <span class="text-cyan">${scoreText}</span></div>
+                            <div class="text-truncate mt-1" style="max-width: 280px; font-style: italic;">"${escapeHtml(cite.excerpt || '')}"</div>
                         </div>
                     `;
                 });
-                coursesHtml += '</div>';
+                citationsHtml += `</div></div>`;
             }
 
-            msgsContainer.insertAdjacentHTML('beforeend', `
-                <div class="edubot-msg assistant">
-                    <div class="edubot-bubble">
-                        ${formatted}
-                        ${coursesHtml}
+            // Update Telemetry Panel
+            if (data.Telemetry) {
+                const tBox = document.getElementById('latest-telemetry-box');
+                if (tBox) {
+                    tBox.style.display = 'block';
+                    document.getElementById('telemetry-latency').innerText = data.Telemetry.latency_ms + 'ms';
+                    document.getElementById('telemetry-tokens').innerText = data.Telemetry.total_tokens + ' tok';
+                    document.getElementById('telemetry-provider').innerText = data.Telemetry.provider + ' (' + data.Telemetry.model + ')';
+                    document.getElementById('telemetry-cost').innerText = '$' + (data.Telemetry.estimated_cost_usd || '0.000000');
+                    const cacheTag = document.getElementById('telemetry-cache-tag');
+                    if (data.Telemetry.was_cache_hit) {
+                        cacheTag.className = 'badge bg-success font-monospace';
+                        cacheTag.innerHTML = '<i class="bi bi-lightning-charge-fill"></i> Cache Hit';
+                    } else {
+                        cacheTag.className = 'badge bg-secondary font-monospace';
+                        cacheTag.innerText = 'Live Inference';
+                    }
+                }
+            }
+
+            const formattedReply = renderMarkdownSimple(data.Reply);
+            const assistantHtml = `
+                <div class="studio-msg assistant">
+                    <div class="studio-bubble">
+                        ${formattedReply}
+                        ${citationsHtml}
                     </div>
-                    <span class="edubot-time">Just now</span>
+                    <div class="studio-time d-flex align-items-center justify-content-between text-muted">
+                        <span>Just now</span>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-icon text-muted hover-text-white p-0" title="Helpful" onclick="submitFeedback(this, true)"><i class="bi bi-hand-thumbs-up"></i></button>
+                            <button type="button" class="btn btn-sm btn-icon text-muted hover-text-white p-0" title="Not Helpful" onclick="submitFeedback(this, false)"><i class="bi bi-hand-thumbs-down"></i></button>
+                        </div>
+                    </div>
                 </div>
-            `);
-            scrollPageChatToBottom();
+            `;
+            msgs.insertAdjacentHTML('beforeend', assistantHtml);
+            msgs.scrollTop = msgs.scrollHeight;
         })
-        .catch(function(err) {
+        .catch(err => {
             if (typing) typing.style.display = 'none';
-            msgsContainer.insertAdjacentHTML('beforeend', `
-                <div class="edubot-msg assistant">
-                    <div class="edubot-bubble text-danger">
-                        <i class="bi bi-wifi-off me-1"></i> Network error connecting to AI Assistant.
+            const netErrHtml = `
+                <div class="studio-msg assistant">
+                    <div class="studio-bubble text-danger">
+                        <i class="bi bi-wifi-off me-1"></i> Failed to communicate with AI Service.
                     </div>
                 </div>
-            `);
-            scrollPageChatToBottom();
+            `;
+            msgs.insertAdjacentHTML('beforeend', netErrHtml);
+            msgs.scrollTop = msgs.scrollHeight;
         });
     }
 
-    function clearPageChatHistory() {
-        var sessionGuid = document.getElementById('page-session-guid').value;
-        if (!confirm('Clear this chat conversation?')) return;
+    function submitFeedback(btn, isHelpful) {
+        btn.classList.remove('text-muted');
+        btn.classList.add(isHelpful ? 'text-success' : 'text-danger');
+    }
 
-        fetch('/ChatBot/ClearHistory', {
+    function openFeatureModal(feature) {
+        if (feature === 'quiz') {
+            new bootstrap.Modal(document.getElementById('quizGeneratorModal')).show();
+        } else if (feature === 'summarize') {
+            new bootstrap.Modal(document.getElementById('summarizerModal')).show();
+        } else if (feature === 'studyPlan') {
+            new bootstrap.Modal(document.getElementById('studyPlanModal')).show();
+        }
+    }
+
+    function generateQuizNow() {
+        const courseId = parseInt(document.getElementById('quiz-course-id').value);
+        const difficulty = document.getElementById('quiz-difficulty').value;
+        const numQ = parseInt(document.getElementById('quiz-num-questions').value);
+        const topic = document.getElementById('quiz-topic').value;
+
+        document.getElementById('quiz-config-view').style.display = 'none';
+        document.getElementById('quiz-loading-view').style.display = 'block';
+
+        fetch('/ChatBot/GeneratePracticeQuiz', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ sessionGuid: sessionGuid })
-        }).then(function() {
-            var msgs = document.getElementById('page-chat-messages');
-            if (msgs) {
-                msgs.innerHTML = `
-                    <div class="edubot-msg assistant">
-                        <div class="edubot-bubble">
-                            <p class="mb-0">Chat history cleared! Ask me anything about courses, modules, or certifications.</p>
-                        </div>
-                        <span class="edubot-time">Just now</span>
-                    </div>
-                `;
+            body: JSON.stringify({
+                course_id: courseId,
+                difficulty: difficulty,
+                num_questions: numQ,
+                topic: topic
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('quiz-loading-view').style.display = 'none';
+            if (!data.success || !data.quiz) {
+                alert(data.message || 'Quiz generation failed.');
+                document.getElementById('quiz-config-view').style.display = 'block';
+                return;
             }
+
+            const runner = document.getElementById('quiz-runner-view');
+            const container = document.getElementById('quiz-questions-container');
+            container.innerHTML = '';
+            runner.style.display = 'block';
+
+            data.quiz.questions.forEach((q, idx) => {
+                let optionsHtml = '';
+                q.options.forEach((opt, oIdx) => {
+                    optionsHtml += `
+                        <div class="form-check p-2 rounded-2 mb-2" style="background: rgba(4, 24, 34, 0.6); border: 1px solid rgba(255, 255, 255, 0.08);">
+                            <input class="form-check-input ms-1" type="radio" name="q_${idx}" id="q_${idx}_${oIdx}" value="${escapeHtml(opt)}" onchange="checkQuizAnswer(${idx}, '${escapeHtml(opt)}', '${escapeHtml(q.correct_answer)}', '${escapeHtml(q.explanation || '')}')">
+                            <label class="form-check-label text-white ms-2" for="q_${idx}_${oIdx}">${escapeHtml(opt)}</label>
+                        </div>
+                    `;
+                });
+
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="card p-3" style="background: rgba(4, 24, 34, 0.85); border: 1px solid rgba(39, 184, 214, 0.25);">
+                        <h6 class="fw-bold text-white mb-3">Q${idx + 1}: ${escapeHtml(q.question)}</h6>
+                        ${optionsHtml}
+                        <div id="expl_${idx}" class="p-2 rounded-2 small mt-2" style="display: none;"></div>
+                    </div>
+                `);
+            });
+        })
+        .catch(err => {
+            document.getElementById('quiz-loading-view').style.display = 'none';
+            document.getElementById('quiz-config-view').style.display = 'block';
+            alert('Error generating quiz.');
         });
     }
 
-    function reindexKnowledge() {
-        var spinner = document.getElementById('reindex-spinner');
-        if (spinner) spinner.className = 'spinner-border spinner-border-sm me-1 text-orange';
-
-        fetch('/ChatBot/Reindex', { method: 'POST' })
-            .then(function(res) { return res.json(); })
-            .then(function(data) {
-                if (spinner) spinner.className = 'bi bi-arrow-repeat me-1 text-orange';
-                alert(data.message || 'Knowledge index refreshed!');
-            })
-            .catch(function() {
-                if (spinner) spinner.className = 'bi bi-arrow-repeat me-1 text-orange';
-                alert('Error refreshing index.');
-            });
+    function checkQuizAnswer(qIdx, selected, correct, explanation) {
+        const explDiv = document.getElementById(`expl_${qIdx}`);
+        if (!explDiv) return;
+        explDiv.style.display = 'block';
+        if (selected.trim().toLowerCase() === correct.trim().toLowerCase()) {
+            explDiv.className = 'p-2 rounded-2 small mt-2 bg-success-subtle text-success border border-success';
+            explDiv.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i> <strong>Correct!</strong> ${escapeHtml(explanation)}`;
+        } else {
+            explDiv.className = 'p-2 rounded-2 small mt-2 bg-danger-subtle text-danger border border-danger';
+            explDiv.innerHTML = `<i class="bi bi-x-circle-fill me-1"></i> <strong>Incorrect.</strong> Correct answer is <em>${escapeHtml(correct)}</em>. ${escapeHtml(explanation)}`;
+        }
     }
 
-    document.addEventListener('DOMContentLoaded', scrollPageChatToBottom);
+    function summarizeContentNow() {
+        const courseId = parseInt(document.getElementById('sum-course-id').value);
+        const format = document.getElementById('sum-format').value;
+        const resDiv = document.getElementById('sum-result');
+        resDiv.style.display = 'block';
+        resDiv.innerHTML = '<div class="text-cyan small"><span class="spinner-border spinner-border-sm me-2"></span>Synthesizing summary from knowledge chunks...</div>';
+
+        fetch('/ChatBot/SummarizeContent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ course_id: courseId, format: format })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success || !data.summary) {
+                resDiv.innerHTML = `<span class="text-danger">${escapeHtml(data.message || 'Failed to summarize.')}</span>`;
+                return;
+            }
+            resDiv.innerHTML = renderMarkdownSimple(data.summary.summary);
+        })
+        .catch(err => {
+            resDiv.innerHTML = '<span class="text-danger">Error summarizing content.</span>';
+        });
+    }
+
+    function generatePlanNow() {
+        const courseId = parseInt(document.getElementById('plan-course-id').value);
+        const days = parseInt(document.getElementById('plan-days').value);
+        const resDiv = document.getElementById('plan-result');
+        resDiv.style.display = 'block';
+        resDiv.innerHTML = '<div class="text-success small"><span class="spinner-border spinner-border-sm me-2"></span>Formulating study plan...</div>';
+
+        fetch('/ChatBot/GenerateStudyPlan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ course_id: courseId, target_days: days })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success || !data.plan) {
+                resDiv.innerHTML = `<span class="text-danger">${escapeHtml(data.message || 'Failed to generate study plan.')}</span>`;
+                return;
+            }
+            resDiv.innerHTML = renderMarkdownSimple(data.plan.study_plan);
+        })
+        .catch(err => {
+            resDiv.innerHTML = '<span class="text-danger">Error generating study plan.</span>';
+        });
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function renderMarkdownSimple(text) {
+        if (!text) return '';
+        var t = escapeHtml(text);
+        // Code blocks ```code```
+        t = t.replace(/```([a-z]*)\n([\s\S]*?)```/g, function(match, lang, code) {
+            return '<pre class="p-3 my-2 rounded-3 text-light overflow-auto" style="background: rgba(4, 24, 34, 0.95); border: 1px solid rgba(39, 184, 214, 0.3); font-size: 13px;"><code>' + code + '</code></pre>';
+        });
+        // Inline code `code`
+        t = t.replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 rounded text-cyan" style="background: rgba(39, 184, 214, 0.15); font-size: 90%;">$1</code>');
+        // Bold **text**
+        t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        // Bullet points
+        t = t.replace(/^\s*[\*\-]\s+(.+)$/gm, '<li class="ms-3 mb-1">$1</li>');
+        // Numbers
+        t = t.replace(/^\s*(\d+)\.\s+(.+)$/gm, '<div class="ms-2 mb-1"><strong>$1.</strong> $2</div>');
+        // Newlines
+        t = t.replace(/\n\n+/g, '<br/><br/>');
+        t = t.replace(/\n/g, '<br/>');
+        return t;
+    }
 </script>

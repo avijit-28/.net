@@ -1,17 +1,17 @@
 """
-EduPlatform AIService - Structured Logger with Secret Masking
-Ensures API keys, tokens, and credentials are never emitted to console or logs.
+Structured Logger with Secret Masking.
+Ensures API keys, tokens, and credentials are never logged to console or logs.
 """
-
 import re
 import logging
 import sys
 
 SECRET_PATTERNS = [
-    re.compile(r"AIza[0-9A-Za-z-_]{35}"),
+    re.compile(r"AQ\.[0-9A-Za-z-_]{35,}"),
     re.compile(r"gsk_[0-9A-Za-z]{40,}"),
     re.compile(r"Bearer\s+[0-9A-Za-z-_.]+"),
     re.compile(r"key=([0-9A-Za-z-_]+)"),
+    re.compile(r"lms_rag_secret[0-9A-Za-z-_]*")
 ]
 
 class SecretMaskingFilter(logging.Filter):
@@ -19,11 +19,11 @@ class SecretMaskingFilter(logging.Filter):
         if isinstance(record.msg, str):
             msg = record.msg
             for pattern in SECRET_PATTERNS:
-                msg = pattern.sub("[REDACTED_SECRET]", msg)
+                msg = pattern.sub("[REDACTED_CREDENTIAL]", msg)
             record.msg = msg
         return True
 
-def setup_logger(name: str = "AIService") -> logging.Logger:
+def setup_logger(name: str = "EnterpriseRAG") -> logging.Logger:
     logger = logging.getLogger(name)
     if not logger.handlers:
         logger.setLevel(logging.INFO)
@@ -38,5 +38,3 @@ def setup_logger(name: str = "AIService") -> logging.Logger:
     return logger
 
 logger = setup_logger()
-get_masked_logger = setup_logger
-

@@ -201,7 +201,7 @@
     <Compile Include="Models\AI\AiChatSource.cs" />
     <Compile Include="Models\AI\AiUsageLog.cs" />
     <Compile Include="Models\AI\AiFeedback.cs" />
-    <Compile Include="Models\AI\AiIndexingJob.cs" />
+    <Compile Include="Models\AI\AiSemanticCache.cs" />
     <Compile Include="Models\Question.cs" />
     <Compile Include="Models\QuestionOption.cs" />
     <Compile Include="Models\Quiz.cs" />
@@ -223,6 +223,10 @@
     <Compile Include="Services\GeminiChatService.cs" />
     <Compile Include="Services\StripeService.cs" />
     <Compile Include="Services\QuizService.cs" />
+    <Compile Include="Services\IAiServiceClient.cs" />
+    <Compile Include="Services\AiServiceClient.cs" />
+    <Compile Include="Services\ICloudinaryService.cs" />
+    <Compile Include="Services\CloudinaryService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="ViewModels\AdminViewModels.cs" />
@@ -320,6 +324,7 @@
     <Content Include="Views\Student\AllReceipts.cshtml" />
     <Content Include="Views\Instructor\Index.cshtml" />
     <Content Include="Views\Instructor\Courses.cshtml" />
+    <Content Include="Views\Instructor\Documents.cshtml" />
     <Content Include="Views\Instructor\CreateCourse.cshtml" />
     <Content Include="Views\Instructor\EditCourse.cshtml" />
     <Content Include="Views\Instructor\Modules.cshtml" />
@@ -359,6 +364,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="AIService\" />
+    <Folder Include="Rag\" />
+    <Folder Include="Database\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AIService\**\*" Exclude="AIService\qdrant_data\**\*;AIService\__pycache__\**\*;AIService\.env" />
+    <None Include="Rag\**\*" />
+    <None Include="Database\**\*" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

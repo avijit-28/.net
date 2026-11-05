@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LMS.Models
+namespace LMS.Models.AI
 {
     [Table("AI_ChatSessions")]
     public class AiChatSession
@@ -19,16 +19,15 @@ namespace LMS.Models
 
         [Required]
         [StringLength(255)]
-        public string SessionTitle { get; set; }
+        public string SessionTitle { get; set; } = "New Learning Session";
 
         [Required]
         [StringLength(50)]
-        public string Mode { get; set; } = "CourseAssistant"; // CourseAssistant, DocumentAssistant, StudyAssistant, QuizGenerator, CodingAssistant
-
-        public bool IsArchived { get; set; } = false;
+        public string LearningMode { get; set; } = "CourseAssistant"; // CourseAssistant, SocraticTutor, ExamPrep, PracticeQuiz, CodeDebugger
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime LastActiveAt { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("UserId")]
         public virtual ApplicationUser User { get; set; }

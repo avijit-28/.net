@@ -1,5 +1,6 @@
 using System.Data.Entity;
 using LMS.Models;
+using LMS.Models.AI;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace LMS.Data
@@ -44,7 +45,7 @@ namespace LMS.Data
         public DbSet<ChatSession> ChatSessions { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
-        // Enterprise RAG Document Ingestion & Assistant DbSets
+        // Enterprise RAG AI Assistant DbSets
         public DbSet<AiDocument> AiDocuments { get; set; }
         public DbSet<AiDocumentChunk> AiDocumentChunks { get; set; }
         public DbSet<AiChatSession> AiChatSessions { get; set; }
@@ -52,7 +53,7 @@ namespace LMS.Data
         public DbSet<AiChatSource> AiChatSources { get; set; }
         public DbSet<AiUsageLog> AiUsageLogs { get; set; }
         public DbSet<AiFeedback> AiFeedbacks { get; set; }
-        public DbSet<AiIndexingJob> AiIndexingJobs { get; set; }
+        public DbSet<AiSemanticCache> AiSemanticCaches { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -75,7 +76,6 @@ namespace LMS.Data
             modelBuilder.Entity<Payment>().Property(p => p.Amount).HasPrecision(18, 2);
             modelBuilder.Entity<Payment>().Property(p => p.AdminCommission).HasPrecision(18, 2);
             modelBuilder.Entity<Payment>().Property(p => p.InstructorEarnings).HasPrecision(18, 2);
-            modelBuilder.Entity<AiUsageLog>().Property(u => u.EstimatedCost).HasPrecision(18, 6);
 
             // Optional 1-to-many relationships without cascade delete
             modelBuilder.Entity<Quiz>()

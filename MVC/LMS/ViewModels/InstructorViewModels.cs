@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web;
 using System.Web.Mvc;
 using LMS.Models;
 
@@ -101,6 +102,9 @@ namespace LMS.ViewModels
         [Display(Name = "Resource File URL / Document")]
         [StringLength(500)]
         public string ResourceUrl { get; set; }
+
+        [Display(Name = "Upload PDF File")]
+        public HttpPostedFileBase PdfFile { get; set; }
 
         [Display(Name = "Duration (Minutes)")]
         public int DurationInMinutes { get; set; } = 10;

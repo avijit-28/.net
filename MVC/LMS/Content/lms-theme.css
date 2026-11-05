@@ -39,15 +39,15 @@
     --lms-amber: #F59E0B;
     --lms-amber-light: #FFFBEB;
 
-    /* Neutrals & Surfaces */
-    --lms-bg: #F8FAFC;
-    --lms-surface: #FFFFFF;
-    --lms-surface-subtle: #F1F5F9;
-    --lms-border: #E2E8F0;
+    /* Neutrals & Surfaces - EduPlatform Signature Dark Canvas */
+    --lms-bg: #041822;
+    --lms-surface: #062330;
+    --lms-surface-subtle: #0B3445;
+    --lms-border: rgba(255, 255, 255, 0.12);
     --lms-border-focus: #FF7A18;
-    --lms-text-main: #0D1E2D;
-    --lms-text-muted: #64748B;
-    --lms-text-subtle: #94A3B8;
+    --lms-text-main: #FFFFFF;
+    --lms-text-muted: #94A3B8;
+    --lms-text-subtle: #64748B;
 
     /* Shadows */
     --lms-shadow-sm: 0 1px 2px 0 rgba(6, 35, 48, 0.04);
@@ -79,7 +79,12 @@ html, body {
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--lms-bg);
+    background-color: #041822;
+    background-image: 
+        radial-gradient(circle at 80% 20%, #0D3B4F 0%, transparent 40%),
+        radial-gradient(circle at 20% 60%, #0B3445 0%, transparent 45%),
+        linear-gradient(180deg, #062330 0%, #041822 100%);
+    background-attachment: fixed;
     color: var(--lms-text-main);
     min-height: 100vh;
     display: flex;
@@ -993,9 +998,10 @@ p, .lead {
 /* Cards & Surfaces */
 .card-custom {
     border-radius: var(--lms-radius-lg);
-    background: #FFFFFF;
-    border: 1px solid var(--lms-border);
-    box-shadow: var(--lms-shadow-sm);
+    background: #062330;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    color: #FFFFFF;
     transition: var(--lms-transition);
 }
 
@@ -3178,4 +3184,108 @@ body.page-instructor-management .form-select:focus {
     color: #FFFFFF !important;
     box-shadow: 0 0 0 3px rgba(39, 184, 214, 0.25) !important;
 }
+
+/* --------------------------------------------------------------------------
+   Definitive Course Details Dark Palette Enforcer
+   -------------------------------------------------------------------------- */
+body.page-course-details .curriculum-section,
+body.page-course-details .reviews-section,
+body.page-course-details .col-lg-8 .card {
+    background: #062330 !important;
+    border: 1px solid rgba(39, 184, 214, 0.25) !important;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-course-details .accordion-flush,
+body.page-course-details #curriculumAccordion {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background: transparent !important;
+}
+
+body.page-course-details #curriculumAccordion .accordion-item {
+    background: rgba(6, 35, 48, 0.9) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
+}
+
+body.page-course-details #curriculumAccordion .accordion-button {
+    background: #0B3445 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+body.page-course-details #curriculumAccordion .accordion-button:not(.collapsed) {
+    background: #0d3d52 !important;
+    color: #FF7A18 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+body.page-course-details #curriculumAccordion .accordion-button strong,
+body.page-course-details #curriculumAccordion .accordion-button .text-dark {
+    color: #FFFFFF !important;
+}
+
+body.page-course-details #curriculumAccordion .accordion-body {
+    background: #062330 !important;
+    color: #E2E8F0 !important;
+}
+
+body.page-course-details #curriculumAccordion .list-group-item {
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #E2E8F0 !important;
+}
+
+body.page-course-details #curriculumAccordion .list-group-item a,
+body.page-course-details #curriculumAccordion .chapter-direct-link,
+body.page-course-details #curriculumAccordion .btn-trigger-enroll {
+    color: #FFFFFF !important;
+    transition: color 0.2s ease;
+}
+
+body.page-course-details #curriculumAccordion .chapter-direct-link:hover,
+body.page-course-details #curriculumAccordion .btn-trigger-enroll:hover {
+    color: #27B8D6 !important;
+}
+
+body.page-course-details .reviews-section .bg-light,
+body.page-course-details .reviews-section .rounded-3.border {
+    background: rgba(11, 52, 69, 0.45) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #E2E8F0 !important;
+}
+
+body.page-course-details .reviews-section .rounded-3.border strong,
+body.page-course-details .reviews-section .rounded-3.border .text-dark {
+    color: #FFFFFF !important;
+}
+
+/* --------------------------------------------------------------------------
+   Definitive Account / Auth Dark Viewport Enforcer
+   -------------------------------------------------------------------------- */
+body.page-login,
+body.page-account,
+body.page-forgot-password,
+body.page-reset-password,
+body.page-register {
+    background-color: #041822 !important;
+    background-image:
+        radial-gradient(circle at 20% 25%, rgba(39, 184, 214, 0.16), transparent 45%),
+        radial-gradient(circle at 80% 30%, rgba(255, 122, 24, 0.18), transparent 40%),
+        linear-gradient(180deg, #041822 0%, #062330 50%, #0B3445 100%) !important;
+    background-attachment: fixed !important;
+    color: #FFFFFF !important;
+    min-height: 100vh !important;
+}
+
+.page-login .main-content-wrapper,
+.page-account .main-content-wrapper,
+.page-forgot-password .main-content-wrapper,
+.page-reset-password .main-content-wrapper {
+    background: transparent !important;
+    color: #FFFFFF !important;
+}
+
 
