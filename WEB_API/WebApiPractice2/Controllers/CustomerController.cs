@@ -11,11 +11,9 @@ namespace WebApiPractice2.Controllers
     {
         private Uri GetApiBaseUri()
         {
-            if (Request != null && Request.Url != null)
-            {
-                return new Uri(string.Format("{0}://{1}/api/", Request.Url.Scheme, Request.Url.Authority));
-            }
-            return new Uri("http://localhost:58572/api/");
+            return Request?.Url != null
+                ? new Uri($"{Request.Url.Scheme}://{Request.Url.Authority}/api/")
+                : new Uri("http://localhost:58572/api/");
         }
 
         // GET: Customer
