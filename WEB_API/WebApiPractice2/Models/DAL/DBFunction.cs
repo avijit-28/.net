@@ -16,6 +16,10 @@ namespace WebApiPractice2.Models.DAL
             var conSetting = ConfigurationManager.ConnectionStrings["DBCon"] 
                           ?? ConfigurationManager.ConnectionStrings["DBConn"];
             conStr = conSetting != null ? conSetting.ToString() : string.Empty;
+            if (!string.IsNullOrEmpty(conStr))
+            {
+                conStr = conStr.Replace("Trust Server Certificate", "TrustServerCertificate");
+            }
             _dt = new DataTable();
         }
 
