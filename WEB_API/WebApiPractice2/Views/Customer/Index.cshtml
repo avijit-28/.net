@@ -1,0 +1,77 @@
+@using WebApiPractice2.Models.BEL
+@model IEnumerable<Customer>
+
+@{
+    ViewBag.Title = "Customer Management (MVC Client)";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-people-fill text-primary"></i> Customer Management</h2>
+            <p class="text-muted mb-0">Project 2: ASP.NET MVC Client consuming Web API via <code>HttpClient</code></p>
+        </div>
+        <div>
+            @Html.ActionLink("+ Create New Customer", "Create", "Customer", null, new { @class = "btn btn-primary shadow-sm" })
+            <a href="/" class="btn btn-outline-secondary ms-2">Back to Overview</a>
+        </div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger shadow-sm">
+            @Html.ValidationSummary(false, "", new { @class = "mb-0" })
+        </div>
+    }
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="card-title mb-0 fw-semibold text-secondary">
+                <span class="badge bg-primary me-2">GET</span> http://localhost:58572/api/CustomerAPI/GetCustomers
+            </h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3" style="width: 100px;">Customer ID</th>
+                        <th>Name</th>
+                        <th>Mobile Number</th>
+                        <th>Email ID</th>
+                        <th>Country</th>
+                        <th class="text-end pe-3" style="width: 160px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var customer in Model)
+                        {
+                            <tr>
+                                <td class="ps-3"><span class="badge bg-light text-dark border">#@customer.CustomerId</span></td>
+                                <td class="fw-semibold text-primary">@customer.Name</td>
+                                <td><code>@customer.MobileNo</code></td>
+                                <td><a href="mailto:@customer.EmailID" class="text-decoration-none">@customer.EmailID</a></td>
+                                <td><span class="badge bg-info text-dark">@customer.Country</span></td>
+                                <td class="text-end pe-3">
+                                    @Html.ActionLink("Edit", "Edit", new { id = customer.CustomerId }, new { @class = "btn btn-sm btn-outline-warning me-1" })
+                                    @Html.ActionLink("Delete", "Delete", new { id = customer.CustomerId }, new { @class = "btn btn-sm btn-outline-danger", onclick = "return confirm('Are you sure you want to delete customer " + customer.Name + "?');" })
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <div class="fs-1 text-secondary mb-2">&#128100;</div>
+                                <p class="mb-2">No customers found.</p>
+                                @Html.ActionLink("Create First Customer", "Create", "Customer", null, new { @class = "btn btn-sm btn-primary" })
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
