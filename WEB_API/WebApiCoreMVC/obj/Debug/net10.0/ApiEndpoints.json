@@ -1,5 +1,84 @@
 [
   {
+    "ContainingType": "WebApiCoreMVC.Controllers.DoctorApiController",
+    "Method": "GetAllDoctors",
+    "RelativePath": "api/DoctorApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApiCoreMVC.Controllers.DoctorApiController",
+    "Method": "AddDoctor",
+    "RelativePath": "api/DoctorApi",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "doctor",
+        "Type": "WebApiCoreMVC.Models.Doctor",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApiCoreMVC.Controllers.DoctorApiController",
+    "Method": "GetDoctorById",
+    "RelativePath": "api/DoctorApi/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApiCoreMVC.Controllers.DoctorApiController",
+    "Method": "UpdateDoctor",
+    "RelativePath": "api/DoctorApi/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "doctor",
+        "Type": "WebApiCoreMVC.Models.Doctor",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApiCoreMVC.Controllers.DoctorApiController",
+    "Method": "DeleteDoctor",
+    "RelativePath": "api/DoctorApi/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "WebApiCoreMVC.Controllers.ValuesController",
     "Method": "Get",
     "RelativePath": "api/Values",
