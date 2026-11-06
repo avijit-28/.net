@@ -1,0 +1,24 @@
+$kind: http-request
+name: ""
+url: http://localhost:5059/api/DoctorApi/5
+method: GET
+body:
+  type: json
+  content: "{\r
+
+    \            \"doctorId\": 26,\r
+
+    \            \"firstName\": \"Kartik\",\r
+
+    \            \"lastName\": \"Singh\",\r
+
+    \            \"specialization\": \"cardiac\",\r
+
+    \            \"departmentId\": 7,\r
+
+    \            \"email\": \"kartik89@gmail.com\",\r
+
+    \            \"phoneNumber\": \"9956884971\"\r
+
+    \        }"
+order: 1000
