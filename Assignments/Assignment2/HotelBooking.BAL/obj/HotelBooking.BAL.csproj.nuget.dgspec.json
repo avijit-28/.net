@@ -59,6 +59,10 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
+            "Microsoft.Extensions.Configuration.Abstractions": {
+              "target": "Package",
+              "version": "[11.0.0, )"
+            },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
               "version": "[8.23.0, )"
@@ -413,6 +417,10 @@
             "Microsoft.Data.SqlClient": {
               "target": "Package",
               "version": "[7.1.2, )"
+            },
+            "Microsoft.Extensions.Configuration.Abstractions": {
+              "target": "Package",
+              "version": "[11.0.0, )"
             }
           },
           "imports": [
