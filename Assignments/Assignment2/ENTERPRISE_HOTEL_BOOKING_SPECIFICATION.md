@@ -2580,6 +2580,16 @@ app.Run();
 ### 3. `GET /api/users/me` (Get Current Profile)
 - **Role Guard**: `[Authorize]` (Customer or Admin)
 - **Response DTO (`UserProfileDto`)**: `200 OK`
+  ```json
+  {
+    "userId": 1,
+    "fullName": "John Doe",
+    "email": "john.doe@example.com",
+    "phoneNumber": "+1-555-0101",
+    "role": "Customer",
+    "createdAt": "2026-11-17T08:00:00Z"
+  }
+  ```
 - **Status Codes**: `200 OK`, `401 Unauthorized`.
 
 ---
