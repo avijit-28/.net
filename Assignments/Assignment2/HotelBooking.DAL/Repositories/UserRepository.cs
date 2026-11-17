@@ -141,6 +141,9 @@ public class UserRepository : IUserRepository
 
     private static User MapUser(SqlDataReader reader)
     {
+        int updatedAtIndex = -1;
+        try { updatedAtIndex = reader.GetOrdinal("UpdatedAt"); } catch (IndexOutOfRangeException) { }
+
         return new User
         {
             UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
@@ -150,7 +153,7 @@ public class UserRepository : IUserRepository
             Role = reader.GetString(reader.GetOrdinal("Role")),
             IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
             CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-            UpdatedAt = reader.IsDBNull(reader.GetOrdinal("UpdatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("UpdatedAt"))
+            UpdatedAt = (updatedAtIndex >= 0 && !reader.IsDBNull(updatedAtIndex)) ? reader.GetDateTime(updatedAtIndex) : null
         };
     }
 }
