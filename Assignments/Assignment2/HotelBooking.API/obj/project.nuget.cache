@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+0Eeq9wfUCg=",
+  "dgSpecHash": "faaSlLqdPQA=",
   "success": true,
   "projectFilePath": "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.API\\HotelBooking.API.csproj",
   "expectedPackageFiles": [
@@ -11,6 +11,8 @@
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.data.sqlclient.extensions.abstractions\\7.1.2\\microsoft.data.sqlclient.extensions.abstractions.7.1.2.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.data.sqlclient.internal.logging\\7.1.2\\microsoft.data.sqlclient.internal.logging.7.1.2.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.data.sqlclient.sni.runtime\\7.1.2\\microsoft.data.sqlclient.sni.runtime.7.1.2.nupkg.sha512",
+    "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\11.0.0\\microsoft.extensions.configuration.abstractions.11.0.0.nupkg.sha512",
+    "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.extensions.primitives\\11.0.0\\microsoft.extensions.primitives.11.0.0.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.identitymodel.abstractions\\8.23.0\\microsoft.identitymodel.abstractions.8.23.0.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\8.23.0\\microsoft.identitymodel.jsonwebtokens.8.23.0.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.identitymodel.logging\\8.23.0\\microsoft.identitymodel.logging.8.23.0.nupkg.sha512",
