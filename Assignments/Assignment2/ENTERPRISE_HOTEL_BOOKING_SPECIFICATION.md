@@ -2460,6 +2460,69 @@ app.Run();
   }
   ```
 
+- **RFC 7807 ProblemDetails Standard Models**:
+  All error responses adhere strictly to RFC 7807 with `Content-Type: application/problem+json`. Standard error schemas and concrete payloads:
+
+  *Example 1: 400 Bad Request (Validation Failure / Invalid Arguments)*
+  ```json
+  {
+    "type": "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1",
+    "title": "One or more validation errors occurred.",
+    "status": 400,
+    "detail": "Check-out date (2026-11-20) must be strictly after check-in date (2026-11-25).",
+    "instance": "/api/rooms/search",
+    "traceId": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-00"
+  }
+  ```
+
+  *Example 2: 401 Unauthorized (Missing or Invalid Bearer Token)*
+  ```json
+  {
+    "type": "https://datatracker.ietf.org/doc/html/rfc7235#section-3.1",
+    "title": "Unauthorized",
+    "status": 401,
+    "detail": "Bearer token is missing, expired, or cryptographically invalid.",
+    "instance": "/api/bookings/my",
+    "traceId": "00-8a71d79e60a3734a9ff59c8695f26938-12e067aa0ba902b7-00"
+  }
+  ```
+
+  *Example 3: 403 Forbidden (Cross-Tenant Access or Insufficient Role Privileges)*
+  ```json
+  {
+    "type": "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3",
+    "title": "Forbidden",
+    "status": 403,
+    "detail": "User lacks required role or ownership permissions to access the requested resource.",
+    "instance": "/api/roomtypes",
+    "traceId": "00-2f91a54b38d1469e8b9195bca34800e2-34f067aa0ba902b7-00"
+  }
+  ```
+
+  *Example 4: 404 Not Found (Missing Entity)*
+  ```json
+  {
+    "type": "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.4",
+    "title": "Not Found",
+    "status": 404,
+    "detail": "The requested resource with ID 999 does not exist.",
+    "instance": "/api/rooms/999",
+    "traceId": "00-98d1a54b38d1469e8b9195bca34800e2-56f067aa0ba902b7-00"
+  }
+  ```
+
+  *Example 5: 409 Conflict (Double-Booking Race Condition / Unique Key Violation)*
+  ```json
+  {
+    "type": "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.8",
+    "title": "Conflict",
+    "status": 409,
+    "detail": "Room 201 is already booked for the selected dates (2026-12-01 to 2026-12-05).",
+    "instance": "/api/bookings",
+    "traceId": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-00"
+  }
+  ```
+
 ---
 
 ## 5.2 Module 3: Authentication & User Profile Management (3 Endpoints)
