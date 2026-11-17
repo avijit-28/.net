@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grand Azure Hotel & Reservation System</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="brand">
+        <i class="fa-solid fa-hotel fa-2x" style="color: var(--accent);"></i>
+        <div>
+          <h1>Grand Azure Hotel</h1>
+          <span>ENTERPRISE RESERVATION SYSTEM</span>
+        </div>
+      </div>
+      <div class="user-controls">
+        <div id="userProfileBadge" class="badge badge-guest">Not Signed In</div>
+        <div id="authActions">
+          <button id="btnOpenLogin" class="btn btn-outline btn-sm" style="color:white; border-color:rgba(255,255,255,0.4);"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+          <button id="btnOpenRegister" class="btn btn-secondary btn-sm"><i class="fa-solid fa-user-plus"></i> Register</button>
+        </div>
+        <button id="btnLogout" class="btn btn-danger btn-sm" style="display:none;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="tab-nav">
+    <div class="nav-container">
+      <button class="tab-btn active" data-tab="searchTab"><i class="fa-solid fa-magnifying-glass"></i> Search & Book Rooms</button>
+      <button class="tab-btn" data-tab="bookingsTab"><i class="fa-solid fa-calendar-check"></i> My Bookings</button>
+      <button id="adminTabBtn" class="tab-btn" data-tab="adminTab" style="display:none;"><i class="fa-solid fa-shield-halved"></i> Admin Console</button>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container">
+
+    <!-- TAB 1: SEARCH & BOOK ROOMS -->
+    <section id="searchTab" class="tab-panel active">
+      <div class="card">
+        <h2 style="margin-bottom: 1rem; color: var(--primary);"><i class="fa-solid fa-calendar-days"></i> Find Available Rooms</h2>
+        <form id="searchForm">
+          <div class="search-form-grid">
+            <div class="form-group">
+              <label for="checkInDate">Check-In Date *</label>
+              <input type="date" id="checkInDate" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="checkOutDate">Check-Out Date *</label>
+              <input type="date" id="checkOutDate" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="guestCount">Guests</label>
+              <select id="guestCount" class="form-control">
+                <option value="1">1 Guest</option>
+                <option value="2" selected>2 Guests</option>
+                <option value="3">3 Guests</option>
+                <option value="4">4 Guests</option>
+                <option value="6">6 Guests</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="roomTypeFilter">Room Category</label>
+              <select id="roomTypeFilter" class="form-control">
+                <option value="">All Categories</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="maxPriceFilter">Max Price / Night ($)</label>
+              <input type="number" id="maxPriceFilter" class="form-control" placeholder="No limit" min="0">
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary" style="height: 42px;"><i class="fa-solid fa-magnifying-glass"></i> Search Rooms</button>
+            </div>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">
+              Filter by Amenities (Relational Division - must match all checked):
+            </label>
+            <div id="amenitiesFilterList" class="amenities-container">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Search Results Grid -->
+      <div id="searchResultsSection">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 id="searchResultsTitle" style="color: var(--text-main);">Available Rooms</h3>
+          <span id="resultsCountBadge" class="badge badge-customer">0 Rooms Found</span>
+        </div>
+        <div id="roomCardsContainer" class="room-grid">
+          <!-- Room Cards inserted here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: MY BOOKINGS -->
+    <section id="bookingsTab" class="tab-panel">
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h2 style="color: var(--primary);"><i class="fa-solid fa-receipt"></i> My Reservations</h2>
+          <button id="btnRefreshBookings" class="btn btn-outline btn-sm"><i class="fa-solid fa-rotate"></i> Refresh</button>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Booking Ref</th>
+                <th>Room</th>
+                <th>Category</th>
+                <th>Check-In</th>
+                <th>Check-Out</th>
+                <th>Nights</th>
+                <th>Guests</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="myBookingsTableBody">
+              <tr><td colspan="10" style="text-align: center; color: var(--text-muted);">Please login to view your reservations.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: ADMIN CONSOLE -->
+    <section id="adminTab" class="tab-panel">
+      <!-- Admin Sub-navigation -->
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+        <button class="btn btn-primary btn-sm admin-subtab-btn" data-subtab="adminRooms">Physical Rooms</button>
+        <button class="btn btn-outline btn-sm admin-subtab-btn" data-subtab="adminRoomTypes">Room Types</button>
+        <button class="btn btn-outline btn-sm admin-subtab-btn" data-subtab="adminAmenities">Amenities Catalog</button>
+        <button class="btn btn-outline btn-sm admin-subtab-btn" data-subtab="adminAllBookings">All Hotel Bookings</button>
+      </div>
+
+      <!-- Admin: Physical Rooms -->
+      <div id="adminRooms" class="card admin-subpanel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3>Physical Rooms Inventory</h3>
+          <button id="btnOpenCreateRoomModal" class="btn btn-secondary btn-sm"><i class="fa-solid fa-plus"></i> Add New Room</button>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Room #</th>
+                <th>Floor</th>
+                <th>Category</th>
+                <th>Nightly Rate</th>
+                <th>Max Guests</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminRoomsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin: Room Types -->
+      <div id="adminRoomTypes" class="card admin-subpanel" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3>Room Tiers & Base Pricing</h3>
+          <button id="btnOpenCreateTypeModal" class="btn btn-secondary btn-sm"><i class="fa-solid fa-plus"></i> Add Room Category</button>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Category Name</th>
+                <th>Description</th>
+                <th>Base Price / Night</th>
+                <th>Max Capacity</th>
+                <th>Active</th>
+              </tr>
+            </thead>
+            <tbody id="adminRoomTypesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin: Amenities Catalog -->
+      <div id="adminAmenities" class="card admin-subpanel" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3>Amenities Catalog</h3>
+          <button id="btnOpenCreateAmenityModal" class="btn btn-secondary btn-sm"><i class="fa-solid fa-plus"></i> Add Amenity</button>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Icon</th>
+                <th>Amenity Name</th>
+                <th>Description</th>
+                <th>Active</th>
+              </tr>
+            </thead>
+            <tbody id="adminAmenitiesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin: All Bookings -->
+      <div id="adminAllBookings" class="card admin-subpanel" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3>Master Booking Register</h3>
+          <button id="btnRefreshAdminBookings" class="btn btn-outline btn-sm"><i class="fa-solid fa-rotate"></i> Refresh</button>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Booking Ref</th>
+                <th>Customer</th>
+                <th>Email</th>
+                <th>Room</th>
+                <th>Check-In</th>
+                <th>Check-Out</th>
+                <th>Total Paid</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="adminAllBookingsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODALS -->
+
+  <!-- 1. Login Modal -->
+  <div id="loginModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-right-to-bracket"></i> Sign In</h3>
+        <button class="btn btn-outline btn-sm btnCloseModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="quick-logins">
+          <button id="btnQuickAdmin" type="button" class="btn btn-outline btn-sm" style="flex:1;"><i class="fa-solid fa-shield"></i> Demo Admin</button>
+          <button id="btnQuickCustomer" type="button" class="btn btn-outline btn-sm" style="flex:1;"><i class="fa-solid fa-user"></i> Demo Customer</button>
+        </div>
+        <form id="loginForm">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="loginEmail">Email Address</label>
+            <input type="email" id="loginEmail" class="form-control" required placeholder="admin@hotel.com">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" class="form-control" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Register Modal -->
+  <div id="registerModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-user-plus"></i> Register Customer Account</h3>
+        <button class="btn btn-outline btn-sm btnCloseModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="registerForm">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="regFullName">Full Name *</label>
+            <input type="text" id="regFullName" class="form-control" required placeholder="Alice Smith">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="regEmail">Email Address *</label>
+            <input type="email" id="regEmail" class="form-control" required placeholder="alice@example.com">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="regPassword">Password * (Min 6 characters)</label>
+            <input type="password" id="regPassword" class="form-control" required minlength="6" placeholder="••••••••">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="regPhone">Phone Number</label>
+            <input type="tel" id="regPhone" class="form-control" placeholder="+1-555-0199">
+          </div>
+          <button type="submit" class="btn btn-secondary" style="width: 100%;">Create Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Book Room Modal -->
+  <div id="bookingModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-hotel"></i> Confirm Room Reservation</h3>
+        <button class="btn btn-outline btn-sm btnCloseModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="bookingSummaryBox" class="room-price-box" style="margin-bottom: 1rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <strong id="bookRoomTitle">Room 101 (Standard)</strong>
+            <span id="bookNightlyRate">$100 / night</span>
+          </div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+            Dates: <span id="bookDatesSummary">2026-11-18 to 2026-11-20</span> (<span id="bookNightsSummary">2</span> Nights)
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; border-top: 1px dashed #cbd5e1; padding-top: 0.5rem;">
+            <span>Total Stay Amount:</span>
+            <span id="bookTotalAmount" class="price-total">$200.00</span>
+          </div>
+        </div>
+
+        <form id="confirmBookingForm">
+          <input type="hidden" id="bookRoomId">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="bookGuestCount">Number of Guests *</label>
+            <input type="number" id="bookGuestCount" class="form-control" min="1" max="10" value="1" required>
+            <small id="bookOccupancyHint" style="color: var(--text-muted); font-size: 0.75rem;">Max Occupancy: 2</small>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="bookCustomerNotes">Special Requests / Notes</label>
+            <textarea id="bookCustomerNotes" class="form-control" rows="2" placeholder="Late check-in, extra towels, etc."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fa-solid fa-check"></i> Book Now & Pay at Counter</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Cancellation Modal with 3-Tier Policy Preview -->
+  <div id="cancellationModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 style="color: var(--danger);"><i class="fa-solid fa-ban"></i> Cancel Booking</h3>
+        <button class="btn btn-outline btn-sm btnCloseModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="room-price-box" style="margin-bottom: 1rem; border-color: #fca5a5; background: #fff1f2;">
+          <h4 style="color: #991b1b; margin-bottom: 0.5rem;"><i class="fa-solid fa-scale-balanced"></i> Automated 3-Tier Refund Policy</h4>
+          <ul style="font-size: 0.8rem; margin-left: 1.25rem; color: #7f1d1d; margin-bottom: 0.75rem;">
+            <li><strong>&gt; 48 hours before check-in:</strong> 100% Refund (0% cancellation fee)</li>
+            <li><strong>24 to 48 hours before check-in:</strong> 50% Refund (50% cancellation fee)</li>
+            <li><strong>&lt; 24 hours before check-in:</strong> 0% Refund (100% cancellation fee)</li>
+          </ul>
+          <div style="font-size: 0.85rem; border-top: 1px dashed #f87171; padding-top: 0.5rem;">
+            <div>Reservation: <strong id="cancelRefLabel">BK-20261117-1001</strong></div>
+            <div>Original Amount: <strong id="cancelOriginalAmount">$200.00</strong></div>
+            <div>Hours to Check-In: <strong id="cancelHoursLabel">~48 hrs</strong></div>
+            <div style="margin-top: 0.25rem; font-size: 0.95rem;">
+              Refund Tier: <span id="cancelRefundTierBadge" class="badge badge-status">100% Refund</span>
+            </div>
+          </div>
+        </div>
+
+        <form id="cancelBookingForm">
+          <input type="hidden" id="cancelBookingId">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="cancelReasonInput">Reason for Cancellation</label>
+            <textarea id="cancelReasonInput" class="form-control" rows="2" placeholder="Change of travel plans..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-danger" style="width: 100%;"><i class="fa-solid fa-triangle-exclamation"></i> Confirm Cancellation</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Create Room Modal (Admin) -->
+  <div id="createRoomModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-door-open"></i> Add Physical Room</h3>
+        <button class="btn btn-outline btn-sm btnCloseModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="createRoomForm">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="createRoomNumber">Room Number * (Unique)</label>
+            <input type="text" id="createRoomNumber" class="form-control" required placeholder="501">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="createRoomTypeId">Room Category *</label>
+            <select id="createRoomTypeId" class="form-control" required></select>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="createRoomFloor">Floor Number *</label>
+            <input type="number" id="createRoomFloor" class="form-control" value="1" min="0" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="createRoomStatus">Initial Status</label>
+            <select id="createRoomStatus" class="form-control">
+              <option value="Available">Available</option>
+              <option value="Under Maintenance">Under Maintenance</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-secondary" style="width: 100%;">Create Room</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
