@@ -1,0 +1,3 @@
+D:\avi\C#\Assignments\Assignment2\HotelBooking.API\wwwroot\index.html
+D:\avi\C#\Assignments\Assignment2\HotelBooking.API\wwwroot\styles.css
+D:\avi\C#\Assignments\Assignment2\HotelBooking.API\wwwroot\app.js
