@@ -1,5 +1,41 @@
 [
   {
+    "ContainingType": "WebApiCoreMVC.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/Auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "login",
+        "Type": "WebApiCoreMVC.Models.LoginModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApiCoreMVC.Controllers.DataController",
+    "Method": "GetAdminData",
+    "RelativePath": "api/Data/admin",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApiCoreMVC.Controllers.DataController",
+    "Method": "GetSecureData",
+    "RelativePath": "api/Data/secure",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "WebApiCoreMVC.Controllers.DoctorApiController",
     "Method": "GetAllDoctors",
     "RelativePath": "api/DoctorApi",
