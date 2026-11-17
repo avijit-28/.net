@@ -3,12 +3,6 @@ namespace HotelBooking.BAL.Security;
 using System;
 using System.Security.Cryptography;
 
-public interface IPasswordHasher
-{
-    (string Hash, string Salt) HashPassword(string plainPassword);
-    bool VerifyPassword(string plainPassword, string storedHash, string storedSalt);
-}
-
 public sealed class PasswordHasher : IPasswordHasher
 {
     private const int SaltSizeBytes = 16;
