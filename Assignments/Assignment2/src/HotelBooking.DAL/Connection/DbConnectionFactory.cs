@@ -1,14 +1,7 @@
 namespace HotelBooking.DAL.Connection;
 
-using System.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-
-public interface IDbConnectionFactory
-{
-    SqlConnection CreateConnection();
-    Task<SqlConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken = default);
-}
 
 public class DbConnectionFactory : IDbConnectionFactory
 {
