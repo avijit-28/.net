@@ -2785,20 +2785,77 @@ app.Run();
 
 ### 14. `POST /api/amenities` (Create Amenity)
 - **Role Guard**: `[Authorize(Roles = "Admin")]`
-- **Request DTO (`CreateAmenityDto`)**: `name`, `description`.
-- **Status Codes**: `201 Created`, `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `409 Conflict` (Duplicate name).
+- **Request DTO (`CreateAmenityDto`)**:
+  ```json
+  {
+    "name": "High-Speed Wi-Fi",
+    "description": "1Gbps symmetrical enterprise fiber connection."
+  }
+  ```
+- **Response DTO (`AmenityDto`)**: `201 Created`
+  ```json
+  {
+    "amenityId": 1,
+    "name": "High-Speed Wi-Fi",
+    "description": "1Gbps symmetrical enterprise fiber connection.",
+    "createdAt": "2026-11-17T08:00:00Z"
+  }
+  ```
+- **Status Codes**: `201 Created`, `400 Bad Request` (Empty name), `401 Unauthorized`, `403 Forbidden`, `409 Conflict` (Duplicate name).
 
 ### 15. `GET /api/amenities` (List Amenities)
 - **Role Guard**: `[AllowAnonymous]`
-- **Response**: `200 OK` (`List<AmenityDto>`)
+- **Response DTO (`List<AmenityDto>`)**: `200 OK`
+  ```json
+  [
+    {
+      "amenityId": 1,
+      "name": "High-Speed Wi-Fi",
+      "description": "1Gbps symmetrical enterprise fiber connection.",
+      "createdAt": "2026-11-17T08:00:00Z"
+    },
+    {
+      "amenityId": 2,
+      "name": "Ocean View Balcony",
+      "description": "Private balcony with unobstructed ocean panorama.",
+      "createdAt": "2026-11-17T08:00:00Z"
+    }
+  ]
+  ```
+- **Status Codes**: `200 OK`.
 
 ### 16. `GET /api/amenities/{id}` (Get Amenity by ID)
 - **Role Guard**: `[AllowAnonymous]`
-- **Status Codes**: `200 OK`, `404 Not Found`.
+- **Response DTO (`AmenityDto`)**: `200 OK`
+  ```json
+  {
+    "amenityId": 1,
+    "name": "High-Speed Wi-Fi",
+    "description": "1Gbps symmetrical enterprise fiber connection.",
+    "createdAt": "2026-11-17T08:00:00Z"
+  }
+  ```
+- **Status Codes**: `200 OK`, `404 Not Found` (Amenity does not exist).
 
 ### 17. `PUT /api/amenities/{id}` (Update Amenity)
 - **Role Guard**: `[Authorize(Roles = "Admin")]`
-- **Status Codes**: `200 OK`, `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`, `409 Conflict`.
+- **Request DTO (`UpdateAmenityDto`)**:
+  ```json
+  {
+    "name": "Ultra High-Speed Wi-Fi",
+    "description": "Upgraded 2Gbps low-latency enterprise fiber with Wi-Fi 7 access points."
+  }
+  ```
+- **Response DTO (`AmenityDto`)**: `200 OK`
+  ```json
+  {
+    "amenityId": 1,
+    "name": "Ultra High-Speed Wi-Fi",
+    "description": "Upgraded 2Gbps low-latency enterprise fiber with Wi-Fi 7 access points.",
+    "createdAt": "2026-11-17T08:00:00Z"
+  }
+  ```
+- **Status Codes**: `200 OK`, `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`, `409 Conflict` (Name already taken).
 
 ### 18. `DELETE /api/amenities/{id}` (Delete Amenity)
 - **Role Guard**: `[Authorize(Roles = "Admin")]`
@@ -2810,17 +2867,47 @@ app.Run();
 
 ### 19. `POST /api/rooms/{roomId}/amenities` (Assign Amenity to Room)
 - **Role Guard**: `[Authorize(Roles = "Admin")]`
-- **Request DTO (`AssignAmenityDto`)**: `{"amenityId": 2}`
-- **Response**: `201 Created`
+- **Request DTO (`AssignAmenityDto`)**:
+  ```json
+  {
+    "amenityId": 2
+  }
+  ```
+- **Response DTO (`RoomAmenitiesResponseDto`)**: `201 Created`
+  ```json
+  {
+    "roomId": 3,
+    "assignedAmenityId": 2,
+    "message": "Amenity 2 successfully assigned to Room 3."
+  }
+  ```
 - **Status Codes**: `201 Created`, `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found` (Room or Amenity missing), `409 Conflict` (Already assigned).
 
 ### 20. `GET /api/rooms/{roomId}/amenities` (List Amenities for Room)
 - **Role Guard**: `[AllowAnonymous]`
-- **Response**: `200 OK` (`List<AmenityDto>`), `404 Not Found`.
+- **Response DTO (`List<AmenityDto>`)**: `200 OK`
+  ```json
+  [
+    {
+      "amenityId": 1,
+      "name": "High-Speed Wi-Fi",
+      "description": "1Gbps symmetrical enterprise fiber connection.",
+      "createdAt": "2026-11-17T08:00:00Z"
+    },
+    {
+      "amenityId": 2,
+      "name": "Ocean View Balcony",
+      "description": "Private balcony with unobstructed ocean panorama.",
+      "createdAt": "2026-11-17T08:00:00Z"
+    }
+  ]
+  ```
+- **Status Codes**: `200 OK`, `404 Not Found` (Room not found).
 
 ### 21. `DELETE /api/rooms/{roomId}/amenities/{amenityId}` (Remove Amenity from Room)
 - **Role Guard**: `[Authorize(Roles = "Admin")]`
-- **Response**: `204 No Content`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`.
+- **Response**: `204 No Content`
+- **Status Codes**: `204 No Content`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found` (Mapping not found).
 
 ---
 
