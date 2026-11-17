@@ -5,15 +5,6 @@ using HotelBooking.DAL.Connection;
 using HotelBooking.Models.Entities;
 using Microsoft.Data.SqlClient;
 
-public interface IUserRepository
-{
-    Task<User> RegisterAsync(User user, string passwordHash, string passwordSalt);
-    Task<User?> GetByEmailForLoginAsync(string email);
-    Task<User?> GetByIdAsync(int userId);
-    Task<User> UpdateProfileAsync(int userId, string fullName, string? phoneNumber);
-    Task<User> ToggleStatusAsync(int userId, bool isActive, int adminUserId);
-}
-
 public class UserRepository : IUserRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
