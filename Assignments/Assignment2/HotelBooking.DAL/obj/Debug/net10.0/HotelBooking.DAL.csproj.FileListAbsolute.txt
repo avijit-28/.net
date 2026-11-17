@@ -1,0 +1,6 @@
+D:\avi\C#\Assignments\Assignment2\HotelBooking.DAL\obj\Debug\net10.0\HotelBooking.DAL.csproj.AssemblyReference.cache
+D:\avi\C#\Assignments\Assignment2\HotelBooking.DAL\obj\Debug\net10.0\HotelBooking.DAL.GeneratedMSBuildEditorConfig.editorconfig
+D:\avi\C#\Assignments\Assignment2\HotelBooking.DAL\obj\Debug\net10.0\HotelBooking.DAL.AssemblyInfoInputs.cache
+D:\avi\C#\Assignments\Assignment2\HotelBooking.DAL\obj\Debug\net10.0\HotelBooking.DAL.AssemblyInfo.cs
+D:\avi\C#\Assignments\Assignment2\HotelBooking.DAL\obj\Debug\net10.0\HotelBooking.DAL.csproj.CoreCompileInputs.cache
+D:\avi\C#\Assignments\Assignment2\HotelBooking.DAL\obj\Debug\net10.0\HotelBooking.DAL.sourcelink.json
