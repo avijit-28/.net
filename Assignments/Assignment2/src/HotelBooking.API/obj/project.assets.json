@@ -1037,11 +1037,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.API\\HotelBooking.API.csproj",
+      "projectUniqueName": "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.API\\HotelBooking.API.csproj",
       "projectName": "HotelBooking.API",
-      "projectPath": "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.API\\HotelBooking.API.csproj",
+      "projectPath": "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.API\\HotelBooking.API.csproj",
       "packagesPath": "C:\\Users\\avijitpakhira\\.nuget\\packages\\",
-      "outputPath": "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.API\\obj\\",
+      "outputPath": "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1063,14 +1063,14 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
-            "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.BAL\\HotelBooking.BAL.csproj": {
-              "projectPath": "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.BAL\\HotelBooking.BAL.csproj"
+            "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.BAL\\HotelBooking.BAL.csproj": {
+              "projectPath": "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.BAL\\HotelBooking.BAL.csproj"
             },
-            "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.DAL\\HotelBooking.DAL.csproj": {
-              "projectPath": "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.DAL\\HotelBooking.DAL.csproj"
+            "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.DAL\\HotelBooking.DAL.csproj": {
+              "projectPath": "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.DAL\\HotelBooking.DAL.csproj"
             },
-            "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.Models\\HotelBooking.Models.csproj": {
-              "projectPath": "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.Models\\HotelBooking.Models.csproj"
+            "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.Models\\HotelBooking.Models.csproj": {
+              "projectPath": "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.Models\\HotelBooking.Models.csproj"
             }
           }
         }
