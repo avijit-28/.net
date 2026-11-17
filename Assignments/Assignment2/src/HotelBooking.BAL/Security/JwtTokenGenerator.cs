@@ -8,11 +8,6 @@ using HotelBooking.Models.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-public interface IJwtTokenGenerator
-{
-    (string Token, DateTime ExpiresAt) GenerateToken(User user);
-}
-
 public class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly IConfiguration _configuration;
