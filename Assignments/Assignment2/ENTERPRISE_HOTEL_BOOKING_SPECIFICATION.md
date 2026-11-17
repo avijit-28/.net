@@ -2993,17 +2993,91 @@ app.Run();
 ### 24. `GET /api/bookings/{id}` (Get Booking by ID)
 - **Role Guard**: `[Authorize]` (Customer or Admin)
 - **Ownership Check**: If caller is Customer, validates `booking.UserId == currentUser.UserId`. If different, returns `403 Forbidden`.
-- **Status Codes**: `200 OK`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`.
+- **Response DTO (`BookingDetailDto`)**: `200 OK`
+  ```json
+  {
+    "bookingId": 101,
+    "bookingReference": "BK-20261117-1001",
+    "userId": 1,
+    "userFullName": "John Doe",
+    "userEmail": "john.doe@example.com",
+    "roomId": 3,
+    "roomNumber": "201",
+    "roomTypeName": "Double Deluxe",
+    "nightlyRate": 179.00,
+    "checkInDate": "2026-12-01T00:00:00Z",
+    "checkOutDate": "2026-12-05T00:00:00Z",
+    "totalNights": 4,
+    "totalAmount": 716.00,
+    "status": "Confirmed",
+    "customerNotes": "Quiet room away from elevators.",
+    "createdAt": "2026-11-17T08:00:00Z"
+  }
+  ```
+- **Status Codes**: `200 OK`, `401 Unauthorized`, `403 Forbidden` (Cross-tenant access attempted), `404 Not Found` (Booking does not exist).
 
 ### 25. `GET /api/bookings/my` (Get My Bookings)
 - **Role Guard**: `[Authorize]`
 - **Query Params**: `page` (default 1), `pageSize` (default 10)
-- **Response**: `200 OK` (`PagedResult<BookingSummaryDto>`)
+- **Response DTO (`PagedResult<BookingSummaryDto>`)**: `200 OK`
+  ```json
+  {
+    "items": [
+      {
+        "bookingId": 101,
+        "bookingReference": "BK-20261117-1001",
+        "roomId": 3,
+        "roomNumber": "201",
+        "roomTypeName": "Double Deluxe",
+        "checkInDate": "2026-12-01T00:00:00Z",
+        "checkOutDate": "2026-12-05T00:00:00Z",
+        "totalNights": 4,
+        "totalAmount": 716.00,
+        "status": "Confirmed",
+        "createdAt": "2026-11-17T08:00:00Z"
+      }
+    ],
+    "page": 1,
+    "pageSize": 10,
+    "totalCount": 1,
+    "totalPages": 1,
+    "hasNext": false,
+    "hasPrevious": false
+  }
+  ```
+- **Status Codes**: `200 OK`, `401 Unauthorized`.
 
 ### 26. `GET /api/bookings` (List All Bookings - Admin Audit)
 - **Role Guard**: `[Authorize(Roles = "Admin")]`
-- **Query Params**: `status?`, `startDate?`, `endDate?`, `page`, `pageSize`
-- **Response**: `200 OK` (`PagedResult<BookingAdminDto>`), `401 Unauthorized`, `403 Forbidden`.
+- **Query Params**: `status?`, `startDate?`, `endDate?`, `page` (default 1), `pageSize` (default 20)
+- **Response DTO (`PagedResult<BookingAdminDto>`)**: `200 OK`
+  ```json
+  {
+    "items": [
+      {
+        "bookingId": 101,
+        "bookingReference": "BK-20261117-1001",
+        "userId": 1,
+        "userFullName": "John Doe",
+        "userEmail": "john.doe@example.com",
+        "roomId": 3,
+        "roomNumber": "201",
+        "checkInDate": "2026-12-01T00:00:00Z",
+        "checkOutDate": "2026-12-05T00:00:00Z",
+        "totalAmount": 716.00,
+        "status": "Confirmed",
+        "createdAt": "2026-11-17T08:00:00Z"
+      }
+    ],
+    "page": 1,
+    "pageSize": 20,
+    "totalCount": 1,
+    "totalPages": 1,
+    "hasNext": false,
+    "hasPrevious": false
+  }
+  ```
+- **Status Codes**: `200 OK`, `401 Unauthorized`, `403 Forbidden`.
 
 ---
 
