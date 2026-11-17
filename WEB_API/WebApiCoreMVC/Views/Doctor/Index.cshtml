@@ -4,13 +4,13 @@
 
 <div class="container-fluid py-4">
     <!-- Header & Action Row -->
-    <div class="card shadow-sm border-0 mb-4">
+    <div class="card shadow-sm border-0 mb-3">
         <div class="card-body bg-light rounded d-flex flex-wrap align-items-center justify-content-between gap-3 p-3">
             <div>
                 <h3 class="fw-bold mb-1 text-primary">
                     <i class="bi bi-person-badge"></i> Doctor Management
                 </h3>
-                <p class="text-muted mb-0 small">Perform Create, Read, Update, and Delete operations using Stored Procedures.</p>
+                <p class="text-muted mb-0 small">Perform Create, Read, Update, and Delete operations using Stored Procedures & JWT Token Security.</p>
             </div>
             <div class="d-flex gap-2">
                 <button type="button" class="btn btn-outline-secondary" onclick="loadDoctors()" title="Refresh List">
@@ -21,6 +21,34 @@
                     + Add New Doctor
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- JWT Token Status & Testing Bar (From PDF Specification) -->
+    <div class="card shadow-sm border-primary mb-3">
+        <div class="card-body py-2 px-3 bg-white d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-secondary p-2" id="jwtStatusBadge">🔒 Guest (No JWT)</span>
+                <span class="small text-muted" id="jwtUserInfo">Log in to obtain a JWT token and test secured endpoints.</span>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-sm btn-outline-primary" onclick="openLoginModal()" id="loginBtn">
+                    🔑 Login (Get JWT)
+                </button>
+                <button class="btn btn-sm btn-outline-info" onclick="testSecureApi()" title="Test api/data/secure">
+                    🧪 Test Secure API
+                </button>
+                <button class="btn btn-sm btn-outline-warning" onclick="testAdminApi()" title="Test api/data/admin (Admin Only)">
+                    👑 Test Admin API
+                </button>
+                <button class="btn btn-sm btn-outline-danger d-none" onclick="logout()" id="logoutBtn">
+                    🚪 Logout
+                </button>
+            </div>
+        </div>
+        <div class="card-footer py-1 px-3 bg-light small text-truncate d-none" id="tokenDisplayBox">
+            <span class="fw-semibold text-secondary">Active JWT:</span>
+            <code class="text-dark" id="tokenString">-</code>
         </div>
     </div>
 
@@ -68,6 +96,42 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- Modal: JWT Login (From PDF Slide 19 & 24)                                 -->
+<!-- ========================================================================= -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="loginModalLabel">🔑 JWT Authentication Login</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="loginForm" onsubmit="submitLogin(event)">
+                <div class="modal-body p-4">
+                    <p class="text-muted small">Submit credentials to <code>/api/auth/login</code> to receive a signed JSON Web Token.</p>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Username</label>
+                        <input type="text" class="form-control" id="loginUsername" required placeholder="e.g. admin or user1" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Password</label>
+                        <input type="password" class="form-control" id="loginPassword" required placeholder="e.g. admin123 or user123" />
+                    </div>
+                    <div class="bg-light p-2 rounded small text-muted">
+                        <strong>Quick Fill Demo Users:</strong><br />
+                        <a href="javascript:void(0)" class="btn btn-xs btn-outline-primary py-0 px-2 mt-1" onclick="fillCreds('admin', 'admin123')">Admin (admin / admin123)</a>
+                        <a href="javascript:void(0)" class="btn btn-xs btn-outline-secondary py-0 px-2 mt-1" onclick="fillCreds('user1', 'user123')">User (user1 / user123)</a>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="loginSubmitBtn">Generate Token</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -245,8 +309,19 @@
     const apiBase = '/api/DoctorApi';
 
     document.addEventListener("DOMContentLoaded", function () {
+        refreshJwtUi();
         loadDoctors();
     });
+
+    // Wrapper function to attach JWT Bearer Token if present
+    async function authFetch(url, options = {}) {
+        options.headers = options.headers || {};
+        const token = localStorage.getItem('jwtToken');
+        if (token) {
+            options.headers['Authorization'] = 'Bearer ' + token;
+        }
+        return await fetch(url, options);
+    }
 
     // Alert helper
     function showAlert(message, type = 'success') {
@@ -263,13 +338,134 @@
         box.classList.add('d-none');
     }
 
+    // =========================================================================
+    // JWT Authentication & Token Management
+    // =========================================================================
+    function openLoginModal() {
+        const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+        modal.show();
+    }
+
+    function fillCreds(u, p) {
+        document.getElementById('loginUsername').value = u;
+        document.getElementById('loginPassword').value = p;
+    }
+
+    async function submitLogin(e) {
+        e.preventDefault();
+        const btn = document.getElementById('loginSubmitBtn');
+        btn.disabled = true;
+        btn.innerText = 'Authenticating...';
+
+        const payload = {
+            username: document.getElementById('loginUsername').value.trim(),
+            password: document.getElementById('loginPassword').value.trim()
+        };
+
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            if (res.ok && data.token) {
+                localStorage.setItem('jwtToken', data.token);
+                localStorage.setItem('jwtUser', data.username);
+                localStorage.setItem('jwtRole', data.role);
+                bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+                showAlert(`Logged in successfully as ${data.username} (${data.role})!`, 'success');
+                refreshJwtUi();
+            } else {
+                showAlert(data.message || 'Login failed. Check credentials.', 'danger');
+            }
+        } catch (err) {
+            showAlert('Login error: ' + err.message, 'danger');
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'Generate Token';
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('jwtUser');
+        localStorage.removeItem('jwtRole');
+        refreshJwtUi();
+        showAlert('Logged out. Token removed from storage.', 'info');
+    }
+
+    function refreshJwtUi() {
+        const token = localStorage.getItem('jwtToken');
+        const user = localStorage.getItem('jwtUser');
+        const role = localStorage.getItem('jwtRole');
+
+        const badge = document.getElementById('jwtStatusBadge');
+        const info = document.getElementById('jwtUserInfo');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const displayBox = document.getElementById('tokenDisplayBox');
+        const tokenString = document.getElementById('tokenString');
+
+        if (token && user) {
+            badge.className = 'badge bg-success p-2';
+            badge.innerText = `🔓 Authenticated (${role})`;
+            info.innerHTML = `Signed in as: <strong>${escapeHtml(user)}</strong> | Role: <span class="badge bg-primary">${escapeHtml(role)}</span>`;
+            loginBtn.classList.add('d-none');
+            logoutBtn.classList.remove('d-none');
+            displayBox.classList.remove('d-none');
+            tokenString.innerText = token;
+        } else {
+            badge.className = 'badge bg-secondary p-2';
+            badge.innerText = '🔒 Guest (No JWT)';
+            info.innerText = 'Log in to obtain a JWT token and test secured endpoints.';
+            loginBtn.classList.remove('d-none');
+            logoutBtn.classList.add('d-none');
+            displayBox.classList.add('d-none');
+            tokenString.innerText = '-';
+        }
+    }
+
+    async function testSecureApi() {
+        try {
+            const res = await authFetch('/api/data/secure');
+            const data = await res.json();
+            if (res.ok) {
+                showAlert(`✅ Secure API Success: ${data.message} (Role: ${data.profile.role})`, 'success');
+            } else {
+                showAlert(`⛔ 401 Unauthorized: ${data.message || 'Access Denied. Please login with a JWT token first.'}`, 'danger');
+            }
+        } catch (err) {
+            showAlert('Error: ' + err.message, 'danger');
+        }
+    }
+
+    async function testAdminApi() {
+        try {
+            const res = await authFetch('/api/data/admin');
+            const data = await res.json();
+            if (res.ok) {
+                showAlert(`👑 Admin API Success: ${data.message}`, 'success');
+            } else if (res.status === 403) {
+                showAlert('🚫 403 Forbidden: You are logged in, but your role is not "Admin"!', 'warning');
+            } else {
+                showAlert('⛔ 401 Unauthorized: Please login as Admin (admin / admin123) first.', 'danger');
+            }
+        } catch (err) {
+            showAlert('Error: ' + err.message, 'danger');
+        }
+    }
+
+    // =========================================================================
     // 1. READ ALL (Stored Procedure: get_AllDoctorDetails)
+    // =========================================================================
     async function loadDoctors() {
         const spinner = document.getElementById('refreshSpinner');
         spinner.classList.remove('d-none');
 
         try {
-            const res = await fetch(apiBase);
+            const res = await authFetch(apiBase);
             const result = await res.json();
 
             if (result.success) {
@@ -285,7 +481,6 @@
         }
     }
 
-    // Render table
     function renderTable(list) {
         const tbody = document.getElementById('doctorTableBody');
         const countSpan = document.getElementById('doctorCount');
@@ -317,7 +512,6 @@
         tbody.innerHTML = html;
     }
 
-    // Client-side search filter
     function filterDoctors() {
         const term = document.getElementById('searchInput').value.toLowerCase().trim();
         if (!term) {
@@ -358,7 +552,7 @@
         };
 
         try {
-            const res = await fetch(apiBase, {
+            const res = await authFetch(apiBase, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(doctor)
@@ -382,7 +576,7 @@
     // 3. READ BY ID (Stored Procedure: get_DoctorDetails) & EDIT
     async function openViewModal(id) {
         try {
-            const res = await fetch(`${apiBase}/${id}`);
+            const res = await authFetch(`${apiBase}/${id}`);
             const result = await res.json();
             if (result.success && result.data) {
                 const doc = result.data;
@@ -405,7 +599,7 @@
 
     async function openEditModal(id) {
         try {
-            const res = await fetch(`${apiBase}/${id}`);
+            const res = await authFetch(`${apiBase}/${id}`);
             const result = await res.json();
             if (result.success && result.data) {
                 const doc = result.data;
@@ -446,7 +640,7 @@
         };
 
         try {
-            const res = await fetch(`${apiBase}/${id}`, {
+            const res = await authFetch(`${apiBase}/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(doctor)
@@ -482,7 +676,7 @@
         btn.innerText = 'Deleting...';
 
         try {
-            const res = await fetch(`${apiBase}/${id}`, {
+            const res = await authFetch(`${apiBase}/${id}`, {
                 method: 'DELETE'
             });
             const data = await res.json();
