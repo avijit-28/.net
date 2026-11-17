@@ -3113,7 +3113,23 @@ app.Run();
 
 ### 28. `GET /api/cancellations/{bookingId}` (Get Cancellation Details)
 - **Role Guard**: `[Authorize]` (Customer or Admin)
-- **Status Codes**: `200 OK`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`.
+- **Ownership Check**: Customer can only view cancellation details for their own booking (`UserId` validation). Admins can view any cancellation.
+- **Response DTO (`CancellationDetailDto`)**: `200 OK`
+  ```json
+  {
+    "cancellationId": 15,
+    "bookingId": 101,
+    "bookingReference": "BK-20261117-1001",
+    "originalBookingAmount": 716.00,
+    "hoursBeforeCheckIn": 336,
+    "refundPercentage": 100.00,
+    "refundAmount": 716.00,
+    "reason": "Family emergency; unable to travel.",
+    "cancellationDate": "2026-11-17T08:00:00Z",
+    "status": "Cancelled"
+  }
+  ```
+- **Status Codes**: `200 OK`, `401 Unauthorized`, `403 Forbidden` (Cross-tenant access attempted), `404 Not Found` (Cancellation record does not exist).
 
 ---
 
