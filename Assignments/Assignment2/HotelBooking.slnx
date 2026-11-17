@@ -1,6 +1,23 @@
 <Solution>
-  <Project Path="src/HotelBooking.Models/HotelBooking.Models.csproj" />
-  <Project Path="src/HotelBooking.DAL/HotelBooking.DAL.csproj" />
-  <Project Path="src/HotelBooking.BAL/HotelBooking.BAL.csproj" />
-  <Project Path="src/HotelBooking.API/HotelBooking.API.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/HotelBooking.Models/HotelBooking.Models.csproj" />
+    <Project Path="src/HotelBooking.DAL/HotelBooking.DAL.csproj" />
+    <Project Path="src/HotelBooking.BAL/HotelBooking.BAL.csproj" />
+    <Project Path="src/HotelBooking.API/HotelBooking.API.csproj" />
+  </Folder>
+  <Folder Name="/database/">
+    <File Path="database/00_Complete_Master_Setup.sql" />
+    <File Path="database/01_Schema.sql" />
+    <File Path="database/02_Indexes.sql" />
+    <File Path="database/03_StoredProcedures.sql" />
+    <File Path="database/04_SeedData.sql" />
+  </Folder>
+  <Folder Name="/tests/">
+    <File Path="tests/HotelBooking_Capstone.postman_collection.json" />
+    <File Path="tests/HotelBooking_Environment.postman_environment.json" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+    <File Path="ENTERPRISE_HOTEL_BOOKING_SPECIFICATION.md" />
+  </Folder>
 </Solution>
