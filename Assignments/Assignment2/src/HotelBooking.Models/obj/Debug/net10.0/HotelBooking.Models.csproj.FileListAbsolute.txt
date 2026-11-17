@@ -11,3 +11,15 @@ D:\avi\C#\Assignments\Assignment2\HotelBooking.Models\obj\Debug\net10.0\refint\H
 D:\avi\C#\Assignments\Assignment2\HotelBooking.Models\obj\Debug\net10.0\HotelBooking.Models.pdb
 D:\avi\C#\Assignments\Assignment2\HotelBooking.Models\obj\Debug\net10.0\ref\HotelBooking.Models.dll
 D:\avi\C#\Assignments\Assignment2\HotelBooking.Models\obj\Debug\net10.0\HotelBoo.FA410782.Up2Date
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.Models\bin\Debug\net10.0\HotelBooking.Models.deps.json
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.Models\bin\Debug\net10.0\HotelBooking.Models.dll
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.Models\bin\Debug\net10.0\HotelBooking.Models.pdb
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.Models\obj\Debug\net10.0\HotelBooking.Models.GeneratedMSBuildEditorConfig.editorconfig
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.Models\obj\Debug\net10.0\HotelBooking.Models.AssemblyInfoInputs.cache
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.Models\obj\Debug\net10.0\HotelBooking.Models.AssemblyInfo.cs
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.Models\obj\Debug\net10.0\HotelBooking.Models.csproj.CoreCompileInputs.cache
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.Models\obj\Debug\net10.0\HotelBooking.Models.sourcelink.json
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.Models\obj\Debug\net10.0\HotelBooking.Models.dll
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.Models\obj\Debug\net10.0\refint\HotelBooking.Models.dll
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.Models\obj\Debug\net10.0\HotelBooking.Models.pdb
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.Models\obj\Debug\net10.0\ref\HotelBooking.Models.dll
