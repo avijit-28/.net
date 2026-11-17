@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "x/fJ+4CuNtw=",
+  "dgSpecHash": "oyU0gUNliUU=",
   "success": true,
-  "projectFilePath": "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.BAL\\HotelBooking.BAL.csproj",
+  "projectFilePath": "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.BAL\\HotelBooking.BAL.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.bcl.cryptography\\10.0.2\\microsoft.bcl.cryptography.10.0.2.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.data.sqlclient\\7.1.2\\microsoft.data.sqlclient.7.1.2.nupkg.sha512",
