@@ -5,15 +5,6 @@ using HotelBooking.DAL.Connection;
 using HotelBooking.Models.Entities;
 using Microsoft.Data.SqlClient;
 
-public interface IRoomTypeRepository
-{
-    Task<RoomType> CreateAsync(RoomType roomType);
-    Task<List<RoomType>> GetAllAsync(bool includeInactive = false);
-    Task<RoomType?> GetByIdAsync(int roomTypeId);
-    Task<RoomType> UpdateAsync(RoomType roomType);
-    Task<bool> SoftDeleteAsync(int roomTypeId);
-}
-
 public class RoomTypeRepository : IRoomTypeRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
