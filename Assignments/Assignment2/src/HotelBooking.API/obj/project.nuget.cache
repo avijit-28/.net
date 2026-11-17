@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "faaSlLqdPQA=",
+  "dgSpecHash": "U2Bc3DyBjOc=",
   "success": true,
-  "projectFilePath": "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.API\\HotelBooking.API.csproj",
+  "projectFilePath": "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.API\\HotelBooking.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.12\\microsoft.aspnetcore.authentication.jwtbearer.10.0.12.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.12\\microsoft.aspnetcore.openapi.10.0.12.nupkg.sha512",
