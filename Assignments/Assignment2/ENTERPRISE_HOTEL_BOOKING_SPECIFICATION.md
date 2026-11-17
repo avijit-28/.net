@@ -2613,15 +2613,71 @@ app.Run();
 ### 5. `GET /api/roomtypes` (List Room Types)
 - **Role Guard**: `[AllowAnonymous]`
 - **Query Params**: `includeInactive` (bool, optional, Admin only)
-- **Response**: `200 OK` (`List<RoomTypeDto>`)
+- **Response DTO (`List<RoomTypeDto>`)**: `200 OK`
+  ```json
+  [
+    {
+      "roomTypeId": 1,
+      "typeName": "Single Standard",
+      "description": "Cozy single room with high-speed internet and workspace.",
+      "basePrice": 99.00,
+      "maxOccupancy": 1,
+      "isActive": true,
+      "createdAt": "2026-11-17T08:00:00Z"
+    },
+    {
+      "roomTypeId": 2,
+      "typeName": "Double Deluxe",
+      "description": "Spacious double room with king bed and private balcony.",
+      "basePrice": 179.00,
+      "maxOccupancy": 2,
+      "isActive": true,
+      "createdAt": "2026-11-17T08:00:00Z"
+    }
+  ]
+  ```
+- **Status Codes**: `200 OK`.
 
 ### 6. `GET /api/roomtypes/{id}` (Get Room Type by ID)
 - **Role Guard**: `[AllowAnonymous]`
-- **Status Codes**: `200 OK`, `404 Not Found`.
+- **Response DTO (`RoomTypeDto`)**: `200 OK`
+  ```json
+  {
+    "roomTypeId": 1,
+    "typeName": "Single Standard",
+    "description": "Cozy single room with high-speed internet and workspace.",
+    "basePrice": 99.00,
+    "maxOccupancy": 1,
+    "isActive": true,
+    "createdAt": "2026-11-17T08:00:00Z"
+  }
+  ```
+- **Status Codes**: `200 OK`, `404 Not Found` (Room type not found).
 
 ### 7. `PUT /api/roomtypes/{id}` (Update Room Type)
 - **Role Guard**: `[Authorize(Roles = "Admin")]`
-- **Request DTO (`UpdateRoomTypeDto`)**: Fields matching Create plus `isActive` (bool).
+- **Request DTO (`UpdateRoomTypeDto`)**:
+  ```json
+  {
+    "typeName": "Grand Executive Suite",
+    "description": "Updated penthouse suite with executive lounge privileges and panoramic skyline views.",
+    "basePrice": 399.00,
+    "maxOccupancy": 4,
+    "isActive": true
+  }
+  ```
+- **Response DTO (`RoomTypeDto`)**: `200 OK`
+  ```json
+  {
+    "roomTypeId": 3,
+    "typeName": "Grand Executive Suite",
+    "description": "Updated penthouse suite with executive lounge privileges and panoramic skyline views.",
+    "basePrice": 399.00,
+    "maxOccupancy": 4,
+    "isActive": true,
+    "createdAt": "2026-11-17T08:00:00Z"
+  }
+  ```
 - **Status Codes**: `200 OK`, `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`, `409 Conflict`.
 
 ### 8. `DELETE /api/roomtypes/{id}` (Delete Room Type)
@@ -2648,7 +2704,30 @@ app.Run();
 ### 10. `GET /api/rooms` (List All Rooms)
 - **Role Guard**: `[AllowAnonymous]`
 - **Query Params**: `roomTypeId?`, `status?`, `page` (default 1), `pageSize` (default 20)
-- **Response**: `200 OK` (`PagedResult<RoomDto>`)
+- **Response DTO (`PagedResult<RoomDto>`)**: `200 OK`
+  ```json
+  {
+    "items": [
+      {
+        "roomId": 1,
+        "roomNumber": "101",
+        "roomTypeId": 1,
+        "roomTypeName": "Single Standard",
+        "basePrice": 99.00,
+        "maxOccupancy": 1,
+        "status": "Available",
+        "createdAt": "2026-11-17T08:00:00Z"
+      }
+    ],
+    "page": 1,
+    "pageSize": 20,
+    "totalCount": 1,
+    "totalPages": 1,
+    "hasNext": false,
+    "hasPrevious": false
+  }
+  ```
+- **Status Codes**: `200 OK`.
 
 ### 11. `GET /api/rooms/{id}` (Get Room Details with Amenities)
 - **Role Guard**: `[AllowAnonymous]`
@@ -2672,7 +2751,28 @@ app.Run();
 
 ### 12. `PUT /api/rooms/{id}` (Update Room)
 - **Role Guard**: `[Authorize(Roles = "Admin")]`
-- **Request DTO (`UpdateRoomDto`)**: `roomNumber`, `roomTypeId`, `status`, `isActive`.
+- **Request DTO (`UpdateRoomDto`)**:
+  ```json
+  {
+    "roomNumber": "301",
+    "roomTypeId": 3,
+    "status": "Available",
+    "isActive": true
+  }
+  ```
+- **Response DTO (`RoomDto`)**: `200 OK`
+  ```json
+  {
+    "roomId": 5,
+    "roomNumber": "301",
+    "roomTypeId": 3,
+    "roomTypeName": "Grand Executive Suite",
+    "basePrice": 350.00,
+    "maxOccupancy": 4,
+    "status": "Available",
+    "createdAt": "2026-11-17T08:00:00Z"
+  }
+  ```
 - **Status Codes**: `200 OK`, `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`, `409 Conflict`.
 
 ### 13. `DELETE /api/rooms/{id}` (Delete Room)
