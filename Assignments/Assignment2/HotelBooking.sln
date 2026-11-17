@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -12,6 +11,27 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelBooking.BAL", "src\HotelBooking.BAL\HotelBooking.BAL.csproj", "{9BCD8133-7D31-4946-BEC3-76214153F1D4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelBooking.API", "src\HotelBooking.API\HotelBooking.API.csproj", "{B4877F34-289F-4737-AB94-276155FDA586}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "database", "database", "{11111111-2222-3333-4444-555555555551}"
+	ProjectSection(SolutionItems) = preProject
+		database\00_Complete_Master_Setup.sql = database\00_Complete_Master_Setup.sql
+		database\01_Schema.sql = database\01_Schema.sql
+		database\02_Indexes.sql = database\02_Indexes.sql
+		database\03_StoredProcedures.sql = database\03_StoredProcedures.sql
+		database\04_SeedData.sql = database\04_SeedData.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{11111111-2222-3333-4444-555555555552}"
+	ProjectSection(SolutionItems) = preProject
+		tests\HotelBooking_Capstone.postman_collection.json = tests\HotelBooking_Capstone.postman_collection.json
+		tests\HotelBooking_Environment.postman_environment.json = tests\HotelBooking_Environment.postman_environment.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{11111111-2222-3333-4444-555555555553}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		ENTERPRISE_HOTEL_BOOKING_SPECIFICATION.md = ENTERPRISE_HOTEL_BOOKING_SPECIFICATION.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
