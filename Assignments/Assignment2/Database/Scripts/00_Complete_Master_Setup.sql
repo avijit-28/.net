@@ -1993,9 +1993,10 @@ BEGIN TRANSACTION;
 BEGIN TRY
 
     -- -------------------------------------------------------------------------
-    -- 1. SEED USERS (Admin and Customer)
-    -- Default Password for both accounts: "Password@123"
-    -- Pre-computed PBKDF2-SHA256 salted hashes:
+    -- 1. SEED USERS (Admin and Customer with Distinct Passwords & Salts)
+    -- Admin Account   : admin@hotel.com       / Password: "Admin@Hotel2026!"
+    -- Customer Account: customer@example.com / Password: "Customer@Pass2026!"
+    -- Derived using PBKDF2 (HMAC-SHA256, 16-byte salt, 100,000 iterations, 32-byte key)
     -- -------------------------------------------------------------------------
     IF NOT EXISTS (SELECT 1 FROM dbo.Users WHERE Email = N'admin@hotel.com')
     BEGIN
@@ -2003,8 +2004,8 @@ BEGIN TRY
         VALUES (
             N'System Administrator',
             N'admin@hotel.com',
-            N'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', -- PBKDF2 hash of "Password@123"
-            N'BwIAAACkAABBAAAAYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY=',
+            N'o4yhQSFXwT0jxm2oPql72BynQ3kKfjmI+MwhMMjB8s4=', -- Hash of "Admin@Hotel2026!"
+            N'19f+EXTmO/OJxSuVkMGSGQ==',                     -- Unique 16-byte cryptographic salt
             N'+1-555-0100',
             N'Admin',
             1,
@@ -2018,8 +2019,8 @@ BEGIN TRY
         VALUES (
             N'John Doe',
             N'customer@example.com',
-            N'jZae727K08KaOmKSgOaGzww/XVqGr/PKEgIMkjrcbJI=', -- PBKDF2 hash of "Password@123"
-            N'BwIAAACkAABBAAAAYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXoxMjM0NTY=',
+            N'vE5dgMuhLZs4aXxQdQ+saQZkG+MfDggIF34uj3j1pEw=', -- Hash of "Customer@Pass2026!"
+            N'OKSRDXLcf6Rs+t/65sGDcg==',                     -- Unique 16-byte cryptographic salt
             N'+1-555-0101',
             N'Customer',
             1,
