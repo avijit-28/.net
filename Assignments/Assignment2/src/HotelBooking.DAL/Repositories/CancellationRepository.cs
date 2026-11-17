@@ -5,12 +5,6 @@ using HotelBooking.DAL.Connection;
 using HotelBooking.Models.DTOs;
 using Microsoft.Data.SqlClient;
 
-public interface ICancellationRepository
-{
-    Task<CancellationResponseDto> CancelBookingAsync(int bookingId, int cancelledByUserId, string? reason);
-    Task<CancellationResponseDto?> GetDetailsByBookingIdAsync(int bookingId);
-}
-
 public class CancellationRepository : ICancellationRepository
 {
     private readonly IDbConnectionFactory _connectionFactory;
