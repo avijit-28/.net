@@ -3162,6 +3162,7 @@ public sealed record AuthResponseDto(
 
 public sealed record UserSummaryDto(int UserId, string Email, string FullName, string Role);
 public sealed record UserProfileDto(int UserId, string FullName, string Email, string? PhoneNumber, string Role, DateTime CreatedAt);
+public sealed record UserResponseDto(int UserId, string FullName, string Email, string? PhoneNumber, string Role, DateTime CreatedAt);
 ```
 
 ```csharp
@@ -3192,6 +3193,39 @@ public sealed record RoomTypeDto(
     int MaxOccupancy,
     bool IsActive,
     DateTime CreatedAt
+);
+```
+
+```csharp
+namespace HotelBooking.Models.DTOs.Amenities;
+
+using System.ComponentModel.DataAnnotations;
+
+public sealed record CreateAmenityDto(
+    [Required, StringLength(100, MinimumLength = 2)] string Name,
+    [StringLength(500)] string? Description
+);
+
+public sealed record UpdateAmenityDto(
+    [Required, StringLength(100, MinimumLength = 2)] string Name,
+    [StringLength(500)] string? Description
+);
+
+public sealed record AmenityDto(
+    int AmenityId,
+    string Name,
+    string? Description,
+    DateTime CreatedAt
+);
+
+public sealed record AssignAmenityDto(
+    [Range(1, int.MaxValue)] int AmenityId
+);
+
+public sealed record RoomAmenitiesResponseDto(
+    int RoomId,
+    int AssignedAmenityId,
+    string Message
 );
 ```
 
@@ -3239,6 +3273,34 @@ public sealed record RoomDetailDto(
 ```
 
 ```csharp
+namespace HotelBooking.Models.DTOs.Common;
+
+public sealed record PagedResult<T>(
+    List<T> Items,
+    int Page,
+    int PageSize,
+    int TotalCount,
+    int TotalPages,
+    bool HasNext,
+    bool HasPrevious
+);
+
+public sealed record PagedSearchResponseDto<T>(
+    List<T> Items,
+    PaginationMetadata Pagination
+);
+
+public sealed record PaginationMetadata(
+    int Page,
+    int PageSize,
+    int TotalCount,
+    int TotalPages,
+    bool HasNext,
+    bool HasPrevious
+);
+```
+
+```csharp
 namespace HotelBooking.Models.DTOs.Search;
 
 public sealed record AvailableRoomDto(
@@ -3281,6 +3343,54 @@ public sealed record BookingResponseDto(
     string? CustomerNotes,
     DateTime CreatedAt
 );
+
+public sealed record BookingDetailDto(
+    int BookingId,
+    string BookingReference,
+    int UserId,
+    string UserFullName,
+    string UserEmail,
+    int RoomId,
+    string RoomNumber,
+    string RoomTypeName,
+    decimal NightlyRate,
+    DateTime CheckInDate,
+    DateTime CheckOutDate,
+    int TotalNights,
+    decimal TotalAmount,
+    string Status,
+    string? CustomerNotes,
+    DateTime CreatedAt
+);
+
+public sealed record BookingSummaryDto(
+    int BookingId,
+    string BookingReference,
+    int RoomId,
+    string RoomNumber,
+    string RoomTypeName,
+    DateTime CheckInDate,
+    DateTime CheckOutDate,
+    int TotalNights,
+    decimal TotalAmount,
+    string Status,
+    DateTime CreatedAt
+);
+
+public sealed record BookingAdminDto(
+    int BookingId,
+    string BookingReference,
+    int UserId,
+    string UserFullName,
+    string UserEmail,
+    int RoomId,
+    string RoomNumber,
+    DateTime CheckInDate,
+    DateTime CheckOutDate,
+    decimal TotalAmount,
+    string Status,
+    DateTime CreatedAt
+);
 ```
 
 ```csharp
@@ -3303,6 +3413,19 @@ public sealed record CancellationResponseDto(
     decimal RefundAmount,
     string Reason,
     DateTime CancellationDate
+);
+
+public sealed record CancellationDetailDto(
+    int CancellationId,
+    int BookingId,
+    string BookingReference,
+    decimal OriginalBookingAmount,
+    int HoursBeforeCheckIn,
+    decimal RefundPercentage,
+    decimal RefundAmount,
+    string Reason,
+    DateTime CancellationDate,
+    string Status = "Cancelled"
 );
 ```
 
