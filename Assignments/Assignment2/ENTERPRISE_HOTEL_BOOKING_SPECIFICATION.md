@@ -3483,9 +3483,12 @@ HotelBooking_Capstone.postman_collection.json
 │   └── 06_Get_My_Bookings_Positive200
 └── 08_Cancellations/
     ├── 01_Cancel_Booking_Tier1_100PercentRefund201
-    ├── 02_Cancel_AlreadyCancelled_BadRequest400
-    ├── 03_Cancel_CrossTenant_Forbidden403
-    └── 04_Rebook_Cancelled_Room_Positive201
+    ├── 02_Cancel_Booking_Tier2_50PercentRefund201
+    ├── 03_Cancel_Booking_Tier3_0PercentRefund201
+    ├── 04_Cancel_AlreadyCancelled_BadRequest400
+    ├── 05_Cancel_CrossTenant_Forbidden403
+    ├── 06_Get_Cancellation_Details_Positive200
+    └── 07_Rebook_Cancelled_Room_Positive201
 ```
 
 ---
@@ -3507,11 +3510,21 @@ HotelBooking_Capstone.postman_collection.json
 | `testRoomTypeId` | *(empty)* | Dynamically captured from created RoomType. |
 | `testRoomId` | *(empty)* | Dynamically captured from created Room. |
 | `testBookingId` | *(empty)* | Dynamically captured from confirmed reservation. |
+| `tier2BookingId` | *(empty)* | Dynamically captured from Tier 2 booking (check-in in 36h). |
+| `tier3BookingId` | *(empty)* | Dynamically captured from Tier 3 booking (check-in in 12h). |
 | `bookingReference` | *(empty)* | Extracted booking reference string (`BK-YYYYMMDD-XXXX`). |
-| `futureCheckIn` | *(dynamic)* | Generated in Pre-request script (+30 days). |
-| `futureCheckOut` | *(dynamic)* | Generated in Pre-request script (+35 days). |
+| `futureCheckIn` | *(dynamic)* | Generated in Pre-request script (+30 days, Tier 1 >48h window). |
+| `futureCheckOut` | *(dynamic)* | Generated in Pre-request script (+34 days). |
 | `overlapCheckIn` | *(dynamic)* | Generated in Pre-request script (+32 days). |
 | `overlapCheckOut` | *(dynamic)* | Generated in Pre-request script (+36 days). |
+| `adjacentCheckIn` | *(dynamic)* | Generated in Pre-request script (Same day as prior CheckOut). |
+| `adjacentCheckOut` | *(dynamic)* | Generated in Pre-request script (+38 days). |
+| `pastCheckIn` | *(dynamic)* | Generated in Pre-request script (-30 days, for negative testing). |
+| `pastCheckOut` | *(dynamic)* | Generated in Pre-request script (-25 days, for negative testing). |
+| `tier2CheckIn` | *(dynamic)* | Generated in Pre-request script (+36 hours from now, Tier 2 24-48h window). |
+| `tier2CheckOut` | *(dynamic)* | Generated in Pre-request script (+84 hours / 2 nights). |
+| `tier3CheckIn` | *(dynamic)* | Generated in Pre-request script (+12 hours from now, Tier 3 <24h window). |
+| `tier3CheckOut` | *(dynamic)* | Generated in Pre-request script (+60 hours / 2 nights). |
 
 ---
 
@@ -3527,7 +3540,7 @@ function formatDate(d) {
     return d.toISOString().split('T')[0];
 }
 
-// 1. Future Stay Window (Tier 1 Cancellation Window: > 48h)
+// 1. Future Stay Window (Tier 1 Cancellation Window: > 48h from now, e.g. +30 days)
 const checkIn = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000));
 const checkOut = new Date(now.getTime() + (34 * 24 * 60 * 60 * 1000));
 pm.environment.set("futureCheckIn", formatDate(checkIn));
@@ -3545,11 +3558,23 @@ const adjacentOut = new Date(now.getTime() + (38 * 24 * 60 * 60 * 1000));
 pm.environment.set("adjacentCheckIn", formatDate(adjacentIn));
 pm.environment.set("adjacentCheckOut", formatDate(adjacentOut));
 
-// 4. Past Dates (for Negative Testing)
-const pastIn = new Date(now.getTime() - (10 * 24 * 60 * 60 * 1000));
-const pastOut = new Date(now.getTime() - (5 * 24 * 60 * 60 * 1000));
+// 4. Past Dates (for Negative Testing: -30 days)
+const pastIn = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+const pastOut = new Date(now.getTime() - (25 * 24 * 60 * 60 * 1000));
 pm.environment.set("pastCheckIn", formatDate(pastIn));
 pm.environment.set("pastCheckOut", formatDate(pastOut));
+
+// 5. Tier 2 Cancellation Window: 24 to 48 Hours Before Check-In (+36 hours from now)
+const tier2In = new Date(now.getTime() + (36 * 60 * 60 * 1000));
+const tier2Out = new Date(now.getTime() + (84 * 60 * 60 * 1000));
+pm.environment.set("tier2CheckIn", formatDate(tier2In));
+pm.environment.set("tier2CheckOut", formatDate(tier2Out));
+
+// 6. Tier 3 Cancellation Window: Less Than 24 Hours Before Check-In (+12 hours from now)
+const tier3In = new Date(now.getTime() + (12 * 60 * 60 * 1000));
+const tier3Out = new Date(now.getTime() + (60 * 60 * 60 * 1000));
+pm.environment.set("tier3CheckIn", formatDate(tier3In));
+pm.environment.set("tier3CheckOut", formatDate(tier3Out));
 ```
 
 ---
@@ -3636,44 +3661,149 @@ pm.test("RFC 7807 Forbidden ProblemDetails returned", function () {
     const err = pm.response.json();
     pm.expect(err.status).to.eql(403);
     pm.expect(err.title).to.eql("Forbidden");
+    pm.expect(err.type).to.include("rfc7231");
+    pm.expect(err).to.have.property("traceId");
 });
 ```
 
-### 3. Date Validation Failure Assertions (`06_Search/05_Search_PastDate_BadRequest400`):
-- Request: `GET /api/rooms/search?checkInDate={{pastCheckIn}}&checkOutDate={{pastCheckOut}}`
+### 3. Date Validation Failure Assertions:
+- **Past Date Violation (`06_Search/05_Search_PastDate_BadRequest400`)**:
+  - Request: `GET /api/rooms/search?checkInDate={{pastCheckIn}}&checkOutDate={{pastCheckOut}}`
+  ```javascript
+  pm.test("Status code is 400 Bad Request for past date", function () {
+      pm.response.to.have.status(400);
+  });
+
+  pm.test("Error detail specifies past date violation", function () {
+      const err = pm.response.json();
+      pm.expect(err.status).to.eql(400);
+      pm.expect(err.title).to.include("validation");
+      pm.expect(err.detail).to.include("past");
+      pm.expect(err).to.have.property("traceId");
+  });
+  ```
+- **Check-Out Before Check-In Violation (`06_Search/06_Search_CheckOutBeforeCheckIn_BadRequest400`)**:
+  - Request: `GET /api/rooms/search?checkInDate={{futureCheckOut}}&checkOutDate={{futureCheckIn}}`
+  ```javascript
+  pm.test("Status code is 400 Bad Request for check-out before check-in", function () {
+      pm.response.to.have.status(400);
+  });
+
+  pm.test("RFC 7807 Bad Request indicates CheckOut before CheckIn violation", function () {
+      const err = pm.response.json();
+      pm.expect(err.status).to.eql(400);
+      pm.expect(err.title).to.include("validation");
+      pm.expect(err.detail).to.include("Check-out date");
+      pm.expect(err).to.have.property("traceId");
+  });
+  ```
+
+### 4. Cancellation 3-Tier Refund Verification:
+- **Tier 1 (> 48 Hours Before Check-In: 100% Refund - `08_Cancellations/01_Cancel_Booking_Tier1_100PercentRefund201`)**:
+  ```javascript
+  pm.test("Status code is 201 Created", function () {
+      pm.response.to.have.status(201);
+  });
+
+  pm.test("Tier 1 100% refund calculated correctly (> 48h)", function () {
+      const res = pm.response.json();
+      pm.expect(res.refundPercentage).to.eql(100.00);
+      pm.expect(res.refundAmount).to.eql(res.originalBookingAmount);
+      pm.expect(res.hoursBeforeCheckIn).to.be.above(48);
+      pm.expect(res.cancellationId).to.be.above(0);
+      pm.expect(res.bookingReference).to.match(/^BK-\d{8}-\d{4}$/);
+  });
+  ```
+- **Tier 2 (24 to 48 Hours Before Check-In: 50% Refund - `08_Cancellations/02_Cancel_Booking_Tier2_50PercentRefund201`)**:
+  ```javascript
+  pm.test("Status code is 201 Created", function () {
+      pm.response.to.have.status(201);
+  });
+
+  pm.test("Tier 2 50% refund calculated correctly (24-48h window)", function () {
+      const res = pm.response.json();
+      pm.expect(res.refundPercentage).to.eql(50.00);
+      const expectedRefund = Math.round(res.originalBookingAmount * 0.50 * 100) / 100;
+      pm.expect(res.refundAmount).to.eql(expectedRefund);
+      pm.expect(res.hoursBeforeCheckIn).to.be.at.least(24);
+      pm.expect(res.hoursBeforeCheckIn).to.be.at.most(48);
+      pm.expect(res.cancellationId).to.be.above(0);
+  });
+  ```
+- **Tier 3 (< 24 Hours Before Check-In: 0% Refund - `08_Cancellations/03_Cancel_Booking_Tier3_0PercentRefund201`)**:
+  ```javascript
+  pm.test("Status code is 201 Created", function () {
+      pm.response.to.have.status(201);
+  });
+
+  pm.test("Tier 3 0% refund calculated correctly (< 24h window)", function () {
+      const res = pm.response.json();
+      pm.expect(res.refundPercentage).to.eql(0.00);
+      pm.expect(res.refundAmount).to.eql(0.00);
+      pm.expect(res.hoursBeforeCheckIn).to.be.below(24);
+      pm.expect(res.cancellationId).to.be.above(0);
+  });
+  ```
+
+### 5. Cancellation Detail Retrieval Assertion (`08_Cancellations/06_Get_Cancellation_Details_Positive200`):
+- Headers: `Authorization: Bearer {{customer1Token}}`
+- Target: `GET /api/cancellations/{{testBookingId}}`
 ```javascript
-pm.test("Status code is 400 Bad Request", function () {
-    pm.response.to.have.status(400);
+pm.test("Status code is 200 OK", function () {
+    pm.response.to.have.status(200);
 });
 
-pm.test("Error detail specifies past date violation", function () {
-    const err = pm.response.json();
-    pm.expect(err.detail).to.include("past");
-});
-```
-
-### 4. Cancellation 3-Tier Refund Verification (`08_Cancellations/01_Cancel_Booking_Tier1_100PercentRefund201`):
-- Booking check-in is 30 days away ($> 48$ hours).
-```javascript
-pm.test("Status code is 201 Created", function () {
-    pm.response.to.have.status(201);
-});
-
-pm.test("Tier 1 100% refund calculated correctly", function () {
+pm.test("Cancellation details returned with matching identifiers", function () {
     const res = pm.response.json();
-    pm.expect(res.refundPercentage).to.eql(100.00);
-    pm.expect(res.refundAmount).to.eql(res.originalBookingAmount);
-    pm.expect(res.hoursBeforeCheckIn).to.be.above(48);
+    pm.expect(res.bookingId).to.eql(pm.environment.get("testBookingId"));
+    pm.expect(res.status).to.eql("Cancelled");
+    pm.expect(res.refundPercentage).to.be.within(0, 100);
+    pm.expect(res).to.have.property("cancellationDate");
 });
 ```
 
-### 5. Re-Booking Restored Availability (`08_Cancellations/04_Rebook_Cancelled_Room_Positive201`):
+### 6. Re-Booking Restored Availability (`08_Cancellations/07_Rebook_Cancelled_Room_Positive201`):
 - Submits new booking for the exact room and dates that were just cancelled.
 ```javascript
 pm.test("Cancelled room is successfully re-booked (201 Created)", function () {
     pm.response.to.have.status(201);
     const res = pm.response.json();
     pm.expect(res.status).to.eql("Confirmed");
+    pm.expect(res.bookingReference).to.match(/^BK-\d{8}-\d{4}$/);
+    pm.expect(res.bookingId).to.not.eql(pm.environment.get("testBookingId"));
+});
+```
+
+### 7. Unauthenticated 401 Unauthorized Security Assertion:
+- Request: `GET /api/bookings/my` without `Authorization` header.
+```javascript
+pm.test("Status code is 401 Unauthorized for unauthenticated request", function () {
+    pm.response.to.have.status(401);
+});
+
+pm.test("RFC 7807 Unauthorized ProblemDetails returned", function () {
+    const err = pm.response.json();
+    pm.expect(err.status).to.eql(401);
+    pm.expect(err.title).to.eql("Unauthorized");
+    pm.expect(err.type).to.include("rfc7235");
+    pm.expect(err).to.have.property("traceId");
+});
+```
+
+### 8. Customer Forbidden 403 Access on Admin Endpoint (`02_RoomTypes/02_Create_RoomType_Customer_Forbidden403`):
+- Headers: `Authorization: Bearer {{customer1Token}}`
+- Target: `POST /api/roomtypes`
+```javascript
+pm.test("Status code is 403 Forbidden for non-admin user", function () {
+    pm.response.to.have.status(403);
+});
+
+pm.test("RFC 7807 Forbidden ProblemDetails returned", function () {
+    const err = pm.response.json();
+    pm.expect(err.status).to.eql(403);
+    pm.expect(err.title).to.eql("Forbidden");
+    pm.expect(err.detail).to.include("role");
+    pm.expect(err).to.have.property("traceId");
 });
 ```
 
