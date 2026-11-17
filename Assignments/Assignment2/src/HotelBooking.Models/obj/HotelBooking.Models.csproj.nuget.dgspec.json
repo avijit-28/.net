@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.Models\\HotelBooking.Models.csproj": {}
+    "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.Models\\HotelBooking.Models.csproj": {}
   },
   "projects": {
-    "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.Models\\HotelBooking.Models.csproj": {
+    "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.Models\\HotelBooking.Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.Models\\HotelBooking.Models.csproj",
+        "projectUniqueName": "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.Models\\HotelBooking.Models.csproj",
         "projectName": "HotelBooking.Models",
-        "projectPath": "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.Models\\HotelBooking.Models.csproj",
+        "projectPath": "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.Models\\HotelBooking.Models.csproj",
         "packagesPath": "C:\\Users\\avijitpakhira\\.nuget\\packages\\",
-        "outputPath": "D:\\avi\\C#\\Assignments\\Assignment2\\HotelBooking.Models\\obj\\",
+        "outputPath": "D:\\avi\\C#\\Assignments\\Assignment2\\src\\HotelBooking.Models\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
