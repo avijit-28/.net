@@ -59,6 +59,10 @@
             "Microsoft.Data.SqlClient": {
               "target": "Package",
               "version": "[7.1.2, )"
+            },
+            "Microsoft.Extensions.Configuration.Abstractions": {
+              "target": "Package",
+              "version": "[11.0.0, )"
             }
           },
           "imports": [
