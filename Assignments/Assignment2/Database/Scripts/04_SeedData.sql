@@ -32,8 +32,8 @@ BEGIN TRY
         VALUES (
             N'System Administrator',
             N'admin@hotel.com',
-            N'o4yhQSFXwT0jxm2oPql72BynQ3kKfjmI+MwhMMjB8s4=', -- Hash of "Admin@Hotel2026!"
-            N'19f+EXTmO/OJxSuVkMGSGQ==',                     -- Unique 16-byte cryptographic salt
+            N'VGA6NpHTjLFoY+TfGm6Tc8TS1LUzeat9kZ0wH4kPMzc=', -- Hash of "Admin@Hotel2026!"
+            N'g2toFVBnKX8INaE8gTmc9g==',                     -- Unique 16-byte cryptographic salt
             N'+1-555-0100',
             N'Admin',
             1,
@@ -47,8 +47,8 @@ BEGIN TRY
         VALUES (
             N'John Doe',
             N'customer@example.com',
-            N'vE5dgMuhLZs4aXxQdQ+saQZkG+MfDggIF34uj3j1pEw=', -- Hash of "Customer@Pass2026!"
-            N'OKSRDXLcf6Rs+t/65sGDcg==',                     -- Unique 16-byte cryptographic salt
+            N'tvHoCQUO8PNftfYpAQCOgVh38LZWWRd0RZRCBbm4szc=', -- Hash of "Customer@Pass2026!"
+            N'tAl6Z34BljRES8pKUPnOdQ==',                     -- Unique 16-byte cryptographic salt
             N'+1-555-0101',
             N'Customer',
             1,
