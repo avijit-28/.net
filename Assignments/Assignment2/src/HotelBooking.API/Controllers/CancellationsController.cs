@@ -6,6 +6,9 @@ using HotelBooking.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+/// <summary>
+/// Manages booking cancellations, automated 3-tier refund calculations, and audit records.
+/// </summary>
 [ApiController]
 public class CancellationsController : ControllerBase
 {
@@ -18,6 +21,15 @@ public class CancellationsController : ControllerBase
         _bookingService = bookingService;
     }
 
+    /// <summary>
+    /// Cancels an existing booking and calculates refund breakdown according to 3-tier refund policy.
+    /// Tier 1 (>48h before check-in): 100% refund.
+    /// Tier 2 (24-48h before check-in): 50% refund.
+    /// Tier 3 (&lt;24h before check-in): 0% refund.
+    /// </summary>
+    /// <param name="bookingId">Booking identifier to cancel.</param>
+    /// <param name="request">Optional cancellation reason.</param>
+    /// <returns>Cancellation and financial refund breakdown.</returns>
     [HttpPost("api/bookings/{bookingId:int}/cancel")]
     [Authorize]
     public async Task<ActionResult<ApiResponse<CancellationResponseDto>>> CancelBooking(int bookingId, [FromBody] CancelBookingRequestDto request)
@@ -38,6 +50,11 @@ public class CancellationsController : ControllerBase
         return Ok(ApiResponse<CancellationResponseDto>.Ok(result, "Booking cancelled successfully."));
     }
 
+    /// <summary>
+    /// Retrieves financial refund and charge breakdown details for a cancelled booking.
+    /// </summary>
+    /// <param name="bookingId">Booking identifier.</param>
+    /// <returns>Cancellation details including refund percentage and charge amount.</returns>
     [HttpGet("api/cancellations/{bookingId:int}")]
     [Authorize]
     public async Task<ActionResult<ApiResponse<CancellationResponseDto>>> GetDetails(int bookingId)
@@ -64,7 +81,7 @@ public class CancellationsController : ControllerBase
     private int GetCurrentUserId()
     {
         var claim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return int.TryParse(claim, out var id) ? id : 0;
+        return int.TryParse(claim, out int id) ? id : 0;
     }
 
     private string GetCurrentUserRole()
