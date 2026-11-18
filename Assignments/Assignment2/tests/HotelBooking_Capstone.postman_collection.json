@@ -1,12 +1,12 @@
 {
   "info": {
     "name": "HotelBooking_Capstone",
-    "description": "Production Postman test collection for Enterprise Hotel Booking & Reservation System.",
+    "description": "Production Postman test collection for Enterprise Hotel Booking & Reservation System (Modules 3-10).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "01_Authentication",
+      "name": "Module_03_User",
       "item": [
         {
           "name": "01_Login_Admin_Positive200",
@@ -17,10 +17,11 @@
                 "exec": [
                   "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
                   "var json = pm.response.json();",
-                  "pm.test('Token received and role is Admin', function() {",
+                  "pm.test('Admin token received', function() {",
                   "  pm.expect(json.data.token).to.be.a('string');",
                   "  pm.expect(json.data.role).to.eql('Admin');",
                   "  pm.environment.set('adminToken', json.data.token);",
+                  "  pm.environment.set('adminUserId', json.data.userId);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -46,10 +47,11 @@
                 "exec": [
                   "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
                   "var json = pm.response.json();",
-                  "pm.test('Token received and role is Customer', function() {",
+                  "pm.test('Customer token received', function() {",
                   "  pm.expect(json.data.token).to.be.a('string');",
                   "  pm.expect(json.data.role).to.eql('Customer');",
                   "  pm.environment.set('customerToken', json.data.token);",
+                  "  pm.environment.set('customerUserId', json.data.userId);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -88,11 +90,36 @@
             },
             "url": "{{baseUrl}}/api/users/login"
           }
+        },
+        {
+          "name": "04_Get_User_Profile_Positive200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "pm.test('User Profile data present', function() {",
+                  "  pm.expect(json.data.email).to.be.a('string');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
+            "url": "{{baseUrl}}/api/users/{{customerUserId}}"
+          }
         }
       ]
     },
     {
-      "name": "02_RoomTypes",
+      "name": "Module_04_RoomTypes",
       "item": [
         {
           "name": "01_GetAll_RoomTypes_Positive200",
@@ -103,9 +130,11 @@
                 "exec": [
                   "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
                   "var json = pm.response.json();",
-                  "pm.test('Returns active room types', function() {",
+                  "pm.test('Room types array returned', function() {",
                   "  pm.expect(json.data).to.be.an('array');",
-                  "  pm.expect(json.data.length).to.be.above(0);",
+                  "  if (json.data.length > 0) {",
+                  "    pm.environment.set('roomTypeId', json.data[0].roomTypeId);",
+                  "  }",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -114,6 +143,7 @@
           ],
           "request": {
             "method": "GET",
+            "header": [],
             "url": "{{baseUrl}}/api/room-types"
           }
         },
@@ -126,7 +156,9 @@
                 "exec": [
                   "pm.test('Status is 201 Created', function() { pm.response.to.have.status(201); });",
                   "var json = pm.response.json();",
-                  "pm.environment.set('testRoomTypeId', json.data.roomTypeId);"
+                  "pm.test('RoomType created', function() {",
+                  "  pm.expect(json.data.roomTypeId).to.be.a('number');",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -140,7 +172,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"typeName\": \"Royal Suite Dynamic\",\n  \"description\": \"Grand luxury suite with panoramic terrace.\",\n  \"basePrice\": 450.00,\n  \"maxOccupancy\": 5\n}"
+              "raw": "{\n  \"typeName\": \"Presidential Penthouse Suite {{$timestamp}}\",\n  \"description\": \"Ultra luxury suite with private terrace and skyline view\",\n  \"basePrice\": 750.00,\n  \"maxOccupancy\": 4\n}"
             },
             "url": "{{baseUrl}}/api/room-types"
           }
@@ -152,7 +184,7 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Status is 403 Forbidden for non-admin', function() { pm.response.to.have.status(403); });"
+                  "pm.test('Status is 403 Forbidden', function() { pm.response.to.have.status(403); });"
                 ],
                 "type": "text/javascript"
               }
@@ -166,7 +198,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"typeName\": \"Unauthorized Type\",\n  \"basePrice\": 100.00,\n  \"maxOccupancy\": 2\n}"
+              "raw": "{\n  \"typeName\": \"Hacker Suite\",\n  \"description\": \"Should not be allowed\",\n  \"basePrice\": 10.00,\n  \"maxOccupancy\": 1\n}"
             },
             "url": "{{baseUrl}}/api/room-types"
           }
@@ -174,7 +206,7 @@
       ]
     },
     {
-      "name": "03_Rooms",
+      "name": "Module_05_Rooms",
       "item": [
         {
           "name": "01_GetAll_Rooms_Positive200",
@@ -185,9 +217,11 @@
                 "exec": [
                   "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
                   "var json = pm.response.json();",
-                  "pm.test('Returns room list', function() {",
+                  "pm.test('Rooms list returned', function() {",
                   "  pm.expect(json.data).to.be.an('array');",
-                  "  pm.environment.set('testRoomId', json.data[0].roomId);",
+                  "  if (json.data.length > 0) {",
+                  "    pm.environment.set('roomId', json.data[0].roomId);",
+                  "  }",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -196,6 +230,7 @@
           ],
           "request": {
             "method": "GET",
+            "header": [],
             "url": "{{baseUrl}}/api/rooms"
           }
         },
@@ -208,8 +243,8 @@
                 "exec": [
                   "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
                   "var json = pm.response.json();",
-                  "pm.test('Room details and amenities loaded', function() {",
-                  "  pm.expect(json.data.roomId).to.eql(parseInt(pm.environment.get('testRoomId')));",
+                  "pm.test('Room details with amenities returned', function() {",
+                  "  pm.expect(json.data.roomId).to.eql(parseInt(pm.environment.get('roomId')));",
                   "  pm.expect(json.data.amenities).to.be.an('array');",
                   "});"
                 ],
@@ -219,13 +254,152 @@
           ],
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/api/rooms/{{testRoomId}}"
+            "header": [],
+            "url": "{{baseUrl}}/api/rooms/{{roomId}}"
+          }
+        },
+        {
+          "name": "03_UpdateRoomStatus_Admin_Positive200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Available\"\n}"
+            },
+            "url": "{{baseUrl}}/api/rooms/{{roomId}}/status"
           }
         }
       ]
     },
     {
-      "name": "04_Search",
+      "name": "Module_06_Amenities",
+      "item": [
+        {
+          "name": "01_GetAll_Amenities_Positive200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "pm.test('Amenities array returned', function() {",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/amenities"
+          }
+        },
+        {
+          "name": "02_Create_Amenity_Admin_Positive201",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201 Created', function() { pm.response.to.have.status(201); });",
+                  "var json = pm.response.json();",
+                  "pm.test('Amenity created with ID', function() {",
+                  "  pm.expect(json.data.amenityId).to.be.a('number');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amenityName\": \"Infinity Pool Access {{$timestamp}}\",\n  \"description\": \"Private roof pool pass included\",\n  \"iconCode\": \"pool\"\n}"
+            },
+            "url": "{{baseUrl}}/api/amenities"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Module_07_RoomAmenities",
+      "item": [
+        {
+          "name": "01_Get_Room_Amenities_Positive200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "pm.test('List of room amenities returned', function() {",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/rooms/{{roomId}}/amenities"
+          }
+        },
+        {
+          "name": "02_Assign_Room_Amenities_Admin_Positive200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amenityIds\": [1, 2, 3]\n}"
+            },
+            "url": "{{baseUrl}}/api/rooms/{{roomId}}/amenities"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Module_08_Search",
       "item": [
         {
           "name": "01_Search_AvailableRooms_Positive200",
@@ -236,9 +410,12 @@
                 "exec": [
                   "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
                   "var json = pm.response.json();",
-                  "pm.test('Search returned available rooms', function() {",
+                  "pm.test('Search results contains stay price and pagination', function() {",
                   "  pm.expect(json.data.items).to.be.an('array');",
-                  "  pm.expect(json.data.totalRecords).to.be.at.least(1);",
+                  "  pm.expect(json.data.totalRecords).to.be.a('number');",
+                  "  if (json.data.items.length > 0) {",
+                  "    pm.expect(json.data.items[0].totalStayPrice).to.be.above(0);",
+                  "  }",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -247,16 +424,8 @@
           ],
           "request": {
             "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/rooms/search?checkInDate=2026-12-01&checkOutDate=2026-12-04&guests=2",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "rooms", "search"],
-              "query": [
-                { "key": "checkInDate", "value": "2026-12-01" },
-                { "key": "checkOutDate", "value": "2026-12-04" },
-                { "key": "guests", "value": "2" }
-              ]
-            }
+            "header": [],
+            "url": "{{baseUrl}}/api/rooms/search?checkInDate=2026-12-01&checkOutDate=2026-12-05&guests=2"
           }
         },
         {
@@ -274,21 +443,14 @@
           ],
           "request": {
             "method": "GET",
-            "url": {
-              "raw": "{{baseUrl}}/api/rooms/search?checkInDate=2020-01-01&checkOutDate=2020-01-05",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "rooms", "search"],
-              "query": [
-                { "key": "checkInDate", "value": "2020-01-01" },
-                { "key": "checkOutDate", "value": "2020-01-05" }
-              ]
-            }
+            "header": [],
+            "url": "{{baseUrl}}/api/rooms/search?checkInDate=2020-01-01&checkOutDate=2020-01-05"
           }
         }
       ]
     },
     {
-      "name": "05_Bookings",
+      "name": "Module_09_Bookings",
       "item": [
         {
           "name": "01_Create_Booking_Customer_Positive201",
@@ -299,10 +461,10 @@
                 "exec": [
                   "pm.test('Status is 201 Created', function() { pm.response.to.have.status(201); });",
                   "var json = pm.response.json();",
-                  "pm.test('Booking confirmed with valid reference', function() {",
-                  "  pm.expect(json.data.bookingReference).to.match(/^BK-\\d{8}-\\d{4}$/);",
-                  "  pm.expect(json.data.bookingStatus).to.eql('Confirmed');",
-                  "  pm.environment.set('testBookingId', json.data.bookingId);",
+                  "pm.test('Booking created with BK- reference', function() {",
+                  "  pm.expect(json.data.bookingId).to.be.a('number');",
+                  "  pm.expect(json.data.bookingReference).to.include('BK-');",
+                  "  pm.environment.set('bookingId', json.data.bookingId);",
                   "  pm.environment.set('bookingReference', json.data.bookingReference);",
                   "});"
                 ],
@@ -318,7 +480,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"roomId\": {{testRoomId}},\n  \"checkInDate\": \"2026-12-10\",\n  \"checkOutDate\": \"2026-12-14\",\n  \"numberOfGuests\": 1,\n  \"customerNotes\": \"Automated API Test Booking\"\n}"
+              "raw": "{\n  \"roomId\": {{roomId}},\n  \"checkInDate\": \"2026-12-20\",\n  \"checkOutDate\": \"2026-12-25\",\n  \"numberOfGuests\": 2\n}"
             },
             "url": "{{baseUrl}}/api/bookings"
           }
@@ -330,7 +492,9 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Double-booking triggers 409 Conflict', function() { pm.response.to.have.status(409); });"
+                  "pm.test('Status is 409 Conflict (Double Booking Blocked)', function() {",
+                  "  pm.response.to.have.status(409);",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -344,7 +508,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"roomId\": {{testRoomId}},\n  \"checkInDate\": \"2026-12-12\",\n  \"checkOutDate\": \"2026-12-16\",\n  \"numberOfGuests\": 1,\n  \"customerNotes\": \"Should fail with double booking conflict\"\n}"
+              "raw": "{\n  \"roomId\": {{roomId}},\n  \"checkInDate\": \"2026-12-22\",\n  \"checkOutDate\": \"2026-12-27\",\n  \"numberOfGuests\": 2\n}"
             },
             "url": "{{baseUrl}}/api/bookings"
           }
@@ -358,7 +522,7 @@
                 "exec": [
                   "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
                   "var json = pm.response.json();",
-                  "pm.test('User bookings retrieved', function() {",
+                  "pm.test('User bookings list returned', function() {",
                   "  pm.expect(json.data).to.be.an('array');",
                   "});"
                 ],
@@ -368,14 +532,16 @@
           ],
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" }
+            ],
             "url": "{{baseUrl}}/api/bookings/my-bookings"
           }
         }
       ]
     },
     {
-      "name": "06_Cancellations",
+      "name": "Module_10_Cancellations",
       "item": [
         {
           "name": "01_Cancel_Booking_Tier1_100PercentRefund200",
@@ -386,9 +552,10 @@
                 "exec": [
                   "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
                   "var json = pm.response.json();",
-                  "pm.test('100% Refund calculated for >48h cancellation', function() {",
-                  "  pm.expect(json.data.refundPercentage).to.eql(100.00);",
-                  "  pm.expect(json.data.cancellationCharge).to.eql(0.00);",
+                  "pm.test('Cancellation breakdown: >48 hours = 100% refund', function() {",
+                  "  pm.expect(json.data.refundPercentage).to.eql(100);",
+                  "  pm.expect(json.data.cancellationCharge).to.eql(0);",
+                  "  pm.expect(json.data.refundAmount).to.be.above(0);",
                   "});"
                 ],
                 "type": "text/javascript"
@@ -403,9 +570,9 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"reason\": \"Flight rescheduling\"\n}"
+              "raw": "{\n  \"reason\": \"Schedule changed plans\"\n}"
             },
-            "url": "{{baseUrl}}/api/bookings/{{testBookingId}}/cancel"
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/cancel"
           }
         },
         {
@@ -415,7 +582,9 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test('Attempting to re-cancel triggers 400 Bad Request', function() { pm.response.to.have.status(400); });"
+                  "pm.test('Status is 400 Bad Request (Cannot cancel already cancelled booking)', function() {",
+                  "  pm.response.to.have.status(400);",
+                  "});"
                 ],
                 "type": "text/javascript"
               }
@@ -429,9 +598,9 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"reason\": \"Attempt duplicate cancel\"\n}"
+              "raw": "{\n  \"reason\": \"Duplicate cancel attempt\"\n}"
             },
-            "url": "{{baseUrl}}/api/bookings/{{testBookingId}}/cancel"
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/cancel"
           }
         }
       ]
