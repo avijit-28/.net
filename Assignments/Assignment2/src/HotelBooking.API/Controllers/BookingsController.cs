@@ -6,6 +6,9 @@ using HotelBooking.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+/// <summary>
+/// Handles atomic room reservations, concurrency safety locks, and booking audits.
+/// </summary>
 [ApiController]
 [Route("api/bookings")]
 public class BookingsController : ControllerBase
@@ -17,6 +20,11 @@ public class BookingsController : ControllerBase
         _bookingService = bookingService;
     }
 
+    /// <summary>
+    /// Creates an atomic room reservation with UPDLOCK/ROWLOCK and UPDLOCK/HOLDLOCK concurrency protection.
+    /// </summary>
+    /// <param name="request">Booking specifications (roomId, checkInDate, checkOutDate, numberOfGuests).</param>
+    /// <returns>Confirmed booking response with generated BookingReference (BK-YYYYMMDD-XXXX).</returns>
     [HttpPost]
     [Authorize]
     public async Task<ActionResult<ApiResponse<BookingResponseDto>>> Create([FromBody] CreateBookingRequestDto request)
@@ -26,6 +34,12 @@ public class BookingsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = created.BookingId }, ApiResponse<BookingResponseDto>.Ok(created, "Booking confirmed successfully."));
     }
 
+    /// <summary>
+    /// Retrieves paginated booking history for the currently authenticated user.
+    /// </summary>
+    /// <param name="pageNumber">Page index (default 1).</param>
+    /// <param name="pageSize">Number of items per page (default 10).</param>
+    /// <returns>List of user bookings.</returns>
     [HttpGet("my-bookings")]
     [Authorize]
     public async Task<ActionResult<ApiResponse<List<BookingResponseDto>>>> GetMyBookings(
@@ -37,6 +51,11 @@ public class BookingsController : ControllerBase
         return Ok(ApiResponse<List<BookingResponseDto>>.Ok(list));
     }
 
+    /// <summary>
+    /// Retrieves detailed booking information by ID. Restricted to booking owner or Administrators.
+    /// </summary>
+    /// <param name="id">Booking identifier.</param>
+    /// <returns>Booking details including user and room metadata.</returns>
     [HttpGet("{id:int}")]
     [Authorize]
     public async Task<ActionResult<ApiResponse<BookingDetailDto>>> GetById(int id)
@@ -56,13 +75,18 @@ public class BookingsController : ControllerBase
         return Ok(ApiResponse<BookingDetailDto>.Ok(booking));
     }
 
+    /// <summary>
+    /// Retrieves booking details using the unique public Booking Reference code.
+    /// </summary>
+    /// <param name="reference">Human-readable booking reference (e.g., BK-20261113-0001).</param>
+    /// <returns>Booking details.</returns>
     [HttpGet("ref/{reference}")]
     [Authorize]
     public async Task<ActionResult<ApiResponse<BookingDetailDto>>> GetByReference(string reference)
     {
         var booking = await _bookingService.GetByReferenceAsync(reference);
         if (booking == null)
-            return NotFound(ApiResponse<BookingDetailDto>.Fail("Booking not found."));
+            return NotFound(ApiResponse<BookingDetailDto>.Fail("Booking reference not found."));
 
         int currentUserId = GetCurrentUserId();
         string role = GetCurrentUserRole();
@@ -75,6 +99,15 @@ public class BookingsController : ControllerBase
         return Ok(ApiResponse<BookingDetailDto>.Ok(booking));
     }
 
+    /// <summary>
+    /// Global booking audit listing with date and status filters. Restricted to Administrators.
+    /// </summary>
+    /// <param name="status">Optional status filter (Confirmed, Cancelled, Completed).</param>
+    /// <param name="startDate">Optional start date range.</param>
+    /// <param name="endDate">Optional end date range.</param>
+    /// <param name="pageNumber">Page index (default 1).</param>
+    /// <param name="pageSize">Page size (default 20).</param>
+    /// <returns>Paginated booking records.</returns>
     [HttpGet]
     [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApiResponse<PagedResultDto<BookingDetailDto>>>> GetAll(
@@ -91,7 +124,7 @@ public class BookingsController : ControllerBase
     private int GetCurrentUserId()
     {
         var claim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return int.TryParse(claim, out var id) ? id : 0;
+        return int.TryParse(claim, out int id) ? id : 0;
     }
 
     private string GetCurrentUserRole()
