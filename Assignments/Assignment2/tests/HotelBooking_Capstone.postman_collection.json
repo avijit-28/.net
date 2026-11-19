@@ -542,7 +542,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"roomId\": {{roomId}},\n  \"checkInDate\": \"2026-12-20\",\n  \"checkOutDate\": \"2026-12-25\",\n  \"numberOfGuests\": 2\n}"
+              "raw": "{\n  \"roomId\": {{roomId}},\n  \"checkInDate\": \"2026-12-20\",\n  \"checkOutDate\": \"2026-12-25\",\n  \"numberOfGuests\": 1\n}"
             },
             "url": "{{baseUrl}}/api/bookings"
           }
@@ -579,7 +579,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"roomId\": {{roomId}},\n  \"checkInDate\": \"2026-12-22\",\n  \"checkOutDate\": \"2026-12-27\",\n  \"numberOfGuests\": 2\n}"
+              "raw": "{\n  \"roomId\": {{roomId}},\n  \"checkInDate\": \"2026-12-22\",\n  \"checkOutDate\": \"2026-12-27\",\n  \"numberOfGuests\": 1\n}"
             },
             "url": "{{baseUrl}}/api/bookings"
           }
