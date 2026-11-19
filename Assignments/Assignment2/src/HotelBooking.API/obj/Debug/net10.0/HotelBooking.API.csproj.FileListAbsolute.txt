@@ -157,4 +157,3 @@ D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Debug\net10.0\refint\
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Debug\net10.0\HotelBooking.API.pdb
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Debug\net10.0\HotelBooking.API.genruntimeconfig.cache
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Debug\net10.0\ref\HotelBooking.API.dll
-D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
