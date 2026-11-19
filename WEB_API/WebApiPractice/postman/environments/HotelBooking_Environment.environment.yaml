@@ -1,0 +1,28 @@
+name: HotelBooking_Environment
+values:
+  - key: baseUrl
+    value: 'http://localhost:5102'
+  - key: adminEmail
+    value: admin@hotel.com
+  - key: adminPassword
+    value: Admin@Hotel2026!
+  - key: customerEmail
+    value: customer@example.com
+  - key: customerPassword
+    value: Customer@Pass2026!
+  - key: adminToken
+    value: ''
+  - key: adminUserId
+    value: '1'
+  - key: customerToken
+    value: ''
+  - key: customerUserId
+    value: '2'
+  - key: roomTypeId
+    value: '1'
+  - key: roomId
+    value: '1'
+  - key: bookingId
+    value: ''
+  - key: bookingReference
+    value: ''
