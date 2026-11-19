@@ -1,0 +1,21 @@
+$kind: http-request
+url: "{{baseUrl}}/api/rooms/search?checkInDate=2026-12-01&checkOutDate=2026-12-05&guests=2"
+method: GET
+queryParams:
+  checkInDate: 2026-12-01
+  checkOutDate: 2026-12-05
+  guests: "2"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });
+      var json = pm.response.json();
+      pm.test('Search results contains stay price and pagination', function() {
+        pm.expect(json.data.items).to.be.an('array');
+        pm.expect(json.data.totalRecords).to.be.a('number');
+        if (json.data.items.length > 0) {
+          pm.expect(json.data.items[0].totalStayPrice).to.be.above(0);
+        }
+      });
+    language: text/javascript
+order: 1000

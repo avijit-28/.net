@@ -1,0 +1,28 @@
+$kind: http-request
+url: "{{baseUrl}}/api/bookings"
+method: POST
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{customerToken}}
+body:
+  type: text
+  content: |-
+    {
+      "roomId": {{roomId}},
+      "checkInDate": "2026-12-20",
+      "checkOutDate": "2026-12-25",
+      "numberOfGuests": 2
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status is 201 Created', function() { pm.response.to.have.status(201); });
+      var json = pm.response.json();
+      pm.test('Booking created with BK- reference', function() {
+        pm.expect(json.data.bookingId).to.be.a('number');
+        pm.expect(json.data.bookingReference).to.include('BK-');
+        pm.environment.set('bookingId', json.data.bookingId);
+        pm.environment.set('bookingReference', json.data.bookingReference);
+      });
+    language: text/javascript
+order: 1000

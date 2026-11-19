@@ -1,0 +1,25 @@
+$kind: http-request
+url: "{{baseUrl}}/api/room-types"
+method: POST
+headers:
+  Content-Type: application/json
+  Authorization: Bearer {{adminToken}}
+body:
+  type: text
+  content: |-
+    {
+      "typeName": "Presidential Penthouse Suite {{$timestamp}}",
+      "description": "Ultra luxury suite with private terrace and skyline view",
+      "basePrice": 750.00,
+      "maxOccupancy": 4
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status is 201 Created', function() { pm.response.to.have.status(201); });
+      var json = pm.response.json();
+      pm.test('RoomType created', function() {
+        pm.expect(json.data.roomTypeId).to.be.a('number');
+      });
+    language: text/javascript
+order: 2000
