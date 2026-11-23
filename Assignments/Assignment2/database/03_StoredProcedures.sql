@@ -998,6 +998,9 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Run auto-checkout first to synchronize room availability
+    EXEC dbo.usp_Booking_AutoCheckout;
+
     IF @CheckInDate < CAST(SYSUTCDATETIME() AS DATE)
     BEGIN
         THROW 50002, N'Check-in date cannot be in the past.', 1;
@@ -1029,7 +1032,7 @@ BEGIN
     INNER JOIN dbo.RoomTypes rt ON r.RoomTypeId = rt.RoomTypeId
     WHERE r.IsActive = 1
       AND rt.IsActive = 1
-      AND r.Status <> N'Under Maintenance'
+      AND r.Status = N'Available'
       AND (@RoomTypeId IS NULL OR r.RoomTypeId = @RoomTypeId)
       AND (@Guests IS NULL OR rt.MaxOccupancy >= @Guests)
       AND (@MinPrice IS NULL OR rt.BasePrice >= @MinPrice)
@@ -1218,6 +1221,12 @@ BEGIN
 
         SET @CreatedBookingId = SCOPE_IDENTITY();
         SET @GeneratedBookingReference = @BookingRef;
+
+        -- Update Room Status to Occupied so it no longer shows available
+        UPDATE dbo.Rooms
+        SET Status = N'Occupied',
+            UpdatedAt = SYSUTCDATETIME()
+        WHERE RoomId = @RoomId;
 
         INSERT INTO dbo.AuditLogs (TableName, RecordId, Action, UserId, NewValues, Timestamp)
         VALUES (
