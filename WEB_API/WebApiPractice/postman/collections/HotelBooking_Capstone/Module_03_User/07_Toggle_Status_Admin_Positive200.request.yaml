@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{baseUrl}}/api/users/{{customerUserId}}/status?isActive=true"
+method: PATCH
+queryParams:
+  isActive: "true"
+auth:
+  type: bearer
+  credentials:
+    token: "{{adminToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });
+      var json = pm.response.json();
+      pm.test('User status toggled', function() {
+        pm.expect(json.data.isActive).to.eql(true);
+      });
+    language: text/javascript
+order: 7000
