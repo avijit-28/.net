@@ -499,6 +499,76 @@
         }
       }
     },
+    "/api/bookings/{id}/checkout": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfBookingResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfBookingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfBookingResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/auto-checkout": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfint"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfint"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOfint"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/bookings/{bookingId}/cancel": {
       "post": {
         "tags": [
@@ -1818,6 +1888,25 @@
           }
         }
       },
+      "ApiResponseOfint": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
       "ApiResponseOfListOfAmenityResponseDto": {
         "type": "object",
         "properties": {
@@ -2372,6 +2461,12 @@
             "maxLength": 100,
             "minLength": 0,
             "type": "string"
+          },
+          "amenityName": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "description": {
             "maxLength": 255,
@@ -2929,6 +3024,12 @@
             "maxLength": 100,
             "minLength": 0,
             "type": "string"
+          },
+          "amenityName": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "description": {
             "maxLength": 255,
