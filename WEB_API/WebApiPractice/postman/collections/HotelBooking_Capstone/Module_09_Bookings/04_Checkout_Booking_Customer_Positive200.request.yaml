@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/bookings/{{bookingId}}/checkout"
+method: POST
+auth:
+  type: bearer
+  credentials:
+    token: "{{customerToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });
+      var json = pm.response.json();
+      pm.test('Booking marked as Completed and room released', function() {
+        pm.expect(json.data.bookingStatus).to.eql('Completed');
+      });
+    language: text/javascript
+order: 4000
