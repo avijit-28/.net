@@ -411,12 +411,16 @@ async function loadMyBookings() {
             <td>${b.numberOfGuests}</td>
             <td><strong>$${b.totalAmount.toFixed(2)}</strong></td>
             <td>
-              <span class="badge ${b.bookingStatus === 'Confirmed' ? 'badge-status' : 'badge-cancelled'}">
+              <span class="badge ${b.bookingStatus === 'Confirmed' ? 'badge-status' : (b.bookingStatus === 'Completed' ? 'badge-customer' : 'badge-cancelled')}">
                 ${b.bookingStatus}
               </span>
             </td>
             <td>
-              ${canCancel ? `<button class="btn btn-danger btn-sm" onclick="openCancellationModal(${b.bookingId}, '${b.bookingReference}', ${b.totalAmount}, '${b.checkInDate}')"><i class="fa-solid fa-ban"></i> Cancel</button>` : '<span style="color:var(--text-muted); font-size:0.8rem;">None</span>'}
+              <div style="display: flex; gap: 0.35rem; align-items: center;">
+                ${isConfirmed ? `<button class="btn btn-success btn-sm" onclick="handleManualCheckout(${b.bookingId}, '${b.bookingReference}')" title="Check out now and free this room"><i class="fa-solid fa-door-open"></i> Check Out</button>` : ''}
+                ${canCancel ? `<button class="btn btn-danger btn-sm" onclick="openCancellationModal(${b.bookingId}, '${b.bookingReference}', ${b.totalAmount}, '${b.checkInDate}')"><i class="fa-solid fa-ban"></i> Cancel</button>` : ''}
+                ${!canCancel && !isConfirmed ? '<span style="color:var(--text-muted); font-size:0.8rem;">Completed</span>' : ''}
+              </div>
             </td>
           </tr>
         `;
