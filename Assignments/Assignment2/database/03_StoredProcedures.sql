@@ -475,7 +475,7 @@ BEGIN
 
         COMMIT TRANSACTION;
 
-        SELECT r.RoomId, r.RoomNumber, r.FloorNumber, r.Status, r.IsActive, r.CreatedAt,
+        SELECT r.RoomId, r.RoomNumber, r.FloorNumber, r.Status, r.IsActive, r.CreatedAt, r.UpdatedAt,
                rt.RoomTypeId, rt.TypeName, rt.BasePrice, rt.MaxOccupancy
         FROM dbo.Rooms r
         INNER JOIN dbo.RoomTypes rt ON r.RoomTypeId = rt.RoomTypeId
@@ -592,7 +592,7 @@ BEGIN
 
         COMMIT TRANSACTION;
 
-        SELECT r.RoomId, r.RoomNumber, r.FloorNumber, r.Status, r.IsActive, r.UpdatedAt,
+        SELECT r.RoomId, r.RoomNumber, r.FloorNumber, r.Status, r.IsActive, r.CreatedAt, r.UpdatedAt,
                rt.RoomTypeId, rt.TypeName, rt.BasePrice, rt.MaxOccupancy
         FROM dbo.Rooms r
         INNER JOIN dbo.RoomTypes rt ON r.RoomTypeId = rt.RoomTypeId
