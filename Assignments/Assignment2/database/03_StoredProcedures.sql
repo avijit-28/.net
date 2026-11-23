@@ -1451,10 +1451,10 @@ BEGIN
         VALUES (
             N'Bookings',
             CAST(@BookingId AS NVARCHAR(50)),
-            N'CHECKOUT',
+            N'UPDATE',
             ISNULL(@UserId, @BookingUserId),
             (SELECT @CurrentStatus AS Status FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
-            (SELECT N'Completed' AS Status, N'Available' AS RoomStatus FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
+            (SELECT N'Completed' AS Status, N'Available' AS RoomStatus, N'CheckOut' AS Operation FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
             SYSUTCDATETIME()
         );
 
