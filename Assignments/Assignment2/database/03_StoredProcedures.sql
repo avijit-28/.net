@@ -1460,6 +1460,23 @@ BEGIN
             UpdatedAt     = SYSUTCDATETIME()
         WHERE BookingId = @BookingId;
 
+        -- Release room back to Available if no other active booking
+        IF NOT EXISTS (
+            SELECT 1 
+            FROM dbo.Bookings
+            WHERE RoomId = (SELECT RoomId FROM dbo.Bookings WHERE BookingId = @BookingId)
+              AND BookingId <> @BookingId
+              AND BookingStatus = N'Confirmed'
+              AND CheckOutDate > CAST(SYSUTCDATETIME() AS DATE)
+        )
+        BEGIN
+            UPDATE dbo.Rooms
+            SET Status = N'Available',
+                UpdatedAt = SYSUTCDATETIME()
+            WHERE RoomId = (SELECT RoomId FROM dbo.Bookings WHERE BookingId = @BookingId)
+              AND Status = N'Occupied';
+        END
+
         INSERT INTO dbo.Cancellations
         (
             BookingId,
