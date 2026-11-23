@@ -1070,7 +1070,7 @@ BEGIN
     INNER JOIN dbo.RoomTypes rt ON r.RoomTypeId = rt.RoomTypeId
     WHERE r.IsActive = 1
       AND rt.IsActive = 1
-      AND r.Status <> N'Under Maintenance'
+      AND r.Status = N'Available'
       AND (@RoomTypeId IS NULL OR r.RoomTypeId = @RoomTypeId)
       AND (@Guests IS NULL OR rt.MaxOccupancy >= @Guests)
       AND (@MinPrice IS NULL OR rt.BasePrice >= @MinPrice)
