@@ -9,4 +9,6 @@ public interface IBookingService
     Task<BookingDetailDto?> GetByReferenceAsync(string bookingReference);
     Task<List<BookingResponseDto>> GetByUserAsync(int userId, int pageNumber = 1, int pageSize = 10);
     Task<PagedResultDto<BookingDetailDto>> GetAllAsync(string? status = null, DateTime? startDate = null, DateTime? endDate = null, int pageNumber = 1, int pageSize = 20);
+    Task<BookingResponseDto> CheckoutAsync(int bookingId, int userId, bool isAdmin);
+    Task<int> AutoCheckoutAsync();
 }
