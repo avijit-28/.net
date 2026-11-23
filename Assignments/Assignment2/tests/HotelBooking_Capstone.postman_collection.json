@@ -123,6 +123,104 @@
             "header": [],
             "url": "{{baseUrl}}/api/users/{{customerUserId}}"
           }
+        },
+        {
+          "name": "05_Register_Customer_Positive201",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 201 Created', function() { pm.response.to.have.status(201); });",
+                  "var json = pm.response.json();",
+                  "pm.test('User registered successfully', function() {",
+                  "  pm.expect(json.data.userId).to.be.a('number');",
+                  "  pm.expect(json.data.email).to.include('@example.com');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Guest {{$timestamp}}\",\n  \"email\": \"guest_{{$timestamp}}@example.com\",\n  \"password\": \"Customer@Pass2026!\",\n  \"phoneNumber\": \"+1-555-{{$randomInt}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/users/register"
+          }
+        },
+        {
+          "name": "06_Update_Profile_Positive200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "pm.test('Profile updated successfully', function() {",
+                  "  pm.expect(json.data.fullName).to.eql('John Doe Updated');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe Updated\",\n  \"phoneNumber\": \"+1-555-9999\"\n}"
+            },
+            "url": "{{baseUrl}}/api/users/{{customerUserId}}"
+          }
+        },
+        {
+          "name": "07_Toggle_Status_Admin_Positive200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "pm.test('User status toggled', function() {",
+                  "  pm.expect(json.data.isActive).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrl}}/api/users/{{customerUserId}}/status?isActive=true"
+          }
         }
       ]
     },
