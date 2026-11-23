@@ -33,6 +33,7 @@ builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IAmenityService, AmenityService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<ICancellationService, CancellationService>();
+builder.Services.AddHostedService<HotelBooking.API.Services.AutoCheckoutBackgroundService>();
 
 // 5. Configure JWT Authentication
 var jwtSecretKey = builder.Configuration["Jwt:SecretKey"] ?? "EnterpriseHotelBookingSecretKey_MustBeAtLeast32BytesLong!";
