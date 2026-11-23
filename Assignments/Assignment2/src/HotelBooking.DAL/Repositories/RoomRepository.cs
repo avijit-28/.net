@@ -228,6 +228,12 @@ public class RoomRepository : IRoomRepository
 
     private static RoomResponseDto MapRoomResponse(SqlDataReader reader)
     {
+        int updatedAtIndex = -1;
+        try { updatedAtIndex = reader.GetOrdinal("UpdatedAt"); } catch (IndexOutOfRangeException) { }
+
+        int createdAtIndex = -1;
+        try { createdAtIndex = reader.GetOrdinal("CreatedAt"); } catch (IndexOutOfRangeException) { }
+
         return new RoomResponseDto
         {
             RoomId = reader.GetInt32(reader.GetOrdinal("RoomId")),
@@ -235,8 +241,8 @@ public class RoomRepository : IRoomRepository
             FloorNumber = reader.GetInt32(reader.GetOrdinal("FloorNumber")),
             Status = reader.GetString(reader.GetOrdinal("Status")),
             IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
-            CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-            UpdatedAt = reader.IsDBNull(reader.GetOrdinal("UpdatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("UpdatedAt")),
+            CreatedAt = (createdAtIndex >= 0 && !reader.IsDBNull(createdAtIndex)) ? reader.GetDateTime(createdAtIndex) : DateTime.UtcNow,
+            UpdatedAt = (updatedAtIndex >= 0 && !reader.IsDBNull(updatedAtIndex)) ? reader.GetDateTime(updatedAtIndex) : null,
             RoomTypeId = reader.GetInt32(reader.GetOrdinal("RoomTypeId")),
             RoomTypeName = reader.GetString(reader.GetOrdinal("TypeName")),
             BasePrice = reader.GetDecimal(reader.GetOrdinal("BasePrice")),
