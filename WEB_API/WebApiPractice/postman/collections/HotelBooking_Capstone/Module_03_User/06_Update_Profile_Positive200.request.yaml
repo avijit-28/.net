@@ -1,0 +1,26 @@
+$kind: http-request
+url: "{{baseUrl}}/api/users/{{customerUserId}}"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "fullName": "John Doe Updated",
+      "phoneNumber": "+1-555-9999"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{customerToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });
+      var json = pm.response.json();
+      pm.test('Profile updated successfully', function() {
+        pm.expect(json.data.fullName).to.eql('John Doe Updated');
+      });
+    language: text/javascript
+order: 6000
