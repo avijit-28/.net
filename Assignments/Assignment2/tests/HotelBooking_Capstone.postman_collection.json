@@ -483,6 +483,41 @@
             },
             "url": "{{baseUrl}}/api/amenities"
           }
+        },
+        {
+          "name": "03_Create_Amenity_Customer_Forbidden403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 403 Forbidden', function() { pm.response.to.have.status(403); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Customer Amenity {{$timestamp}}\",\n  \"description\": \"Customer should be forbidden\",\n  \"iconCode\": \"security\"\n}"
+            },
+            "url": "{{baseUrl}}/api/amenities"
+          }
         }
       ]
     },
