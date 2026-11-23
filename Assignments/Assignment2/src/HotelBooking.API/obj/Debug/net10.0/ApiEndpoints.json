@@ -265,6 +265,52 @@
   },
   {
     "ContainingType": "HotelBooking.API.Controllers.BookingsController",
+    "Method": "Checkout",
+    "RelativePath": "api/bookings/{id}/checkout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "HotelBooking.Models.DTOs.ApiResponse\u00601[[HotelBooking.Models.DTOs.BookingResponseDto, HotelBooking.Models, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "HotelBooking.API.Controllers.BookingsController",
+    "Method": "TriggerAutoCheckout",
+    "RelativePath": "api/bookings/auto-checkout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "HotelBooking.Models.DTOs.ApiResponse\u00601[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "HotelBooking.API.Controllers.BookingsController",
     "Method": "GetMyBookings",
     "RelativePath": "api/bookings/my-bookings",
     "HttpMethod": "GET",
