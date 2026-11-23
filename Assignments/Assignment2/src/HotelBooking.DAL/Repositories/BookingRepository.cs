@@ -170,6 +170,38 @@ public class BookingRepository : IBookingRepository
         return result;
     }
 
+    public async Task<BookingResponseDto> CheckoutAsync(int bookingId, int userId, bool isAdmin)
+    {
+        using var connection = await _connectionFactory.CreateOpenConnectionAsync();
+        using var command = new SqlCommand("dbo.usp_Booking_Checkout", connection)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        command.Parameters.Add(new SqlParameter("@BookingId", SqlDbType.Int) { Value = bookingId });
+        command.Parameters.Add(new SqlParameter("@UserId", SqlDbType.Int) { Value = userId });
+        command.Parameters.Add(new SqlParameter("@IsAdmin", SqlDbType.Bit) { Value = isAdmin });
+
+        using var reader = await command.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return MapBookingResponse(reader);
+        }
+
+        throw new InvalidOperationException("Failed to check out booking.");
+    }
+
+    public async Task<int> AutoCheckoutAsync()
+    {
+        using var connection = await _connectionFactory.CreateOpenConnectionAsync();
+        using var command = new SqlCommand("dbo.usp_Booking_AutoCheckout", connection)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        return await command.ExecuteNonQueryAsync();
+    }
+
     private static BookingResponseDto MapBookingResponse(SqlDataReader reader)
     {
         return new BookingResponseDto
