@@ -79,6 +79,12 @@ public class RoomRepository : IRoomRepository
             return null;
         }
 
+        int updatedAtIndex = -1;
+        try { updatedAtIndex = reader.GetOrdinal("UpdatedAt"); } catch (IndexOutOfRangeException) { }
+
+        int createdAtIndex = -1;
+        try { createdAtIndex = reader.GetOrdinal("CreatedAt"); } catch (IndexOutOfRangeException) { }
+
         var detail = new RoomDetailResponseDto
         {
             RoomId = reader.GetInt32(reader.GetOrdinal("RoomId")),
@@ -86,8 +92,8 @@ public class RoomRepository : IRoomRepository
             FloorNumber = reader.GetInt32(reader.GetOrdinal("FloorNumber")),
             Status = reader.GetString(reader.GetOrdinal("Status")),
             IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
-            CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-            UpdatedAt = reader.IsDBNull(reader.GetOrdinal("UpdatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("UpdatedAt")),
+            CreatedAt = (createdAtIndex >= 0 && !reader.IsDBNull(createdAtIndex)) ? reader.GetDateTime(createdAtIndex) : DateTime.UtcNow,
+            UpdatedAt = (updatedAtIndex >= 0 && !reader.IsDBNull(updatedAtIndex)) ? reader.GetDateTime(updatedAtIndex) : null,
             RoomTypeId = reader.GetInt32(reader.GetOrdinal("RoomTypeId")),
             RoomTypeName = reader.GetString(reader.GetOrdinal("TypeName")),
             RoomTypeDescription = reader.IsDBNull(reader.GetOrdinal("RoomTypeDescription")) ? null : reader.GetString(reader.GetOrdinal("RoomTypeDescription")),
