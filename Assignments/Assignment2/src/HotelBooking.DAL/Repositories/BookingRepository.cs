@@ -226,6 +226,9 @@ public class BookingRepository : IBookingRepository
 
     private static BookingDetailDto MapBookingDetail(SqlDataReader reader)
     {
+        int updatedAtIndex = -1;
+        try { updatedAtIndex = reader.GetOrdinal("UpdatedAt"); } catch (IndexOutOfRangeException) { }
+
         return new BookingDetailDto
         {
             BookingId = reader.GetInt32(reader.GetOrdinal("BookingId")),
@@ -245,7 +248,7 @@ public class BookingRepository : IBookingRepository
             BookingStatus = reader.GetString(reader.GetOrdinal("BookingStatus")),
             CustomerNotes = reader.IsDBNull(reader.GetOrdinal("CustomerNotes")) ? null : reader.GetString(reader.GetOrdinal("CustomerNotes")),
             CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-            UpdatedAt = reader.IsDBNull(reader.GetOrdinal("UpdatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("UpdatedAt"))
+            UpdatedAt = (updatedAtIndex >= 0 && !reader.IsDBNull(updatedAtIndex)) ? reader.GetDateTime(updatedAtIndex) : null
         };
     }
 }
