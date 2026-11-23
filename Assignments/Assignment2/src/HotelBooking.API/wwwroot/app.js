@@ -633,7 +633,10 @@ async function loadAdminAllBookings() {
           <td>${b.checkInDate.split('T')[0]}</td>
           <td>${b.checkOutDate.split('T')[0]}</td>
           <td><strong>$${b.totalAmount.toFixed(2)}</strong></td>
-          <td><span class="badge ${b.bookingStatus === 'Confirmed' ? 'badge-status' : 'badge-cancelled'}">${b.bookingStatus}</span></td>
+          <td><span class="badge ${b.bookingStatus === 'Confirmed' ? 'badge-status' : (b.bookingStatus === 'Completed' ? 'badge-customer' : 'badge-cancelled')}">${b.bookingStatus}</span></td>
+          <td>
+            ${b.bookingStatus === 'Confirmed' ? `<button class="btn btn-success btn-sm" onclick="handleManualCheckout(${b.bookingId}, '${b.bookingReference}')" title="Check out customer and release room"><i class="fa-solid fa-door-open"></i> Check Out</button>` : '<span style="color:var(--text-muted); font-size:0.8rem;">-</span>'}
+          </td>
         </tr>
       `).join('');
     }
