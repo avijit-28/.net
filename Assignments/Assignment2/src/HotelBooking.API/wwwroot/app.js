@@ -486,11 +486,47 @@ async function handleConfirmCancellation(e) {
       closeAllModals();
       showToast(`Reservation Cancelled. Refund Amount: $${data.data.refundAmount.toFixed(2)} (${data.data.refundPercentage}% tier)`, 'success');
       loadMyBookings();
+      triggerSearch();
+      if (currentUser && currentUser.role === 'Admin') {
+        loadAdminRooms();
+        loadAdminAllBookings();
+      }
     } else {
       showToast(data.detail || data.message || 'Failed to cancel booking.', 'error');
     }
   } catch (err) {
     showToast('Network error during cancellation request.', 'error');
+  }
+}
+
+// Manual Check-Out Handler
+async function handleManualCheckout(bookingId, bookingReference) {
+  if (!confirm(`Are you sure you want to check out of reservation ${bookingReference}? This will complete your stay and free the room back to 'Available'.`)) {
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/bookings/${bookingId}/checkout`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${currentToken}`
+      }
+    });
+
+    const data = await res.json();
+    if (res.ok && data.success) {
+      showToast(`Check-out completed for ${bookingReference}! Room is now Available.`, 'success');
+      loadMyBookings();
+      triggerSearch();
+      if (currentUser && currentUser.role === 'Admin') {
+        loadAdminRooms();
+        loadAdminAllBookings();
+      }
+    } else {
+      showToast(data.detail || data.message || 'Check-out failed.', 'error');
+    }
+  } catch {
+    showToast('Network error during check-out.', 'error');
   }
 }
 
