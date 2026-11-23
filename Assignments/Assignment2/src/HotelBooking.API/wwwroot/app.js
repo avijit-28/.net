@@ -513,7 +513,7 @@ async function loadAdminRooms() {
           <td>$${r.basePrice.toFixed(2)}</td>
           <td>${r.maxOccupancy}</td>
           <td>
-            <span class="badge ${r.status === 'Available' ? 'badge-status' : 'badge-maintenance'}">${r.status}</span>
+            <span class="badge ${r.status === 'Available' ? 'badge-status' : (r.status === 'Occupied' ? 'badge-occupied' : 'badge-maintenance')}">${r.status}</span>
           </td>
           <td>
             <button class="btn btn-outline btn-sm" onclick="toggleRoomMaintenance(${r.roomId}, '${r.status}')">
