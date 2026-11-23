@@ -118,6 +118,9 @@ public class RoomTypeRepository : IRoomTypeRepository
 
     private static RoomType MapRoomType(SqlDataReader reader)
     {
+        int updatedAtIndex = -1;
+        try { updatedAtIndex = reader.GetOrdinal("UpdatedAt"); } catch (IndexOutOfRangeException) { }
+
         return new RoomType
         {
             RoomTypeId = reader.GetInt32(reader.GetOrdinal("RoomTypeId")),
@@ -127,7 +130,7 @@ public class RoomTypeRepository : IRoomTypeRepository
             MaxOccupancy = reader.GetInt32(reader.GetOrdinal("MaxOccupancy")),
             IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
             CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-            UpdatedAt = reader.IsDBNull(reader.GetOrdinal("UpdatedAt")) ? null : reader.GetDateTime(reader.GetOrdinal("UpdatedAt"))
+            UpdatedAt = (updatedAtIndex >= 0 && !reader.IsDBNull(updatedAtIndex)) ? reader.GetDateTime(updatedAtIndex) : null
         };
     }
 }
