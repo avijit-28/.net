@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HotelBooking.DAL")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e64b564a49a5d94cef14a30eee2e339f62750bf6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4cc2683cee331107c51b2e8ec8225b34fb52e5b1")]
 [assembly: System.Reflection.AssemblyProductAttribute("HotelBooking.DAL")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HotelBooking.DAL")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
