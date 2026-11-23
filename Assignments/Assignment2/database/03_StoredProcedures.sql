@@ -502,6 +502,9 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Run auto-checkout first to synchronize room status
+    EXEC dbo.usp_Booking_AutoCheckout;
+
     SELECT r.RoomId, r.RoomNumber, r.FloorNumber, r.Status, r.IsActive, r.CreatedAt, r.UpdatedAt,
            rt.RoomTypeId, rt.TypeName, rt.BasePrice, rt.MaxOccupancy
     FROM dbo.Rooms r
@@ -522,6 +525,9 @@ CREATE OR ALTER PROCEDURE dbo.usp_Room_GetById
 AS
 BEGIN
     SET NOCOUNT ON;
+
+    -- Run auto-checkout first to synchronize room status
+    EXEC dbo.usp_Booking_AutoCheckout;
 
     SELECT r.RoomId, r.RoomNumber, r.FloorNumber, r.Status, r.IsActive, r.CreatedAt, r.UpdatedAt,
            rt.RoomTypeId, rt.TypeName, rt.Description AS RoomTypeDescription, rt.BasePrice, rt.MaxOccupancy
