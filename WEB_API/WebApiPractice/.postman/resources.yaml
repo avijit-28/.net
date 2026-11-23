@@ -6,7 +6,7 @@ workspace:
 
 cloudResources:
   collections:
-    ../postman/collections/HotelBooking_Capstone: 1eb943ef-7c56-407a-8942-b465fb6e3457
+    ../postman/collections/HotelBooking_Capstone: 1408896b-242f-4509-840d-ed1f7894a69e
 
 # All resources in the `postman/` folder are automatically registered in Local View.
 # Point to additional files outside the `postman/` folder to register them individually. Example:
