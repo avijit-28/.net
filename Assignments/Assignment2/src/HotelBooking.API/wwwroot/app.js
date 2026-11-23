@@ -366,6 +366,7 @@ async function handleConfirmBooking(e) {
     if (res.ok && data.success) {
       closeAllModals();
       showToast(`Booking Confirmed! Reference: ${data.data.bookingReference}`, 'success');
+      triggerSearch();
       switchTab('bookingsTab');
     } else {
       showToast(data.detail || data.message || 'Booking failed: room may have been taken.', 'error');
