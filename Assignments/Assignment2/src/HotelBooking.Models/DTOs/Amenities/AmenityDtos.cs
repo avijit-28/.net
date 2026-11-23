@@ -1,11 +1,25 @@
 namespace HotelBooking.Models.DTOs;
 
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 public class CreateAmenityDto
 {
-    [Required, StringLength(100)]
-    public string Name { get; set; } = string.Empty;
+    private string _name = string.Empty;
+
+    [Required(ErrorMessage = "The Name field is required."), StringLength(100)]
+    public string Name
+    {
+        get => _name;
+        set { if (!string.IsNullOrWhiteSpace(value)) _name = value; }
+    }
+
+    [JsonPropertyName("amenityName")]
+    public string? AmenityName
+    {
+        get => _name;
+        set { if (!string.IsNullOrWhiteSpace(value)) _name = value; }
+    }
 
     [StringLength(255)]
     public string? Description { get; set; }
@@ -16,8 +30,21 @@ public class CreateAmenityDto
 
 public class UpdateAmenityDto
 {
-    [Required, StringLength(100)]
-    public string Name { get; set; } = string.Empty;
+    private string _name = string.Empty;
+
+    [Required(ErrorMessage = "The Name field is required."), StringLength(100)]
+    public string Name
+    {
+        get => _name;
+        set { if (!string.IsNullOrWhiteSpace(value)) _name = value; }
+    }
+
+    [JsonPropertyName("amenityName")]
+    public string? AmenityName
+    {
+        get => _name;
+        set { if (!string.IsNullOrWhiteSpace(value)) _name = value; }
+    }
 
     [StringLength(255)]
     public string? Description { get; set; }
