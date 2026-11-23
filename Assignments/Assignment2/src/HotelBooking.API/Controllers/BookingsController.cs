@@ -121,6 +121,35 @@ public class BookingsController : ControllerBase
         return Ok(ApiResponse<PagedResultDto<BookingDetailDto>>.Ok(result));
     }
 
+    /// <summary>
+    /// Checks out of an active reservation manually (by Customer or Admin), completing the booking and releasing the room back to Available.
+    /// </summary>
+    /// <param name="id">Booking identifier.</param>
+    /// <returns>Updated booking record marked as Completed.</returns>
+    [HttpPost("{id:int}/checkout")]
+    [Authorize]
+    public async Task<ActionResult<ApiResponse<BookingResponseDto>>> Checkout(int id)
+    {
+        int currentUserId = GetCurrentUserId();
+        string role = GetCurrentUserRole();
+        bool isAdmin = role == "Admin";
+
+        var result = await _bookingService.CheckoutAsync(id, currentUserId, isAdmin);
+        return Ok(ApiResponse<BookingResponseDto>.Ok(result, "Check-out completed successfully. Room is now available."));
+    }
+
+    /// <summary>
+    /// Triggers automated check-out for all reservations whose stay duration has finished, releasing rooms to Available.
+    /// </summary>
+    /// <returns>Number of bookings automatically completed.</returns>
+    [HttpPost("auto-checkout")]
+    [AllowAnonymous]
+    public async Task<ActionResult<ApiResponse<int>>> TriggerAutoCheckout()
+    {
+        var count = await _bookingService.AutoCheckoutAsync();
+        return Ok(ApiResponse<int>.Ok(count, "Automated check-out executed successfully."));
+    }
+
     private int GetCurrentUserId()
     {
         var claim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
