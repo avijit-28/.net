@@ -479,7 +479,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"amenityName\": \"Infinity Pool Access {{$timestamp}}\",\n  \"description\": \"Private roof pool pass included\",\n  \"iconCode\": \"pool\"\n}"
+              "raw": "{\n  \"name\": \"Infinity Pool Access {{$timestamp}}\",\n  \"amenityName\": \"Infinity Pool Access {{$timestamp}}\",\n  \"description\": \"Private roof pool pass included\",\n  \"iconCode\": \"pool\"\n}"
             },
             "url": "{{baseUrl}}/api/amenities"
           }
