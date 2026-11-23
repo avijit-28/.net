@@ -274,7 +274,7 @@ BEGIN
 
         COMMIT TRANSACTION;
 
-        SELECT RoomTypeId, TypeName, Description, BasePrice, MaxOccupancy, IsActive, CreatedAt
+        SELECT RoomTypeId, TypeName, Description, BasePrice, MaxOccupancy, IsActive, CreatedAt, UpdatedAt
         FROM dbo.RoomTypes
         WHERE RoomTypeId = @CreatedRoomTypeId;
 
