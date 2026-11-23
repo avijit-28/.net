@@ -616,6 +616,39 @@
             "header": [],
             "url": "{{baseUrl}}/api/bookings/my-bookings"
           }
+        },
+        {
+          "name": "04_Checkout_Booking_Customer_Positive200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 OK', function() { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "pm.test('Booking marked as Completed and room released', function() {",
+                  "  pm.expect(json.data.bookingStatus).to.eql('Completed');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/checkout"
+          }
         }
       ]
     },
