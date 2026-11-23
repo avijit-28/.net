@@ -17,4 +17,6 @@ public class BookingService : IBookingService
     public Task<BookingDetailDto?> GetByReferenceAsync(string bookingReference) => _repository.GetByReferenceAsync(bookingReference);
     public Task<List<BookingResponseDto>> GetByUserAsync(int userId, int pageNumber = 1, int pageSize = 10) => _repository.GetByUserAsync(userId, pageNumber, pageSize);
     public Task<PagedResultDto<BookingDetailDto>> GetAllAsync(string? status = null, DateTime? startDate = null, DateTime? endDate = null, int pageNumber = 1, int pageSize = 20) => _repository.GetAllAsync(status, startDate, endDate, pageNumber, pageSize);
+    public Task<BookingResponseDto> CheckoutAsync(int bookingId, int userId, bool isAdmin) => _repository.CheckoutAsync(bookingId, userId, isAdmin);
+    public Task<int> AutoCheckoutAsync() => _repository.AutoCheckoutAsync();
 }
