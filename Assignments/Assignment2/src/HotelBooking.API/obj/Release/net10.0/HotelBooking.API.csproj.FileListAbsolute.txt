@@ -142,9 +142,6 @@ D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\rjims
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\rjsmrazor.dswa.cache.json
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\rjsmcshtml.dswa.cache.json
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\scopedcss\bundle\HotelBooking.API.styles.css
-D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\compressed\qn2vxc53r9-{0}-ohvmkl9lq0-ohvmkl9lq0.gz
-D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\compressed\jxq5y5v4yf-{0}-95oj70eqc8-95oj70eqc8.gz
-D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\compressed\m430hw5z1z-{0}-tdo57b6tp2-tdo57b6tp2.gz
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\staticwebassets.build.json
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\staticwebassets.build.json.cache
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\staticwebassets.development.json
@@ -156,3 +153,6 @@ D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\refin
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\HotelBooking.API.pdb
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\HotelBooking.API.genruntimeconfig.cache
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\ref\HotelBooking.API.dll
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\compressed\qn2vxc53r9-{0}-qugjcj0kmm-qugjcj0kmm.gz
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\compressed\jxq5y5v4yf-{0}-c40j9gige1-c40j9gige1.gz
+D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Release\net10.0\compressed\m430hw5z1z-{0}-nfpiji8yyx-nfpiji8yyx.gz
