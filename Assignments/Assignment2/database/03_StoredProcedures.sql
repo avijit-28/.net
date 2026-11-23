@@ -1376,6 +1376,152 @@ BEGIN
 END;
 GO
 
+-- -----------------------------------------------------------------------------
+-- 30a. usp_Booking_Checkout
+-- Description: Manually checks out an active reservation, marking booking Completed
+--              and releasing the room back to Available.
+-- -----------------------------------------------------------------------------
+CREATE OR ALTER PROCEDURE dbo.usp_Booking_Checkout
+    @BookingId      INT,
+    @UserId         INT = NULL,
+    @IsAdmin        BIT = 0
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    DECLARE @RoomId INT;
+    DECLARE @CurrentStatus NVARCHAR(20);
+    DECLARE @BookingUserId INT;
+    DECLARE @BookingReference NVARCHAR(30);
+
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        SELECT @RoomId = RoomId,
+               @CurrentStatus = BookingStatus,
+               @BookingUserId = UserId,
+               @BookingReference = BookingReference
+        FROM dbo.Bookings WITH (UPDLOCK, ROWLOCK)
+        WHERE BookingId = @BookingId;
+
+        IF @RoomId IS NULL
+        BEGIN
+            THROW 50003, N'Booking does not exist.', 1;
+        END
+
+        IF @IsAdmin = 0 AND @UserId IS NOT NULL AND @BookingUserId <> @UserId
+        BEGIN
+            THROW 50004, N'Unauthorized: You can only check out of your own booking.', 1;
+        END
+
+        IF @CurrentStatus = N'Completed'
+        BEGIN
+            THROW 50008, N'This booking has already been checked out.', 1;
+        END
+
+        IF @CurrentStatus = N'Cancelled'
+        BEGIN
+            THROW 50008, N'Cannot check out a cancelled booking.', 1;
+        END
+
+        -- Mark booking Completed
+        UPDATE dbo.Bookings
+        SET BookingStatus = N'Completed',
+            UpdatedAt = SYSUTCDATETIME()
+        WHERE BookingId = @BookingId;
+
+        -- Set room status back to Available if no other active booking
+        IF NOT EXISTS (
+            SELECT 1 
+            FROM dbo.Bookings
+            WHERE RoomId = @RoomId
+              AND BookingId <> @BookingId
+              AND BookingStatus = N'Confirmed'
+              AND CheckOutDate > CAST(SYSUTCDATETIME() AS DATE)
+        )
+        BEGIN
+            UPDATE dbo.Rooms
+            SET Status = N'Available',
+                UpdatedAt = SYSUTCDATETIME()
+            WHERE RoomId = @RoomId AND Status = N'Occupied';
+        END
+
+        -- Audit log
+        INSERT INTO dbo.AuditLogs (TableName, RecordId, Action, UserId, OldValues, NewValues, Timestamp)
+        VALUES (
+            N'Bookings',
+            CAST(@BookingId AS NVARCHAR(50)),
+            N'CHECKOUT',
+            ISNULL(@UserId, @BookingUserId),
+            (SELECT @CurrentStatus AS Status FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
+            (SELECT N'Completed' AS Status, N'Available' AS RoomStatus FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
+            SYSUTCDATETIME()
+        );
+
+        COMMIT TRANSACTION;
+
+        SELECT b.BookingId, b.BookingReference, b.UserId, b.RoomId,
+               r.RoomNumber, rt.TypeName AS RoomTypeName, rt.BasePrice AS NightlyRate,
+               b.CheckInDate, b.CheckOutDate, DATEDIFF(DAY, b.CheckInDate, b.CheckOutDate) AS TotalNights,
+               b.NumberOfGuests, b.TotalAmount, b.BookingStatus, b.CustomerNotes, b.CreatedAt
+        FROM dbo.Bookings b
+        INNER JOIN dbo.Rooms r ON b.RoomId = r.RoomId
+        INNER JOIN dbo.RoomTypes rt ON r.RoomTypeId = rt.RoomTypeId
+        WHERE b.BookingId = @BookingId;
+
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH;
+END;
+GO
+
+-- -----------------------------------------------------------------------------
+-- 30b. usp_Booking_AutoCheckout
+-- Description: Automatically checks out finished bookings whose check-out date has
+--              passed, and resets room statuses to Available.
+-- -----------------------------------------------------------------------------
+CREATE OR ALTER PROCEDURE dbo.usp_Booking_AutoCheckout
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    BEGIN TRANSACTION;
+    BEGIN TRY
+        -- Mark expired confirmed bookings as Completed
+        UPDATE dbo.Bookings
+        SET BookingStatus = N'Completed',
+            UpdatedAt = SYSUTCDATETIME()
+        WHERE BookingStatus = N'Confirmed'
+          AND CheckOutDate <= CAST(SYSUTCDATETIME() AS DATE);
+
+        -- Free rooms that have no active Confirmed bookings
+        UPDATE r
+        SET r.Status = N'Available',
+            r.UpdatedAt = SYSUTCDATETIME()
+        FROM dbo.Rooms r
+        WHERE r.Status = N'Occupied'
+          AND NOT EXISTS (
+              SELECT 1 
+              FROM dbo.Bookings b
+              WHERE b.RoomId = r.RoomId
+                AND b.BookingStatus = N'Confirmed'
+                AND b.CheckOutDate > CAST(SYSUTCDATETIME() AS DATE)
+          );
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH;
+END;
+GO
+
 -- =============================================================================
 -- MODULE 10: HOTEL CANCELLATION STORED PROCEDURES
 -- =============================================================================
