@@ -157,4 +157,3 @@ D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Debug\net10.0\ref\Hot
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Debug\net10.0\compressed\qn2vxc53r9-{0}-qugjcj0kmm-qugjcj0kmm.gz
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Debug\net10.0\compressed\jxq5y5v4yf-{0}-c40j9gige1-c40j9gige1.gz
 D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Debug\net10.0\compressed\m430hw5z1z-{0}-nfpiji8yyx-nfpiji8yyx.gz
-D:\avi\C#\Assignments\Assignment2\src\HotelBooking.API\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
