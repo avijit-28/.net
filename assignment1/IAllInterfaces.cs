@@ -17,7 +17,7 @@ namespace assignment1
     }
     public interface IChargeable
     {
-        void Charge();
+        void Charge(string batteryStatus);
     }
 
 
