@@ -20,6 +20,11 @@ namespace assignment1
                 {
                     card_number = value;
                 }
+                else
+                {
+                    Console.WriteLine("Invalid card number. It must be 16 digits.");
+
+                }
             }
             get
             {
@@ -53,6 +58,11 @@ namespace assignment1
                 if (!string.IsNullOrEmpty(value))
                 {
                     security_token = value;
+                    Console.WriteLine("Bank API Security Token configured successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Invalid security token.");
                 }
             }
             get
@@ -60,7 +70,35 @@ namespace assignment1
                 return security_token;
             }
         }
-
+        public void ProcessTransaction(decimal amount)
+        {
+            Console.WriteLine($"\n--- Processing Payment of ${amount} ---");
+            // Verify prerequisites using encapsulated state
+            if (string.IsNullOrEmpty(security_token))
+            {
+                Console.WriteLine("Transaction Failed: Bank API token is missing!");
+                return;
+            }
+            if (string.IsNullOrEmpty(card_number))
+            {
+                Console.WriteLine("Transaction Failed: No card registered!");
+                return;
+            }
+            if (amount <= 0)
+            {
+                Console.WriteLine("Transaction Failed: Amount must be greater than ₹0.");
+                return;
+            }
+            if (amount > account_balance)
+            {
+                Console.WriteLine($"Transaction Declined: Insufficient balance. Available: ₹{account_balance:N2}");
+                return;
+            }
+            // Deduct safely
+            account_balance -= amount;
+            Console.WriteLine($"SUCCESS: ${amount} debited from Card {CardNumber}.");
+            Console.WriteLine($"Remaining Balance: ${account_balance}");
+        }
     }
     
 } 
