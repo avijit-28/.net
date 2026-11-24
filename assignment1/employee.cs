@@ -25,7 +25,7 @@ namespace assignment1
             return BaseSalary;
         }
         
-        public void DisplayEmployeeInfo()
+        public virtual void DisplayEmployeeInfo()
         {
             Console.WriteLine($"Employee ID: {EmployeeId}");
             Console.WriteLine($"Name: {Name}");
@@ -37,43 +37,74 @@ namespace assignment1
 
     class FullTimeEmployee : employee
     {
-        public double Benefits { get; set; }
-
-        public FullTimeEmployee(int id, string name, double salary, double benefits)
-            : base(id, name, salary)
+        public double AnnualBonus { get; set; }
+        public double MedicalAllowance { get; set; }
+        
+        public FullTimeEmployee(int id, string name, double baseSalary, double annualBonus, double medicalAllowance)
+            : base(id, name, baseSalary)
         {
-            Benefits = benefits;
+            AnnualBonus = annualBonus;
+            MedicalAllowance = medicalAllowance;
         }
+
         public double CalculateNetSalary()
         {
-            return BaseSalary + Benefits;
+            return BaseSalary + AnnualBonus + MedicalAllowance;
         }
+
+        public override void DisplayEmployeeInfo()
+        {
+            base.DisplayEmployeeInfo();
+            Console.WriteLine($"Annual Bonus: {AnnualBonus}");
+            Console.WriteLine($"Medical Allowance: {MedicalAllowance}");
+            Console.WriteLine($"Net Salary: {CalculateNetSalary()}");
+        }
+
     }
     class ContractEmployee : employee
     {
-        public ContractEmployee(int id, string name, double salary)
+        public int ContractDurationMonths { get; set; }
+        public double OvertimePay { get; set; }
+        public ContractEmployee(int id, string name, double salary, int contractDuration, double overtimePay)
             : base(id, name, salary)
         {
-
+            ContractDurationMonths = contractDuration;
+            OvertimePay = overtimePay;
         }
         public double CalculateNetSalary()
         {
-            return BaseSalary;
+            return BaseSalary + OvertimePay;
+        }
+        public override void DisplayEmployeeInfo()
+        {
+            base.DisplayEmployeeInfo();
+            Console.WriteLine($"Contract Duration (Months): {ContractDurationMonths}");
+            Console.WriteLine($"Overtime Pay: {OvertimePay}");
+            Console.WriteLine($"Net Salary: {CalculateNetSalary()}");
         }
     }
 
     class FreelanceEmployee : employee
     {
-       public double projectRate { get; set; }
+        public int CompletedProjects { get; set; }
+        public double projectRate { get; set; }
 
-        public FreelanceEmployee(int id, string name, double salary, double projectRate)
+        public FreelanceEmployee(int id, string name, double salary, double projectRate, int completedProjects)
             : base(id, name, salary)
         {
             this.projectRate = projectRate;
+            this.CompletedProjects = completedProjects;
         }
         public double CalculateNetSalary()
         {
-            return BaseSalary + projectRate;
+            return BaseSalary + (projectRate * CompletedProjects);
+        }
+        public override void DisplayEmployeeInfo()
+        {
+            base.DisplayEmployeeInfo();
+            Console.WriteLine($"Project Rate: {projectRate}");
+            Console.WriteLine($"Completed Projects: {CompletedProjects}");
+            Console.WriteLine($"Net Salary: {CalculateNetSalary()}");
         }
     }
 }   
