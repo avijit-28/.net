@@ -15,25 +15,25 @@
 
 //----------------------------------------------------question 2-----------------------------------------------------
 
-Healthcare patient = new Healthcare(101, "Rahul Verma");
-Console.WriteLine($"Patient Registered: {patient.PatientName} (ID: {patient.PatientId})\n");
-patient.SetMedicalHistory("Patient has asthma and mild seasonal allergy.");
-Console.WriteLine($"Medical History: {patient.GetMedicalHistory()}\n"); 
+//Healthcare patient = new Healthcare(101, "Rahul Verma");
+//Console.WriteLine($"Patient Registered: {patient.PatientName} (ID: {patient.PatientId})\n");
+//patient.SetMedicalHistory("Patient has asthma and mild seasonal allergy.");
+//Console.WriteLine($"Medical History: {patient.GetMedicalHistory()}\n"); 
 
-Console.WriteLine("--- Temperature Validation Test ---");
+//Console.WriteLine("--- Temperature Validation Test ---");
 
-patient.SetTemperature(48.5);
+//patient.SetTemperature(48.5);
 
-patient.SetTemperature(37.5);
+//patient.SetTemperature(37.5);
 
 
-Console.WriteLine("--- Billing Status Test ---");
-Console.WriteLine($"Initial Bill Status: Paid = {patient.BillPaid}");
+//Console.WriteLine("--- Billing Status Test ---");
+//Console.WriteLine($"Initial Bill Status: Paid = {patient.BillPaid}");
 
-patient.payBill();
-Console.WriteLine($"Updated Bill Status: Paid = {patient.BillPaid}");
+//patient.payBill();
+//Console.WriteLine($"Updated Bill Status: Paid = {patient.BillPaid}");
 
-patient.payBill();
+//patient.payBill();
 
 //----------------------------------------------------question 3-----------------------------------------------------
 
