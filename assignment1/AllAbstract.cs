@@ -20,8 +20,8 @@ namespace assignment1
             Console.WriteLine($"SUCCESS: Loan of ${LoanAmount} sanctioned for {ApplicantName}!");
         }
 
-        public abstract virtual double CalculateInterestRate();
-        public abstract virtual bool CheckEligibility();
+        public abstract double CalculateInterestRate();
+        public abstract bool CheckEligibility();
 
         public void ProcessLoan()
         {
