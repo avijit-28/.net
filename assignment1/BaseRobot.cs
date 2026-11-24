@@ -19,7 +19,7 @@ namespace assignment1
             Console.WriteLine($"Robot {name} is starting.");
             }
         }
-    };      
+         
         
 
         public abstract void PerformTask();
@@ -49,5 +49,6 @@ namespace assignment1
             Console.WriteLine($"Robot {name} is navigating to {destination} in the warehouse.");
         }
     }
+   }
 
 }
