@@ -154,13 +154,13 @@ robot.Start();
 robot.PerformTask();
 robot.Detect();
 robot.Navigate("Storage Area");
-robot.Charge();
+robot.Charge("docking and charging battery");
 
 INavigable nav = robot;
 nav.Navigate("Charging Dock Station 1");
 
 IChargeable charger = robot;
-charger.Charge();
+charger.Charge("fully charged");
 
 Console.WriteLine("All operations completed successfully.");
 Console.ReadKey();
