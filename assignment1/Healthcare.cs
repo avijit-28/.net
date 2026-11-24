@@ -18,6 +18,8 @@ namespace assignment1
         {
             PatientId = id;
             PatientName = name;
+            temperature = 37.0; 
+            billPaid = false;
         }
 
         public string GetMedicalHistory()
@@ -30,6 +32,7 @@ namespace assignment1
             if (!string.IsNullOrEmpty(history))
             {
                 medicalHistory = history;
+                Console.WriteLine("Medical history updated successfully.");
             }
             else
             {
@@ -47,17 +50,18 @@ namespace assignment1
             if (temp >= 35.0 && temp <= 42.0)
             {
                 temperature = temp;
+                Console.WriteLine($"Temperature updated to {temperature}°C.");
             }
             else
             {
-                Console.WriteLine("Temperature must be between 35.0 and 42.0 degrees Celsius.");
+                Console.WriteLine("Invalid! Temperature must be between 35.0 and 42.0 degrees Celsius.");
             }
         }
 
         public bool BillPaid
         {
             get { return billPaid; } 
-            set { billPaid = value; }
+            private set { billPaid = value; }
         }
         public void payBill()
         {
