@@ -20,3 +20,11 @@ D:\avi\C#\assignment1\obj\Debug\net8.0\assignment1.sourcelink.json
 D:\avi\C#\assignment1\obj\Debug\net8.0\assignment1.dll
 D:\avi\C#\assignment1\obj\Debug\net8.0\refint\assignment1.dll
 D:\avi\C#\assignment1\obj\Debug\net8.0\assignment1.pdb
+D:\avi\C#\assignment1\bin\Debug\net8.0\assignment1.exe
+D:\avi\C#\assignment1\bin\Debug\net8.0\assignment1.deps.json
+D:\avi\C#\assignment1\bin\Debug\net8.0\assignment1.runtimeconfig.json
+D:\avi\C#\assignment1\bin\Debug\net8.0\assignment1.dll
+D:\avi\C#\assignment1\bin\Debug\net8.0\assignment1.pdb
+D:\avi\C#\assignment1\obj\Debug\net8.0\assignment1.genruntimeconfig.cache
+D:\avi\C#\assignment1\obj\Debug\net8.0\ref\assignment1.dll
+D:\avi\C#\assignment1\obj\Debug\net8.0\assignme.AC03CC8D.Up2Date
