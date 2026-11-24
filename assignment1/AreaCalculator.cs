@@ -43,15 +43,20 @@ namespace assignment1
         }
         public override void Draw()
         {
-            Console.WriteLine("Drawing a circle.");
+            Console.WriteLine($"Drawing a circle of radius {Radius}.");
         }
     }
 
-    class polygon : Shape
+    class Polygon : Shape
     {
+        public int NumberOfSides { get; set; }
+        public Polygon(int numberOfSides)
+        {
+            NumberOfSides = numberOfSides;
+        }
         public override void Draw()
         {
-            Console.WriteLine("Drawing a polygon.");
+            Console.WriteLine($"Drawing a polygon with {NumberOfSides} sides.");
         }
     }
 
