@@ -74,21 +74,30 @@
 //}
 
 //----------------------------------------------------question 6-----------------------------------------------------
-//Console.WriteLine("Method Overloading Example:");
-//Console.WriteLine("Area Calculator");
-//AreaCalculator areaCalculator = new AreaCalculator();
-//double rectangleArea = areaCalculator.CalculateArea(5, 10); // Rectangle
-//double circleArea = areaCalculator.CalculateArea(4); // circle
+Console.WriteLine("Method Overloading Example:");
+Console.WriteLine("Area Calculator");
 
-//Console.WriteLine($"Area of Rectangle: {rectangleArea}");
-//Console.WriteLine($"Area of Circle: {circleArea}");
+AreaCalculator areaCalculator = new AreaCalculator();
+double rectangleArea = areaCalculator.CalculateArea(5, 10); // Rectangle
+double circleArea = areaCalculator.CalculateArea(4); // circle
+double tringleArea = areaCalculator.CalculateArea(6.0, 8.0, true);
 
-//Console.WriteLine("\nMethod Overriding Example:");
-//Shape shape1 = new Circle();
-//Shape shape2 = new polygon();
+Console.WriteLine($"Area of Rectangle: {rectangleArea}");
+Console.WriteLine($"Area of Circle: {circleArea}");
+Console.WriteLine($"Triangle Area: {triangleArea}");
 
-//shape1.Draw(); // Calls Circle's Draw method
-//shape2.Draw(); // Calls Polygon's Draw method
+Console.WriteLine("\nMethod Overriding Example:");
+List<Shape> cadCanvas = new List<Shape>
+            {
+                new Circle(7.5),
+                new Polygon(6),      // Hexagon
+                new Shape()          // Generic base shape
+            };
+// At runtime, the CLR checks the actual object type and dispatches the correct Draw()
+foreach (Shape shape in cadCanvas)
+{
+    shape.Draw();
+}
 
 
 //----------------------------------------------------question 7-----------------------------------------------------
