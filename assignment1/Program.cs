@@ -93,31 +93,81 @@
 
 //----------------------------------------------------question 7-----------------------------------------------------
 
-//SmartDevice light = new SmartLight();
-
-//light.TurnOn();
-//Console.WriteLine($"Energy Consumption: {light.GetEnergyConsumption()} watts");
-//light.TurnOff();
-
-//SmartDevice thermostat = new SmartThermostat();
-//thermostat.TurnOn();
-//Console.WriteLine($"Energy Consumption: {thermostat.GetEnergyConsumption()} watts");
-//thermostat.TurnOff();
-
-//SmartDevice ac = new SmartAC();
-//ac.TurnOn();
-//Console.WriteLine($"Energy Consumption: {ac.GetEnergyConsumption()} watts");
-//ac.TurnOff();
-
+List<SmartDevice> homeDevices = new List<SmartDevice>
+            {
+                new SmartLight("Living Room Light"),
+                new SmartThermostat("Hallway Thermostat"),
+                new SmartAC("Master Bedroom AC")
+            };
+while (true)
+{
+    Console.WriteLine("\n==============================");
+    Console.WriteLine("    SMART HOME CONTROLLER     ");
+    Console.WriteLine("==============================");
+    Console.WriteLine("Select a Device:");
+    for (int i = 0; i < homeDevices.Count; i++)
+    {
+        Console.WriteLine($"{i + 1}. {homeDevices[i].DeviceName}");
+    }
+    Console.WriteLine("0. Exit App");
+    Console.Write("\nEnter choice (0-3): ");
+    string deviceChoice = Console.ReadLine();
+    if (deviceChoice == "0")
+    {
+        Console.WriteLine("Exiting Smart Home App. Goodbye!");
+        break;
+    }
+    // Check valid choice
+    if (int.TryParse(deviceChoice, out int index) && index >= 1 && index <= homeDevices.Count)
+    {
+        SmartDevice selectedDevice = homeDevices[index - 1];
+        // --- Sub-menu for selected device ---
+        bool stayInSubMenu = true;
+        while (stayInSubMenu)
+        {
+            Console.WriteLine($"\n--- [{selectedDevice.DeviceName}] Controls ---");
+            Console.WriteLine("1. Turn ON");
+            Console.WriteLine("2. Turn OFF");
+            Console.WriteLine("3. Check Energy Consumption");
+            Console.WriteLine("4. <-- Back to Device List");
+            Console.Write("Choose action (1-4): ");
+            string actionChoice = Console.ReadLine();
+            switch (actionChoice)
+            {
+                case "1":
+                    selectedDevice.TurnOn();
+                    break;
+                case "2":
+                    selectedDevice.TurnOff();
+                    break;
+                case "3":
+                    double power = selectedDevice.GetEnergyConsumption();
+                    Console.WriteLine($"Current Power Draw: {power} Watts");
+                    break;
+                case "4":
+                    stayInSubMenu = false; // Go back to outer device menu
+                    Console.WriteLine("Going back to device selection...");
+                    break;
+                default:
+                    Console.WriteLine("Invalid action! Please choose 1, 2, 3, or 4.");
+                    break;
+            }
+        }
+    }
+    else
+    {
+        Console.WriteLine("Invalid device choice! Please try again.");
+    }
+}
 
 //----------------------------------------------------question 8-----------------------------------------------------
 
-Loan homeLoan = new HomeLoan("Rahul Sharma", 5000000);
-homeLoan.ProcessLoan();
-Loan carLoan = new CarLoan("Priya Verma", 800000);
-carLoan.ProcessLoan();
-Loan eduLoan = new EducationLoan("Aman Gupta", 1500000);
-eduLoan.ProcessLoan();
+//Loan homeLoan = new HomeLoan("Rahul Sharma", 5000000);
+//homeLoan.ProcessLoan();
+//Loan carLoan = new CarLoan("Priya Verma", 1200000);
+//carLoan.ProcessLoan();
+//Loan eduLoan = new EducationLoan("Aman Gupta", 400000);
+//eduLoan.ProcessLoan();
 
 //----------------------------------------------------question 9-----------------------------------------------------
 
