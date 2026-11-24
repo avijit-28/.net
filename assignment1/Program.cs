@@ -3,14 +3,26 @@
 
 //----------------------------------------------------question 1-----------------------------------------------------
 
-//PaymentProcessor payment = new PaymentProcessor();
-
-//payment.CardNumber = "9876543215935795";
-//payment.AccountBalance = 1000.00m;
-//payment.SecurityToken = "securetoken123";
-
-//Console.WriteLine($"Card Number: {payment.CardNumber}");
-//Console.WriteLine($"Account Balance: {payment.AccountBalance}");
+Console.WriteLine("=== SECURE PAYMENT PROCESSOR MODULE ===\n");
+PaymentProcessor gateway = new PaymentProcessor();
+// 1. Testing Balance Validation (Cannot be negative)
+Console.WriteLine("--- Test 1: Account Balance Encapsulation ---");
+gateway.AccountBalance = -500; // Rejected!
+gateway.AccountBalance = 25000; // Accepted!
+Console.WriteLine($"Current Balance: ₹{gateway.AccountBalance:N2}\n");
+// 2. Testing Card Masking
+Console.WriteLine("--- Test 2: Card Masking Encapsulation ---");
+gateway.CardNumber = "12345";              // Rejected (not 16 digits)
+gateway.CardNumber = "4532119988773456";  // Accepted
+                                          // Reading card number returns masked value:
+Console.WriteLine($"Masked Card Display: {gateway.CardNumber}\n");
+// 3. Testing Write-Only Security Token
+Console.WriteLine("--- Test 3: Write-Only Token Encapsulation ---");
+gateway.SecurityToken = "BANK-OAUTH-TOKEN-XY99882"; 
+Console.WriteLine("\n--- Test 4: Processing Payment ---");
+gateway.ProcessTransaction(7500);  // Success
+gateway.ProcessTransaction(30000); // Declined (Insufficient funds)
+        }
 
 
 //----------------------------------------------------question 2-----------------------------------------------------
