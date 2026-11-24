@@ -91,7 +91,7 @@ namespace assignment1
             }
             if (amount > account_balance)
             {
-                Console.WriteLine($"Transaction Declined: Insufficient balance. Available: ₹{account_balance:N2}");
+                Console.WriteLine($"Transaction Declined: Insufficient balance. Available: ${account_balance:N2}");
                 return;
             }
             // Deduct safely
