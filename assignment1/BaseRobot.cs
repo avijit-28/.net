@@ -46,9 +46,9 @@ namespace assignment1
             Console.WriteLine($"Robot {Name} is navigating to {destination}.");
         }
         // Implementing IChargeable
-        public void Charge()
+        public void Charge( string batteryStatus)
         {
-            Console.WriteLine($"Robot {Name} is docking and charging battery.");
+            Console.WriteLine($"Robot {Name} is {batteryStatus}.");
         }
     }
 }
