@@ -320,7 +320,6 @@ static void PrintHeader(string title)
     Console.ForegroundColor = ConsoleColor.Green;
     Console.WriteLine("╔══════════════════════════════════════════════════════════════════════════════╗");
     Console.WriteLine($"║ {title,-76} ║");
-    //Console.WriteLine($"║ Concept: {subtitle,-67} ║");
     Console.WriteLine("╚══════════════════════════════════════════════════════════════════════════════╝\n");
     Console.ResetColor();
 }
