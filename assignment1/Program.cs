@@ -15,70 +15,77 @@
 
 //----------------------------------------------------question 2-----------------------------------------------------
 
-//Healthcare patient = new Healthcare(1, "John Doe");
-//patient.SetMedicalHistory("No known allergies. Previous surgery in 2015.");
-//patient.SetTemperature(36.5);
+Healthcare patient = new Healthcare(101, "Rahul Verma");
+Console.WriteLine($"Patient Registered: {patient.PatientName} (ID: {patient.PatientId})\n");
+patient.SetMedicalHistory("Patient has asthma and mild seasonal allergy.");
+Console.WriteLine($"Medical History: {patient.GetMedicalHistory()}\n"); patient.SetTemperature(36.5);
+Console.WriteLine("--- Temperature Validation Test ---");
 
-//patient.payBill();
+patient.SetTemperature(48.5);
 
-//Console.WriteLine($"Patient ID: {patient.PatientId}");
-//Console.WriteLine($"Patient Name: {patient.PatientName}");
-//Console.WriteLine($"Medical History: {patient.GetMedicalHistory()}");
-//Console.WriteLine($"Temperature: {patient.GetTemperature()} °C");
-//Console.WriteLine($"Bill Paid: {patient.BillPaid}");
+patient.SetTemperature(37.5);
+Console.WriteLine($"Current Temperature: {patient.GetTemperature()}°C\n");
+
+Console.WriteLine("--- Billing Status Test ---");
+Console.WriteLine($"Initial Bill Status: Paid = {patient.BillPaid}");
+
+patient.payBill();
+Console.WriteLine($"Updated Bill Status: Paid = {patient.BillPaid}");
+
+patient.payBill();
 
 //----------------------------------------------------question 3-----------------------------------------------------
 
-employee baseEmp = new employee(100, "Suresh Kumar", 30000);
-FullTimeEmployee ftEmp = new FullTimeEmployee(101, "Aarav Sharma", 60000, 10000, 5000);
-ContractEmployee ctEmp = new ContractEmployee(102, "Pooja Verma", 45000, 6, 4000);
-FreelanceEmployee flEmp = new FreelanceEmployee(103, "Rohan Das", 15000, 8000, 5);
-while (true)
-{
-    Console.Clear();
-    Console.WriteLine("========================================");
-    Console.WriteLine("    ENTERPRISE PAYROLL SYSTEM MENU      ");
-    Console.WriteLine("========================================");
-    Console.WriteLine("1. Base Employee Info");
-    Console.WriteLine("2. Full-Time Employee Payroll");
-    Console.WriteLine("3. Contract Employee Payroll");
-    Console.WriteLine("4. Freelance Employee Payroll");
-    Console.WriteLine("0. Exit");
-    Console.Write("\nEnter choice (0-4): ");
-    string choice = Console.ReadLine();
-    if (choice == "0")
-    {
-        Console.Clear();
-        Console.WriteLine("Exiting Payroll System. Goodbye!");
-        break;
-    }
-    Console.Clear(); 
-    switch (choice)
-    {
-        case "1":
-            Console.WriteLine("=== [BASE EMPLOYEE] ===");
-            baseEmp.DisplayEmployeeInfo();
-            break;
-        case "2":
-            Console.WriteLine("=== [FULL-TIME EMPLOYEE] ===");
-            ftEmp.DisplayEmployeeInfo();
-            break;
-        case "3":
-            Console.WriteLine("=== [CONTRACT EMPLOYEE] ===");
-            ctEmp.DisplayEmployeeInfo();
-            break;
-        case "4":
-            Console.WriteLine("=== [FREELANCE EMPLOYEE] ===");
-            flEmp.DisplayEmployeeInfo();
-            break;
-        default:
-            Console.WriteLine("Invalid choice! Choose between 0 and 4.");
-            break;
-    }
-    Console.WriteLine("\n----------------------------------------");
-    Console.WriteLine("Press any key to choose another employee...");
-    Console.ReadKey();
-}
+//employee baseEmp = new employee(100, "Suresh Kumar", 30000);
+//FullTimeEmployee ftEmp = new FullTimeEmployee(101, "Aarav Sharma", 60000, 10000, 5000);
+//ContractEmployee ctEmp = new ContractEmployee(102, "Pooja Verma", 45000, 6, 4000);
+//FreelanceEmployee flEmp = new FreelanceEmployee(103, "Rohan Das", 15000, 8000, 5);
+//while (true)
+//{
+//    Console.Clear();
+//    Console.WriteLine("========================================");
+//    Console.WriteLine("    ENTERPRISE PAYROLL SYSTEM MENU      ");
+//    Console.WriteLine("========================================");
+//    Console.WriteLine("1. Base Employee Info");
+//    Console.WriteLine("2. Full-Time Employee Payroll");
+//    Console.WriteLine("3. Contract Employee Payroll");
+//    Console.WriteLine("4. Freelance Employee Payroll");
+//    Console.WriteLine("0. Exit");
+//    Console.Write("\nEnter choice (0-4): ");
+//    string choice = Console.ReadLine();
+//    if (choice == "0")
+//    {
+//        Console.Clear();
+//        Console.WriteLine("Exiting Payroll System. Goodbye!");
+//        break;
+//    }
+//    Console.Clear(); 
+//    switch (choice)
+//    {
+//        case "1":
+//            Console.WriteLine("=== [BASE EMPLOYEE] ===");
+//            baseEmp.DisplayEmployeeInfo();
+//            break;
+//        case "2":
+//            Console.WriteLine("=== [FULL-TIME EMPLOYEE] ===");
+//            ftEmp.DisplayEmployeeInfo();
+//            break;
+//        case "3":
+//            Console.WriteLine("=== [CONTRACT EMPLOYEE] ===");
+//            ctEmp.DisplayEmployeeInfo();
+//            break;
+//        case "4":
+//            Console.WriteLine("=== [FREELANCE EMPLOYEE] ===");
+//            flEmp.DisplayEmployeeInfo();
+//            break;
+//        default:
+//            Console.WriteLine("Invalid choice! Choose between 0 and 4.");
+//            break;
+//    }
+//    Console.WriteLine("\n----------------------------------------");
+//    Console.WriteLine("Press any key to choose another employee...");
+//    Console.ReadKey();
+//}
 //----------------------------------------------------question 4-----------------------------------------------------
 
 
