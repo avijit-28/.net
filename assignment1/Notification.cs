@@ -28,7 +28,7 @@ namespace assignment1
             Console.WriteLine($"[SMS Service] sending SMS: {message}");
         }
     }
-    public class whatsappNotification : Notification
+    public class WhatsAppNotification : Notification
     {
         public override void SendNotification(string message)
         {
