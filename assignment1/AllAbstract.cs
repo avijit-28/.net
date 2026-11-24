@@ -17,7 +17,7 @@ namespace assignment1
         }
         public void SanctionLoan()
         {
-            Console.WriteLine($" SUCCESS: Loan of ₹{LoanAmount} sanctioned for {ApplicantName}!");
+            Console.WriteLine($" SUCCESS: Loan of ${LoanAmount} sanctioned for {ApplicantName}!");
         }
 
         public abstract double CalculateInterestRate();
