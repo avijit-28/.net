@@ -112,7 +112,7 @@ while (true)
         {
             case "1":
                 Console.WriteLine("=== SINGLE CHANNEL DISPATCH ===");
-                alertingPipeline[0].SendNotification(message); // Email
+                alertingPipeline[0].SendNotification(message); // 
                 break;
             case "2":
                 Console.WriteLine("=== SINGLE CHANNEL DISPATCH ===");
