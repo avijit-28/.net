@@ -17,7 +17,7 @@ namespace assignment1
         public override bool CheckEligibility()
         {
             Console.WriteLine("Checking eligibility for home loan.");
-            return true; // Example eligibility check
+            return true; 
         }
 
         public override double CalculateInterestRate()
@@ -35,7 +35,7 @@ namespace assignment1
         public override bool CheckEligibility()
         {
             Console.WriteLine("Checking Car Loan: Verifying dealer quotation and minimum income criteria...");
-            return true; // Example eligibility check
+            return true; 
         }
 
         public override double CalculateInterestRate()
@@ -53,7 +53,7 @@ namespace assignment1
         public override bool CheckEligibility()
         {
             Console.WriteLine("Checking Education Loan: Verifying college admission letter and co-applicant details...");
-            return true; // 
+            return true; 
         }
 
         public override double CalculateInterestRate()
