@@ -90,7 +90,7 @@ namespace assignment1
         public double projectRate { get; set; }
 
         public FreelanceEmployee(int id, string name, double salary, double projectRate, int completedProjects)
-            : base(id, name, salary)
+            : base(id, name, salary )
         {
             this.projectRate = projectRate;
             this.CompletedProjects = completedProjects;
