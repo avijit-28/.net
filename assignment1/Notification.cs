@@ -6,40 +6,40 @@ using System.Threading.Tasks;
 
 namespace assignment1
 {
-    internal class Notification
+    public class Notification
     {
         public virtual void SendNotification(string message)
         {
-            Console.WriteLine($"Sending notification: {message}");
+            Console.WriteLine($"[Default Channel] notification sent: {message}");
         }
     }
 
-    class EmailNotification : Notification
+    public class EmailNotification : Notification
     {
         public override void SendNotification(string message)
         {
-            Console.WriteLine($"Sending email notification: {message}");
+            Console.WriteLine($"[Email Service (SMTP)] sending mail: {message}");
         }
     }
-    class SMSNotification : Notification
+    public class SMSNotification : Notification
     {
         public override void SendNotification(string message)
         {
-            Console.WriteLine($"Sending SMS notification: {message}");
+            Console.WriteLine($"[SMS Service] sending SMS: {message}");
         }
     }
-    class whatsappNotification : Notification
+    public class whatsappNotification : Notification
     {
         public override void SendNotification(string message)
         {
-            Console.WriteLine($"Sending WhatsApp notification: {message}");
+            Console.WriteLine($"[WhatsApp Service] sending WhatsApp notification: {message}");
         }
     }
-    class PushNotification : Notification
+    public class PushNotification : Notification
     {
         public override void SendNotification(string message)
         {
-            Console.WriteLine($"Sending push notification: {message}");
+            Console.WriteLine($"[Push Service] sending push notification: {message}");
         }
     }
 
