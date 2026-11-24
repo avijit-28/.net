@@ -17,11 +17,11 @@ namespace assignment1
         }
         public void SanctionLoan()
         {
-            Console.WriteLine($" SUCCESS: Loan of ${LoanAmount} sanctioned for {ApplicantName}!");
+            Console.WriteLine($"SUCCESS: Loan of ${LoanAmount} sanctioned for {ApplicantName}!");
         }
 
-        public abstract double CalculateInterestRate();
-        public abstract bool CheckEligibility();
+        public abstract virtual double CalculateInterestRate();
+        public abstract virtual bool CheckEligibility();
 
         public void ProcessLoan()
         {
@@ -30,12 +30,12 @@ namespace assignment1
             if (CheckEligibility())
             {
                 double interestRate = CalculateInterestRate();
-                Console.WriteLine($" Eligibility approved! Applied Interest Rate: {interestRate}%");
+                Console.WriteLine($"Eligibility approved! Applied Interest Rate: {interestRate}%");
                 SanctionLoan();
             }
             else
             {
-                Console.WriteLine(" REJECTED: Eligibility criteria not satisfied.");
+                Console.WriteLine("REJECTED: Eligibility criteria not satisfied.");
             }
         }
 
