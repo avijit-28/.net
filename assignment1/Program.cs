@@ -156,7 +156,7 @@ robot.Detect();
 robot.Navigate("Storage Area");
 robot.Charge();
 
-//Console.WriteLine("All operations completed successfully.");
+Console.WriteLine("All operations completed successfully.");
 
 
 
