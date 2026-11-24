@@ -1,394 +1,336 @@
-﻿using assignment1;
+﻿using System;
+using System.Collections.Generic;
+using assignment1;
 
+// ==============================================================================================
+//                              C# OOP ASSIGNMENT 1 - MASTER RUNNER                              
+// ==============================================================================================
 
-//----------------------------------------------------question 1-----------------------------------------------------
+while (true)
+{
+    Console.Clear();
+    Console.ForegroundColor = ConsoleColor.Cyan;
+    Console.WriteLine("╔══════════════════════════════════════════════════════════════════════════════╗");
+    Console.WriteLine("║                    C# OBJECT ORIENTED PROGRAMMING ASSIGNMENT                 ║");
+    Console.WriteLine("║                                MASTER CONSOLE                                ║");
+    Console.WriteLine("╚══════════════════════════════════════════════════════════════════════════════╝");
+    Console.ResetColor();
 
-Console.WriteLine("=== SECURE PAYMENT PROCESSOR MODULE ===\n");
-PaymentProcessor gateway = new PaymentProcessor();
-// 1. Testing Balance Validation (Cannot be negative)
-Console.WriteLine("--- Test 1: Account Balance Encapsulation ---");
-gateway.AccountBalance = -500; // Rejected!
-gateway.AccountBalance = 25000; // Accepted!
-Console.WriteLine($"Current Balance: ${gateway.AccountBalance}\n");
-// 2. Testing Card Masking
-Console.WriteLine("--- Test 2: Card Masking Encapsulation ---");
-gateway.CardNumber = "12345";              // Rejected (not 16 digits)
-gateway.CardNumber = "4532119988773456";  // Accepted
-                                          // Reading card number returns masked value:
-Console.WriteLine($"Masked Card Display: {gateway.CardNumber}\n");
-// 3. Testing Write-Only Security Token
-Console.WriteLine("--- Test 3: Write-Only Token Encapsulation ---");
-gateway.SecurityToken = "BANK-OAUTH-TOKEN-XY99882"; 
-Console.WriteLine("\n--- Test 4: Processing Payment ---");
-gateway.ProcessTransaction(7500);  // Success
-gateway.ProcessTransaction(30000); // Declined (Insufficient funds)
-        
+    Console.WriteLine(" Select a Question to Execute:\n");
+    Console.WriteLine("  [1]  Question 1  : Encapsulation — Secure Payment Processor Module");
+    Console.WriteLine("  [2]  Question 2  : Encapsulation & Data Hiding — Healthcare Patient Records");
+    Console.WriteLine("  [3]  Question 3  : Inheritance — Enterprise Employee Hierarchy & Payroll");
+    Console.WriteLine("  [4]  Question 4  : Multilevel Inheritance — Vehicle Telematics & Fleet");
+    Console.WriteLine("  [5]  Question 5  : Polymorphism — Dynamic Notification & Alerting Pipeline");
+    Console.WriteLine("  [6]  Question 6  : Compile vs Runtime Polymorphism — Math & CAD Engine");
+    Console.WriteLine("  [7]  Question 7  : Abstraction — IoT Smart Home Automation Framework");
+    Console.WriteLine("  [8]  Question 8  : Abstract Classes — Banking Loan Processing Workflow");
+    Console.WriteLine("  [9]  Question 9  : Interfaces — Plug-and-Play Cloud Storage Provider");
+    Console.WriteLine("  [10] Question 10 : Abstract Class vs Interface — Autonomous Robot Engine");
+    Console.WriteLine("────────────────────────────────────────────────────────────────────────────────");
+    Console.WriteLine("  [0]  Exit Application");
+    Console.WriteLine("────────────────────────────────────────────────────────────────────────────────");
+    Console.Write("Enter your choice (0-10): ");
 
+    string? choice = Console.ReadLine()?.Trim();
 
-//----------------------------------------------------question 2-----------------------------------------------------
+    if (choice == "0")
+    {
+        Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("\nThank you! Exiting C# Assignment Console. Have a great day!\n");
+        Console.ResetColor();
+        break;
+    }
 
-//Healthcare patient = new Healthcare(101, "Rahul Verma");
-//Console.WriteLine($"Patient Registered: {patient.PatientName} (ID: {patient.PatientId})\n");
-//patient.SetMedicalHistory("Patient has asthma and mild seasonal allergy.");
-//Console.WriteLine($"Medical History: {patient.GetMedicalHistory()}\n"); 
+    Console.Clear();
 
-//Console.WriteLine("--- Temperature Validation Test ---");
+    switch (choice)
+    {
+        // =====================================================================================
+        // QUESTION 1: Secure Payment Processor (Encapsulation)
+        // =====================================================================================
+        case "1":
+            PrintHeader("QUESTION 1: SECURE PAYMENT PROCESSING MODULE", "Encapsulation, Data Hiding & Write-Only Properties");
 
-//patient.SetTemperature(48.5);
+            PaymentProcessor gateway = new PaymentProcessor();
 
-//patient.SetTemperature(37.5);
+            Console.WriteLine("--- Test 1: Account Balance Encapsulation ---");
+            Console.WriteLine("Attempting to set negative balance (-$500)...");
+            gateway.AccountBalance = -500; // Validation rejection
+            Console.WriteLine("Setting valid balance ($25,000)...");
+            gateway.AccountBalance = 25000;
+            Console.WriteLine($"Current Balance: ${gateway.AccountBalance:N2}\n");
 
+            Console.WriteLine("--- Test 2: Card Masking Encapsulation ---");
+            Console.WriteLine("Attempting invalid card length ('12345')...");
+            gateway.CardNumber = "12345"; // Validation rejection
+            Console.WriteLine("Setting valid 16-digit card ('4532119988773456')...");
+            gateway.CardNumber = "4532119988773456";
+            Console.WriteLine($"Masked Card Display: {gateway.CardNumber}\n");
 
-//Console.WriteLine("--- Billing Status Test ---");
-//Console.WriteLine($"Initial Bill Status: Paid = {patient.BillPaid}");
+            Console.WriteLine("--- Test 3: Write-Only Security Token ---");
+            gateway.SecurityToken = "BANK-OAUTH-TOKEN-XY99882";
+            Console.WriteLine("Security token configured. (Protected from public read access)\n");
 
-//patient.payBill();
-//Console.WriteLine($"Updated Bill Status: Paid = {patient.BillPaid}");
+            Console.WriteLine("--- Test 4: Processing Payment Transactions ---");
+            gateway.ProcessTransaction(7500);  // Success
+            gateway.ProcessTransaction(30000); // Declined
+            break;
 
-//patient.payBill();
+        // =====================================================================================
+        // QUESTION 2: Healthcare Patient Record (Data Hiding)
+        // =====================================================================================
+        case "2":
+            PrintHeader("QUESTION 2: HEALTHCARE PATIENT RECORDS SYSTEM", "Data Hiding, Restricted Access Modifiers & Validation");
 
-//----------------------------------------------------question 3-----------------------------------------------------
+            Healthcare patient = new Healthcare(101, "Rahul Verma");
+            Console.WriteLine($"Patient Registered: {patient.PatientName} (ID: {patient.PatientId})\n");
 
-//employee baseEmp = new employee(100, "Suresh Kumar", 30000);
-//FullTimeEmployee ftEmp = new FullTimeEmployee(101, "Aarav Sharma", 60000, 10000, 5000);
-//ContractEmployee ctEmp = new ContractEmployee(102, "Pooja Verma", 45000, 6, 4000);
-//FreelanceEmployee flEmp = new FreelanceEmployee(103, "Rohan Das", 15000, 8000, 5);
-//while (true)
-//{
-//    Console.Clear();
-//    Console.WriteLine("========================================");
-//    Console.WriteLine("    ENTERPRISE PAYROLL SYSTEM MENU      ");
-//    Console.WriteLine("========================================");
-//    Console.WriteLine("1. Base Employee Info");
-//    Console.WriteLine("2. Full-Time Employee Payroll");
-//    Console.WriteLine("3. Contract Employee Payroll");
-//    Console.WriteLine("4. Freelance Employee Payroll");
-//    Console.WriteLine("0. Exit");
-//    Console.Write("\nEnter choice (0-4): ");
-//    string choice = Console.ReadLine();
-//    if (choice == "0")
-//    {
-//        Console.Clear();
-//        Console.WriteLine("Exiting Payroll System. Goodbye!");
-//        break;
-//    }
-//    Console.Clear(); 
-//    switch (choice)
-//    {
-//        case "1":
-//            Console.WriteLine("=== [BASE EMPLOYEE] ===");
-//            baseEmp.DisplayEmployeeInfo();
-//            break;
-//        case "2":
-//            Console.WriteLine("=== [FULL-TIME EMPLOYEE] ===");
-//            ftEmp.DisplayEmployeeInfo();
-//            break;
-//        case "3":
-//            Console.WriteLine("=== [CONTRACT EMPLOYEE] ===");
-//            ctEmp.DisplayEmployeeInfo();
-//            break;
-//        case "4":
-//            Console.WriteLine("=== [FREELANCE EMPLOYEE] ===");
-//            flEmp.DisplayEmployeeInfo();
-//            break;
-//        default:
-//            Console.WriteLine("Invalid choice! Choose between 0 and 4.");
-//            break;
-//    }
-//    Console.WriteLine("\n----------------------------------------");
-//    Console.WriteLine("Press any key to choose another employee...");
-//    Console.ReadKey();
-//}
-//----------------------------------------------------question 4-----------------------------------------------------
+            Console.WriteLine("--- Medical History ---");
+            patient.SetMedicalHistory("Patient has asthma and mild seasonal allergy.");
+            Console.WriteLine($"Medical History: {patient.GetMedicalHistory()}\n");
 
+            Console.WriteLine("--- Temperature Validation Test ---");
+            Console.WriteLine("Setting invalid temperature (48.5°C)...");
+            patient.SetTemperature(48.5); // Rejection
+            Console.WriteLine("Setting valid temperature (37.5°C)...");
+            patient.SetTemperature(37.5);
+            Console.WriteLine($"Recorded Temperature: {patient.GetTemperature()}°C\n");
 
-//Vehicle v1 = new Vehicle("V-001", "DL-01-AA-1111", 28.7041, 77.1025, "SEC-01");
-//MotorizedVehicle v2 = new MotorizedVehicle("MV-002", "DL-02-BB-2222", 28.5355, 77.3910, "SEC-02", 150, 60);
-//ElectricVehicle v3 = new ElectricVehicle("EV-003", "DL-03-CC-3333", 19.0760, 72.8777, "SEC-03", 450, 80);
-//while (true)
-//{
-//    Console.Clear();
-//    Console.WriteLine("======================================");
-//    Console.WriteLine("        SELECT A VEHICLE TYPE         ");
-//    Console.WriteLine("======================================");
-//    Console.WriteLine("1. Base Vehicle (Level 1)");
-//    Console.WriteLine("2. Motorized Vehicle (Level 2)");
-//    Console.WriteLine("3. Electric Vehicle (Level 3)");
-//    Console.WriteLine("0. Exit");
-//    Console.Write("\nEnter choice (0-3): ");
-//    string choice = Console.ReadLine();
-//    if (choice == "0")
-//    {
-//        Console.Clear();
-//        Console.WriteLine("Exiting program. Goodbye!");
-//        break;
-//    }
-//    Console.Clear(); // Screen clear
-//    switch (choice)
-//    {
-//        case "1":
-//            Console.WriteLine($"=== BASE VEHICLE [{v1.VehicleNumber}] ===");
-//            v1.LogGPS();
-//            v1.StartEngine();
-//            break;
-//        case "2":
-//            Console.WriteLine($"=== MOTORIZED VEHICLE [{v2.VehicleNumber}] ===");
-//            v2.LogGPS();
-//            v2.StartEngine();
-//            v2.UpdateLocation(28.6000, 77.2000);
-//            break;
-//        case "3":
-//            Console.WriteLine($"=== ELECTRIC VEHICLE [{v3.VehicleNumber}] ===");
-//            v3.LogGPS();
-//            v3.StartEngine();
-//            v3.calculateRange();
-//            v3.UpdateLocation(19.2000, 72.9000);
-//            break;
-//        default:
-//            Console.WriteLine("Invalid choice! Please enter 0, 1, 2, or 3.");
-//            break;
-//    }
-//    Console.WriteLine("\n--------------------------------------");
-//    Console.WriteLine("Press any key to choose another vehicle...");
-//    Console.ReadKey();
-//}
+            Console.WriteLine("--- Billing Status Encapsulation ---");
+            Console.WriteLine($"Initial Bill Paid Status: {patient.BillPaid}");
+            patient.payBill();
+            Console.WriteLine($"Updated Bill Paid Status: {patient.BillPaid}");
+            Console.WriteLine("Attempting duplicate payment:");
+            patient.payBill();
+            break;
 
+        // =====================================================================================
+        // QUESTION 3: Employee Hierarchy & Payroll (Inheritance)
+        // =====================================================================================
+        case "3":
+            PrintHeader("QUESTION 3: ENTERPRISE EMPLOYEE HIERARCHY & PAYROLL", "Single & Hierarchical Inheritance, 'base' Keyword");
 
-//----------------------------------------------------question 5-----------------------------------------------------
+            employee baseEmp = new employee(100, "Suresh Kumar", 30000);
+            FullTimeEmployee ftEmp = new FullTimeEmployee(101, "Aarav Sharma", 60000, 10000, 5000);
+            ContractEmployee ctEmp = new ContractEmployee(102, "Pooja Verma", 45000, 6, 4000);
+            FreelanceEmployee flEmp = new FreelanceEmployee(103, "Rohan Das", 15000, 8000, 5);
 
+            Console.WriteLine("1. [BASE EMPLOYEE]");
+            baseEmp.DisplayEmployeeInfo();
+            Console.WriteLine("\n2. [FULL-TIME EMPLOYEE]");
+            ftEmp.DisplayEmployeeInfo();
+            Console.WriteLine("\n3. [CONTRACT EMPLOYEE]");
+            ctEmp.DisplayEmployeeInfo();
+            Console.WriteLine("\n4. [FREELANCE EMPLOYEE]");
+            flEmp.DisplayEmployeeInfo();
+            break;
 
-//static void DispatchAllAlerts(List<Notification> pipeline, string Message)
-//{
-//    Console.WriteLine($"\n=== DISPATCHING ALERT PIPELINE: \"{Message}\" ===");
-//    foreach (Notification channel in pipeline)
-//    {
+        // =====================================================================================
+        // QUESTION 4: Vehicle Telematics (Multilevel Inheritance)
+        // =====================================================================================
+        case "4":
+            PrintHeader("QUESTION 4: VEHICLE TELEMATICS & FLEET MANAGEMENT", "Multilevel Inheritance & Feature Propagation");
 
-//        channel.SendNotification(Message);
-//    }
-//}
+            Vehicle v1 = new Vehicle("V-001", "DL-01-AA-1111", 28.7041, 77.1025, "SEC-01");
+            MotorizedVehicle v2 = new MotorizedVehicle("MV-002", "DL-02-BB-2222", 28.5355, 77.3910, "SEC-02", 150, 60);
+            ElectricVehicle v3 = new ElectricVehicle("EV-003", "DL-03-CC-3333", 19.0760, 72.8777, "SEC-03", 450, 80);
 
-//List<Notification> alertingPipeline = new List<Notification>
-//            {
-//                new EmailNotification(),
-//                new SMSNotification(),
-//                new WhatsAppNotification(),
-//                new PushNotification()
-//            };
-//while (true)
-//{
-//    Console.Clear(); 
-//    Console.WriteLine("========================================");
-//    Console.WriteLine("    NOTIFICATION & ALERTING PIPELINE    ");
-//    Console.WriteLine("========================================");
-//    Console.WriteLine("Choose Delivery Option:");
-//    Console.WriteLine("1. Send via Email");
-//    Console.WriteLine("2. Send via SMS");
-//    Console.WriteLine("3. Send via WhatsApp");
-//    Console.WriteLine("4. Send via Push Notification");
-//    Console.WriteLine("5. Broadcast to ALL Channels (Pipeline)");
-//    Console.WriteLine("0. Exit App");
-//    Console.Write("\nEnter choice (0-5): ");
-//    string choice = Console.ReadLine();
-//    if (choice == "0")
-//    {
-//        Console.Clear();
-//        Console.WriteLine("Exiting Notification System. Goodbye!");
-//        break;
-//    }
-//    if (choice == "1" || choice == "2" || choice == "3" || choice == "4" || choice == "5")
-//    {
-//        Console.Write("\nEnter Message (Press Enter for Default): ");
-//        string message = Console.ReadLine();
-//        if (string.IsNullOrWhiteSpace(message))
-//        {
-//            message = "CRITICAL: Database CPU usage exceeded 90%!";
-//        }
-//        Console.Clear(); // Result dikhane se pehle screen clear
-//        switch (choice)
-//        {
-//            case "1":
-//                Console.WriteLine("=== SINGLE CHANNEL DISPATCH ===");
-//                alertingPipeline[0].SendNotification(message); // 
-//                break;
-//            case "2":
-//                Console.WriteLine("=== SINGLE CHANNEL DISPATCH ===");
-//                alertingPipeline[1].SendNotification(message); // SMS
-//                break;
-//            case "3":
-//                Console.WriteLine("=== SINGLE CHANNEL DISPATCH ===");
-//                alertingPipeline[2].SendNotification(message); // WhatsApp
-//                break;
-//            case "4":
-//                Console.WriteLine("=== SINGLE CHANNEL DISPATCH ===");
-//                alertingPipeline[3].SendNotification(message); // Push
-//                break;
-//            case "5":
-//                // Driver method calling all channels via late binding
-//                DispatchAllAlerts(alertingPipeline, message);
-//                break;
-//        }
-//        Console.WriteLine("\n----------------------------------------");
-//        Console.WriteLine("Alert sent successfully!");
-//        Console.WriteLine("Press any key to go back to Menu...");
-//        Console.ReadKey();
-//    }
-//    else
-//    {
-//        Console.WriteLine("Invalid choice! Press any key to try again...");
-//        Console.ReadKey();
-//    }
-//}
+            Console.WriteLine("--- LEVEL 1: BASE VEHICLE ---");
+            v1.LogGPS();
+            v1.StartEngine();
 
+            Console.WriteLine("\n--- LEVEL 2: MOTORIZED VEHICLE ---");
+            v2.LogGPS();
+            v2.StartEngine();
+            v2.UpdateLocation(28.6000, 77.2000);
 
-//----------------------------------------------------question 6-----------------------------------------------------
-//Console.WriteLine("Method Overloading Example:");
-//Console.WriteLine("Area Calculator");
+            Console.WriteLine("\n--- LEVEL 3: ELECTRIC VEHICLE ---");
+            v3.LogGPS();
+            v3.StartEngine();
+            v3.calculateRange();
+            v3.UpdateLocation(19.2000, 72.9000);
+            break;
 
-//AreaCalculator areaCalculator = new AreaCalculator();
-//double rectangleArea = areaCalculator.CalculateArea(5, 10); // Rectangle
-//double circleArea = areaCalculator.CalculateArea(4); // circle
-//double triangleArea = areaCalculator.CalculateArea(6.0, 8.0, true);
+        // =====================================================================================
+        // QUESTION 5: Notification Pipeline (Late Binding Polymorphism)
+        // =====================================================================================
+        case "5":
+            PrintHeader("QUESTION 5: DYNAMIC NOTIFICATION & ALERTING PIPELINE", "Runtime Polymorphism, Method Overriding & Late Binding");
 
-//Console.WriteLine($"Area of Rectangle: {rectangleArea}");
-//Console.WriteLine($"Area of Circle: {circleArea}");
-//Console.WriteLine($"Triangle Area: {triangleArea}");
+            List<Notification> alertingPipeline = new List<Notification>
+            {
+                new EmailNotification(),
+                new SMSNotification(),
+                new WhatsAppNotification(),
+                new PushNotification()
+            };
 
-//Console.WriteLine("\nMethod Overriding Example:");
-//List<Shape> cadCanvas = new List<Shape>
-//            {
-//                new Circle(7.5),
-//                new Polygon(6),      // Hexagon
+            DispatchAllAlerts(alertingPipeline, "CRITICAL: Database CPU usage exceeded 90%!");
+            break;
 
-//            };
-//// At runtime, the CLR checks the actual object type and dispatches the correct Draw()
-//foreach (Shape shape in cadCanvas)
-//{
-//    shape.Draw();
-//}
+        // =====================================================================================
+        // QUESTION 6: Math & CAD Engine (Compile vs Runtime Polymorphism)
+        // =====================================================================================
+        case "6":
+            PrintHeader("QUESTION 6: MATH ENGINE & GEOMETRY ENGINE", "Compile-Time (Overloading) vs Runtime (Overriding) Polymorphism");
 
+            Console.WriteLine("--- COMPILE-TIME POLYMORPHISM (Method Overloading) ---");
+            AreaCalculator areaCalculator = new AreaCalculator();
+            double rectArea = areaCalculator.CalculateArea(5.0, 10.0);
+            double circArea = areaCalculator.CalculateArea(4.0);
+            double triArea  = areaCalculator.CalculateArea(6.0, 8.0, true);
 
-//----------------------------------------------------question 7-----------------------------------------------------
+            Console.WriteLine($"Rectangle Area (5 x 10)  : {rectArea}");
+            Console.WriteLine($"Circle Area (Radius 4)   : {circArea:F2}");
+            Console.WriteLine($"Triangle Area (Base 6, H 8): {triArea}\n");
 
-//List<SmartDevice> homeDevices = new List<SmartDevice>
-//            {
-//                new SmartLight("Living Room Light"),
-//                new SmartThermostat("Hallway Thermostat"),
-//                new SmartAC("Master Bedroom AC")
-//            };
-//while (true)
-//{
-//    Console.Clear(); // Clears console on main menu / when coming back
-//    Console.WriteLine("==============================");
-//    Console.WriteLine("    SMART HOME CONTROLLER     ");
-//    Console.WriteLine("==============================");
-//    Console.WriteLine("Select a Device:");
-//    for (int i = 0; i < homeDevices.Count; i++)
-//    {
-//        Console.WriteLine($"{i + 1}. {homeDevices[i].DeviceName}");
-//    }
-//    Console.WriteLine("0. Exit App");
-//    Console.Write("\nEnter choice (0-3): ");
-//    string deviceChoice = Console.ReadLine();
-//    if (deviceChoice == "0")
-//    {
-//        Console.Clear();
-//        Console.WriteLine("Exiting Smart Home App. Goodbye!");
-//        break;
-//    }
-//    if (int.TryParse(deviceChoice, out int index) && index >= 1 && index <= homeDevices.Count)
-//    {
-//        SmartDevice selectedDevice = homeDevices[index - 1];
-//        Console.Clear(); // Clears screen when device is selected
-//        bool stayInSubMenu = true;
-//        while (stayInSubMenu)
-//        {
-//            Console.WriteLine($"\n--- [{selectedDevice.DeviceName}] Controls ---");
-//            Console.WriteLine("1. Turn ON");
-//            Console.WriteLine("2. Turn OFF");
-//            Console.WriteLine("3. Check Energy Consumption");
-//            Console.WriteLine("4. <-- Back to Device List");
-//            Console.Write("Choose action (1-4): ");
-//            string actionChoice = Console.ReadLine();
-//            switch (actionChoice)
-//            {
-//                case "1":
-//                    selectedDevice.TurnOn();
-//                    break;
-//                case "2":
-//                    selectedDevice.TurnOff();
-//                    break;
-//                case "3":
-//                    double power = selectedDevice.GetEnergyConsumption();
-//                    Console.WriteLine($"Current Power Draw: {power} Watts");
-//                    break;
-//                case "4":
-//                    stayInSubMenu = false; // Exits loop and Console.Clear() runs at top
-//                    break;
-//                default:
-//                    Console.WriteLine("Invalid action! Please choose 1, 2, 3, or 4.");
-//                    break;
-//            }
-//        }
-//    }
-//    else
-//    {
-//        Console.WriteLine("Invalid device choice! Press Enter to try again...");
-//        Console.ReadLine();
-//    }
-//}
+            Console.WriteLine("--- RUNTIME POLYMORPHISM (Method Overriding / Late Binding) ---");
+            List<Shape> cadCanvas = new List<Shape>
+            {
+                new Circle(7.5),
+                new Polygon(6)
+            };
 
-//----------------------------------------------------question 8-----------------------------------------------------
+            foreach (Shape shape in cadCanvas)
+            {
+                shape.Draw();
+            }
+            break;
 
-//Loan homeLoan = new HomeLoan("Rahul Sharma", 5000000);
-//homeLoan.ProcessLoan();
-//Loan carLoan = new CarLoan("Priya Verma", 1200000);
-//carLoan.ProcessLoan();
-//Loan eduLoan = new EducationLoan("Aman Gupta", 400000);
-//eduLoan.ProcessLoan();
+        // =====================================================================================
+        // QUESTION 7: Smart Home Automation (Abstraction)
+        // =====================================================================================
+        case "7":
+            PrintHeader("QUESTION 7: SMART HOME AUTOMATION FRAMEWORK", "Abstraction, Abstract Methods & System Complexity Hiding");
 
-//----------------------------------------------------question 9-----------------------------------------------------
+            List<SmartDevice> homeDevices = new List<SmartDevice>
+            {
+                new SmartLight("Living Room Light"),
+                new SmartThermostat("Hallway Thermostat"),
+                new SmartAC("Master Bedroom AC")
+            };
 
+            Console.WriteLine("1. Activating All Devices:");
+            foreach (SmartDevice device in homeDevices)
+            {
+                device.TurnOn();
+            }
 
+            Console.WriteLine("\n2. Energy Audit:");
+            double totalPower = 0;
+            foreach (SmartDevice device in homeDevices)
+            {
+                double power = device.GetEnergyConsumption();
+                Console.WriteLine($" - {device.DeviceName,-22} : {power,6} W");
+                totalPower += power;
+            }
+            Console.WriteLine($" Total Power Consumption : {totalPower} W ({totalPower / 1000:F2} kW)\n");
 
-//ICloudStorageProvider storage = new S3Storage();
-//storage.UploadFile("video1.mp4");
-//storage.DownloadFile("VID-101");
+            Console.WriteLine("3. Shutting Down Devices:");
+            foreach (SmartDevice device in homeDevices)
+            {
+                device.TurnOff();
+            }
+            break;
 
-//Console.WriteLine("-----------------------------");
+        // =====================================================================================
+        // QUESTION 8: Banking Loan Processing (Abstract Classes & Template Pattern)
+        // =====================================================================================
+        case "8":
+            PrintHeader("QUESTION 8: BANKING LOAN PROCESSING WORKFLOW", "Abstract Classes, Concrete Shared Workflows & Custom Logic");
 
-//storage = new AzureStorage();
-//storage.UploadFile("photo.png");
-//storage.DownloadFile("IMG-502");
+            Loan homeLoan = new HomeLoan("Rahul Sharma", 5000000);
+            homeLoan.ProcessLoan();
 
-//Console.WriteLine("-----------------------------");
+            Loan carLoan = new CarLoan("Priya Verma", 1200000);
+            carLoan.ProcessLoan();
 
-//storage = new GoogleCloudStorage();
-//storage.DeleteFile("IMG-502");
+            Loan eduLoan = new EducationLoan("Aman Gupta", 400000);
+            eduLoan.ProcessLoan();
+            break;
 
-//----------------------------------------------------question 10-----------------------------------------------------
+        // =====================================================================================
+        // QUESTION 9: Cloud Storage Provider (Interfaces & DIP)
+        // =====================================================================================
+        case "9":
+            PrintHeader("QUESTION 9: PLUG-AND-PLAY CLOUD STORAGE SYSTEM", "Interface-Based Programming, Loose Coupling & Dependency Inversion");
 
-//WarehouseRobot robot = new WarehouseRobot("Neon");
-////robot.Name = "Neon";
-//robot.Start();
-//robot.PerformTask();
-//robot.Detect();
-//robot.Navigate("Storage Area");
-//robot.Charge("docking and charging battery");
+            Console.WriteLine("--- 1. Using Amazon S3 Provider ---");
+            ICloudStorageProvider storage = new S3Storage();
+            storage.UploadFile("user_video.mp4");
+            storage.DownloadFile("VID-101");
 
-//INavigable nav = robot;
-//nav.Navigate("Charging Dock Station 1");
+            Console.WriteLine("\n--- 2. Switching to Azure Blob Provider (Plug-and-Play) ---");
+            storage = new AzureStorage();
+            storage.UploadFile("profile_picture.png");
+            storage.DownloadFile("IMG-502");
 
-//IChargeable charger = robot;
-//charger.Charge("fully charged");
+            Console.WriteLine("\n--- 3. Switching to Google Cloud Storage ---");
+            storage = new GoogleCloudStorage();
+            storage.DeleteFile("OLD-ARCHIVE-99");
+            break;
 
-Console.WriteLine("All operations completed successfully.");
-Console.ReadKey();
+        // =====================================================================================
+        // QUESTION 10: Autonomous Robot Engine (Abstract Class vs Interface)
+        // =====================================================================================
+        case "10":
+            PrintHeader("QUESTION 10: AUTONOMOUS ROBOT NAVIGATION ENGINE", "Abstract Class ('Is-A') vs Interfaces ('Can-Do') & Multiple Inheritance");
 
+            WarehouseRobot robot = new WarehouseRobot("Neon-AGV");
 
+            Console.WriteLine("--- Base Class Identity & Workflow ---");
+            robot.Start();
+            robot.PerformTask();
 
+            Console.WriteLine("\n--- Interface Capabilities (Multiple Interfaces) ---");
+            robot.Detect();
+            robot.Navigate("Storage Bay 4, Aisle B");
+            robot.Charge("docking and charging battery");
 
+            Console.WriteLine("\n--- Interface Polymorphism Reference Checks ---");
+            INavigable navRef = robot;
+            navRef.Navigate("Charging Station Alpha");
 
+            IChargeable chargeRef = robot;
+            chargeRef.Charge("fully charged and ready");
+            break;
 
+        default:
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Invalid selection! Please enter a number from 0 to 10.");
+            Console.ResetColor();
+            break;
+    }
 
+    Console.ForegroundColor = ConsoleColor.DarkGray;
+    Console.WriteLine("\n────────────────────────────────────────────────────────────────────────────────");
+    Console.ResetColor();
+    Console.WriteLine("Press any key to return to Master Menu...");
+    Console.ReadKey();
+}
 
+// ==============================================================================================
+//                                     HELPER METHODS                                            
+// ==============================================================================================
 
+static void PrintHeader(string title, string subtitle)
+{
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine("╔══════════════════════════════════════════════════════════════════════════════╗");
+    Console.WriteLine($"║ {title,-76} ║");
+    Console.WriteLine($"║ Concept: {subtitle,-67} ║");
+    Console.WriteLine("╚══════════════════════════════════════════════════════════════════════════════╝\n");
+    Console.ResetColor();
+}
+
+static void DispatchAllAlerts(List<Notification> pipeline, string message)
+{
+    Console.WriteLine($"=== DISPATCHING ALERT PIPELINE VIA LATE BINDING ===");
+    Console.WriteLine($"Payload: \"{message}\"\n");
+    foreach (Notification channel in pipeline)
+    {
+        channel.SendNotification(message);
+    }
+}
