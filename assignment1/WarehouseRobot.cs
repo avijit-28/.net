@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using assignment1.IAllInterfaces;
 
 namespace assignment1
 {
@@ -21,18 +22,7 @@ namespace assignment1
 
         public abstract void PerformTask();
     }
-    interface Isensor
-    {
-        void Detect();
-    }
-    interface Inevigable
-    {
-        void Navigate(string destination);
-    }
-    interface Ichargeable
-    {
-        void Charge();
-    }
+    
 
     public class Behavior: WarehouseRobot, Isensor, Inevigable, Ichargeable
     {
