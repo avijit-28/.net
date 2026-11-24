@@ -112,25 +112,12 @@
 
 //----------------------------------------------------question 8-----------------------------------------------------
 
-//Loan homeLoan = new HomeLoan();
-//homeLoan.VerifyDocumentation();
-//Console.WriteLine($"Interest Rate for Home Loan: {homeLoan.CalculateInterest()}%");
-//Console.WriteLine($"Eligibility for Home Loan: {homeLoan.CheckEligibility()}");
-//homeLoan.SanctionLoan();
-//Console.WriteLine('\n');
-
-//Loan carLoan = new CarLoan();
-//carLoan.VerifyDocumentation();
-//Console.WriteLine($"Interest Rate for Car Loan: {carLoan.CalculateInterest()}%");
-//Console.WriteLine($"Eligibility for Car Loan: {carLoan.CheckEligibility()}");
-//carLoan.SanctionLoan();
-//Console.WriteLine('\n');
-
-//Loan educationLoan = new EducationLoan();
-//educationLoan.VerifyDocumentation();
-//Console.WriteLine($"Interest Rate for Education Loan: {educationLoan.CalculateInterest()}%");
-//Console.WriteLine($"Eligibility for Education Loan: {educationLoan.CheckEligibility()}");
-//educationLoan.SanctionLoan();
+Loan homeLoan = new HomeLoan("Rahul Sharma", 5000000);
+homeLoan.ProcessLoan();
+Loan carLoan = new CarLoan("Priya Verma", 800000);
+carLoan.ProcessLoan();
+Loan eduLoan = new EducationLoan("Aman Gupta", 1500000);
+eduLoan.ProcessLoan();
 
 //----------------------------------------------------question 9-----------------------------------------------------
 
@@ -153,19 +140,19 @@
 
 //----------------------------------------------------question 10-----------------------------------------------------
 
-WarehouseRobot robot = new WarehouseRobot("Neon");
-//robot.Name = "Neon";
-robot.Start();
-robot.PerformTask();
-robot.Detect();
-robot.Navigate("Storage Area");
-robot.Charge("docking and charging battery");
+//WarehouseRobot robot = new WarehouseRobot("Neon");
+////robot.Name = "Neon";
+//robot.Start();
+//robot.PerformTask();
+//robot.Detect();
+//robot.Navigate("Storage Area");
+//robot.Charge("docking and charging battery");
 
-INavigable nav = robot;
-nav.Navigate("Charging Dock Station 1");
+//INavigable nav = robot;
+//nav.Navigate("Charging Dock Station 1");
 
-IChargeable charger = robot;
-charger.Charge("fully charged");
+//IChargeable charger = robot;
+//charger.Charge("fully charged");
 
 Console.WriteLine("All operations completed successfully.");
 Console.ReadKey();
