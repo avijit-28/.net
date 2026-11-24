@@ -146,23 +146,38 @@
 //azure_storage.DownloadFile("file2.txt");
 //azure_storage.DeleteFile("file2.txt");
 
+
+// Scenario 1: Media processor uses Amazon S3
+ICloudStorageProvider awsProvider = new S3Storage();
+MediaProcessor s3Processor = new MediaProcessor(awsProvider);
+s3Processor.ProcessAndStoreUserUpload(@"C:\uploads\video1.mp4", "VID-101");
+// Scenario 2: Switch company storage to Azure Blob (Plug-and-play!)
+// MediaProcessor code remains 100% UNTOUCHED
+ICloudStorageProvider azureProvider = new AzureStorage();
+MediaProcessor azureProcessor = new MediaProcessor(azureProvider);
+azureProcessor.ProcessAndStoreUserUpload(@"C:\uploads\photo.png", "IMG-502");
+// Scenario 3: Switch company storage to Google Cloud Storage
+ICloudStorageProvider gcpProvider = new GoogleCloudStorage();
+MediaProcessor gcpProcessor = new MediaProcessor(gcpProvider);
+gcpProcessor.RemoveMedia("IMG-502");
+
 //----------------------------------------------------question 10-----------------------------------------------------
 
-WarehouseRobot robot = new WarehouseRobot("Neon");
-//robot.Name = "Neon";
-robot.Start();
-robot.PerformTask();
-robot.Detect();
-robot.Navigate("Storage Area");
-robot.Charge("docking and charging battery");
+//WarehouseRobot robot = new WarehouseRobot("Neon");
+////robot.Name = "Neon";
+//robot.Start();
+//robot.PerformTask();
+//robot.Detect();
+//robot.Navigate("Storage Area");
+//robot.Charge("docking and charging battery");
 
-INavigable nav = robot;
-nav.Navigate("Charging Dock Station 1");
+//INavigable nav = robot;
+//nav.Navigate("Charging Dock Station 1");
 
-IChargeable charger = robot;
-charger.Charge("fully charged");
+//IChargeable charger = robot;
+//charger.Charge("fully charged");
 
-Console.WriteLine("All operations completed successfully.");
+//Console.WriteLine("All operations completed successfully.");
 Console.ReadKey();
 
 
