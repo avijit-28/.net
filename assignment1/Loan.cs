@@ -52,7 +52,7 @@ namespace assignment1
             return true; // Example eligibility check
         }
 
-        public override double CalculateInterest()
+        public override double CalculateInterestRate()
         {
             Console.WriteLine("Calculating interest for car loan.");
             return 9.2;
@@ -70,7 +70,7 @@ namespace assignment1
             return true; // Example eligibility check
         }
 
-        public override double CalculateInterest()
+        public override double CalculateInterestRate()
         {
             Console.WriteLine("Calculating interest for education loan.");
             return 7;
