@@ -48,7 +48,7 @@ namespace assignment1
 
         public override bool CheckEligibility()
         {
-            Console.WriteLine("Checking Car Loan: Verifying dealer quotation and minimum income criteria...);
+            Console.WriteLine("Checking Car Loan: Verifying dealer quotation and minimum income criteria...");
             return true; // Example eligibility check
         }
 
