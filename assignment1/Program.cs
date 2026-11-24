@@ -149,7 +149,7 @@
 //----------------------------------------------------question 10-----------------------------------------------------
 
 Behavior robot = new Behavior("BOT");
-//robot.name = "WarehouseBot";
+robot.name = "WarehouseBot";
 robot.Start();
 robot.PerformTask();
 robot.Detect();
