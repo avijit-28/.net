@@ -70,8 +70,7 @@ static void DispatchAllAlerts(List<Notification> pipeline, string alertMessage)
         channel.SendNotification(alertMessage);
     }
 }
-static void Main(string[] args)
-{
+
     
     List<Notification> alertingPipeline = new List<Notification>
             {
@@ -82,7 +81,7 @@ static void Main(string[] args)
             };
     
     DispatchAllAlerts(alertingPipeline, "CRITICAL: Database CPU usage exceeded 90%!");
-}
+
 
 //----------------------------------------------------question 6-----------------------------------------------------
 //Console.WriteLine("Method Overloading Example:");
