@@ -7,21 +7,7 @@ using System.Threading.Tasks;
 
 namespace assignment1
 {
-    public void ProcessLoan()
-    {
-        Console.WriteLine($"\n--- Processing Loan for {ApplicantName} (${LoanAmount}) ---");
-        VerifyDocumentation();
-        if (CheckEligibility())
-        {
-            double interestRate = CalculateInterestRate();
-            Console.WriteLine($" Eligibility approved! Applied Interest Rate: {rate}%");
-            SanctionLoan();
-        }
-        else
-        {
-            Console.WriteLine(" REJECTED: Eligibility criteria not satisfied.");
-        }
-    }
+    
 
     class HomeLoan : Loan
     {
