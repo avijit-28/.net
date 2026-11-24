@@ -61,13 +61,13 @@
 //----------------------------------------------------question 5-----------------------------------------------------
 
 
-static void DispatchAllAlerts(List<Notification> pipeline, string alertMessage)
+static void DispatchAllAlerts(List<Notification> pipeline, string Message)
 {
-    Console.WriteLine($"\n=== DISPATCHING ALERT PIPELINE: \"{alertMessage}\" ===");
+    Console.WriteLine($"\n=== DISPATCHING ALERT PIPELINE: \"{Message}\" ===");
     foreach (Notification channel in pipeline)
     {
         
-        channel.SendNotification(alertMessage);
+        channel.SendNotification(Message);
     }
 }
 
