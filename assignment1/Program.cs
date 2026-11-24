@@ -61,7 +61,7 @@
 //----------------------------------------------------question 5-----------------------------------------------------
 
 
-public static void DispatchAllAlerts(List<Notification> pipeline, string alertMessage)
+static void DispatchAllAlerts(List<Notification> pipeline, string alertMessage)
 {
     Console.WriteLine($"\n=== DISPATCHING ALERT PIPELINE: \"{alertMessage}\" ===");
     foreach (Notification channel in pipeline)
