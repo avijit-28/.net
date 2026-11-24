@@ -29,75 +29,103 @@
 
 //----------------------------------------------------question 3-----------------------------------------------------
 
-//FullTimeEmployee emp1 = new FullTimeEmployee(1, "Alice", 50000, 5000);
-//ContractEmployee emp2 = new ContractEmployee(2, "Bob", 30000);
-//FreelanceEmployee emp3 = new FreelanceEmployee(3, "Charlie", 20000, 3000);
-
-//Console.WriteLine("Full-Time Employee:");
-//emp1.DisplayEmployeeInfo();
-//Console.WriteLine($"Net Salary: {emp1.CalculateNetSalary()}");
-
-//Console.WriteLine("\nContract Employee:");
-//emp2.DisplayEmployeeInfo();
-//Console.WriteLine($"Net Salary: {emp2.CalculateNetSalary()}");
-
-//Console.WriteLine("\nFreelance Employee:");
-//emp3.DisplayEmployeeInfo();
-//Console.WriteLine($"Net Salary: {emp3.CalculateNetSalary()}");
-
-//----------------------------------------------------question 4-----------------------------------------------------
-
-
-Vehicle v1 = new Vehicle("V-001", "DL-01-AA-1111", 28.7041, 77.1025, "SEC-01");
-MotorizedVehicle v2 = new MotorizedVehicle("MV-002", "DL-02-BB-2222", 28.5355, 77.3910, "SEC-02", 150, 60);
-ElectricVehicle v3 = new ElectricVehicle("EV-003", "DL-03-CC-3333", 19.0760, 72.8777, "SEC-03", 450, 80);
+FullTimeEmployee ft = new FullTimeEmployee(101, "Aarav Sharma", 60000, 10000, 5000);
+ContractEmployee ct = new ContractEmployee(102, "Pooja Verma", 45000, 6, 4000);
+Freelancer fl = new Freelancer(103, "Rohan Das", 15000, 4, 12000);
 while (true)
 {
     Console.Clear();
-    Console.WriteLine("======================================");
-    Console.WriteLine("        SELECT A VEHICLE TYPE         ");
-    Console.WriteLine("======================================");
-    Console.WriteLine("1. Base Vehicle (Level 1)");
-    Console.WriteLine("2. Motorized Vehicle (Level 2)");
-    Console.WriteLine("3. Electric Vehicle (Level 3)");
+    Console.WriteLine("========================================");
+    Console.WriteLine("    ENTERPRISE PAYROLL SYSTEM MENU      ");
+    Console.WriteLine("========================================");
+    Console.WriteLine("1. View Full-Time Employee Payroll");
+    Console.WriteLine("2. View Contract Employee Payroll");
+    Console.WriteLine("3. View Freelancer Payroll");
     Console.WriteLine("0. Exit");
     Console.Write("\nEnter choice (0-3): ");
     string choice = Console.ReadLine();
     if (choice == "0")
     {
         Console.Clear();
-        Console.WriteLine("Exiting program. Goodbye!");
+        Console.WriteLine("Exiting Payroll System. Goodbye!");
         break;
     }
-    Console.Clear(); // Screen clear
+    Console.Clear(); // Clears screen before showing payroll
     switch (choice)
     {
         case "1":
-            Console.WriteLine($"=== BASE VEHICLE [{v1.VehicleNumber}] ===");
-            v1.LogGPS();
-            v1.StartEngine();
+            Console.WriteLine("=== FULL-TIME EMPLOYEE PAYROLL ===");
+            ft.DisplayEmployeeInfo();
             break;
         case "2":
-            Console.WriteLine($"=== MOTORIZED VEHICLE [{v2.VehicleNumber}] ===");
-            v2.LogGPS();
-            v2.StartEngine();
-            v2.UpdateLocation(28.6000, 77.2000);
+            Console.WriteLine("=== CONTRACT EMPLOYEE PAYROLL ===");
+            ct.DisplayEmployeeInfo();
             break;
         case "3":
-            Console.WriteLine($"=== ELECTRIC VEHICLE [{v3.VehicleNumber}] ===");
-            v3.LogGPS();
-            v3.StartEngine();
-            v3.calculateRange();
-            v3.UpdateLocation(19.2000, 72.9000);
+            Console.WriteLine("=== FREELANCER PAYROLL ===");
+            fl.DisplayEmployeeInfo();
             break;
         default:
-            Console.WriteLine("Invalid choice! Please enter 0, 1, 2, or 3.");
+            Console.WriteLine("Invalid choice! Choose between 0 and 3.");
             break;
     }
-    Console.WriteLine("\n--------------------------------------");
-    Console.WriteLine("Press any key to choose another vehicle...");
+    Console.WriteLine("\n----------------------------------------");
+    Console.WriteLine("Press any key to choose another employee...");
     Console.ReadKey();
 }
+//----------------------------------------------------question 4-----------------------------------------------------
+
+
+//Vehicle v1 = new Vehicle("V-001", "DL-01-AA-1111", 28.7041, 77.1025, "SEC-01");
+//MotorizedVehicle v2 = new MotorizedVehicle("MV-002", "DL-02-BB-2222", 28.5355, 77.3910, "SEC-02", 150, 60);
+//ElectricVehicle v3 = new ElectricVehicle("EV-003", "DL-03-CC-3333", 19.0760, 72.8777, "SEC-03", 450, 80);
+//while (true)
+//{
+//    Console.Clear();
+//    Console.WriteLine("======================================");
+//    Console.WriteLine("        SELECT A VEHICLE TYPE         ");
+//    Console.WriteLine("======================================");
+//    Console.WriteLine("1. Base Vehicle (Level 1)");
+//    Console.WriteLine("2. Motorized Vehicle (Level 2)");
+//    Console.WriteLine("3. Electric Vehicle (Level 3)");
+//    Console.WriteLine("0. Exit");
+//    Console.Write("\nEnter choice (0-3): ");
+//    string choice = Console.ReadLine();
+//    if (choice == "0")
+//    {
+//        Console.Clear();
+//        Console.WriteLine("Exiting program. Goodbye!");
+//        break;
+//    }
+//    Console.Clear(); // Screen clear
+//    switch (choice)
+//    {
+//        case "1":
+//            Console.WriteLine($"=== BASE VEHICLE [{v1.VehicleNumber}] ===");
+//            v1.LogGPS();
+//            v1.StartEngine();
+//            break;
+//        case "2":
+//            Console.WriteLine($"=== MOTORIZED VEHICLE [{v2.VehicleNumber}] ===");
+//            v2.LogGPS();
+//            v2.StartEngine();
+//            v2.UpdateLocation(28.6000, 77.2000);
+//            break;
+//        case "3":
+//            Console.WriteLine($"=== ELECTRIC VEHICLE [{v3.VehicleNumber}] ===");
+//            v3.LogGPS();
+//            v3.StartEngine();
+//            v3.calculateRange();
+//            v3.UpdateLocation(19.2000, 72.9000);
+//            break;
+//        default:
+//            Console.WriteLine("Invalid choice! Please enter 0, 1, 2, or 3.");
+//            break;
+//    }
+//    Console.WriteLine("\n--------------------------------------");
+//    Console.WriteLine("Press any key to choose another vehicle...");
+//    Console.ReadKey();
+//}
 
 
 //----------------------------------------------------question 5-----------------------------------------------------
