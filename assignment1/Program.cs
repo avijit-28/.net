@@ -51,7 +51,7 @@ while (true)
         // QUESTION 1: Secure Payment Processor (Encapsulation)
         // =====================================================================================
         case "1":
-            PrintHeader("QUESTION 1: SECURE PAYMENT PROCESSING MODULE", "Encapsulation, Data Hiding & Write-Only Properties");
+            PrintHeader("QUESTION 1: SECURE PAYMENT PROCESSING MODULE");
 
             PaymentProcessor gateway = new PaymentProcessor();
 
@@ -82,7 +82,7 @@ while (true)
         // QUESTION 2: Healthcare Patient Record (Data Hiding)
         // =====================================================================================
         case "2":
-            PrintHeader("QUESTION 2: HEALTHCARE PATIENT RECORDS SYSTEM", "Data Hiding, Restricted Access Modifiers & Validation");
+            PrintHeader("QUESTION 2: HEALTHCARE PATIENT RECORDS SYSTEM");
 
             Healthcare patient = new Healthcare(101, "Rahul Verma");
             Console.WriteLine($"Patient Registered: {patient.PatientName} (ID: {patient.PatientId})\n");
@@ -110,7 +110,7 @@ while (true)
         // QUESTION 3: Employee Hierarchy & Payroll (Inheritance)
         // =====================================================================================
         case "3":
-            PrintHeader("QUESTION 3: ENTERPRISE EMPLOYEE HIERARCHY & PAYROLL", "Single & Hierarchical Inheritance, 'base' Keyword");
+            PrintHeader("QUESTION 3: ENTERPRISE EMPLOYEE HIERARCHY & PAYROLL");
 
             employee baseEmp = new employee(100, "Suresh Kumar", 30000);
             FullTimeEmployee ftEmp = new FullTimeEmployee(101, "Aarav Sharma", 60000, 10000, 5000);
@@ -131,7 +131,7 @@ while (true)
         // QUESTION 4: Vehicle Telematics (Multilevel Inheritance)
         // =====================================================================================
         case "4":
-            PrintHeader("QUESTION 4: VEHICLE TELEMATICS & FLEET MANAGEMENT", "Multilevel Inheritance & Feature Propagation");
+            PrintHeader("QUESTION 4: VEHICLE TELEMATICS & FLEET MANAGEMENT");
 
             Vehicle v1 = new Vehicle("V-001", "DL-01-AA-1111", 28.7041, 77.1025, "SEC-01");
             MotorizedVehicle v2 = new MotorizedVehicle("MV-002", "DL-02-BB-2222", 28.5355, 77.3910, "SEC-02", 150, 60);
@@ -157,7 +157,7 @@ while (true)
         // QUESTION 5: Notification Pipeline (Late Binding Polymorphism)
         // =====================================================================================
         case "5":
-            PrintHeader("QUESTION 5: DYNAMIC NOTIFICATION & ALERTING PIPELINE", "Runtime Polymorphism, Method Overriding & Late Binding");
+            PrintHeader("QUESTION 5: DYNAMIC NOTIFICATION & ALERTING PIPELINE");
 
             List<Notification> alertingPipeline = new List<Notification>
             {
@@ -174,7 +174,7 @@ while (true)
         // QUESTION 6: Math & CAD Engine (Compile vs Runtime Polymorphism)
         // =====================================================================================
         case "6":
-            PrintHeader("QUESTION 6: MATH ENGINE & GEOMETRY ENGINE", "Compile-Time (Overloading) vs Runtime (Overriding) Polymorphism");
+            PrintHeader("QUESTION 6: MATH ENGINE & GEOMETRY ENGINE");
 
             Console.WriteLine("--- COMPILE-TIME POLYMORPHISM (Method Overloading) ---");
             AreaCalculator areaCalculator = new AreaCalculator();
@@ -203,7 +203,7 @@ while (true)
         // QUESTION 7: Smart Home Automation (Abstraction)
         // =====================================================================================
         case "7":
-            PrintHeader("QUESTION 7: SMART HOME AUTOMATION FRAMEWORK", "Abstraction, Abstract Methods & System Complexity Hiding");
+            PrintHeader("QUESTION 7: SMART HOME AUTOMATION FRAMEWORK");
 
             List<SmartDevice> homeDevices = new List<SmartDevice>
             {
@@ -239,7 +239,7 @@ while (true)
         // QUESTION 8: Banking Loan Processing (Abstract Classes & Template Pattern)
         // =====================================================================================
         case "8":
-            PrintHeader("QUESTION 8: BANKING LOAN PROCESSING WORKFLOW", "Abstract Classes, Concrete Shared Workflows & Custom Logic");
+            PrintHeader("QUESTION 8: BANKING LOAN PROCESSING WORKFLOW");
 
             Loan homeLoan = new HomeLoan("Rahul Sharma", 5000000);
             homeLoan.ProcessLoan();
@@ -255,7 +255,7 @@ while (true)
         // QUESTION 9: Cloud Storage Provider (Interfaces & DIP)
         // =====================================================================================
         case "9":
-            PrintHeader("QUESTION 9: PLUG-AND-PLAY CLOUD STORAGE SYSTEM", "Interface-Based Programming, Loose Coupling & Dependency Inversion");
+            PrintHeader("QUESTION 9: STORAGE SYSTEM");
 
             Console.WriteLine("--- 1. Using Amazon S3 Provider ---");
             ICloudStorageProvider storage = new S3Storage();
@@ -276,7 +276,7 @@ while (true)
         // QUESTION 10: Autonomous Robot Engine (Abstract Class vs Interface)
         // =====================================================================================
         case "10":
-            PrintHeader("QUESTION 10: AUTONOMOUS ROBOT NAVIGATION ENGINE", "Abstract Class ('Is-A') vs Interfaces ('Can-Do') & Multiple Inheritance");
+            PrintHeader("QUESTION 10: AUTONOMOUS ROBOT NAVIGATION ENGINE");
 
             WarehouseRobot robot = new WarehouseRobot("Neon-AGV");
 
