@@ -1,6 +1,29 @@
 ﻿using System;
 namespace assignment1
 {
+    // Loan abstract class
+    public abstract class Loan
+    {
+        public string ApplicantName { get; set; }
+        public double LoanAmount { get; set; }
+        public Loan(string applicantName, double loanAmount)
+        {
+            ApplicantName = applicantName;
+            LoanAmount = loanAmount;
+        }
+        public void VerifyDocumentation()
+        {
+            Console.WriteLine($"Verifying KYC and identity documents for {ApplicantName}...");
+        }
+        public void SanctionLoan()
+        {
+            Console.WriteLine($" SUCCESS: Loan of ₹{LoanAmount} sanctioned for {ApplicantName}!");
+        }
+
+        public abstract double CalculateInterestRate();
+        public abstract bool CheckEligibility();
+
+    }
 
     // BaseRobot abstract class
     public abstract class BaseRobot
