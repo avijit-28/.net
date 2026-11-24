@@ -9,20 +9,7 @@ using System.Threading.Tasks;
 
 namespace assignment1
 {
-    public abstract class BaseRobot
-    {
-        public string Name { get; set; }
-        public BaseRobot(string name)
-        {
-            Name = name;
-        }
-        public void Start()
-        {
-            Console.WriteLine($"Robot {Name} is starting.");
-        }
-        // Must be implemented by specific robot types
-        public abstract void PerformTask();
-    }
+    
 
 
     public class WarehouseRobot : BaseRobot, ISensor, INavigable, IChargeable
