@@ -315,7 +315,7 @@ while (true)
 //                                     HELPER METHODS                                            
 // ==============================================================================================
 
-static void PrintHeader(string title, string subtitle)
+static void PrintHeader(string title)
 {
     Console.ForegroundColor = ConsoleColor.Green;
     Console.WriteLine("╔══════════════════════════════════════════════════════════════════════════════╗");
