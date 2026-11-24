@@ -148,7 +148,7 @@
 
 //----------------------------------------------------question 10-----------------------------------------------------
 
-Behavior robot = new Behavior("BOT");
+WarehouseRobot robot = new WarehouseRobot();
 robot.name = "Neon";
 robot.Start();
 robot.PerformTask();
