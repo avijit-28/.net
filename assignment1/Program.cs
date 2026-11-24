@@ -112,7 +112,7 @@
 
 //----------------------------------------------------question 8-----------------------------------------------------
 
-//Loan homeLoan = new HomeLoan(); 
+//Loan homeLoan = new HomeLoan();
 //homeLoan.VerifyDocumentation();
 //Console.WriteLine($"Interest Rate for Home Loan: {homeLoan.CalculateInterest()}%");
 //Console.WriteLine($"Eligibility for Home Loan: {homeLoan.CheckEligibility()}");
@@ -135,41 +135,39 @@
 //----------------------------------------------------question 9-----------------------------------------------------
 
 
-// 1. Amazon S3 use karna:
-ICloudStorageProvider storage = new S3Storage();
-storage.UploadFile("video1.mp4");
-storage.DownloadFile("VID-101");
 
-Console.WriteLine("-----------------------------");
+//ICloudStorageProvider storage = new S3Storage();
+//storage.UploadFile("video1.mp4");
+//storage.DownloadFile("VID-101");
 
-// 2. Azure me switch karna (Plug-and-play):
-storage = new AzureStorage();
-storage.UploadFile("photo.png");
-storage.DownloadFile("IMG-502");
+//Console.WriteLine("-----------------------------");
 
-Console.WriteLine("-----------------------------");
+//storage = new AzureStorage();
+//storage.UploadFile("photo.png");
+//storage.DownloadFile("IMG-502");
 
-// 3. Google Cloud me switch karna:
-storage = new GoogleCloudStorage();
-storage.DeleteFile("IMG-502");
+//Console.WriteLine("-----------------------------");
+
+//storage = new GoogleCloudStorage();
+//storage.DeleteFile("IMG-502");
 
 //----------------------------------------------------question 10-----------------------------------------------------
 
-//WarehouseRobot robot = new WarehouseRobot("Neon");
-////robot.Name = "Neon";
-//robot.Start();
-//robot.PerformTask();
-//robot.Detect();
-//robot.Navigate("Storage Area");
-//robot.Charge("docking and charging battery");
+WarehouseRobot robot = new WarehouseRobot("Neon");
+//robot.Name = "Neon";
+robot.Start();
+robot.PerformTask();
+robot.Detect();
+robot.Navigate("Storage Area");
+robot.Charge("docking and charging battery");
 
-//INavigable nav = robot;
-//nav.Navigate("Charging Dock Station 1");
+INavigable nav = robot;
+nav.Navigate("Charging Dock Station 1");
 
-//IChargeable charger = robot;
-//charger.Charge("fully charged");
+IChargeable charger = robot;
+charger.Charge("fully charged");
 
-//Console.WriteLine("All operations completed successfully.");
+Console.WriteLine("All operations completed successfully.");
 Console.ReadKey();
 
 
