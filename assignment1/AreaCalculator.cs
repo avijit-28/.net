@@ -6,20 +6,24 @@ using System.Threading.Tasks;
 
 namespace assignment1
 {
-    internal class AreaCalculator
+    public class AreaCalculator
     {
         // Method overloading to calculate area of different shapes
-        // Rectangle: length * width
+        
         public double CalculateArea(double length, double width)
         {
             return length * width;
         }
-        // Circle: π * radius^2
+        
         public double CalculateArea(double radius)
         {
             return (22/7) * radius * radius;
         }
-        
+        public double CalculateArea(double baseLength, double height, bool isTriangle)
+        {
+            return 0.5 * baseLength * height;
+        }
+
     }
     class Shape
     {
@@ -31,6 +35,12 @@ namespace assignment1
 
     class Circle : Shape
     {
+        public double Radius { get; set; }
+        public Circle(double radius)
+        {
+            Radius = radius;
+
+        }
         public override void Draw()
         {
             Console.WriteLine("Drawing a circle.");
