@@ -25,7 +25,7 @@ Console.WriteLine("--- Temperature Validation Test ---");
 patient.SetTemperature(48.5);
 
 patient.SetTemperature(37.5);
-Console.WriteLine($"Current Temperature: {patient.GetTemperature()}°C\n");
+
 
 Console.WriteLine("--- Billing Status Test ---");
 Console.WriteLine($"Initial Bill Status: Paid = {patient.BillPaid}");
