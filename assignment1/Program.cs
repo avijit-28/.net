@@ -148,8 +148,8 @@
 
 //----------------------------------------------------question 10-----------------------------------------------------
 
-WarehouseRobot robot = new WarehouseRobot();
-robot.name = "Neon";
+WarehouseRobot robot = new WarehouseRobot("Neon");
+//robot.Name = "Neon";
 robot.Start();
 robot.PerformTask();
 robot.Detect();
