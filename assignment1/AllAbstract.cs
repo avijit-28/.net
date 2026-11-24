@@ -1,6 +1,19 @@
 ﻿using System;
 namespace assignment1
 {
+    //SmartDevice abstract class
+    public abstract class SmartDevice
+    {
+        public string DeviceName { get; set; }
+        public SmartDevice(string deviceName)
+        {
+            DeviceName = deviceName;
+        }
+        public abstract void TurnOn();
+        public abstract void TurnOff();
+        public abstract double GetEnergyConsumption();
+    }
+
     // Loan abstract class
     public abstract class Loan
     {
