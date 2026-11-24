@@ -148,7 +148,7 @@
 
 //----------------------------------------------------question 10-----------------------------------------------------
 
-Warehouse robot = new Warehouse("BOT");
+WarehouseRobot robot = new WarehouseRobot("BOT");
 //robot.name = "WarehouseBot";
 robot.Start();
 robot.PerformTask();
