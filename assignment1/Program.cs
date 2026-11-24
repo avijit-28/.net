@@ -93,73 +93,73 @@
 
 //----------------------------------------------------question 7-----------------------------------------------------
 
-List<SmartDevice> homeDevices = new List<SmartDevice>
-            {
-                new SmartLight("Living Room Light"),
-                new SmartThermostat("Hallway Thermostat"),
-                new SmartAC("Master Bedroom AC")
-            };
-while (true)
-{
-    Console.Clear(); // Clears console on main menu / when coming back
-    Console.WriteLine("==============================");
-    Console.WriteLine("    SMART HOME CONTROLLER     ");
-    Console.WriteLine("==============================");
-    Console.WriteLine("Select a Device:");
-    for (int i = 0; i < homeDevices.Count; i++)
-    {
-        Console.WriteLine($"{i + 1}. {homeDevices[i].DeviceName}");
-    }
-    Console.WriteLine("0. Exit App");
-    Console.Write("\nEnter choice (0-3): ");
-    string deviceChoice = Console.ReadLine();
-    if (deviceChoice == "0")
-    {
-        Console.Clear();
-        Console.WriteLine("Exiting Smart Home App. Goodbye!");
-        break;
-    }
-    if (int.TryParse(deviceChoice, out int index) && index >= 1 && index <= homeDevices.Count)
-    {
-        SmartDevice selectedDevice = homeDevices[index - 1];
-        Console.Clear(); // Clears screen when device is selected
-        bool stayInSubMenu = true;
-        while (stayInSubMenu)
-        {
-            Console.WriteLine($"\n--- [{selectedDevice.DeviceName}] Controls ---");
-            Console.WriteLine("1. Turn ON");
-            Console.WriteLine("2. Turn OFF");
-            Console.WriteLine("3. Check Energy Consumption");
-            Console.WriteLine("4. <-- Back to Device List");
-            Console.Write("Choose action (1-4): ");
-            string actionChoice = Console.ReadLine();
-            switch (actionChoice)
-            {
-                case "1":
-                    selectedDevice.TurnOn();
-                    break;
-                case "2":
-                    selectedDevice.TurnOff();
-                    break;
-                case "3":
-                    double power = selectedDevice.GetEnergyConsumption();
-                    Console.WriteLine($"Current Power Draw: {power} Watts");
-                    break;
-                case "4":
-                    stayInSubMenu = false; // Exits loop and Console.Clear() runs at top
-                    break;
-                default:
-                    Console.WriteLine("Invalid action! Please choose 1, 2, 3, or 4.");
-                    break;
-            }
-        }
-    }
-    else
-    {
-        Console.WriteLine("Invalid device choice! Press Enter to try again...");
-        Console.ReadLine();
-    }
-}
+//List<SmartDevice> homeDevices = new List<SmartDevice>
+//            {
+//                new SmartLight("Living Room Light"),
+//                new SmartThermostat("Hallway Thermostat"),
+//                new SmartAC("Master Bedroom AC")
+//            };
+//while (true)
+//{
+//    Console.Clear(); // Clears console on main menu / when coming back
+//    Console.WriteLine("==============================");
+//    Console.WriteLine("    SMART HOME CONTROLLER     ");
+//    Console.WriteLine("==============================");
+//    Console.WriteLine("Select a Device:");
+//    for (int i = 0; i < homeDevices.Count; i++)
+//    {
+//        Console.WriteLine($"{i + 1}. {homeDevices[i].DeviceName}");
+//    }
+//    Console.WriteLine("0. Exit App");
+//    Console.Write("\nEnter choice (0-3): ");
+//    string deviceChoice = Console.ReadLine();
+//    if (deviceChoice == "0")
+//    {
+//        Console.Clear();
+//        Console.WriteLine("Exiting Smart Home App. Goodbye!");
+//        break;
+//    }
+//    if (int.TryParse(deviceChoice, out int index) && index >= 1 && index <= homeDevices.Count)
+//    {
+//        SmartDevice selectedDevice = homeDevices[index - 1];
+//        Console.Clear(); // Clears screen when device is selected
+//        bool stayInSubMenu = true;
+//        while (stayInSubMenu)
+//        {
+//            Console.WriteLine($"\n--- [{selectedDevice.DeviceName}] Controls ---");
+//            Console.WriteLine("1. Turn ON");
+//            Console.WriteLine("2. Turn OFF");
+//            Console.WriteLine("3. Check Energy Consumption");
+//            Console.WriteLine("4. <-- Back to Device List");
+//            Console.Write("Choose action (1-4): ");
+//            string actionChoice = Console.ReadLine();
+//            switch (actionChoice)
+//            {
+//                case "1":
+//                    selectedDevice.TurnOn();
+//                    break;
+//                case "2":
+//                    selectedDevice.TurnOff();
+//                    break;
+//                case "3":
+//                    double power = selectedDevice.GetEnergyConsumption();
+//                    Console.WriteLine($"Current Power Draw: {power} Watts");
+//                    break;
+//                case "4":
+//                    stayInSubMenu = false; // Exits loop and Console.Clear() runs at top
+//                    break;
+//                default:
+//                    Console.WriteLine("Invalid action! Please choose 1, 2, 3, or 4.");
+//                    break;
+//            }
+//        }
+//    }
+//    else
+//    {
+//        Console.WriteLine("Invalid device choice! Press Enter to try again...");
+//        Console.ReadLine();
+//    }
+//}
 
 //----------------------------------------------------question 8-----------------------------------------------------
 
