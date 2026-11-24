@@ -3,62 +3,78 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+//using assignment1.AllAbstract;
 
 namespace assignment1
 {
-    abstract class Loan
+    public void ProcessLoan()
     {
-        public void VerifyDocumentation()
+        Console.WriteLine($"\n--- Processing Loan for {ApplicantName} (${LoanAmount}) ---");
+        VerifyDocumentation();
+        if (CheckEligibility())
         {
-            Console.WriteLine("Verifying documentation for the loan.");
+            double interestRate = CalculateInterestRate();
+            Console.WriteLine($" Eligibility approved! Applied Interest Rate: {rate}%");
+            SanctionLoan();
         }
-        public void SanctionLoan()
+        else
         {
-            Console.WriteLine("Sanctioning the loan.");
+            Console.WriteLine(" REJECTED: Eligibility criteria not satisfied.");
         }
-
-        public abstract double CalculateInterest();
-        public abstract bool CheckEligibility();
-
-
     }
+
     class HomeLoan : Loan
     {
-        public override double CalculateInterest()
-        {
-            Console.WriteLine("Calculating interest for home loan.");
-            return 8;
-        }
+        public HomeLoan(string applicantName, double loanAmount) 
+            : base(applicantName, loanAmount){}
+
         public override bool CheckEligibility()
         {
             Console.WriteLine("Checking eligibility for home loan.");
             return true; // Example eligibility check
         }
+
+        public override double CalculateInterestRate()
+        {
+            Console.WriteLine("Checking Home Loan: Verifying property registry...");
+            return 8;
+        }
+        
     }
     class CarLoan : Loan
     {
+        public CarLoan(string applicantName, double loanAmount) 
+            : base(applicantName, loanAmount) { }
+
+        public override bool CheckEligibility()
+        {
+            Console.WriteLine("Checking Car Loan: Verifying dealer quotation and minimum income criteria...);
+            return true; // Example eligibility check
+        }
+
         public override double CalculateInterest()
         {
             Console.WriteLine("Calculating interest for car loan.");
-            return 9;
+            return 9.2;
         }
-        public override bool CheckEligibility()
-        {
-            Console.WriteLine("Checking eligibility for car loan.");
-            return true; // Example eligibility check
-        }
+        
     }
     class EducationLoan : Loan
     {
+        public EducationLoan(string applicantName, double loanAmount) 
+            : base(applicantName, loanAmount) { }
+
+        public override bool CheckEligibility()
+        {
+            Console.WriteLine("Checking Education Loan: Verifying college admission letter and co-applicant details...");
+            return true; // Example eligibility check
+        }
+
         public override double CalculateInterest()
         {
             Console.WriteLine("Calculating interest for education loan.");
             return 7;
         }
-        public override bool CheckEligibility()
-        {
-            Console.WriteLine("Checking eligibility for education loan.");
-            return true; // Example eligibility check
-        }
+        
     }
 }
