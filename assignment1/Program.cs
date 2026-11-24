@@ -71,16 +71,77 @@ static void DispatchAllAlerts(List<Notification> pipeline, string alertMessage)
     }
 }
 
-    
-    List<Notification> alertingPipeline = new List<Notification>
+List<Notification> alertingPipeline = new List<Notification>
             {
                 new EmailNotification(),
                 new SMSNotification(),
                 new WhatsAppNotification(),
                 new PushNotification()
             };
-    
-    DispatchAllAlerts(alertingPipeline, "CRITICAL: Database CPU usage exceeded 90%!");
+while (true)
+{
+    Console.Clear(); // Har baar screen clear karega
+    Console.WriteLine("========================================");
+    Console.WriteLine("    NOTIFICATION & ALERTING PIPELINE    ");
+    Console.WriteLine("========================================");
+    Console.WriteLine("Choose Delivery Option:");
+    Console.WriteLine("1. Send via Email");
+    Console.WriteLine("2. Send via SMS");
+    Console.WriteLine("3. Send via WhatsApp");
+    Console.WriteLine("4. Send via Push Notification");
+    Console.WriteLine("5. Broadcast to ALL Channels (Pipeline)");
+    Console.WriteLine("0. Exit App");
+    Console.Write("\nEnter choice (0-5): ");
+    string choice = Console.ReadLine();
+    if (choice == "0")
+    {
+        Console.Clear();
+        Console.WriteLine("Exiting Notification System. Goodbye!");
+        break;
+    }
+    if (choice == "1" || choice == "2" || choice == "3" || choice == "4" || choice == "5")
+    {
+        Console.Write("\nEnter Alert Message (Press Enter for Default): ");
+        string message = Console.ReadLine();
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            message = "CRITICAL: Database CPU usage exceeded 90%!";
+        }
+        Console.Clear(); // Result dikhane se pehle screen clear
+        switch (choice)
+        {
+            case "1":
+                Console.WriteLine("=== SINGLE CHANNEL DISPATCH ===");
+                alertingPipeline[0].SendNotification(message); // Email
+                break;
+            case "2":
+                Console.WriteLine("=== SINGLE CHANNEL DISPATCH ===");
+                alertingPipeline[1].SendNotification(message); // SMS
+                break;
+            case "3":
+                Console.WriteLine("=== SINGLE CHANNEL DISPATCH ===");
+                alertingPipeline[2].SendNotification(message); // WhatsApp
+                break;
+            case "4":
+                Console.WriteLine("=== SINGLE CHANNEL DISPATCH ===");
+                alertingPipeline[3].SendNotification(message); // Push
+                break;
+            case "5":
+                // Driver method calling all channels via late binding
+                DispatchAllAlerts(alertingPipeline, message);
+                break;
+        }
+        Console.WriteLine("\n----------------------------------------");
+        Console.WriteLine("Alert sent successfully!");
+        Console.WriteLine("Press any key to go back to Menu...");
+        Console.ReadKey();
+    }
+    else
+    {
+        Console.WriteLine("Invalid choice! Press any key to try again...");
+        Console.ReadKey();
+    }
+}
 
 
 //----------------------------------------------------question 6-----------------------------------------------------
