@@ -12,3 +12,11 @@ D:\avi\assignment1\obj\Debug\net8.0\refint\assignment1.dll
 D:\avi\assignment1\obj\Debug\net8.0\assignment1.pdb
 D:\avi\assignment1\obj\Debug\net8.0\assignment1.genruntimeconfig.cache
 D:\avi\assignment1\obj\Debug\net8.0\ref\assignment1.dll
+D:\avi\C#\assignment1\obj\Debug\net8.0\assignment1.GeneratedMSBuildEditorConfig.editorconfig
+D:\avi\C#\assignment1\obj\Debug\net8.0\assignment1.AssemblyInfoInputs.cache
+D:\avi\C#\assignment1\obj\Debug\net8.0\assignment1.AssemblyInfo.cs
+D:\avi\C#\assignment1\obj\Debug\net8.0\assignment1.csproj.CoreCompileInputs.cache
+D:\avi\C#\assignment1\obj\Debug\net8.0\assignment1.sourcelink.json
+D:\avi\C#\assignment1\obj\Debug\net8.0\assignment1.dll
+D:\avi\C#\assignment1\obj\Debug\net8.0\refint\assignment1.dll
+D:\avi\C#\assignment1\obj\Debug\net8.0\assignment1.pdb
