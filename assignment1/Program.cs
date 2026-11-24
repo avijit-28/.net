@@ -80,7 +80,7 @@ List<Notification> alertingPipeline = new List<Notification>
             };
 while (true)
 {
-    Console.Clear(); // Har baar screen clear karega
+    Console.Clear(); 
     Console.WriteLine("========================================");
     Console.WriteLine("    NOTIFICATION & ALERTING PIPELINE    ");
     Console.WriteLine("========================================");
@@ -101,7 +101,7 @@ while (true)
     }
     if (choice == "1" || choice == "2" || choice == "3" || choice == "4" || choice == "5")
     {
-        Console.Write("\nEnter Alert Message (Press Enter for Default): ");
+        Console.Write("\nEnter Message (Press Enter for Default): ");
         string message = Console.ReadLine();
         if (string.IsNullOrWhiteSpace(message))
         {
