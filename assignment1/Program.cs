@@ -9,7 +9,7 @@ PaymentProcessor gateway = new PaymentProcessor();
 Console.WriteLine("--- Test 1: Account Balance Encapsulation ---");
 gateway.AccountBalance = -500; // Rejected!
 gateway.AccountBalance = 25000; // Accepted!
-Console.WriteLine($"Current Balance: ₹{gateway.AccountBalance:N2}\n");
+Console.WriteLine($"Current Balance: ${gateway.AccountBalance}\n");
 // 2. Testing Card Masking
 Console.WriteLine("--- Test 2: Card Masking Encapsulation ---");
 gateway.CardNumber = "12345";              // Rejected (not 16 digits)
