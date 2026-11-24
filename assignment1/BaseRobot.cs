@@ -10,45 +10,44 @@ namespace assignment1
 {
     public abstract class BaseRobot
     {
-        public string name { get; set; }
-
-        public BaseRobot()
+        public string Name { get; set; }
+        public BaseRobot(string name)
         {
-            public void Start()
-            {
-            Console.WriteLine($"Robot {name} is starting.");
-            }
+            Name = name;
         }
-         
-        
-
+        public void Start()
+        {
+            Console.WriteLine($"Robot {Name} is starting.");
+        }
+        // Must be implemented by specific robot types
         public abstract void PerformTask();
     }
 
 
-    public class WarehouseRobot : BaseRobot, Isensor, Inevigable, Ichargeable
+    public class WarehouseRobot : BaseRobot, ISensor, INavigable, IChargeable
     {
         public WarehouseRobot(string name) : base(name)
         {
         }
-
+        // Overriding abstract method
         public override void PerformTask()
         {
-            Console.WriteLine($"Robot {name} is performing warehouse tasks.");
+            Console.WriteLine($"Robot {Name} is performing warehouse inventory handling.");
         }
+        // Implementing ISensor
         public void Detect()
         {
-            Console.WriteLine($"Robot {name} is detecting obstacles in the warehouse.");
+            Console.WriteLine($"Robot {Name} is detecting obstacles using LiDAR sensors.");
         }
-        public void Charge()
-        {
-            Console.WriteLine($"Robot {name} is charging.");
-        }
+        // Implementing INavigable
         public void Navigate(string destination)
         {
-            Console.WriteLine($"Robot {name} is navigating to {destination} in the warehouse.");
+            Console.WriteLine($"Robot {Name} is navigating to {destination}.");
+        }
+        // Implementing IChargeable
+        public void Charge()
+        {
+            Console.WriteLine($"Robot {Name} is docking and charging battery.");
         }
     }
-   }
-
 }
