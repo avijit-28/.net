@@ -47,6 +47,7 @@ namespace assignment1
 
         public void SetTemperature(double temp)
         {
+            Console.WriteLine($"Current temperature to {temp}°C...");
             if (temp >= 35.0 && temp <= 42.0)
             {
                 temperature = temp;
