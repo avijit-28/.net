@@ -90,7 +90,7 @@ Console.WriteLine("\nMethod Overriding Example:");
 List<Shape> cadCanvas = new List<Shape>
             {
                 new Circle(7.5),
-                new Polygon(),      // Hexagon
+                new Polygon(6),      // Hexagon
                 
             };
 // At runtime, the CLR checks the actual object type and dispatches the correct Draw()
