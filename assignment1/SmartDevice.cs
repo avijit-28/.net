@@ -6,38 +6,35 @@ using System.Threading.Tasks;
 
 namespace assignment1
 {
-    abstract class SmartDevice
-    {
-        public abstract void TurnOn();
-        public abstract void TurnOff();
-        public abstract double GetEnergyConsumption();
-    }
-
+    
     class SmartLight : SmartDevice
     {
+        public SmartLight(string deviceName) : base(deviceName) { }
         public override void TurnOn()
         {
-            Console.WriteLine("Smart Light is turned on.");
+            Console.WriteLine($"Smart Light ({DeviceName}) is turned on.");
         }
         public override void TurnOff()
         {
-            Console.WriteLine("Smart Light is turned off.");
+            Console.WriteLine($"Smart Light ({DeviceName}) is turned off.");
         }
         public override double GetEnergyConsumption()
         {
-            return 10.5; // Example energy consumption in watts
+            return 10.5; 
         }
     }
 
     class SmartThermostat : SmartDevice
     {
-                public override void TurnOn()
+        public SmartThermostat(string deviceName) : base(deviceName) { }
+
+        public override void TurnOn()
         {
-            Console.WriteLine("Smart Thermostat is turned on.");
+            Console.WriteLine($"Smart Thermostat ({DeviceName}) is turned on.");
         }
         public override void TurnOff()
         {
-            Console.WriteLine("Smart Thermostat is turned off.");
+            Console.WriteLine($"Smart Thermostat ({DeviceName}) is turned off.");
         }
         public override double GetEnergyConsumption()
         {
@@ -47,17 +44,18 @@ namespace assignment1
 
     class SmartAC : SmartDevice
     {
+        public SmartAC(string deviceName) : base(deviceName) { }
         public override void TurnOn()
         {
-            Console.WriteLine("Smart AC is turned on.");
+            Console.WriteLine($"Smart AC ({DeviceName}) is turned on.");
         }
         public override void TurnOff()
         {
-            Console.WriteLine("Smart AC is turned off.");
+            Console.WriteLine($"Smart AC ({DeviceName}) is turned off.");
         }
         public override double GetEnergyConsumption()
         {
-            return 1500; // Example energy consumption in watts
+            return 1500; 
         }
     }
 }
