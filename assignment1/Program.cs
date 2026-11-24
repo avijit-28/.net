@@ -22,7 +22,7 @@ gateway.SecurityToken = "BANK-OAUTH-TOKEN-XY99882";
 Console.WriteLine("\n--- Test 4: Processing Payment ---");
 gateway.ProcessTransaction(7500);  // Success
 gateway.ProcessTransaction(30000); // Declined (Insufficient funds)
-        }
+        
 
 
 //----------------------------------------------------question 2-----------------------------------------------------
