@@ -135,31 +135,23 @@
 //----------------------------------------------------question 9-----------------------------------------------------
 
 
-//ICloudStorage googleStorage = new GoogleStorage();
-//googleStorage.UploadFile("file1.txt");
-//googleStorage.DownloadFile("file1.txt");
-//googleStorage.DeleteFile("file1.txt");
-//Console.WriteLine('\n');
+// 1. Amazon S3 use karna:
+ICloudStorageProvider storage = new S3Storage();
+storage.UploadFile("video1.mp4");
+storage.DownloadFile("VID-101");
 
-//ICloudStorage azure_storage = new AzureStorage();
-//azure_storage.UploadFile("file2.txt");
-//azure_storage.DownloadFile("file2.txt");
-//azure_storage.DeleteFile("file2.txt");
+Console.WriteLine("-----------------------------");
 
+// 2. Azure me switch karna (Plug-and-play):
+storage = new AzureStorage();
+storage.UploadFile("photo.png");
+storage.DownloadFile("IMG-502");
 
-// Scenario 1: Media processor uses Amazon S3
-ICloudStorageProvider awsProvider = new S3Storage();
-MediaProcessor s3Processor = new MediaProcessor(awsProvider);
-s3Processor.ProcessAndStoreUserUpload(@"C:\uploads\video1.mp4", "VID-101");
-// Scenario 2: Switch company storage to Azure Blob (Plug-and-play!)
-// MediaProcessor code remains 100% UNTOUCHED
-ICloudStorageProvider azureProvider = new AzureStorage();
-MediaProcessor azureProcessor = new MediaProcessor(azureProvider);
-azureProcessor.ProcessAndStoreUserUpload(@"C:\uploads\photo.png", "IMG-502");
-// Scenario 3: Switch company storage to Google Cloud Storage
-ICloudStorageProvider gcpProvider = new GoogleCloudStorage();
-MediaProcessor gcpProcessor = new MediaProcessor(gcpProvider);
-gcpProcessor.RemoveMedia("IMG-502");
+Console.WriteLine("-----------------------------");
+
+// 3. Google Cloud me switch karna:
+storage = new GoogleCloudStorage();
+storage.DeleteFile("IMG-502");
 
 //----------------------------------------------------question 10-----------------------------------------------------
 
