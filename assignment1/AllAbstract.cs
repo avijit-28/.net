@@ -23,6 +23,22 @@ namespace assignment1
         public abstract double CalculateInterestRate();
         public abstract bool CheckEligibility();
 
+        public void ProcessLoan()
+        {
+            Console.WriteLine($"\n--- Processing Loan for {ApplicantName} (${LoanAmount}) ---");
+            VerifyDocumentation();
+            if (CheckEligibility())
+            {
+                double interestRate = CalculateInterestRate();
+                Console.WriteLine($" Eligibility approved! Applied Interest Rate: {rate}%");
+                SanctionLoan();
+            }
+            else
+            {
+                Console.WriteLine(" REJECTED: Eligibility criteria not satisfied.");
+            }
+        }
+
     }
 
     // BaseRobot abstract class
