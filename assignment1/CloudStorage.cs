@@ -6,42 +6,52 @@ using System.Threading.Tasks;
 
 namespace assignment1
 {
-        public interface ICloudStorage
+    public class S3Storage : ICloudStorageProvider
+    {
+        public void UploadFile(string path)
         {
-            void UploadFile(string fileName);
-            void DownloadFile(string fileName);
-            void DeleteFile(string fileName);
+            Console.WriteLine($"[Amazon S3] Uploading file from path '{path}' to S3 bucket.");
         }
-        public class GoogleStorage : ICloudStorage
+        public void DownloadFile(string fileId)
         {
-            public void UploadFile(string fileName)
-            {
-                Console.WriteLine($"Uploading {fileName} to Google storage.");
-            }   
-            public void DownloadFile(string fileName)
-            {
-                Console.WriteLine($"Downloading {fileName} from Google storage.");
-            }
-            public void DeleteFile(string fileName)
-            {
-                Console.WriteLine($"Deleting {fileName} from Google storage.");
-            }
+            Console.WriteLine($"[Amazon S3] Downloading object with Key '{fileId}' from S3 bucket.");
         }
+        public void DeleteFile(string fileId)
+        {
+            Console.WriteLine($"[Amazon S3] Deleting object with Key '{fileId}' from S3 bucket.");
+        }
+    }
 
-        public class AzureStorage : ICloudStorage
+    public class GoogleCloudStorage : ICloudStorageProvider
+    {
+        public void UploadFile(string path)
         {
-            public void UploadFile(string fileName)
-            {
-                Console.WriteLine($"Uploading {fileName} to Azure storage.");
-            }
-            public void DownloadFile(string fileName)
-            {
-                Console.WriteLine($"Downloading {fileName} from Azure storage.");
-            }
-            public void DeleteFile(string fileName)
-            {
-                Console.WriteLine($"Deleting {fileName} from Azure storage.");
-            }
+            Console.WriteLine($"[Google Cloud] Uploading '{path}' to GCS Bucket.");
         }
+        public void DownloadFile(string fileId)
+        {
+            Console.WriteLine($"[Google Cloud] Fetching object '{fileId}' via Cloud Storage API.");
+        }
+        public void DeleteFile(string fileId)
+        {
+            Console.WriteLine($"[Google Cloud] Deleting object '{fileId}' from GCS Bucket.");
+        }
+    }
+
+    public class AzureStorage : ICloudStorageProvider
+    {
+        public void UploadFile(string path)
+        {
+            Console.WriteLine($"[Azure Blob] Uploading '{path}' as Block Blob to Azure Storage Container.");
+        }
+        public void DownloadFile(string fileId)
+        {
+            Console.WriteLine($"[Azure Blob] Streaming blob content for BlobId '{fileId}'.");
+        }
+        public void DeleteFile(string fileId)
+        {
+            Console.WriteLine($"[Azure Blob] Marking and deleting blob '{fileId}'.");
+        }
+    }
 
 }
