@@ -53,7 +53,7 @@ namespace assignment1
         public override bool CheckEligibility()
         {
             Console.WriteLine("Checking Education Loan: Verifying college admission letter and co-applicant details...");
-            return true; // Example eligibility check
+            return true; // 
         }
 
         public override double CalculateInterestRate()
