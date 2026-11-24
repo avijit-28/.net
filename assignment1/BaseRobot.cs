@@ -12,14 +12,14 @@ namespace assignment1
     {
         public string name { get; set; }
 
-        public BaseRobot(string name)
+        public BaseRobot()
         {
-            this.name = name;
+            public void Start()
+            {
+                Console.WriteLine($"Robot {name} is starting.");
+            }
         }
-        public void Start()
-        {
-            Console.WriteLine($"Robot {name} is starting.");
-        }
+        
 
         public abstract void PerformTask();
     }
