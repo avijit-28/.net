@@ -1,14 +1,23 @@
 ﻿using System;
-
-/// <summary>
-/// Summary description for Class1
-/// </summary>
-public class Class1
+namespace assignment1
 {
-	public Class1()
-	{
-		//
-		// TODO: Add constructor logic here
-		//
-	}
+
+    // BaseRobot abstract class
+    public abstract class BaseRobot
+    {
+        public string Name { get; set; }
+        public BaseRobot(string name)
+        {
+            Name = name;
+        }
+        public void Start()
+        {
+            Console.WriteLine($"Robot {Name} is starting.");
+        }
+        // Must be implemented by specific robot types
+        public abstract void PerformTask();
+    }
+
 }
+
+   
