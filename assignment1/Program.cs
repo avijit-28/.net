@@ -18,7 +18,8 @@
 Healthcare patient = new Healthcare(101, "Rahul Verma");
 Console.WriteLine($"Patient Registered: {patient.PatientName} (ID: {patient.PatientId})\n");
 patient.SetMedicalHistory("Patient has asthma and mild seasonal allergy.");
-Console.WriteLine($"Medical History: {patient.GetMedicalHistory()}\n"); patient.SetTemperature(36.5);
+Console.WriteLine($"Medical History: {patient.GetMedicalHistory()}\n"); 
+
 Console.WriteLine("--- Temperature Validation Test ---");
 
 patient.SetTemperature(48.5);
