@@ -101,7 +101,8 @@ List<SmartDevice> homeDevices = new List<SmartDevice>
             };
 while (true)
 {
-    Console.WriteLine("\n==============================");
+    Console.Clear(); // Clears console on main menu / when coming back
+    Console.WriteLine("==============================");
     Console.WriteLine("    SMART HOME CONTROLLER     ");
     Console.WriteLine("==============================");
     Console.WriteLine("Select a Device:");
@@ -114,14 +115,14 @@ while (true)
     string deviceChoice = Console.ReadLine();
     if (deviceChoice == "0")
     {
+        Console.Clear();
         Console.WriteLine("Exiting Smart Home App. Goodbye!");
         break;
     }
-    // Check valid choice
     if (int.TryParse(deviceChoice, out int index) && index >= 1 && index <= homeDevices.Count)
     {
         SmartDevice selectedDevice = homeDevices[index - 1];
-        // --- Sub-menu for selected device ---
+        Console.Clear(); // Clears screen when device is selected
         bool stayInSubMenu = true;
         while (stayInSubMenu)
         {
@@ -145,8 +146,7 @@ while (true)
                     Console.WriteLine($"Current Power Draw: {power} Watts");
                     break;
                 case "4":
-                    stayInSubMenu = false; // Go back to outer device menu
-                    Console.WriteLine("Going back to device selection...");
+                    stayInSubMenu = false; // Exits loop and Console.Clear() runs at top
                     break;
                 default:
                     Console.WriteLine("Invalid action! Please choose 1, 2, 3, or 4.");
@@ -156,7 +156,8 @@ while (true)
     }
     else
     {
-        Console.WriteLine("Invalid device choice! Please try again.");
+        Console.WriteLine("Invalid device choice! Press Enter to try again...");
+        Console.ReadLine();
     }
 }
 
