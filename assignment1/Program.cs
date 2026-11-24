@@ -29,20 +29,22 @@
 
 //----------------------------------------------------question 3-----------------------------------------------------
 
-FullTimeEmployee ft = new FullTimeEmployee(101, "Aarav Sharma", 60000, 10000, 5000);
-ContractEmployee ct = new ContractEmployee(102, "Pooja Verma", 45000, 6, 4000);
-Freelancer fl = new Freelancer(103, "Rohan Das", 15000, 4, 12000);
+employee baseEmp = new employee(100, "Suresh Kumar", 30000);
+FullTimeEmployee ftEmp = new FullTimeEmployee(101, "Aarav Sharma", 60000, 10000, 5000);
+ContractEmployee ctEmp = new ContractEmployee(102, "Pooja Verma", 45000, 6, 4000);
+FreelanceEmployee flEmp = new FreelanceEmployee(103, "Rohan Das", 15000, 8000, 5);
 while (true)
 {
     Console.Clear();
     Console.WriteLine("========================================");
     Console.WriteLine("    ENTERPRISE PAYROLL SYSTEM MENU      ");
     Console.WriteLine("========================================");
-    Console.WriteLine("1. View Full-Time Employee Payroll");
-    Console.WriteLine("2. View Contract Employee Payroll");
-    Console.WriteLine("3. View Freelancer Payroll");
+    Console.WriteLine("1. Base Employee Info");
+    Console.WriteLine("2. Full-Time Employee Payroll");
+    Console.WriteLine("3. Contract Employee Payroll");
+    Console.WriteLine("4. Freelance Employee Payroll");
     Console.WriteLine("0. Exit");
-    Console.Write("\nEnter choice (0-3): ");
+    Console.Write("\nEnter choice (0-4): ");
     string choice = Console.ReadLine();
     if (choice == "0")
     {
@@ -50,23 +52,27 @@ while (true)
         Console.WriteLine("Exiting Payroll System. Goodbye!");
         break;
     }
-    Console.Clear(); // Clears screen before showing payroll
+    Console.Clear(); 
     switch (choice)
     {
         case "1":
-            Console.WriteLine("=== FULL-TIME EMPLOYEE PAYROLL ===");
-            ft.DisplayEmployeeInfo();
+            Console.WriteLine("=== [BASE EMPLOYEE] ===");
+            baseEmp.DisplayEmployeeInfo();
             break;
         case "2":
-            Console.WriteLine("=== CONTRACT EMPLOYEE PAYROLL ===");
-            ct.DisplayEmployeeInfo();
+            Console.WriteLine("=== [FULL-TIME EMPLOYEE] ===");
+            ftEmp.DisplayEmployeeInfo();
             break;
         case "3":
-            Console.WriteLine("=== FREELANCER PAYROLL ===");
-            fl.DisplayEmployeeInfo();
+            Console.WriteLine("=== [CONTRACT EMPLOYEE] ===");
+            ctEmp.DisplayEmployeeInfo();
+            break;
+        case "4":
+            Console.WriteLine("=== [FREELANCE EMPLOYEE] ===");
+            flEmp.DisplayEmployeeInfo();
             break;
         default:
-            Console.WriteLine("Invalid choice! Choose between 0 and 3.");
+            Console.WriteLine("Invalid choice! Choose between 0 and 4.");
             break;
     }
     Console.WriteLine("\n----------------------------------------");
