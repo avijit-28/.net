@@ -71,3 +71,4 @@ D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\refint\Assignment3.dll
 D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\Assignment3.pdb
 D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\Assignment3.genruntimeconfig.cache
 D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\ref\Assignment3.dll
+D:\avi\C#\Assignments\Assignment3\bin\Debug\net10.0\appsettings.json
