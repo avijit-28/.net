@@ -12,6 +12,7 @@ IConfiguration configuration = new ConfigurationBuilder()
 // Load application settings.
 AppSettings settings = AppSettings.Load(configuration);
 MeterReconciliationRepository repository =
+
     new MeterReconciliationRepository(settings);
 
 await repository.TestConnectionAsync();
