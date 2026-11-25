@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "KVMS+VY9yPw=",
+  "dgSpecHash": "rLbtwIO8XPI=",
   "success": true,
   "projectFilePath": "D:\\avi\\C#\\Assignments\\Assignment3\\Assignment3.csproj",
   "expectedPackageFiles": [
@@ -13,6 +13,7 @@
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.extensions.caching.memory\\9.0.21\\microsoft.extensions.caching.memory.9.0.21.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.extensions.configuration\\11.0.0\\microsoft.extensions.configuration.11.0.0.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\11.0.0\\microsoft.extensions.configuration.abstractions.11.0.0.nupkg.sha512",
+    "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.extensions.configuration.binder\\11.0.0\\microsoft.extensions.configuration.binder.11.0.0.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.extensions.configuration.fileextensions\\11.0.0\\microsoft.extensions.configuration.fileextensions.11.0.0.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.extensions.configuration.json\\11.0.0\\microsoft.extensions.configuration.json.11.0.0.nupkg.sha512",
     "C:\\Users\\avijitpakhira\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.0\\microsoft.extensions.dependencyinjection.abstractions.10.0.0.nupkg.sha512",
