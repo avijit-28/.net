@@ -1,4 +1,5 @@
 ﻿
+using System.Data;
 using Microsoft.Extensions.Configuration;
 using Assignment3.Configuration;
 using Assignment3.Repositories;
@@ -14,10 +15,10 @@ IConfiguration configuration = new ConfigurationBuilder()
         reloadOnChange: true)
     .Build();
 
-// Load application settings.
+// Load settings.
 AppSettings settings = AppSettings.Load(configuration);
 
-// Initialize application components.
+// Initialize components.
 var repository =
     new MeterReconciliationRepository(settings);
 
@@ -38,6 +39,7 @@ while (running)
     Console.WriteLine("================================");
     Console.WriteLine("1. Test SQL connection");
     Console.WriteLine("2. Synchronize meter readings");
+    Console.WriteLine("3. View reconciliation summary");
     Console.WriteLine("0. Exit");
     Console.Write("Select option: ");
 
@@ -51,6 +53,39 @@ while (running)
 
         case "2":
             await orchestrator.SyncMeterReadingsAsync();
+            break;
+
+        case "3":
+            DataTable summary =
+                await repository.GetReconciliationSummaryAsync();
+
+            if (summary.Rows.Count == 0)
+            {
+                Console.WriteLine("No reconciliation summary found.");
+            }
+            else
+            {
+                Console.WriteLine("\nReconciliation Summary:");
+
+                foreach (DataColumn column in summary.Columns)
+                {
+                    Console.Write($"{column.ColumnName,-25}");
+                }
+
+                Console.WriteLine();
+
+                foreach (DataRow row in summary.Rows)
+                {
+                    foreach (DataColumn column in summary.Columns)
+                    {
+                        Console.Write(
+                            $"{row[column],-25}");
+                    }
+
+                    Console.WriteLine();
+                }
+            }
+
             break;
 
         case "0":
