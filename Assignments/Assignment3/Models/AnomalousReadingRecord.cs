@@ -10,7 +10,7 @@ namespace Assignment3.Models
 
         public string MeterSerialNumber { get; set; } = string.Empty;
 
-        public int? FeederId { get; set; }
+        public string? FeederId { get; set; }
 
         public DateTime ReadingDate { get; set; }
 
