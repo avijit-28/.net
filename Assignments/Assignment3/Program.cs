@@ -19,8 +19,7 @@ AppSettings settings = AppSettings.Load(configuration);
 
 // Initialize application components.
 var repository =
-    new MeterReconciliationRepository(
-        settings.ConnectionString);
+    new MeterReconciliationRepository(settings);
 
 var apiClient =
     new MeterApiClient(settings);
