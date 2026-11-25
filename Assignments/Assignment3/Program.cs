@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Extensions.Configuration;
 using Assignment3.Configuration;
+using Assignment3.Repositories;
 
 // Load appsettings.json from the application output directory.
 IConfiguration configuration = new ConfigurationBuilder()
@@ -10,6 +11,10 @@ IConfiguration configuration = new ConfigurationBuilder()
 
 // Load application settings.
 AppSettings settings = AppSettings.Load(configuration);
+MeterReconciliationRepository repository =
+    new MeterReconciliationRepository(settings);
+
+await repository.TestConnectionAsync();
 
 Console.WriteLine("Configuration loaded successfully.");
 Console.WriteLine($"API Base URL: {settings.ApiBaseUrl}");
