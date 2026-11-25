@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 using System.Data;
 using Microsoft.Extensions.Configuration;
 using Assignment3.Configuration;
@@ -35,66 +35,102 @@ bool running = true;
 while (running)
 {
     Console.WriteLine("\n================================");
-    Console.WriteLine(" METER RECONCILIATION SYSTEM");
+    Console.WriteLine("  METER RECONCILIATION SYSTEM   ");
     Console.WriteLine("================================");
     Console.WriteLine("1. Test SQL connection");
     Console.WriteLine("2. Synchronize meter readings");
     Console.WriteLine("3. View reconciliation summary");
+    Console.WriteLine("4. View anomalous readings");
     Console.WriteLine("0. Exit");
     Console.Write("Select option: ");
 
     string? choice = Console.ReadLine();
-
-    switch (choice)
+    if (choice == null)
     {
-        case "1":
-            await repository.TestConnectionAsync();
-            break;
+        break;
+    }
 
-        case "2":
-            await orchestrator.SyncMeterReadingsAsync();
-            break;
+    try
+    {
+        switch (choice.Trim())
+        {
+            case "1":
+                await repository.TestConnectionAsync();
+                break;
 
-        case "3":
-            DataTable summary =
-                await repository.GetReconciliationSummaryAsync();
+            case "2":
+                await orchestrator.SyncMeterReadingsAsync();
+                break;
 
-            if (summary.Rows.Count == 0)
-            {
-                Console.WriteLine("No reconciliation summary found.");
-            }
-            else
-            {
-                Console.WriteLine("\nReconciliation Summary:");
+            case "3":
+                DataTable summary =
+                    await repository.GetReconciliationSummaryAsync();
 
-                foreach (DataColumn column in summary.Columns)
+                if (summary.Rows.Count == 0)
                 {
-                    Console.Write($"{column.ColumnName,-25}");
+                    Console.WriteLine("No reconciliation summary found.");
                 }
-
-                Console.WriteLine();
-
-                foreach (DataRow row in summary.Rows)
+                else
                 {
+                    Console.WriteLine("\n--- Reconciliation Summary ---");
+
                     foreach (DataColumn column in summary.Columns)
                     {
-                        Console.Write(
-                            $"{row[column],-25}");
+                        Console.Write($"{column.ColumnName,-30}");
                     }
 
                     Console.WriteLine();
+                    Console.WriteLine(new string('-', summary.Columns.Count * 30));
+
+                    foreach (DataRow row in summary.Rows)
+                    {
+                        foreach (DataColumn column in summary.Columns)
+                        {
+                            Console.Write($"{row[column],-30}");
+                        }
+
+                        Console.WriteLine();
+                    }
                 }
-            }
 
-            break;
+                break;
 
-        case "0":
-            running = false;
-            Console.WriteLine("Application closed.");
-            break;
+            case "4":
+                var anomalies = await repository.GetAnomalousReadingsAsync();
 
-        default:
-            Console.WriteLine("Invalid option.");
-            break;
+                if (anomalies.Count == 0)
+                {
+                    Console.WriteLine("No anomalous readings found.");
+                }
+                else
+                {
+                    Console.WriteLine("\n--- Anomalous Readings ---");
+                    Console.WriteLine($"{"ReadingId",-10} {"MeterSerial",-15} {"ReadingDate",-22} {"CumulKWh",-12} {"PrevCumul",-12} {"Status",-10}");
+                    Console.WriteLine(new string('-', 85));
+
+                    foreach (var a in anomalies)
+                    {
+                        string prevStr = a.PreviousCumulativeKWh.HasValue ? a.PreviousCumulativeKWh.Value.ToString("F3") : "N/A";
+                        Console.WriteLine($"{a.ReadingId,-10} {a.MeterSerialNumber,-15} {a.ReadingDate:yyyy-MM-dd HH:mm:ss} {a.CumulativeKWh,10:F3}  {prevStr,10}  {a.ReadingStatus,-10}");
+                    }
+                }
+
+                break;
+
+            case "0":
+                running = false;
+                Console.WriteLine("Application closed.");
+                break;
+
+            default:
+                Console.WriteLine("Invalid option.");
+                break;
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"\n[ERROR] An error occurred: {ex.Message}");
+        Console.ResetColor();
     }
 }
