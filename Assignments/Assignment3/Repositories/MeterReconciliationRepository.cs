@@ -204,7 +204,7 @@ namespace Assignment3.Repositories
         // 4. Retrieve anomalous readings
         public async Task<List<AnomalousReadingRecord>>
             GetAnomalousReadingsAsync(
-                int? feederId = null,
+                string? feederId = null,
                 DateTime? startDate = null,
                 DateTime? endDate = null)
         {
@@ -223,7 +223,8 @@ namespace Assignment3.Repositories
 
             command.Parameters.Add(
                 "@FeederId",
-                SqlDbType.Int).Value =
+                SqlDbType.VarChar,
+                30).Value =
                     (object?)feederId ?? DBNull.Value;
 
             command.Parameters.Add(
@@ -254,7 +255,7 @@ namespace Assignment3.Repositories
                     FeederId = reader.IsDBNull(
                         reader.GetOrdinal("FeederId"))
                         ? null
-                        : reader.GetInt32(
+                        : reader.GetString(
                             reader.GetOrdinal("FeederId")),
 
                     ReadingDate = reader.GetDateTime(
