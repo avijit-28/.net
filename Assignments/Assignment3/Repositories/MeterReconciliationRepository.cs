@@ -309,27 +309,27 @@ namespace Assignment3.Repositories
                 100).Value = result.BatchId;
 
             command.Parameters.Add(
-                "@TotalReadings",
+                "@TotalReceived",
                 SqlDbType.Int).Value = result.TotalReadings;
 
             command.Parameters.Add(
-                "@InsertedReadings",
+                "@InsertedCount",
                 SqlDbType.Int).Value = result.InsertedReadings;
 
             command.Parameters.Add(
-                "@DuplicateReadings",
+                "@DuplicateCount",
                 SqlDbType.Int).Value = result.DuplicateReadings;
 
             command.Parameters.Add(
-                "@RejectedReadings",
+                "@RejectedCount",
                 SqlDbType.Int).Value = result.RejectedReadings;
 
             command.Parameters.Add(
-                "@AnomalyReadings",
+                "@AnomalyCount",
                 SqlDbType.Int).Value = result.AnomalyReadings;
 
             command.Parameters.Add(
-                "@FailedReadings",
+                "@FailedCount",
                 SqlDbType.Int).Value = result.FailedReadings;
 
             SqlParameter statusParameter =
