@@ -194,50 +194,50 @@ namespace Assignment3.Services
 
             return new List<MeterReadingDto>
             {
-                // Reading 1: Baseline reading for MTR-1001
+                // Reading 1: Baseline / normal reading for MTR-1001
                 new MeterReadingDto
                 {
                     MeterSerialNumber = "MTR-1001",
                     ExternalReadingId = $"EXT-{batchId}-001",
                     BatchId = batchId,
-                    ReadingDate = now.AddHours(-2),
-                    CumulativeKWh = 1200.500m
+                    ReadingDate = now.AddMinutes(-5),
+                    CumulativeKWh = 2000.000m
                 },
-                // Reading 2: Subsequent reading for MTR-1001 (Valid Consumption: +15.5 kWh)
+                // Reading 2: Normal positive consumption for MTR-1001 (+25 kWh)
                 new MeterReadingDto
                 {
                     MeterSerialNumber = "MTR-1001",
                     ExternalReadingId = $"EXT-{batchId}-002",
                     BatchId = batchId,
-                    ReadingDate = now.AddHours(-1),
-                    CumulativeKWh = 1216.000m
+                    ReadingDate = now.AddMinutes(-3),
+                    CumulativeKWh = 2025.000m
                 },
-                // Reading 3: Baseline reading for MTR-1002
+                // Reading 3: Reading for MTR-3001
                 new MeterReadingDto
                 {
-                    MeterSerialNumber = "MTR-1002",
+                    MeterSerialNumber = "MTR-3001",
                     ExternalReadingId = $"EXT-{batchId}-003",
                     BatchId = batchId,
-                    ReadingDate = now.AddHours(-2),
-                    CumulativeKWh = 850.000m
+                    ReadingDate = now.AddMinutes(-4),
+                    CumulativeKWh = 1500.000m
                 },
-                // Reading 4: Subsequent reading for MTR-1002 with LOWER cumulative kWh (Anomaly / Negative consumption)
+                // Reading 4: LOWER reading for MTR-3001 (Negative Delta -> Triggers Anomaly!)
                 new MeterReadingDto
                 {
-                    MeterSerialNumber = "MTR-1002",
+                    MeterSerialNumber = "MTR-3001",
                     ExternalReadingId = $"EXT-{batchId}-004",
                     BatchId = batchId,
-                    ReadingDate = now.AddHours(-1),
-                    CumulativeKWh = 810.000m
+                    ReadingDate = now.AddMinutes(-2),
+                    CumulativeKWh = 1420.000m
                 },
-                // Reading 5: Invalid negative cumulative kWh (Rejected by database)
+                // Reading 5: Negative cumulative reading (Rejected by database)
                 new MeterReadingDto
                 {
                     MeterSerialNumber = "MTR-2001",
                     ExternalReadingId = $"EXT-{batchId}-005",
                     BatchId = batchId,
-                    ReadingDate = now.AddHours(-1),
-                    CumulativeKWh = -25.000m
+                    ReadingDate = now.AddMinutes(-1),
+                    CumulativeKWh = -50.000m
                 },
                 // Reading 6: Unknown meter serial number (Rejected by database)
                 new MeterReadingDto
@@ -245,8 +245,8 @@ namespace Assignment3.Services
                     MeterSerialNumber = "MTR-UNKNOWN-999",
                     ExternalReadingId = $"EXT-{batchId}-006",
                     BatchId = batchId,
-                    ReadingDate = now.AddHours(-1),
-                    CumulativeKWh = 350.000m
+                    ReadingDate = now.AddMinutes(-1),
+                    CumulativeKWh = 300.000m
                 },
                 // Reading 7: Duplicate of Reading 2 (Duplicate check)
                 new MeterReadingDto
@@ -254,8 +254,8 @@ namespace Assignment3.Services
                     MeterSerialNumber = "MTR-1001",
                     ExternalReadingId = $"EXT-{batchId}-002",
                     BatchId = batchId,
-                    ReadingDate = now.AddHours(-1),
-                    CumulativeKWh = 1216.000m
+                    ReadingDate = now.AddMinutes(-3),
+                    CumulativeKWh = 2025.000m
                 }
             };
         }
