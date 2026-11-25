@@ -87,6 +87,8 @@ namespace Assignment3.ApiClients
                     string.Join("&", queryParameters);
             }
 
+            Exception? lastException = null;
+
             for (int attempt = 1;
                  attempt <= _maxRetryAttempts;
                  attempt++)
@@ -122,35 +124,51 @@ namespace Assignment3.ApiClients
                         statusCode == 404)
                     {
                         throw new HttpRequestException(
-                            $"API request failed. HTTP status: {statusCode}");
+                            $"API request failed. HTTP status: {statusCode} ({response.ReasonPhrase})");
                     }
 
                     if (statusCode != 429 &&
                         statusCode != 503)
                     {
                         throw new HttpRequestException(
-                            $"API request failed. HTTP status: {statusCode}");
+                            $"API request failed. HTTP status: {statusCode} ({response.ReasonPhrase})");
                     }
 
                     if (attempt == _maxRetryAttempts)
                     {
                         throw new HttpRequestException(
                             $"API request failed after {attempt} attempts. " +
-                            $"HTTP status: {statusCode}");
+                            $"HTTP status: {statusCode} ({response.ReasonPhrase})");
                     }
                 }
-                catch (TaskCanceledException)
-                    when (attempt == _maxRetryAttempts)
+                catch (HttpRequestException ex)
                 {
-                    throw new TimeoutException(
-                        "The meter API request timed out.");
+                    lastException = ex;
+                    if (attempt < _maxRetryAttempts)
+                    {
+                        Console.WriteLine($"[API Retry {attempt}/{_maxRetryAttempts}] Connection failed: {ex.Message}. Retrying...");
+                    }
+                }
+                catch (TaskCanceledException ex)
+                {
+                    lastException = ex;
+                    if (attempt < _maxRetryAttempts)
+                    {
+                        Console.WriteLine($"[API Retry {attempt}/{_maxRetryAttempts}] Request timed out. Retrying...");
+                    }
                 }
 
-                await Task.Delay(
-                    TimeSpan.FromSeconds(attempt * 2));
+                if (attempt < _maxRetryAttempts)
+                {
+                    await Task.Delay(
+                        TimeSpan.FromSeconds(attempt * 2));
+                }
             }
 
-            return new List<MeterReadingDto>();
+            throw new HttpRequestException(
+                $"Unable to connect to Web API at {_httpClient.BaseAddress} after {_maxRetryAttempts} attempts. " +
+                $"Please ensure the API server is running and accessible. (Error: {lastException?.Message})",
+                lastException);
         }
     }
 }
