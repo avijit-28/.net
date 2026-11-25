@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
@@ -16,6 +18,7 @@ namespace Assignment3.Repositories
             _connectionString = settings.ConnectionString;
         }
 
+        // 1. Test SQL Server connection
         public async Task TestConnectionAsync()
         {
             using SqlConnection connection =
@@ -26,7 +29,7 @@ namespace Assignment3.Repositories
             Console.WriteLine("SQL Server connection successful.");
         }
 
-
+        // 2. Insert a meter reading using stored procedure
         public async Task<(int ReturnCode, string Status, string Message)>
             UpsertMeterReadingAsync(MeterReadingDto reading)
         {
@@ -34,7 +37,9 @@ namespace Assignment3.Repositories
                 new SqlConnection(_connectionString);
 
             using SqlCommand command =
-                new SqlCommand("dbo.usp_UpsertMeterReading", connection);
+                new SqlCommand(
+                    "dbo.usp_UpsertMeterReading",
+                    connection);
 
             command.CommandType = CommandType.StoredProcedure;
 
@@ -73,7 +78,8 @@ namespace Assignment3.Repositories
                     SqlDbType.NVarChar,
                     20);
 
-            statusParameter.Direction = ParameterDirection.Output;
+            statusParameter.Direction =
+                ParameterDirection.Output;
 
             SqlParameter messageParameter =
                 command.Parameters.Add(
@@ -81,14 +87,16 @@ namespace Assignment3.Repositories
                     SqlDbType.NVarChar,
                     500);
 
-            messageParameter.Direction = ParameterDirection.Output;
+            messageParameter.Direction =
+                ParameterDirection.Output;
 
             SqlParameter returnParameter =
                 command.Parameters.Add(
                     "@RETURN_VALUE",
                     SqlDbType.Int);
 
-            returnParameter.Direction = ParameterDirection.ReturnValue;
+            returnParameter.Direction =
+                ParameterDirection.ReturnValue;
 
             await connection.OpenAsync();
 
@@ -98,15 +106,17 @@ namespace Assignment3.Repositories
                 (int)returnParameter.Value;
 
             string status =
-                statusParameter.Value?.ToString() ?? string.Empty;
+                statusParameter.Value?.ToString()
+                ?? string.Empty;
 
             string message =
-                messageParameter.Value?.ToString() ?? string.Empty;
+                messageParameter.Value?.ToString()
+                ?? string.Empty;
 
             return (returnCode, status, message);
         }
 
-
+        // 3. Calculate consumption difference
         public async Task<int> CalculateConsumptionDeltaAsync(
             Guid runId,
             long readingId)
@@ -119,7 +129,8 @@ namespace Assignment3.Repositories
                     "dbo.usp_CalculateConsumptionDelta",
                     connection);
 
-            command.CommandType = CommandType.StoredProcedure;
+            command.CommandType =
+                CommandType.StoredProcedure;
 
             command.Parameters.Add(
                 "@RunId",
@@ -144,6 +155,86 @@ namespace Assignment3.Repositories
             return (int)returnParameter.Value;
         }
 
+        // 4. Retrieve anomalous meter readings
+        public async Task<List<AnomalousReadingRecord>>
+            GetAnomalousReadingsAsync(
+                int? feederId = null,
+                DateTime? startDate = null,
+                DateTime? endDate = null)
+        {
+            List<AnomalousReadingRecord> readings = new();
 
+            using SqlConnection connection =
+                new SqlConnection(_connectionString);
+
+            using SqlCommand command =
+                new SqlCommand(
+                    "dbo.usp_GetAnomalousReadings",
+                    connection);
+
+            command.CommandType =
+                CommandType.StoredProcedure;
+
+            command.Parameters.Add(
+                "@FeederId",
+                SqlDbType.Int).Value =
+                    (object?)feederId ?? DBNull.Value;
+
+            command.Parameters.Add(
+                "@StartDate",
+                SqlDbType.Date).Value =
+                    (object?)startDate ?? DBNull.Value;
+
+            command.Parameters.Add(
+                "@EndDate",
+                SqlDbType.Date).Value =
+                    (object?)endDate ?? DBNull.Value;
+
+            await connection.OpenAsync();
+
+            using SqlDataReader reader =
+                await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                readings.Add(new AnomalousReadingRecord
+                {
+                    ReadingId = reader.GetInt64(
+                        reader.GetOrdinal("ReadingId")),
+
+                    MeterSerialNumber = reader.GetString(
+                        reader.GetOrdinal("MeterSerialNumber")),
+
+                    FeederId = reader.IsDBNull(
+                        reader.GetOrdinal("FeederId"))
+                        ? null
+                        : reader.GetInt32(
+                            reader.GetOrdinal("FeederId")),
+
+                    ReadingDate = reader.GetDateTime(
+                        reader.GetOrdinal("ReadingDate")),
+
+                    CumulativeKWh = reader.GetDecimal(
+                        reader.GetOrdinal("CumulativeKWh")),
+
+                    PreviousCumulativeKWh = reader.IsDBNull(
+                        reader.GetOrdinal("PreviousCumulativeKWh"))
+                        ? null
+                        : reader.GetDecimal(
+                            reader.GetOrdinal("PreviousCumulativeKWh")),
+
+                    ConsumptionKWh = reader.IsDBNull(
+                        reader.GetOrdinal("ConsumptionKWh"))
+                        ? null
+                        : reader.GetDecimal(
+                            reader.GetOrdinal("ConsumptionKWh")),
+
+                    ReadingStatus = reader.GetString(
+                        reader.GetOrdinal("ReadingStatus"))
+                });
+            }
+
+            return readings;
+        }
     }
 }
