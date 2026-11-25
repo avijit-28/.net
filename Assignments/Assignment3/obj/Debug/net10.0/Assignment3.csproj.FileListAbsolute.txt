@@ -1,0 +1,16 @@
+D:\avi\C#\Assignments\Assignment3\bin\Debug\net10.0\Assignment3.exe
+D:\avi\C#\Assignments\Assignment3\bin\Debug\net10.0\Assignment3.deps.json
+D:\avi\C#\Assignments\Assignment3\bin\Debug\net10.0\Assignment3.runtimeconfig.json
+D:\avi\C#\Assignments\Assignment3\bin\Debug\net10.0\Assignment3.dll
+D:\avi\C#\Assignments\Assignment3\bin\Debug\net10.0\Assignment3.pdb
+D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\Assignment3.GeneratedMSBuildEditorConfig.editorconfig
+D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\Assignment3.AssemblyInfoInputs.cache
+D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\Assignment3.AssemblyInfo.cs
+D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\Assignment3.csproj.CoreCompileInputs.cache
+D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\Assignment3.sourcelink.json
+D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\Assignment3.dll
+D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\refint\Assignment3.dll
+D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\Assignment3.pdb
+D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\Assignment3.genruntimeconfig.cache
+D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\ref\Assignment3.dll
+D:\avi\C#\Assignments\Assignment3\obj\Debug\net10.0\Assignme.63108F37.Up2Date
