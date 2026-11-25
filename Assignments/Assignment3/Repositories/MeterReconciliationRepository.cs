@@ -29,7 +29,7 @@ namespace Assignment3.Repositories
             Console.WriteLine("SQL Server connection successful.");
         }
 
-        // 2. Insert a meter reading using stored procedure
+        // 2. Insert a meter reading
         public async Task<(int ReturnCode, string Status, string Message)>
             UpsertMeterReadingAsync(MeterReadingDto reading)
         {
@@ -116,7 +116,7 @@ namespace Assignment3.Repositories
             return (returnCode, status, message);
         }
 
-        // 3. Calculate consumption difference
+        // 3. Calculate consumption delta
         public async Task<int> CalculateConsumptionDeltaAsync(
             Guid runId,
             long readingId)
@@ -155,7 +155,7 @@ namespace Assignment3.Repositories
             return (int)returnParameter.Value;
         }
 
-        // 4. Retrieve anomalous meter readings
+        // 4. Retrieve anomalous readings
         public async Task<List<AnomalousReadingRecord>>
             GetAnomalousReadingsAsync(
                 int? feederId = null,
@@ -235,6 +235,138 @@ namespace Assignment3.Repositories
             }
 
             return readings;
+        }
+
+        // 5. Log reconciliation run
+        public async Task<(int ReturnCode, string Status, string Message)>
+            LogReconciliationRunAsync(
+                ReconciliationRunResult result)
+        {
+            using SqlConnection connection =
+                new SqlConnection(_connectionString);
+
+            using SqlCommand command =
+                new SqlCommand(
+                    "dbo.usp_LogReconciliationRun",
+                    connection);
+
+            command.CommandType =
+                CommandType.StoredProcedure;
+
+            command.Parameters.Add(
+                "@RunId",
+                SqlDbType.UniqueIdentifier).Value = result.RunId;
+
+            command.Parameters.Add(
+                "@BatchId",
+                SqlDbType.NVarChar,
+                100).Value = result.BatchId;
+
+            command.Parameters.Add(
+                "@TotalReadings",
+                SqlDbType.Int).Value = result.TotalReadings;
+
+            command.Parameters.Add(
+                "@InsertedReadings",
+                SqlDbType.Int).Value = result.InsertedReadings;
+
+            command.Parameters.Add(
+                "@DuplicateReadings",
+                SqlDbType.Int).Value = result.DuplicateReadings;
+
+            command.Parameters.Add(
+                "@RejectedReadings",
+                SqlDbType.Int).Value = result.RejectedReadings;
+
+            command.Parameters.Add(
+                "@AnomalyReadings",
+                SqlDbType.Int).Value = result.AnomalyReadings;
+
+            command.Parameters.Add(
+                "@FailedReadings",
+                SqlDbType.Int).Value = result.FailedReadings;
+
+            SqlParameter statusParameter =
+                command.Parameters.Add(
+                    "@Status",
+                    SqlDbType.NVarChar,
+                    20);
+
+            statusParameter.Direction =
+                ParameterDirection.Output;
+
+            SqlParameter messageParameter =
+                command.Parameters.Add(
+                    "@Message",
+                    SqlDbType.NVarChar,
+                    500);
+
+            messageParameter.Direction =
+                ParameterDirection.Output;
+
+            SqlParameter returnParameter =
+                command.Parameters.Add(
+                    "@RETURN_VALUE",
+                    SqlDbType.Int);
+
+            returnParameter.Direction =
+                ParameterDirection.ReturnValue;
+
+            await connection.OpenAsync();
+
+            await command.ExecuteNonQueryAsync();
+
+            int returnCode =
+                (int)returnParameter.Value;
+
+            string status =
+                statusParameter.Value?.ToString()
+                ?? string.Empty;
+
+            string message =
+                messageParameter.Value?.ToString()
+                ?? string.Empty;
+
+            return (returnCode, status, message);
+        }
+
+        // 6. Retrieve reconciliation summaries
+        public async Task<DataTable> GetReconciliationSummaryAsync(
+            Guid? runId = null,
+            string? batchId = null)
+        {
+            DataTable summaryTable = new DataTable();
+
+            using SqlConnection connection =
+                new SqlConnection(_connectionString);
+
+            using SqlCommand command =
+                new SqlCommand(
+                    "dbo.usp_GetReconciliationSummary",
+                    connection);
+
+            command.CommandType =
+                CommandType.StoredProcedure;
+
+            command.Parameters.Add(
+                "@RunId",
+                SqlDbType.UniqueIdentifier).Value =
+                    (object?)runId ?? DBNull.Value;
+
+            command.Parameters.Add(
+                "@BatchId",
+                SqlDbType.NVarChar,
+                100).Value =
+                    (object?)batchId ?? DBNull.Value;
+
+            await connection.OpenAsync();
+
+            using SqlDataReader reader =
+                await command.ExecuteReaderAsync();
+
+            summaryTable.Load(reader);
+
+            return summaryTable;
         }
     }
 }
