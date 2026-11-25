@@ -30,8 +30,8 @@ namespace Assignment3.Repositories
         }
 
         // 2. Insert a meter reading
-        public async Task<(int ReturnCode, string Status, string Message)>
-            UpsertMeterReadingAsync(MeterReadingDto reading)
+        public async Task<(int ReturnCode, string Status, string Message, long? ReadingId)>
+            UpsertMeterReadingAsync(Guid runId, MeterReadingDto reading)
         {
             using SqlConnection connection =
                 new SqlConnection(_connectionString);
@@ -42,6 +42,10 @@ namespace Assignment3.Repositories
                     connection);
 
             command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.Add(
+                "@RunId",
+                SqlDbType.UniqueIdentifier).Value = runId;
 
             command.Parameters.Add(
                 "@MeterSerialNumber",
@@ -90,6 +94,87 @@ namespace Assignment3.Repositories
             messageParameter.Direction =
                 ParameterDirection.Output;
 
+            SqlParameter readingIdParameter =
+                command.Parameters.Add(
+                    "@ReadingId",
+                    SqlDbType.BigInt);
+
+            readingIdParameter.Direction =
+                ParameterDirection.Output;
+
+            SqlParameter returnParameter =
+                command.Parameters.Add(
+                    "@RETURN_VALUE",
+                    SqlDbType.Int);
+
+            returnParameter.Direction =
+                ParameterDirection.ReturnValue;
+
+            await connection.OpenAsync();
+
+            await command.ExecuteNonQueryAsync();
+
+            int returnCode =
+                (int)returnParameter.Value;
+
+            string status =
+                statusParameter.Value?.ToString()
+                ?? string.Empty;
+
+            string message =
+                messageParameter.Value?.ToString()
+                ?? string.Empty;
+
+            long? readingId =
+                readingIdParameter.Value is long id
+                    ? id
+                    : (readingIdParameter.Value != null && readingIdParameter.Value != DBNull.Value && long.TryParse(readingIdParameter.Value.ToString(), out long parsedId) ? parsedId : null);
+
+            return (returnCode, status, message, readingId);
+        }
+
+        // 3. Calculate consumption delta
+        public async Task<(int ReturnCode, string Status, string Message)> CalculateConsumptionDeltaAsync(
+            Guid runId,
+            long readingId)
+        {
+            using SqlConnection connection =
+                new SqlConnection(_connectionString);
+
+            using SqlCommand command =
+                new SqlCommand(
+                    "dbo.usp_CalculateConsumptionDelta",
+                    connection);
+
+            command.CommandType =
+                CommandType.StoredProcedure;
+
+            command.Parameters.Add(
+                "@RunId",
+                SqlDbType.UniqueIdentifier).Value = runId;
+
+            command.Parameters.Add(
+                "@ReadingId",
+                SqlDbType.BigInt).Value = readingId;
+
+            SqlParameter statusParameter =
+                command.Parameters.Add(
+                    "@Status",
+                    SqlDbType.NVarChar,
+                    20);
+
+            statusParameter.Direction =
+                ParameterDirection.Output;
+
+            SqlParameter messageParameter =
+                command.Parameters.Add(
+                    "@Message",
+                    SqlDbType.NVarChar,
+                    500);
+
+            messageParameter.Direction =
+                ParameterDirection.Output;
+
             SqlParameter returnParameter =
                 command.Parameters.Add(
                     "@RETURN_VALUE",
@@ -114,45 +199,6 @@ namespace Assignment3.Repositories
                 ?? string.Empty;
 
             return (returnCode, status, message);
-        }
-
-        // 3. Calculate consumption delta
-        public async Task<int> CalculateConsumptionDeltaAsync(
-            Guid runId,
-            long readingId)
-        {
-            using SqlConnection connection =
-                new SqlConnection(_connectionString);
-
-            using SqlCommand command =
-                new SqlCommand(
-                    "dbo.usp_CalculateConsumptionDelta",
-                    connection);
-
-            command.CommandType =
-                CommandType.StoredProcedure;
-
-            command.Parameters.Add(
-                "@RunId",
-                SqlDbType.UniqueIdentifier).Value = runId;
-
-            command.Parameters.Add(
-                "@ReadingId",
-                SqlDbType.BigInt).Value = readingId;
-
-            SqlParameter returnParameter =
-                command.Parameters.Add(
-                    "@RETURN_VALUE",
-                    SqlDbType.Int);
-
-            returnParameter.Direction =
-                ParameterDirection.ReturnValue;
-
-            await connection.OpenAsync();
-
-            await command.ExecuteNonQueryAsync();
-
-            return (int)returnParameter.Value;
         }
 
         // 4. Retrieve anomalous readings
