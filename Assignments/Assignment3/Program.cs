@@ -22,5 +22,8 @@ Console.WriteLine($"API Base URL: {settings.ApiBaseUrl}");
 Console.WriteLine($"Timeout: {settings.TimeoutSeconds} seconds");
 Console.WriteLine($"Maximum retries: {settings.MaxRetryAttempts}");
 
-Console.WriteLine("\nPress any key to exit...");
-Console.ReadKey();
+if (!Console.IsInputRedirected)
+{
+    Console.WriteLine("\nPress any key to exit...");
+    Console.ReadKey();
+}
