@@ -94,14 +94,6 @@ namespace Assignment3.Repositories
             messageParameter.Direction =
                 ParameterDirection.Output;
 
-            SqlParameter readingIdParameter =
-                command.Parameters.Add(
-                    "@ReadingId",
-                    SqlDbType.BigInt);
-
-            readingIdParameter.Direction =
-                ParameterDirection.Output;
-
             SqlParameter returnParameter =
                 command.Parameters.Add(
                     "@RETURN_VALUE",
@@ -125,10 +117,29 @@ namespace Assignment3.Repositories
                 messageParameter.Value?.ToString()
                 ?? string.Empty;
 
-            long? readingId =
-                readingIdParameter.Value is long id
-                    ? id
-                    : (readingIdParameter.Value != null && readingIdParameter.Value != DBNull.Value && long.TryParse(readingIdParameter.Value.ToString(), out long parsedId) ? parsedId : null);
+            long? readingId = null;
+
+            // If inserted successfully, query the new ReadingId
+            if (returnCode == 1)
+            {
+                using SqlCommand getIdCommand = new SqlCommand(
+                    @"SELECT TOP 1 MR.ReadingId
+                      FROM dbo.MeterReadings AS MR
+                      INNER JOIN dbo.Meters AS M ON MR.MeterId = M.MeterId
+                      WHERE MR.BatchId = @BatchId
+                        AND M.MeterSerialNumber = @MeterSerialNumber
+                      ORDER BY MR.ReadingId DESC;",
+                    connection);
+
+                getIdCommand.Parameters.Add("@BatchId", SqlDbType.NVarChar, 100).Value = reading.BatchId;
+                getIdCommand.Parameters.Add("@MeterSerialNumber", SqlDbType.NVarChar, 50).Value = reading.MeterSerialNumber;
+
+                object? idResult = await getIdCommand.ExecuteScalarAsync();
+                if (idResult != null && idResult != DBNull.Value && long.TryParse(idResult.ToString(), out long parsedId))
+                {
+                    readingId = parsedId;
+                }
+            }
 
             return (returnCode, status, message, readingId);
         }
