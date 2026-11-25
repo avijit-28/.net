@@ -6,15 +6,21 @@ using Assignment3.Repositories;
 // Load appsettings.json from the application output directory.
 IConfiguration configuration = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile(
+        "appsettings.json",
+        optional: false,
+        reloadOnChange: true)
     .Build();
 
 // Load application settings.
 AppSettings settings = AppSettings.Load(configuration);
+
+// Create repository using the database connection string.
 MeterReconciliationRepository repository =
+    new MeterReconciliationRepository(
+        settings.ConnectionString);
 
-    new MeterReconciliationRepository(settings);
-
+// Test SQL connection.
 await repository.TestConnectionAsync();
 
 Console.WriteLine("Configuration loaded successfully.");
