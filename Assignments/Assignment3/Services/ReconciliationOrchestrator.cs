@@ -1,4 +1,6 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Assignment3.ApiClients;
 using Assignment3.Models;
 using Assignment3.Repositories;
@@ -24,57 +26,238 @@ namespace Assignment3.Services
             DateTime? endDate = null,
             string? cursor = null)
         {
+            Guid runId = Guid.NewGuid();
+            string batchId = $"BATCH-{DateTime.UtcNow:yyyyMMddHHmmss}";
+
+            Console.WriteLine("\n[Reconciliation Run Initiated]");
+            Console.WriteLine($"Run ID:   {runId}");
+            Console.WriteLine($"Batch ID: {batchId}");
             Console.WriteLine("Fetching meter readings from API...");
 
-            List<MeterReadingDto> readings =
-                await _apiClient.GetMeterReadingsAsync(
+            List<MeterReadingDto> readings;
+
+            try
+            {
+                readings = await _apiClient.GetMeterReadingsAsync(
                     feederId,
                     startDate,
                     endDate,
                     cursor);
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\n[API Unavailable / Connection Refused]");
+                Console.WriteLine($"Details: {ex.Message}");
+                Console.ResetColor();
 
-            Console.WriteLine(
-                $"Received {readings.Count} meter readings.");
+                Console.Write("\nWould you like to simulate synchronization using test readings? (y/n): ");
+                string? input = Console.ReadLine()?.Trim().ToLowerInvariant();
 
-            int successfulRecords = 0;
-            int failedRecords = 0;
+                if (input == "y" || input == "yes")
+                {
+                    readings = GetSampleTestReadings(batchId);
+                    Console.WriteLine($"Loaded {readings.Count} test readings to verify end-to-end reconciliation.\n");
+                }
+                else
+                {
+                    // Log the failed sync run in database
+                    await _repository.LogReconciliationRunAsync(new ReconciliationRunResult
+                    {
+                        RunId = runId,
+                        BatchId = batchId,
+                        TotalReadings = 0,
+                        InsertedReadings = 0,
+                        DuplicateReadings = 0,
+                        RejectedReadings = 0,
+                        AnomalyReadings = 0,
+                        FailedReadings = 1,
+                        Status = "Failed",
+                        Message = $"API connection failed: {ex.Message}"
+                    });
+
+                    Console.WriteLine("Failed run logged to ReconciliationAuditLog.");
+                    return 0;
+                }
+            }
+
+            Console.WriteLine($"Processing {readings.Count} meter reading(s)...");
+
+            int insertedCount = 0;
+            int duplicateCount = 0;
+            int rejectedCount = 0;
+            int anomalyCount = 0;
+            int failedCount = 0;
 
             foreach (MeterReadingDto reading in readings)
             {
+                if (string.IsNullOrWhiteSpace(reading.BatchId))
+                {
+                    reading.BatchId = batchId;
+                }
+
                 try
                 {
-                    var result =
-                        await _repository.UpsertMeterReadingAsync(reading);
+                    var (returnCode, status, message, readingId) =
+                        await _repository.UpsertMeterReadingAsync(runId, reading);
 
-                    if (result.ReturnCode == 0)
+                    if (returnCode == 1) // Inserted
                     {
-                        successfulRecords++;
+                        insertedCount++;
+                        Console.WriteLine($"  [INSERTED]   Meter {reading.MeterSerialNumber,-10} | Reading: {reading.CumulativeKWh,8:F3} kWh | {message}");
 
-                        Console.WriteLine(
-                            $"Saved: {result.Status}");
+                        // Calculate consumption delta
+                        if (readingId.HasValue)
+                        {
+                            var deltaResult = await _repository.CalculateConsumptionDeltaAsync(runId, readingId.Value);
+
+                            if (deltaResult.Status == "Anomaly")
+                            {
+                                anomalyCount++;
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"               -> [ANOMALY] {deltaResult.Message}");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                Console.WriteLine($"               -> [DELTA]   {deltaResult.Status}: {deltaResult.Message}");
+                            }
+                        }
+                    }
+                    else if (returnCode == 2) // Duplicate
+                    {
+                        duplicateCount++;
+                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                        Console.WriteLine($"  [DUPLICATE]  Meter {reading.MeterSerialNumber,-10} | {message}");
+                        Console.ResetColor();
+                    }
+                    else if (returnCode < 0) // Rejected (e.g. unknown meter or negative reading)
+                    {
+                        rejectedCount++;
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        Console.WriteLine($"  [REJECTED]   Meter {reading.MeterSerialNumber,-10} | {message}");
+                        Console.ResetColor();
                     }
                     else
                     {
-                        failedRecords++;
-
-                        Console.WriteLine(
-                            $"Failed: {result.Message}");
+                        failedCount++;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"  [FAILED]     Meter {reading.MeterSerialNumber,-10} | {message}");
+                        Console.ResetColor();
                     }
                 }
                 catch (Exception ex)
                 {
-                    failedRecords++;
-
-                    Console.WriteLine(
-                        $"Record processing error: {ex.Message}");
+                    failedCount++;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"  [ERROR]      Meter {reading.MeterSerialNumber,-10} | {ex.Message}");
+                    Console.ResetColor();
                 }
             }
 
-            Console.WriteLine("\nSynchronization completed.");
-            Console.WriteLine($"Successful records: {successfulRecords}");
-            Console.WriteLine($"Failed records: {failedRecords}");
+            // Save run summary in database
+            var runResult = new ReconciliationRunResult
+            {
+                RunId = runId,
+                BatchId = batchId,
+                TotalReadings = readings.Count,
+                InsertedReadings = insertedCount,
+                DuplicateReadings = duplicateCount,
+                RejectedReadings = rejectedCount,
+                AnomalyReadings = anomalyCount,
+                FailedReadings = failedCount,
+                Status = failedCount == 0 && rejectedCount == 0 ? "Success" : "CompletedWithAlerts",
+                Message = $"Processed {readings.Count} readings: {insertedCount} inserted, {duplicateCount} duplicates, {anomalyCount} anomalies, {rejectedCount} rejected."
+            };
 
-            return successfulRecords;
+            await _repository.LogReconciliationRunAsync(runResult);
+
+            Console.WriteLine("\n-------------------------------------------");
+            Console.WriteLine("        SYNCHRONIZATION SUMMARY            ");
+            Console.WriteLine("-------------------------------------------");
+            Console.WriteLine($"Total Received:     {readings.Count}");
+            Console.WriteLine($"Inserted:           {insertedCount}");
+            Console.WriteLine($"Calculated Deltas:  {insertedCount}");
+            Console.WriteLine($"Anomalies Detected: {anomalyCount}");
+            Console.WriteLine($"Duplicates Skipped: {duplicateCount}");
+            Console.WriteLine($"Rejected:           {rejectedCount}");
+            Console.WriteLine($"Failed / Errors:    {failedCount}");
+            Console.WriteLine("Summary saved to ReconciliationAuditLog.");
+            Console.WriteLine("-------------------------------------------");
+
+            return insertedCount;
+        }
+
+        private static List<MeterReadingDto> GetSampleTestReadings(string batchId)
+        {
+            DateTime now = DateTime.UtcNow;
+
+            return new List<MeterReadingDto>
+            {
+                // Reading 1: Baseline reading for MTR-1001
+                new MeterReadingDto
+                {
+                    MeterSerialNumber = "MTR-1001",
+                    ExternalReadingId = $"EXT-{batchId}-001",
+                    BatchId = batchId,
+                    ReadingDate = now.AddHours(-2),
+                    CumulativeKWh = 1200.500m
+                },
+                // Reading 2: Subsequent reading for MTR-1001 (Valid Consumption: +15.5 kWh)
+                new MeterReadingDto
+                {
+                    MeterSerialNumber = "MTR-1001",
+                    ExternalReadingId = $"EXT-{batchId}-002",
+                    BatchId = batchId,
+                    ReadingDate = now.AddHours(-1),
+                    CumulativeKWh = 1216.000m
+                },
+                // Reading 3: Baseline reading for MTR-1002
+                new MeterReadingDto
+                {
+                    MeterSerialNumber = "MTR-1002",
+                    ExternalReadingId = $"EXT-{batchId}-003",
+                    BatchId = batchId,
+                    ReadingDate = now.AddHours(-2),
+                    CumulativeKWh = 850.000m
+                },
+                // Reading 4: Subsequent reading for MTR-1002 with LOWER cumulative kWh (Anomaly / Negative consumption)
+                new MeterReadingDto
+                {
+                    MeterSerialNumber = "MTR-1002",
+                    ExternalReadingId = $"EXT-{batchId}-004",
+                    BatchId = batchId,
+                    ReadingDate = now.AddHours(-1),
+                    CumulativeKWh = 810.000m
+                },
+                // Reading 5: Invalid negative cumulative kWh (Rejected by database)
+                new MeterReadingDto
+                {
+                    MeterSerialNumber = "MTR-2001",
+                    ExternalReadingId = $"EXT-{batchId}-005",
+                    BatchId = batchId,
+                    ReadingDate = now.AddHours(-1),
+                    CumulativeKWh = -25.000m
+                },
+                // Reading 6: Unknown meter serial number (Rejected by database)
+                new MeterReadingDto
+                {
+                    MeterSerialNumber = "MTR-UNKNOWN-999",
+                    ExternalReadingId = $"EXT-{batchId}-006",
+                    BatchId = batchId,
+                    ReadingDate = now.AddHours(-1),
+                    CumulativeKWh = 350.000m
+                },
+                // Reading 7: Duplicate of Reading 2 (Duplicate check)
+                new MeterReadingDto
+                {
+                    MeterSerialNumber = "MTR-1001",
+                    ExternalReadingId = $"EXT-{batchId}-002",
+                    BatchId = batchId,
+                    ReadingDate = now.AddHours(-1),
+                    CumulativeKWh = 1216.000m
+                }
+            };
         }
     }
 }
