@@ -6,7 +6,10 @@ using Assignment3.Repositories;
 using Assignment3.ApiClients;
 using Assignment3.Services;
 
-// Load appsettings.json.
+// Configure Console Output
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+// Load appsettings.json
 IConfiguration configuration = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
     .AddJsonFile(
@@ -15,33 +18,47 @@ IConfiguration configuration = new ConfigurationBuilder()
         reloadOnChange: true)
     .Build();
 
-// Load settings.
+// Load typed settings
 AppSettings settings = AppSettings.Load(configuration);
 
-// Initialize components.
-var repository =
-    new MeterReconciliationRepository(settings);
+// Initialize system components
+var repository = new MeterReconciliationRepository(settings);
+var apiClient = new MeterApiClient(settings);
+var orchestrator = new ReconciliationOrchestrator(apiClient, repository);
 
-var apiClient =
-    new MeterApiClient(settings);
-
-var orchestrator =
-    new ReconciliationOrchestrator(
-        apiClient,
-        repository);
+// Print Startup Splash
+PrintHeader();
+Console.ForegroundColor = ConsoleColor.Green;
+Console.WriteLine("  [✓] System Initialized Successfully");
+Console.ResetColor();
+Console.WriteLine($"      • Target Database : MeterReconciliationDB");
+Console.WriteLine($"      • Web API Base URL: {settings.ApiBaseUrl}");
+Console.WriteLine($"      • Request Timeout : {settings.TimeoutSeconds} seconds (Max Retries: {settings.MaxRetryAttempts})");
+Console.WriteLine(new string('─', 64));
 
 bool running = true;
 
 while (running)
 {
-    Console.WriteLine("\n================================");
-    Console.WriteLine("  METER RECONCILIATION SYSTEM   ");
-    Console.WriteLine("================================");
-    Console.WriteLine("1. Synchronize meter readings");
-    Console.WriteLine("2. View reconciliation summary");
-    Console.WriteLine("3. View anomalous readings");
-    Console.WriteLine("0. Exit");
-    Console.Write("Select option: ");
+    Console.WriteLine();
+    Console.ForegroundColor = ConsoleColor.Cyan;
+    Console.WriteLine("╔══════════════════════════════════════════════════════════════╗");
+    Console.WriteLine("║                 OPERATIONAL CONTROL PANEL                    ║");
+    Console.WriteLine("╚══════════════════════════════════════════════════════════════╝");
+    Console.ResetColor();
+
+    Console.ForegroundColor = ConsoleColor.White;
+    Console.WriteLine("  [1]  ⚡  Synchronize Meter Readings (Fetch API & Reconcile)");
+    Console.WriteLine("  [2]  📊  View Batch Reconciliation History & Audit Summaries");
+    Console.WriteLine("  [3]  ⚠️   View Flagged High-Variance & Anomalous Readings");
+    Console.ForegroundColor = ConsoleColor.DarkGray;
+    Console.WriteLine("  [0]  🚪  Exit Application");
+    Console.ResetColor();
+    Console.WriteLine(new string('─', 64));
+
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.Write("  Select Action [0-3] ▶ ");
+    Console.ResetColor();
 
     string? choice = Console.ReadLine();
     if (choice == null)
@@ -58,74 +75,138 @@ while (running)
                 break;
 
             case "2":
-                DataTable summary =
-                    await repository.GetReconciliationSummaryAsync();
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("┌──────────────────────────────────────────────────────────────┐");
+                Console.WriteLine("│             RECONCILIATION RUN AUDIT SUMMARY                 │");
+                Console.WriteLine("└──────────────────────────────────────────────────────────────┘");
+                Console.ResetColor();
+
+                DataTable summary = await repository.GetReconciliationSummaryAsync();
 
                 if (summary.Rows.Count == 0)
                 {
-                    Console.WriteLine("No reconciliation summary found.");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("  [i] No reconciliation audit logs found in database.");
+                    Console.ResetColor();
                 }
                 else
                 {
-                    Console.WriteLine("\n--- Reconciliation Summary ---");
-
-                    foreach (DataColumn column in summary.Columns)
-                    {
-                        Console.Write($"{column.ColumnName,-30}");
-                    }
-
-                    Console.WriteLine();
-                    Console.WriteLine(new string('-', summary.Columns.Count * 30));
+                    // Print table headers
+                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    Console.WriteLine($"  {"AuditId",-8} {"BatchId",-26} {"Status",-10} {"CreatedAt",-22} {"Summary Details"}");
+                    Console.WriteLine("  " + new string('─', 110));
+                    Console.ResetColor();
 
                     foreach (DataRow row in summary.Rows)
                     {
-                        foreach (DataColumn column in summary.Columns)
-                        {
-                            Console.Write($"{row[column],-30}");
-                        }
+                        string auditId = row["AuditId"]?.ToString() ?? "";
+                        string batchId = row["BatchId"]?.ToString() ?? "N/A";
+                        bool isSuccess = row["IsSuccess"] is bool b && b;
+                        string dateStr = Convert.ToDateTime(row["CreatedAt"]).ToString("yyyy-MM-dd HH:mm:ss");
+                        string details = row["Summary"]?.ToString() ?? "";
 
-                        Console.WriteLine();
+                        Console.Write($"  {auditId,-8} {batchId,-26} ");
+
+                        if (isSuccess)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write($"{"Success",-10} ");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.Write($"{"Alerts",-10} ");
+                        }
+                        Console.ResetColor();
+
+                        Console.WriteLine($"{dateStr,-22} {details}");
                     }
+                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    Console.WriteLine("  " + new string('─', 110));
+                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"  [✓] Retrieved {summary.Rows.Count} reconciliation run(s).");
+                    Console.ResetColor();
                 }
 
                 break;
 
             case "3":
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine("┌──────────────────────────────────────────────────────────────┐");
+                Console.WriteLine("│             FLAGGED ANOMALOUS METER READINGS                 │");
+                Console.WriteLine("└──────────────────────────────────────────────────────────────┘");
+                Console.ResetColor();
+
                 var anomalies = await repository.GetAnomalousReadingsAsync();
 
                 if (anomalies.Count == 0)
                 {
-                    Console.WriteLine("No anomalous readings found.");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("  [✓] Great! Zero anomalous meter readings detected in grid.");
+                    Console.ResetColor();
                 }
                 else
                 {
-                    Console.WriteLine("\n--- Anomalous Readings ---");
-                    Console.WriteLine($"{"ReadingId",-10} {"MeterSerial",-15} {"ReadingDate",-22} {"CumulKWh",-12} {"PrevCumul",-12} {"Status",-10}");
-                    Console.WriteLine(new string('-', 85));
+                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                    Console.WriteLine($"  {"ReadingId",-10} {"MeterSerial",-16} {"Feeder",-10} {"ReadingDate",-22} {"Current KWh",-14} {"Previous KWh",-14} {"Alert Reason"}");
+                    Console.WriteLine("  " + new string('─', 110));
+                    Console.ResetColor();
 
                     foreach (var a in anomalies)
                     {
                         string prevStr = a.PreviousCumulativeKWh.HasValue ? a.PreviousCumulativeKWh.Value.ToString("F3") : "N/A";
-                        Console.WriteLine($"{a.ReadingId,-10} {a.MeterSerialNumber,-15} {a.ReadingDate:yyyy-MM-dd HH:mm:ss} {a.CumulativeKWh,10:F3}  {prevStr,10}  {a.ReadingStatus,-10}");
+                        string feeder = string.IsNullOrWhiteSpace(a.FeederId) ? "N/A" : a.FeederId;
+
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write($"  {a.ReadingId,-10} {a.MeterSerialNumber,-16} {feeder,-10} {a.ReadingDate:yyyy-MM-dd HH:mm:ss}  {a.CumulativeKWh,11:F3}   {prevStr,11}   ");
+                        
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"[Negative Consumption: Rollback/Reset]");
+                        Console.ResetColor();
                     }
+                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                    Console.WriteLine("  " + new string('─', 110));
+                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"  [!] Found {anomalies.Count} high-variance reading(s) requiring engineer inspection.");
+                    Console.ResetColor();
                 }
 
                 break;
 
             case "0":
                 running = false;
-                Console.WriteLine("Application closed.");
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("  [✓] Operational session closed cleanly. Goodbye!");
+                Console.ResetColor();
                 break;
 
             default:
-                Console.WriteLine("Invalid option.");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("  [✗] Invalid selection. Please choose an option between 0 and 3.");
+                Console.ResetColor();
                 break;
         }
     }
     catch (Exception ex)
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"\n[ERROR] An error occurred: {ex.Message}");
+        Console.WriteLine($"\n  [✗ ERROR] An unexpected exception occurred: {ex.Message}");
         Console.ResetColor();
     }
+}
+
+static void PrintHeader()
+{
+    Console.ForegroundColor = ConsoleColor.Cyan;
+    Console.WriteLine(@"
+╔══════════════════════════════════════════════════════════════╗
+║              SMART METER RECONCILIATION SYSTEM               ║
+║         Enterprise ADO.NET & REST API Synchronization        ║
+╚══════════════════════════════════════════════════════════════╝");
+    Console.ResetColor();
 }
