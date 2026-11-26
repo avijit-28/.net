@@ -32,3 +32,4 @@ D:\avi\C#\Assignments\MeterReconciliation.API\obj\Debug\net10.0\refint\MeterReco
 D:\avi\C#\Assignments\MeterReconciliation.API\obj\Debug\net10.0\MeterReconciliation.API.pdb
 D:\avi\C#\Assignments\MeterReconciliation.API\obj\Debug\net10.0\MeterReconciliation.API.genruntimeconfig.cache
 D:\avi\C#\Assignments\MeterReconciliation.API\obj\Debug\net10.0\ref\MeterReconciliation.API.dll
+D:\avi\C#\Assignments\MeterReconciliation.API\bin\Debug\net10.0\MeterReconciliation_API.postman_collection.json
