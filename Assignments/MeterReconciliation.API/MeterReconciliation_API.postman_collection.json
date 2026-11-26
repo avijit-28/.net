@@ -1,0 +1,272 @@
+{
+	"info": {
+		"_postman_id": "7a35e7dc-4a62-4f3b-b2ea-9c09d6b24d10",
+		"name": "Utility Meter Reconciliation API",
+		"description": "Postman test suite for Utility Meter Reconciliation .NET Web API endpoints.\nIncludes automated test assertions for status codes, schema validation, and response data.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Get Meter Readings Batch",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is within acceptable SLA (< 2000ms)\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"pm.test(\"Response is an array of meter readings\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an(\"array\");",
+							"    pm.expect(jsonData.length).to.be.above(0);",
+							"});",
+							"",
+							"pm.test(\"Each reading contains required fields with valid types\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    jsonData.forEach(function(item) {",
+							"        pm.expect(item).to.have.property(\"meterSerialNumber\").that.is.a(\"string\");",
+							"        pm.expect(item).to.have.property(\"batchId\").that.is.a(\"string\");",
+							"        pm.expect(item).to.have.property(\"readingDate\");",
+							"        pm.expect(item).to.have.property(\"cumulativeKWh\").that.is.a(\"number\");",
+							"    });",
+							"});",
+							"",
+							"pm.test(\"Verify presence of anomaly and baseline readings\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const serials = jsonData.map(x => x.meterSerialNumber);",
+							"    pm.expect(serials).to.include(\"MTR-1001\");",
+							"    pm.expect(serials).to.include(\"MTR-3001\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "X-API-Key",
+						"value": "{{apiKey}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/meter-readings/batch",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"meter-readings",
+						"batch"
+					]
+				},
+				"description": "Retrieves batch meter readings for reconciliation. Tests schema, datatypes, and presence of benchmark meter serials."
+			},
+			"response": []
+		},
+		{
+			"name": "2. Get Meter Readings Batch (With Query Filters)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response is an array\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an(\"array\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "X-API-Key",
+						"value": "{{apiKey}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/meter-readings/batch?feederId=1&startDate=2026-11-01&endDate=2026-11-30",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"meter-readings",
+						"batch"
+					],
+					"query": [
+						{
+							"key": "feederId",
+							"value": "1"
+						},
+						{
+							"key": "startDate",
+							"value": "2026-11-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2026-11-30"
+						}
+					]
+				},
+				"description": "Tests batch meter readings endpoint with optional query parameters."
+			},
+			"response": []
+		},
+		{
+			"name": "3. Get Tariff Updates",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response is an array of tariff slabs\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an(\"array\");",
+							"    pm.expect(jsonData.length).to.be.above(0);",
+							"});",
+							"",
+							"pm.test(\"Tariff slab contains required fields\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const first = jsonData[0];",
+							"    pm.expect(first).to.have.property(\"slabId\").that.is.a(\"number\");",
+							"    pm.expect(first).to.have.property(\"feederId\").that.is.a(\"string\");",
+							"    pm.expect(first).to.have.property(\"slabName\").that.is.a(\"string\");",
+							"    pm.expect(first).to.have.property(\"minUnits\").that.is.a(\"number\");",
+							"    pm.expect(first).to.have.property(\"ratePerUnit\").that.is.a(\"number\");",
+							"    pm.expect(first.ratePerUnit).to.be.above(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "X-API-Key",
+						"value": "{{apiKey}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/tariff-updates",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"tariff-updates"
+					]
+				},
+				"description": "Retrieves active tariff structures and billing slabs."
+			},
+			"response": []
+		},
+		{
+			"name": "4. Get Dispatch Alerts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response is an array of dispatch alerts\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an(\"array\");",
+							"});",
+							"",
+							"pm.test(\"Alert records contain valid severity levels\", function () {",
+							"    const jsonData = pm.response.json();",
+							"    const validSeverities = [\"Low\", \"Medium\", \"High\", \"Critical\"];",
+							"    jsonData.forEach(function(alert) {",
+							"        pm.expect(alert).to.have.property(\"alertId\");",
+							"        pm.expect(alert).to.have.property(\"feederId\");",
+							"        pm.expect(alert).to.have.property(\"severity\");",
+							"        pm.expect(alert).to.have.property(\"message\");",
+							"        pm.expect(validSeverities).to.include(alert.severity);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "X-API-Key",
+						"value": "{{apiKey}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/dispatch-alerts",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"dispatch-alerts"
+					]
+				},
+				"description": "Queries real-time grid alerts and dispatch notifications."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5193",
+			"type": "string"
+		},
+		{
+			"key": "apiKey",
+			"value": "avi2807",
+			"type": "string"
+		}
+	]
+}
