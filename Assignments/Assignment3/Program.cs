@@ -26,21 +26,24 @@ var repository = new MeterReconciliationRepository(settings);
 var apiClient = new MeterApiClient(settings);
 var orchestrator = new ReconciliationOrchestrator(apiClient, repository);
 
-// Print Startup Splash
-PrintHeader();
-Console.ForegroundColor = ConsoleColor.Green;
-Console.WriteLine("  [✓] System Initialized Successfully");
-Console.ResetColor();
-Console.WriteLine($"      • Target Database : MeterReconciliationDB");
-Console.WriteLine($"      • Web API Base URL: {settings.ApiBaseUrl}");
-Console.WriteLine($"      • Request Timeout : {settings.TimeoutSeconds} seconds (Max Retries: {settings.MaxRetryAttempts})");
-Console.WriteLine(new string('─', 64));
-
 bool running = true;
+
+// Initial clear on startup
+if (!Console.IsInputRedirected)
+{
+    try { Console.Clear(); } catch { }
+}
 
 while (running)
 {
-    Console.WriteLine();
+    PrintHeader();
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine("  [✓] System Active & Ready");
+    Console.ResetColor();
+    Console.WriteLine($"      • Target Database : MeterReconciliationDB");
+    Console.WriteLine($"      • Web API Base URL: {settings.ApiBaseUrl}");
+    Console.WriteLine(new string('─', 64));
+
     Console.ForegroundColor = ConsoleColor.Cyan;
     Console.WriteLine("╔══════════════════════════════════════════════════════════════╗");
     Console.WriteLine("║                 OPERATIONAL CONTROL PANEL                    ║");
@@ -72,6 +75,7 @@ while (running)
         {
             case "1":
                 await orchestrator.SyncMeterReadingsAsync();
+                PauseAndClear();
                 break;
 
             case "2":
@@ -130,6 +134,7 @@ while (running)
                     Console.ResetColor();
                 }
 
+                PauseAndClear();
                 break;
 
             case "3":
@@ -175,6 +180,7 @@ while (running)
                     Console.ResetColor();
                 }
 
+                PauseAndClear();
                 break;
 
             case "0":
@@ -189,6 +195,7 @@ while (running)
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("  [✗] Invalid selection. Please choose an option between 0 and 3.");
                 Console.ResetColor();
+                PauseAndClear();
                 break;
         }
     }
@@ -197,6 +204,7 @@ while (running)
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine($"\n  [✗ ERROR] An unexpected exception occurred: {ex.Message}");
         Console.ResetColor();
+        PauseAndClear();
     }
 }
 
@@ -209,4 +217,18 @@ static void PrintHeader()
 ║         Enterprise ADO.NET & REST API Synchronization        ║
 ╚══════════════════════════════════════════════════════════════╝");
     Console.ResetColor();
+}
+
+static void PauseAndClear()
+{
+    Console.WriteLine();
+    Console.ForegroundColor = ConsoleColor.DarkGray;
+    Console.Write("  Press [Enter] to return to menu...");
+    Console.ResetColor();
+    Console.ReadLine();
+
+    if (!Console.IsInputRedirected)
+    {
+        try { Console.Clear(); } catch { }
+    }
 }
