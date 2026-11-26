@@ -1,6 +1,32 @@
-@MeterReconciliation.API_HostAddress = http://localhost:5193
+@HostAddress = http://localhost:5193
+@ApiKey = avi2807
 
-GET {{MeterReconciliation.API_HostAddress}}/weatherforecast/
+### 1. Batch Meter Readings (Default)
+GET {{HostAddress}}/api/v1/meter-readings/batch
 Accept: application/json
+X-API-Key: {{ApiKey}}
 
-###
+### 2. Batch Meter Readings (With Query Parameters)
+GET {{HostAddress}}/api/v1/meter-readings/batch?feederId=1&startDate=2026-11-01&endDate=2026-11-30
+Accept: application/json
+X-API-Key: {{ApiKey}}
+
+### 3. Active Tariff Slabs
+GET {{HostAddress}}/api/v1/tariff-updates
+Accept: application/json
+X-API-Key: {{ApiKey}}
+
+### 4. Active Tariff Slabs (Filter by Feeder)
+GET {{HostAddress}}/api/v1/tariff-updates?feederId=FDR-01
+Accept: application/json
+X-API-Key: {{ApiKey}}
+
+### 5. Outage & Dispatch Alerts
+GET {{HostAddress}}/api/v1/dispatch-alerts
+Accept: application/json
+X-API-Key: {{ApiKey}}
+
+### 6. Outage & Dispatch Alerts (Filter by Feeder)
+GET {{HostAddress}}/api/v1/dispatch-alerts?feederId=FDR-03
+Accept: application/json
+X-API-Key: {{ApiKey}}
