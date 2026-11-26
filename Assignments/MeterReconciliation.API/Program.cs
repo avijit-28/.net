@@ -11,8 +11,6 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
-
 // 1. Meter Readings Batch API
 app.MapGet("/api/v1/meter-readings/batch", (int? feederId, DateTime? startDate, DateTime? endDate, string? cursor) =>
 {
