@@ -37,10 +37,9 @@ while (running)
     Console.WriteLine("\n================================");
     Console.WriteLine("  METER RECONCILIATION SYSTEM   ");
     Console.WriteLine("================================");
-    Console.WriteLine("1. Test SQL connection");
-    Console.WriteLine("2. Synchronize meter readings");
-    Console.WriteLine("3. View reconciliation summary");
-    Console.WriteLine("4. View anomalous readings");
+    Console.WriteLine("1. Synchronize meter readings");
+    Console.WriteLine("2. View reconciliation summary");
+    Console.WriteLine("3. View anomalous readings");
     Console.WriteLine("0. Exit");
     Console.Write("Select option: ");
 
@@ -55,14 +54,10 @@ while (running)
         switch (choice.Trim())
         {
             case "1":
-                await repository.TestConnectionAsync();
-                break;
-
-            case "2":
                 await orchestrator.SyncMeterReadingsAsync();
                 break;
 
-            case "3":
+            case "2":
                 DataTable summary =
                     await repository.GetReconciliationSummaryAsync();
 
