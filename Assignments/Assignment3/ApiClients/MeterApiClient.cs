@@ -39,6 +39,7 @@ namespace Assignment3.ApiClients
                     "application/json"));
         }
 
+
         public async Task<List<MeterReadingDto>>
             GetMeterReadingsAsync(
                 int? feederId = null,
@@ -102,6 +103,7 @@ namespace Assignment3.ApiClients
                     {
                         string json =
                             await response.Content.ReadAsStringAsync();
+                            
 
                         List<MeterReadingDto>? readings =
                             JsonSerializer.Deserialize<
