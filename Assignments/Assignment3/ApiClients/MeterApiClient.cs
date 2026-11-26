@@ -18,7 +18,13 @@ namespace Assignment3.ApiClients
 
         public MeterApiClient(AppSettings settings)
         {
-            _httpClient = new HttpClient
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback =
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+
+            _httpClient = new HttpClient(handler)
             {
                 BaseAddress = new Uri(settings.ApiBaseUrl),
                 Timeout = TimeSpan.FromSeconds(
