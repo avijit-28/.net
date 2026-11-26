@@ -5,6 +5,7 @@ using Assignment3.Configuration;
 using Assignment3.Repositories;
 using Assignment3.ApiClients;
 using Assignment3.Services;
+using Assignment3.Models;
 
 // Configure Console Output
 Console.OutputEncoding = System.Text.Encoding.UTF8;
