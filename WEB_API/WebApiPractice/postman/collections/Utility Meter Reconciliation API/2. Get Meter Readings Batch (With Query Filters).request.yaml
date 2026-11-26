@@ -1,0 +1,24 @@
+$kind: http-request
+description: Tests batch meter readings endpoint with optional query parameters.
+url: "{{baseUrl}}/api/v1/meter-readings/batch?feederId=1&startDate=2026-11-01&endDate=2026-11-30"
+method: GET
+headers:
+  Accept: application/json
+  X-API-Key: "{{apiKey}}"
+queryParams:
+  feederId: "1"
+  startDate: 2026-11-01
+  endDate: 2026-11-30
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Response is an array", function () {
+          const jsonData = pm.response.json();
+          pm.expect(jsonData).to.be.an("array");
+      });
+    language: text/javascript
+order: 2000

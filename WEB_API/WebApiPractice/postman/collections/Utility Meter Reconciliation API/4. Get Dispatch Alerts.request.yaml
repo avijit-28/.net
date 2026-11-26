@@ -1,0 +1,32 @@
+$kind: http-request
+description: Queries real-time grid alerts and dispatch notifications.
+url: "{{baseUrl}}/api/v1/dispatch-alerts"
+method: GET
+headers:
+  Accept: application/json
+  X-API-Key: "{{apiKey}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Response is an array of dispatch alerts", function () {
+          const jsonData = pm.response.json();
+          pm.expect(jsonData).to.be.an("array");
+      });
+
+      pm.test("Alert records contain valid severity levels", function () {
+          const jsonData = pm.response.json();
+          const validSeverities = ["Low", "Medium", "High", "Critical"];
+          jsonData.forEach(function(alert) {
+              pm.expect(alert).to.have.property("alertId");
+              pm.expect(alert).to.have.property("feederId");
+              pm.expect(alert).to.have.property("severity");
+              pm.expect(alert).to.have.property("message");
+              pm.expect(validSeverities).to.include(alert.severity);
+          });
+      });
+    language: text/javascript
+order: 4000

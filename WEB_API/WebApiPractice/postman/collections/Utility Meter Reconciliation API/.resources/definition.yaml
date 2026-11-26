@@ -1,0 +1,7 @@
+$kind: collection
+description: |-
+  Postman test suite for Utility Meter Reconciliation .NET Web API endpoints.
+  Includes automated test assertions for status codes, schema validation, and response data.
+variables:
+  baseUrl: http://localhost:5193
+  apiKey: avi2807

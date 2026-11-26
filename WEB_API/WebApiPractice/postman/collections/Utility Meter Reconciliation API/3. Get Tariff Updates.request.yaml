@@ -1,0 +1,32 @@
+$kind: http-request
+description: Retrieves active tariff structures and billing slabs.
+url: "{{baseUrl}}/api/v1/tariff-updates"
+method: GET
+headers:
+  Accept: application/json
+  X-API-Key: "{{apiKey}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Response is an array of tariff slabs", function () {
+          const jsonData = pm.response.json();
+          pm.expect(jsonData).to.be.an("array");
+          pm.expect(jsonData.length).to.be.above(0);
+      });
+
+      pm.test("Tariff slab contains required fields", function () {
+          const jsonData = pm.response.json();
+          const first = jsonData[0];
+          pm.expect(first).to.have.property("slabId").that.is.a("number");
+          pm.expect(first).to.have.property("feederId").that.is.a("string");
+          pm.expect(first).to.have.property("slabName").that.is.a("string");
+          pm.expect(first).to.have.property("minUnits").that.is.a("number");
+          pm.expect(first).to.have.property("ratePerUnit").that.is.a("number");
+          pm.expect(first.ratePerUnit).to.be.above(0);
+      });
+    language: text/javascript
+order: 3000

@@ -1,0 +1,42 @@
+$kind: http-request
+description: Retrieves batch meter readings for reconciliation. Tests schema, datatypes, and presence of benchmark meter serials.
+url: "{{baseUrl}}/api/v1/meter-readings/batch"
+method: GET
+headers:
+  Accept: application/json
+  X-API-Key: "{{apiKey}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Response time is within acceptable SLA (< 2000ms)", function () {
+          pm.expect(pm.response.responseTime).to.be.below(2000);
+      });
+
+      pm.test("Response is an array of meter readings", function () {
+          const jsonData = pm.response.json();
+          pm.expect(jsonData).to.be.an("array");
+          pm.expect(jsonData.length).to.be.above(0);
+      });
+
+      pm.test("Each reading contains required fields with valid types", function () {
+          const jsonData = pm.response.json();
+          jsonData.forEach(function(item) {
+              pm.expect(item).to.have.property("meterSerialNumber").that.is.a("string");
+              pm.expect(item).to.have.property("batchId").that.is.a("string");
+              pm.expect(item).to.have.property("readingDate");
+              pm.expect(item).to.have.property("cumulativeKWh").that.is.a("number");
+          });
+      });
+
+      pm.test("Verify presence of anomaly and baseline readings", function () {
+          const jsonData = pm.response.json();
+          const serials = jsonData.map(x => x.meterSerialNumber);
+          pm.expect(serials).to.include("MTR-1001");
+          pm.expect(serials).to.include("MTR-3001");
+      });
+    language: text/javascript
+order: 1000
