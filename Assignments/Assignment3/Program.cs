@@ -90,7 +90,7 @@ while (running)
 
                 break;
 
-            case "4":
+            case "3":
                 var anomalies = await repository.GetAnomalousReadingsAsync();
 
                 if (anomalies.Count == 0)
