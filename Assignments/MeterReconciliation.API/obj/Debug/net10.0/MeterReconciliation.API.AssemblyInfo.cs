@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MeterReconciliation.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1f0f7ec25ad652971f6fbcf55e120bdb8dbb27ca")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d3b1a98ec9fd8a06f27de00fa01a16c1ac90ee55")]
 [assembly: System.Reflection.AssemblyProductAttribute("MeterReconciliation.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MeterReconciliation.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
