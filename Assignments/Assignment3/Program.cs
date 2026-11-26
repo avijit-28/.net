@@ -55,13 +55,15 @@ while (running)
     Console.WriteLine("  [1]  ⚡  Synchronize Meter Readings (Fetch API & Reconcile)");
     Console.WriteLine("  [2]  📊  View Batch Reconciliation History & Audit Summaries");
     Console.WriteLine("  [3]  ⚠️   View Flagged High-Variance & Anomalous Readings");
+    Console.WriteLine("  [4]  💡  View Active Tariff Slabs (Poll Web API)");
+    Console.WriteLine("  [5]  🚨  View Outage & Dispatch Alerts (Poll Web API)");
     Console.ForegroundColor = ConsoleColor.DarkGray;
     Console.WriteLine("  [0]  🚪  Exit Application");
     Console.ResetColor();
     Console.WriteLine(new string('─', 64));
 
     Console.ForegroundColor = ConsoleColor.Yellow;
-    Console.Write("  Select Action [0-3] ▶ ");
+    Console.Write("  Select Action [0-5] ▶ ");
     Console.ResetColor();
 
     string? choice = Console.ReadLine();
