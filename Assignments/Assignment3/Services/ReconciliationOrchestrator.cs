@@ -46,39 +46,28 @@ namespace Assignment3.Services
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\n[API Unavailable / Connection Refused]");
                 Console.WriteLine($"Details: {ex.Message}");
                 Console.ResetColor();
 
-                Console.Write("\nWould you like to simulate synchronization using test readings? (y/n): ");
-                string? input = Console.ReadLine()?.Trim().ToLowerInvariant();
-
-                if (input == "y" || input == "yes")
+                // Log the failed sync run in database
+                await _repository.LogReconciliationRunAsync(new ReconciliationRunResult
                 {
-                    readings = GetSampleTestReadings(batchId);
-                    Console.WriteLine($"Loaded {readings.Count} test readings to verify end-to-end reconciliation.\n");
-                }
-                else
-                {
-                    // Log the failed sync run in database
-                    await _repository.LogReconciliationRunAsync(new ReconciliationRunResult
-                    {
-                        RunId = runId,
-                        BatchId = batchId,
-                        TotalReadings = 0,
-                        InsertedReadings = 0,
-                        DuplicateReadings = 0,
-                        RejectedReadings = 0,
-                        AnomalyReadings = 0,
-                        FailedReadings = 1,
-                        Status = "Failed",
-                        Message = $"API connection failed: {ex.Message}"
-                    });
+                    RunId = runId,
+                    BatchId = batchId,
+                    TotalReadings = 0,
+                    InsertedReadings = 0,
+                    DuplicateReadings = 0,
+                    RejectedReadings = 0,
+                    AnomalyReadings = 0,
+                    FailedReadings = 1,
+                    Status = "Failed",
+                    Message = $"API connection failed: {ex.Message}"
+                });
 
-                    Console.WriteLine("Failed run logged to ReconciliationAuditLog.");
-                    return 0;
-                }
+                Console.WriteLine("\nFailed run logged to ReconciliationAuditLog.");
+                return 0;
             }
 
             Console.WriteLine($"Processing {readings.Count} meter reading(s)...");
